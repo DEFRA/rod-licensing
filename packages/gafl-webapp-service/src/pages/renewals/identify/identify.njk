@@ -141,7 +141,7 @@
                             classes: "govuk-!-font-weight-bold govuk-label"
                       }
                   },
-                  errorMessage: { text: mssgs.enter_dob } if error['date-of-birth'],
+                  errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
                   hint: {
                     text: mssgs.enter_dob_example
                   }

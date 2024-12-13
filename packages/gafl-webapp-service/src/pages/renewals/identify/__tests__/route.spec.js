@@ -66,6 +66,23 @@ describe('getData', () => {
     await getData(getMockRequest(undefined, pageGet))
     expect(pageGet).toHaveBeenCalledWith(IDENTIFY.page)
   })
+
+  it.each([
+    ['full-date', 'object.missing'],
+    ['day', 'any.required']
+  ])('should add error details ({%s: %s}) to the page data', async (errorKey, errorValue) => {
+    const pageGet = async () => ({
+      error: { [errorKey]: errorValue }
+    })
+
+    const result = await getData(getMockRequest(undefined, pageGet))
+    expect(result.error).toEqual({ errorKey, errorValue })
+  })
+
+  it('omits error if there is no error', async () => {
+    const result = await getData(getMockRequest())
+    expect(result.error).toBeUndefined()
+  })
 })
 
 describe('default', () => {

@@ -21,13 +21,21 @@ export const getData = async request => {
     }
   }
 
-  return {
+  const pageData = {
     referenceNumber: permission.referenceNumber,
     uri: {
       new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     },
     ...getDateErrorFlags(page?.error)
   }
+
+  if (page?.error) {
+    const [errorKey] = Object.keys(page.error)
+    const errorValue = page.error[errorKey]
+    pageData.error = { errorKey, errorValue }
+  }
+
+  return pageData
 }
 
 export const validator = payload => {
