@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.10 (2024-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2094](https://github.com/DEFRA/rod-licensing/pull/2094) Licence to start error not in error summary ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.57.0-rc.9 (2024-12-12)
 
 #### :bug: Bug Fix
