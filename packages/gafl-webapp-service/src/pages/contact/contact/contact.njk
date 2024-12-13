@@ -81,7 +81,9 @@
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
          {{ mssgs.important_info_contact_input_mobile_note }}</br>
-         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
+            <meta name="format-detection" content="telephone=no">
+                <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
+            </meta>
          </span>
      </div>
 {% endset -%}

@@ -62,8 +62,8 @@ const getMockCatalog = overrides => ({
   contact_summary_row_contact: Symbol('contact-summary-row-contact'),
   contact_summary_row_licence_details: Symbol('contact-summary-row-licence-details'),
   contact_summary_row_newsletter: Symbol('contact-summary-row-newsletter'),
-  contact_summary_text_sngl: 'contact-summary-text-sngl',
-  contact_summary_text_plrl: 'contact-summary-text-plrl',
+  contact_summary_text_sngl: 'Text message-contact-summary-text-sngl',
+  contact_summary_text_plrl: 'Text messages-contact-summary-text-plrl',
   contact_summary_title: Symbol('contact-summary-title'),
   no: 'negative, Ghost Rider',
   yes: 'aye',
@@ -169,7 +169,6 @@ describe('contact-summary > route', () => {
     const mssgCatalog = getMockCatalog({
       [mssgKey]: mssg
     })
-    console.log('mssgcat: ', mssgCatalog.yes)
     const samplePermission = getMockPermission({
       preferredMethodOfNewsletter
     })
