@@ -5,10 +5,10 @@ import { permitSchema } from './permit.schema.js'
 import { contactResponseSchema } from './contact.schema.js'
 import { finalisedPermissionSchemaContent } from './permission.schema.js'
 
-const referenceLength = 6
+const REFERENCE_LENGTH = 6
 
 export const authenticateRenewalRequestParamsSchema = Joi.object({
-  referenceNumber: Joi.string().min(referenceLength).required().description('The permission reference number (supports partial)')
+  referenceNumber: Joi.string().min(REFERENCE_LENGTH).required().description('The permission reference number (supports partial)')
 }).label('authenticate-renewal-request-params')
 
 export const authenticateRenewalRequestQuerySchema = Joi.object({

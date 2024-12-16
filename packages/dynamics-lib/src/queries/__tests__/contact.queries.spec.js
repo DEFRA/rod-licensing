@@ -1,5 +1,6 @@
 import { contactForLicensee, contactForLicenseeNoReference } from '../contact.queries.js'
 import { dynamicsClient } from '../../client/dynamics-client.js'
+import { Contact } from '../../entities/contact.entity.js'
 
 jest.mock('dynamics-web-api', () => {
   return jest.fn().mockImplementation(() => {
@@ -99,15 +100,65 @@ describe('Contact Queries', () => {
   })
 
   describe('contactForLicenseeNoReference', () => {
-    it('should return a predefined query with correct filter', () => {
+    beforeEach(() => {
+      jest.resetModules()
+
+      jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
+        postcode: { field: 'mock_postcode' },
+        birthDate: { field: 'mock_birthdate' }
+      })
+
+      jest.spyOn(Contact.definition, 'defaultFilter', 'get').mockReturnValue('statecode eq 0')
+    })
+
+    it('root should return Contact', () => {
+      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+      expect(result._root).toEqual(Contact)
+    })
+
+    it('should return a predefined query', () => {
       const query = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
 
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'contacts',
         expand: [],
-        filter: "defra_postcode eq 'AB12 3CD' and birthdate eq 03/12/1990 and statecode eq 0",
+        filter: "mock_postcode eq 'AB12 3CD' and mock_birthdate eq 03/12/1990 and statecode eq 0",
         select: expect.any(Array)
       })
+    })
+
+    it('should use mocked values for mapping postcode', () => {
+      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+      expect(result._retrieveRequest.filter).toContain(Contact.definition.mappings.postcode.field)
+    })
+
+    it('should use mocked values for mapping birth date', () => {
+      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+      expect(result._retrieveRequest.filter).toContain(Contact.definition.mappings.birthDate.field)
+    })
+
+    it('collections should return contacts', () => {
+      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+      expect(result._retrieveRequest.collection).toEqual('contacts')
+    })
+
+    it('expand should return []', () => {
+      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+      expect(result._retrieveRequest.expand).toEqual([])
+    })
+
+    it.each([
+      ['AB12 3CD', '03/12/1990'],
+      ['EF45 6GH', '05/06/1987'],
+      ['IJ78 9KL', '14/11/1975']
+    ])('filter should return postcode and birth date when they are %s and %s', (postcode, birthDate) => {
+      const result = contactForLicenseeNoReference(birthDate, postcode)
+      expect(result._retrieveRequest.filter).toEqual(`mock_postcode eq '${postcode}' and mock_birthdate eq ${birthDate} and statecode eq 0`)
+    })
+
+    it('select should be an array', () => {
+      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+      expect(result._retrieveRequest.select).toEqual(expect.any(Array))
     })
   })
 })

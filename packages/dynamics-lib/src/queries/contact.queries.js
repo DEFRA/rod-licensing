@@ -38,9 +38,10 @@ export const contactForLicensee = (permissionReferenceNumberLast6Characters, lic
 }
 
 export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcode) => {
-  let filter = `${Contact.definition.mappings.postcode.field} eq '${escapeODataStringValue(licenseePostcode)}'`
-  filter += ` and ${Contact.definition.mappings.birthDate.field} eq ${licenseeBirthDate}`
-  filter += ` and ${Contact.definition.defaultFilter}`
+  const { postcode, birthDate } = Contact.definition.mappings
+  const filter = `${postcode.field} eq '${escapeODataStringValue(licenseePostcode)}' and ${birthDate.field} eq ${licenseeBirthDate} and ${
+    Contact.definition.defaultFilter
+  }`
   return new PredefinedQuery({
     root: Contact,
     filter: filter,
