@@ -109,9 +109,9 @@ export const getPaymentStatus = async (paymentId, recurring = false) => {
   }
 }
 
-const createRecurringPayment = async preparedPayment => {
+const createRecurringPaymentAgreement = async preparedPayment => {
   try {
-    return await govUkPayApi.createRecurringPayment(preparedPayment)
+    return await govUkPayApi.createRecurringPaymentAgreement(preparedPayment)
   } catch (err) {
     /*
      * Potentially errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
@@ -122,7 +122,7 @@ const createRecurringPayment = async preparedPayment => {
 }
 
 export const sendRecurringPayment = async preparedPayment => {
-  const response = await createRecurringPayment(preparedPayment)
+  const response = await createRecurringPaymentAgreement(preparedPayment)
 
   if (response.ok) {
     const resBody = await response.json()

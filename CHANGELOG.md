@@ -1,4 +1,113 @@
 
+## v1.57.0-rc.12 (2024-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2095](https://github.com/DEFRA/rod-licensing/pull/2095) Missing inline error on renewals id page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.11 (2024-12-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2091](https://github.com/DEFRA/rod-licensing/pull/2091) Update activity in CRM ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+## v1.57.0-rc.10 (2024-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2094](https://github.com/DEFRA/rod-licensing/pull/2094) Licence to start error not in error summary ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.9 (2024-12-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2093](https://github.com/DEFRA/rod-licensing/pull/2093) Fix DOB message in Welsh ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.8 (2024-12-12)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2092](https://github.com/DEFRA/rod-licensing/pull/2092) Fix RP creation bug ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.57.0-rc.6 (2024-12-10)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#2081](https://github.com/DEFRA/rod-licensing/pull/2081) Create RP Record in CRM ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.5 (2024-12-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2088](https://github.com/DEFRA/rod-licensing/pull/2088) Change length link junior licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.57.0-rc.4 (2024-12-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2022](https://github.com/DEFRA/rod-licensing/pull/2022) Apply more specific date error messages ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.57.0-rc.3 (2024-12-06)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2082](https://github.com/DEFRA/rod-licensing/pull/2082) Rename createRecurringPayment to clarify it creates agreements ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.57.0-rc.2 (2024-12-04)
+
+#### :rocket: Enhancement
+* `pocl-job`
+  * [#2085](https://github.com/DEFRA/rod-licensing/pull/2085) FTP POCL references ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.57.0-rc.1 (2024-11-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2086](https://github.com/DEFRA/rod-licensing/pull/2086) RCP fails ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.57.0-rc.0 (2024-11-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2075](https://github.com/DEFRA/rod-licensing/pull/2075) RCP job fails locally ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.55.0-rc.6 (2024-11-25)
 
 #### :rocket: Enhancement

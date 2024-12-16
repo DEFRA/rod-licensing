@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dateSchemaInput matches expected format 1`] = `
+Object {
+  "day": "1",
+  "day-and-month": Object {
+    "day": "1",
+    "month": "2",
+  },
+  "day-and-year": Object {
+    "day": "1",
+    "year": "2023",
+  },
+  "full-date": Object {
+    "day": "1",
+    "month": "2",
+    "year": "2023",
+  },
+  "invalid-date": "2023-02-01",
+  "month": "2",
+  "month-and-year": Object {
+    "month": "2",
+    "year": "2023",
+  },
+  "non-numeric": Object {
+    "day": "1",
+    "month": "2",
+    "year": "2023",
+  },
+  "year": "2023",
+}
+`;

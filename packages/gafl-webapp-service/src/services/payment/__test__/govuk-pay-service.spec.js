@@ -309,7 +309,7 @@ describe('The govuk-pay-service', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
       }
-      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
       const unique = Symbol('payload')
       const payload = {
         reference: 'd81f1a2b-6508-468f-8342-b6770f60f7cd',
@@ -318,7 +318,7 @@ describe('The govuk-pay-service', () => {
         unique
       }
       await sendRecurringPayment(payload)
-      expect(govUkPayApi.createRecurringPayment).toHaveBeenCalledWith(payload)
+      expect(govUkPayApi.createRecurringPaymentAgreement).toHaveBeenCalledWith(payload)
     })
 
     it('should return response body when payment creation is successful', async () => {
@@ -326,7 +326,7 @@ describe('The govuk-pay-service', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
       }
-      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
 
       const result = await sendRecurringPayment(preparedPayment)
 
@@ -338,7 +338,7 @@ describe('The govuk-pay-service', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
       }
-      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
 
       await sendRecurringPayment(preparedPayment)
 
@@ -352,7 +352,7 @@ describe('The govuk-pay-service', () => {
         json: jest.fn().mockResolvedValue({ message: 'Server error' })
       }
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
 
       try {
         await sendRecurringPayment(preparedPayment)
@@ -370,7 +370,7 @@ describe('The govuk-pay-service', () => {
     it('should throw error when API call fails with network issue', async () => {
       const mockError = new Error('Network error')
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      govUkPayApi.createRecurringPayment.mockRejectedValue(mockError)
+      govUkPayApi.createRecurringPaymentAgreement.mockRejectedValue(mockError)
 
       try {
         await sendRecurringPayment(preparedPayment)
@@ -389,7 +389,7 @@ describe('The govuk-pay-service', () => {
         json: jest.fn().mockResolvedValue({ message: 'Rate limit exceeded' })
       }
       const consoleErrorSpy = jest.spyOn(console, 'info').mockImplementation(jest.fn())
-      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
 
       try {
         await sendRecurringPayment(preparedPayment)
@@ -404,7 +404,7 @@ describe('The govuk-pay-service', () => {
         status: 500,
         json: jest.fn().mockResolvedValue({ message: 'Server error' })
       }
-      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
 
       try {
         await sendRecurringPayment(preparedPayment)
