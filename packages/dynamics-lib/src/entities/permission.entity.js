@@ -24,6 +24,7 @@ export class Permission extends BaseEntity {
       stagingId: { field: 'defra_stagingid', type: 'string' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
       isRenewal: { field: 'defra_renewal', type: 'boolean' },
+      isRecurringPayment: { field: 'defra_rcpagreement', type: 'boolean' },
       isLicenceForYou: { field: 'defra_licenceforyou', type: 'optionset', ref: 'defra_islicenceforyou' }
     },
     relationships: {
@@ -125,6 +126,18 @@ export class Permission extends BaseEntity {
 
   set isRenewal (isRenewal) {
     super._setState('isRenewal', isRenewal)
+  }
+
+  /**
+   * Whether the permission has a recurring payment agreement
+   * @type {boolean}
+   */
+  get isRecurringPayment () {
+    return super._getState('isRecurringPayment')
+  }
+
+  set isRecurringPayment (isRecurringPayment) {
+    super._setState('isRecurringPayment', isRecurringPayment)
   }
 
   /*
