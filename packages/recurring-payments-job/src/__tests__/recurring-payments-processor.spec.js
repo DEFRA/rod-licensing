@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { processRecurringPayments } from '../recurring-payments-processor.js'
+import { processRecurringPayments, processPayment } from '../recurring-payments-processor.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -8,7 +8,9 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     preparePermissionDataForRenewal: jest.fn(() => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
-    createTransaction: jest.fn()
+    createTransaction: jest.fn(),
+    sendPayment: jest.fn(),
+    processPayment: jest.fn()
   }
 }))
 
@@ -240,6 +242,21 @@ describe('recurring-payments-processor', () => {
       await processRecurringPayments()
 
       expect(salesApi.createTransaction.mock.calls).toEqual(expectedData)
+    })
+
+    it('logs an error and throws it when sendPayment fails', async () => {
+      const transaction = { id: 'transaction-id' }
+      const error = new Error('Payment failed')
+
+      salesApi.sendPayment.mockImplementationOnce(() => {
+        throw error
+      })
+
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+      await expect(processPayment(transaction)).rejects.toThrow(error)
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('Error sending payment', JSON.stringify(transaction))
     })
   })
 })
