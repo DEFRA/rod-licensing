@@ -564,18 +564,18 @@ describe('The pricing summary calculator', () => {
   describe('shouldDisplayPriceChangePaymentWarningMessage', () => {
     it.each`
       permission               | currentDateTime                    | length   | expected               | licence                      | dateTime
-      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'12M'} | ${undefined}           | ${'12 month adult licence'}  | ${'before start date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'12M'} | ${undefined}           | ${'12 month adult licence'}  | ${'after end date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'12M'} | ${'payment-edge-case'} | ${'12 month adult licence'}  | ${'within range'}
-      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'12M'} | ${undefined}           | ${'12 month junior licence'} | ${'within range'}
-      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'8D'}  | ${undefined}           | ${'8 day adult licence'}     | ${'before start date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'8D'}  | ${undefined}           | ${'8 day adult licence'}     | ${'after end date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'8D'}  | ${'payment-edge-case'} | ${'8 day adult licence'}     | ${'within range'}
-      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'8D'}  | ${undefined}           | ${'8 day junior licence'}    | ${'within range'}
-      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'1D'}  | ${undefined}           | ${'1 day adult licence'}     | ${'before start date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day adult licence'}     | ${'after end date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'1D'}  | ${'payment-edge-case'} | ${'1 day adult licence'}     | ${'within range'}
-      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day junior licence'}    | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2025-03-25T23:59Z')} | ${'12M'} | ${undefined}           | ${'12 month adult licence'}  | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-02T00:01Z')} | ${'12M'} | ${undefined}           | ${'12 month adult licence'}  | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-01T00:01Z')} | ${'12M'} | ${'payment-edge-case'} | ${'12 month adult licence'}  | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2025-04-01T00:01Z')} | ${'12M'} | ${undefined}           | ${'12 month junior licence'} | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2025-03-25T23:59Z')} | ${'8D'}  | ${undefined}           | ${'8 day adult licence'}     | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-02T00:01Z')} | ${'8D'}  | ${undefined}           | ${'8 day adult licence'}     | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-01T00:01Z')} | ${'8D'}  | ${'payment-edge-case'} | ${'8 day adult licence'}     | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2025-04-01T00:01Z')} | ${'8D'}  | ${undefined}           | ${'8 day junior licence'}    | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2025-03-25T23:59Z')} | ${'1D'}  | ${undefined}           | ${'1 day adult licence'}     | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-02T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day adult licence'}     | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-01T00:01Z')} | ${'1D'}  | ${'payment-edge-case'} | ${'1 day adult licence'}     | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2025-04-01T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day junior licence'}    | ${'within range'}
     `(
       'returns $expected for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message',
       async ({ permission, currentDateTime, expected }) => {
@@ -588,18 +588,18 @@ describe('The pricing summary calculator', () => {
 
     it.each`
       permission               | currentDateTime                    | type                        | expected               | licence                    | dateTime
-      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'adult salmon licence'}  | ${'before start date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'adult salmon licence'}  | ${'after end date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'salmon-and-sea-trout'}   | ${'payment-edge-case'} | ${'adult salmon licence'}  | ${'within range'}
-      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'junior salmon licence'} | ${'within range'}
-      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'adult 2 rod licence'}   | ${'before start date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'adult 2 rod licence'}   | ${'after end date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${'payment-edge-case'} | ${'adult 2 rod licence'}   | ${'within range'}
-      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'junior 2 rod licence'}  | ${'within range'}
-      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'adult 3 rod licence'}   | ${'before start date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'adult 3 rod licence'}   | ${'after end date'}
-      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${'payment-edge-case'} | ${'adult 3 rod licence'}   | ${'within range'}
-      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'junior 3 rod licence'}  | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2025-03-25T23:59Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'adult salmon licence'}  | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-02T00:01Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'adult salmon licence'}  | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-01T00:01Z')} | ${'salmon-and-sea-trout'}   | ${'payment-edge-case'} | ${'adult salmon licence'}  | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2025-04-01T00:01Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'junior salmon licence'} | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2025-03-25T23:59Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'adult 2 rod licence'}   | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-02T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'adult 2 rod licence'}   | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-01T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${'payment-edge-case'} | ${'adult 2 rod licence'}   | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2025-04-01T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'junior 2 rod licence'}  | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2025-03-25T23:59Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'adult 3 rod licence'}   | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-02T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'adult 3 rod licence'}   | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2025-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${'payment-edge-case'} | ${'adult 3 rod licence'}   | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2025-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'junior 3 rod licence'}  | ${'within range'}
     `(
       'returns $expected for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message',
       async ({ permission, currentDateTime, type, expected }) => {
@@ -612,22 +612,22 @@ describe('The pricing summary calculator', () => {
 
     it.each`
       date                             | concessions     | expected | dateTime                       | licence
-      ${new Date('2024-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start date'}         | ${'an adult licence'}
-      ${new Date('2024-04-04T01:00Z')} | ${[]}           | ${false} | ${'after start date'}          | ${'an adult licence'}
-      ${new Date('2024-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before time'} | ${'an adult licence'}
-      ${new Date('2024-04-01T00:04Z')} | ${[]}           | ${false} | ${'same date but after time'}  | ${'an adult licence'}
-      ${new Date('2024-03-30T23:59Z')} | ${[]}           | ${true}  | ${'start of range'}            | ${'an adult licence'}
-      ${new Date('2024-04-01T00:00Z')} | ${[]}           | ${true}  | ${'within range'}              | ${'an adult licence'}
-      ${new Date('2024-04-01T00:01Z')} | ${[]}           | ${true}  | ${'end of range'}              | ${'an adult licence'}
-      ${new Date('2024-03-30T23:59Z')} | ${['Junior']}   | ${false} | ${'start of range'}            | ${'a junior licence'}
-      ${new Date('2024-04-01T00:00Z')} | ${['Junior']}   | ${false} | ${'within range'}              | ${'a junior licence'}
-      ${new Date('2024-04-01T00:01Z')} | ${['Junior']}   | ${false} | ${'end of range'}              | ${'a junior licence'}
-      ${new Date('2024-03-30T23:59Z')} | ${['Senior']}   | ${true}  | ${'start of range'}            | ${'a senior licence'}
-      ${new Date('2024-04-01T00:00Z')} | ${['Senior']}   | ${true}  | ${'within range'}              | ${'a senior licence'}
-      ${new Date('2024-04-01T00:01Z')} | ${['Senior']}   | ${true}  | ${'end of range'}              | ${'a senior licence'}
-      ${new Date('2024-03-30T23:59Z')} | ${['Disabled']} | ${true}  | ${'start of range'}            | ${'a disabled licence'}
-      ${new Date('2024-04-01T00:00Z')} | ${['Disabled']} | ${true}  | ${'within range'}              | ${'a disabled licence'}
-      ${new Date('2024-04-01T00:01Z')} | ${['Disabled']} | ${true}  | ${'end of range'}              | ${'a disabled licence'}
+      ${new Date('2025-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start date'}         | ${'an adult licence'}
+      ${new Date('2025-04-04T01:00Z')} | ${[]}           | ${false} | ${'after start date'}          | ${'an adult licence'}
+      ${new Date('2025-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before time'} | ${'an adult licence'}
+      ${new Date('2025-04-01T00:04Z')} | ${[]}           | ${false} | ${'same date but after time'}  | ${'an adult licence'}
+      ${new Date('2025-03-30T23:59Z')} | ${[]}           | ${true}  | ${'start of range'}            | ${'an adult licence'}
+      ${new Date('2025-04-01T00:00Z')} | ${[]}           | ${true}  | ${'within range'}              | ${'an adult licence'}
+      ${new Date('2025-04-01T00:01Z')} | ${[]}           | ${true}  | ${'end of range'}              | ${'an adult licence'}
+      ${new Date('2025-03-30T23:59Z')} | ${['Junior']}   | ${false} | ${'start of range'}            | ${'a junior licence'}
+      ${new Date('2025-04-01T00:00Z')} | ${['Junior']}   | ${false} | ${'within range'}              | ${'a junior licence'}
+      ${new Date('2025-04-01T00:01Z')} | ${['Junior']}   | ${false} | ${'end of range'}              | ${'a junior licence'}
+      ${new Date('2025-03-30T23:59Z')} | ${['Senior']}   | ${true}  | ${'start of range'}            | ${'a senior licence'}
+      ${new Date('2025-04-01T00:00Z')} | ${['Senior']}   | ${true}  | ${'within range'}              | ${'a senior licence'}
+      ${new Date('2025-04-01T00:01Z')} | ${['Senior']}   | ${true}  | ${'end of range'}              | ${'a senior licence'}
+      ${new Date('2025-03-30T23:59Z')} | ${['Disabled']} | ${true}  | ${'start of range'}            | ${'a disabled licence'}
+      ${new Date('2025-04-01T00:00Z')} | ${['Disabled']} | ${true}  | ${'within range'}              | ${'a disabled licence'}
+      ${new Date('2025-04-01T00:01Z')} | ${['Disabled']} | ${true}  | ${'end of range'}              | ${'a disabled licence'}
     `('returns $expected when we have $licence and current date and time is $dateTime', ({ date, concessions, expected }) => {
       moment.now = () => moment(date)
       const result = shouldDisplayPriceChangePaymentWarningMessage(concessions)
