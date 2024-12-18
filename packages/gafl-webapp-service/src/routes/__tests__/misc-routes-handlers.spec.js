@@ -337,6 +337,60 @@ describe('guidance page handlers', () => {
           })
         )
       })
+
+      it.each([['csrf_token_cookie_name'], ['any_name'], ['token_cookie']])(
+        'sets CSRF_TOKEN_NAME to match process.env.CSRF_TOKEN_COOKIE_NAME',
+        async csrf => {
+          process.env.CSRF_TOKEN_COOKIE_NAME = csrf
+          const toolkit = getMockToolkit()
+          await cookiesPagePostHandler(getMockRequest(), toolkit)
+          expect(toolkit.view).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              CSRF_TOKEN_NAME: csrf
+            })
+          )
+        }
+      )
+
+      it.each([['default cookie name'], ['csrf-token-cookie-name-default']])(
+        "sets CSRF_TOKEN_NAME to default if process.env.CSRF_TOKEN_COOKIE_NAME isn't provided",
+        async defaultName => {
+          delete process.env.CSRF_TOKEN_COOKIE_NAME
+          constants.CSRF_TOKEN_COOKIE_NAME_DEFAULT = defaultName
+          const toolkit = getMockToolkit()
+          await cookiesPagePostHandler(getMockRequest(), toolkit)
+          expect(toolkit.view).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              CSRF_TOKEN_NAME: defaultName
+            })
+          )
+        }
+      )
+
+      it.each([['csrf_token_cookie_value'], ['any_value'], ['token_value']])(
+        'grabs CSRF_TOKEN_VALUE correctly based on generate from crumb',
+        async csrf => {
+          const request = getMockRequest(
+            { locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' },
+            CONTROLLER.uri,
+            '',
+            {},
+            csrf
+          )
+          const toolkit = getMockToolkit()
+
+          await cookiesPagePostHandler(request, toolkit)
+
+          expect(toolkit.view).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              CSRF_TOKEN_VALUE: csrf
+            })
+          )
+        }
+      )
     })
   })
 
@@ -497,7 +551,7 @@ describe('guidance page handlers', () => {
     })
   })
 
-  const getMockRequest = (i18nValues, referer, analytics, payload) => {
+  const getMockRequest = (i18nValues, referer, analytics, payload, csrfToken = 'token') => {
     const { catalog, locales, locale } = {
       catalog: {},
       locales: [],
@@ -523,7 +577,14 @@ describe('guidance page handlers', () => {
             get: jest.fn().mockResolvedValue(analytics)
           }
         }
-      }))
+      })),
+      server: {
+        plugins: {
+          crumb: {
+            generate: jest.fn().mockResolvedValue(csrfToken)
+          }
+        }
+      }
     }
   }
 

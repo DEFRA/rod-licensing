@@ -17,7 +17,15 @@ import {
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT
 } from './constants.js'
-import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TRANSACTION, NEW_PRICES } from './uri.js'
+import {
+  ACCESSIBILITY_STATEMENT,
+  COOKIES,
+  PRIVACY_POLICY,
+  REFUND_POLICY,
+  NEW_TRANSACTION,
+  NEW_PRICES,
+  RECURRING_TERMS_CONDITIONS
+} from './uri.js'
 
 import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
@@ -190,10 +198,15 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
+  const redirectExceptionUris = [NEW_PRICES.uri, RECURRING_TERMS_CONDITIONS.uri]
+
   server.decorate('toolkit', 'redirectWithLanguageCode', function (redirect) {
     const pathname = this.request.url.pathname
-    const uriWithLanguage =
-      pathname === NEW_PRICES.uri ? addLanguageCodeToUri(this.request, pathname) : addLanguageCodeToUri(this.request, redirect)
+
+    const uriWithLanguage = redirectExceptionUris.includes(pathname)
+      ? addLanguageCodeToUri(this.request, pathname)
+      : addLanguageCodeToUri(this.request, redirect)
+
     const uriWithLanguageAndEmptyFragment = addEmptyFragmentToUri(uriWithLanguage)
 
     return this.redirect(uriWithLanguageAndEmptyFragment)

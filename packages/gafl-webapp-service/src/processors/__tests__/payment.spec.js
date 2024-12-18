@@ -1,12 +1,15 @@
-import { preparePayment } from '../payment.js'
+import { preparePayment, prepareRecurringPaymentAgreement } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 import { addLanguageCodeToUri } from '../uri-helper.js'
 import { AGREED } from '../../uri.js'
+import db from 'debug'
+const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:payment-processors')]
 
 jest.mock('../uri-helper.js')
 
 jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 const createRequest = (opts = {}, catalog = {}) => ({
   i18n: {
@@ -17,11 +20,19 @@ const createRequest = (opts = {}, catalog = {}) => ({
   server: { info: { protocol: opts.protocol || '' } }
 })
 
-const createTransaction = ({ isLicenceForYou = true, additionalPermissions = [], cost = 12, licenseeOverrides = {} } = {}) => ({
+const createTransaction = ({
+  isLicenceForYou = true,
+  additionalPermissions = [],
+  cost = 12,
+  licenseeOverrides = {},
+  agreementId
+} = {}) => ({
   id: 'transaction-id',
   cost,
+  agreementId,
   permissions: [
     {
+      id: 'permission-id',
       licensee: {
         firstName: 'Lando',
         lastName: 'Norris',
@@ -45,7 +56,7 @@ describe('preparePayment', () => {
     it.each(['http', 'https'])('uses SSL when "x-forwarded-proto" header is present, proto "%s"', proto => {
       addLanguageCodeToUri.mockReturnValue(proto + '://localhost:1234/buy/agreed')
       const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
-      const result = preparePayment(request, createTransaction())
+      const result = preparePayment(request, createTransaction(), false)
 
       expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
     })
@@ -206,5 +217,50 @@ describe('preparePayment', () => {
       const result = preparePayment(createRequest(), boboTransaction)
       expect(result.email).toBe(undefined)
     })
+  })
+
+  describe('if agreementId is not present', () => {
+    it('does not include set_up_agreement', () => {
+      const result = preparePayment(createRequest(), createTransaction())
+      expect(result.set_up_agreement).toBe(undefined)
+    })
+  })
+
+  describe('if agreementId is present', () => {
+    it('set_up_agreement is set to agreementId', () => {
+      const agreementId = 'foo'
+      const recurringPaymentTransaction = createTransaction({ agreementId })
+
+      const result = preparePayment(createRequest(), recurringPaymentTransaction)
+
+      expect(result.set_up_agreement).toBe(agreementId)
+    })
+  })
+})
+
+describe('prepareRecurringPaymentAgreement', () => {
+  it('reference equals transaction.id', async () => {
+    const transaction = createTransaction()
+    const result = await prepareRecurringPaymentAgreement(createRequest(), transaction)
+    expect(result.reference).toBe(transaction.id)
+  })
+
+  it('description equals the recurring payment description from catalog', async () => {
+    const mockCatalog = {
+      recurring_payment_description: 'The recurring card payment for your rod fishing licence'
+    }
+    const request = createRequest({}, mockCatalog)
+    const transaction = createTransaction()
+
+    const result = await prepareRecurringPaymentAgreement(request, transaction)
+    expect(result.description).toBe(mockCatalog.recurring_payment_description)
+  })
+
+  it('logs to debug for recurring payment', async () => {
+    const transaction = createTransaction()
+    const request = createRequest()
+
+    const result = await prepareRecurringPaymentAgreement(request, transaction)
+    expect(debug).toHaveBeenCalledWith('Creating prepared recurring payment agreement %o', result)
   })
 })

@@ -116,6 +116,9 @@ describe('The easy renewal identification page', () => {
               referenceNumber: 'ABC123'
             }),
             setCurrentPermission: () => {}
+          },
+          page: {
+            getCurrentPermission: async () => ({})
           }
         }
       })

@@ -1,5 +1,412 @@
 
 
+## v1.57.0-rc.12 (2024-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2095](https://github.com/DEFRA/rod-licensing/pull/2095) Missing inline error on renewals id page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.11 (2024-12-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2091](https://github.com/DEFRA/rod-licensing/pull/2091) Update activity in CRM ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+## v1.57.0-rc.10 (2024-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2094](https://github.com/DEFRA/rod-licensing/pull/2094) Licence to start error not in error summary ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.9 (2024-12-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2093](https://github.com/DEFRA/rod-licensing/pull/2093) Fix DOB message in Welsh ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.8 (2024-12-12)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2092](https://github.com/DEFRA/rod-licensing/pull/2092) Fix RP creation bug ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.57.0-rc.6 (2024-12-10)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#2081](https://github.com/DEFRA/rod-licensing/pull/2081) Create RP Record in CRM ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.57.0-rc.5 (2024-12-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2088](https://github.com/DEFRA/rod-licensing/pull/2088) Change length link junior licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.57.0-rc.4 (2024-12-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2022](https://github.com/DEFRA/rod-licensing/pull/2022) Apply more specific date error messages ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.57.0-rc.3 (2024-12-06)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2082](https://github.com/DEFRA/rod-licensing/pull/2082) Rename createRecurringPayment to clarify it creates agreements ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.57.0-rc.2 (2024-12-04)
+
+#### :rocket: Enhancement
+* `pocl-job`
+  * [#2085](https://github.com/DEFRA/rod-licensing/pull/2085) FTP POCL references ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.57.0-rc.1 (2024-11-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2086](https://github.com/DEFRA/rod-licensing/pull/2086) RCP fails ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.57.0-rc.0 (2024-11-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2075](https://github.com/DEFRA/rod-licensing/pull/2075) RCP job fails locally ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.6 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#2070](https://github.com/DEFRA/rod-licensing/pull/2070) Remove ftp image and build ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.5 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`, `pocl-job`
+  * [#2064](https://github.com/DEFRA/rod-licensing/pull/2064) Remove ftp functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.4 (2024-11-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2074](https://github.com/DEFRA/rod-licensing/pull/2074) Add agreement_id to existing GOV.UK Pay request ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.55.0-rc.3 (2024-11-21)
+
+#### :rocket: Enhancement
+* [#2078](https://github.com/DEFRA/rod-licensing/pull/2078) Set-output removed from versioning script ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.2 (2024-11-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2077](https://github.com/DEFRA/rod-licensing/pull/2077) Change links for three rod licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.1 (2024-11-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2079](https://github.com/DEFRA/rod-licensing/pull/2079) Licence summary licence type capitals ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.0 (2024-11-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2072](https://github.com/DEFRA/rod-licensing/pull/2072) Create activity in CRM ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+## v1.55.0-rc.6 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#2070](https://github.com/DEFRA/rod-licensing/pull/2070) Remove ftp image and build ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.5 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`, `pocl-job`
+  * [#2064](https://github.com/DEFRA/rod-licensing/pull/2064) Remove ftp functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.4 (2024-11-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2074](https://github.com/DEFRA/rod-licensing/pull/2074) Add agreement_id to existing GOV.UK Pay request ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.55.0-rc.3 (2024-11-21)
+
+#### :rocket: Enhancement
+* [#2078](https://github.com/DEFRA/rod-licensing/pull/2078) Set-output removed from versioning script ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.2 (2024-11-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2077](https://github.com/DEFRA/rod-licensing/pull/2077) Change links for three rod licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.1 (2024-11-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2079](https://github.com/DEFRA/rod-licensing/pull/2079) Licence summary licence type capitals ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.0 (2024-11-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2072](https://github.com/DEFRA/rod-licensing/pull/2072) Create activity in CRM ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+
+
+
+
+
+## v1.51.0-rc.5 (2024-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2073](https://github.com/DEFRA/rod-licensing/pull/2073) Building tag error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.51.0-rc.4 (2024-11-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#2069](https://github.com/DEFRA/rod-licensing/pull/2069) Change docker to not install dev dependency ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.51.0-rc.2 (2024-11-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2071](https://github.com/DEFRA/rod-licensing/pull/2071) Fix bug where transaction id is not recognised ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.51.0-rc.1 (2024-10-29)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2050](https://github.com/DEFRA/rod-licensing/pull/2050) Create rcp agreement with GOV.UK pay ([@ScottDormand96](https://github.com/ScottDormand96))
+* `gafl-webapp-service`
+  * [#2030](https://github.com/DEFRA/rod-licensing/pull/2030) Content amendments to payment summary ([@lailien3](https://github.com/lailien3))
+* Other
+  * [#2060](https://github.com/DEFRA/rod-licensing/pull/2060) Update dependencies in package-lock ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.51.0-rc.0 (2024-10-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2067](https://github.com/DEFRA/rod-licensing/pull/2067) Payment complete 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#2066](https://github.com/DEFRA/rod-licensing/pull/2066) Update content to 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.50.0-rc.10 (2024-10-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2061](https://github.com/DEFRA/rod-licensing/pull/2061) Uninstall pdfmake ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.9 (2024-10-09)
+
+#### :bug: Bug Fix
+* [#2063](https://github.com/DEFRA/rod-licensing/pull/2063) Fix localstack config ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.50.0-rc.8 (2024-09-25)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2054](https://github.com/DEFRA/rod-licensing/pull/2054) Correcting styling for RCP T&C headers ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.50.0-rc.7 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2051](https://github.com/DEFRA/rod-licensing/pull/2051) Add missing export for RCR angler login ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.50.0-rc.6 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2049](https://github.com/DEFRA/rod-licensing/pull/2049) Add query to allow angler to login in to RCR ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.50.0-rc.5 (2024-09-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2045](https://github.com/DEFRA/rod-licensing/pull/2045) Display Recurring payment terms and conditions ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.4 (2024-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2047](https://github.com/DEFRA/rod-licensing/pull/2047) Fulfilment page deselecting post ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.3 (2024-09-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2046](https://github.com/DEFRA/rod-licensing/pull/2046) Change link on address page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.2 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2040](https://github.com/DEFRA/rod-licensing/pull/2040) Amend Change link in Easy Renew Journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.50.0-rc.1 (2024-09-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2039](https://github.com/DEFRA/rod-licensing/pull/2039) RCP T&C - Shrink Subheadings ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.50.0-rc.0 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2043](https://github.com/DEFRA/rod-licensing/pull/2043) Update postal fulfilment information banner ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.49.0-rc.11 (2024-09-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2036](https://github.com/DEFRA/rod-licensing/pull/2036) Save multiple times cookies page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 ## v1.49.0-rc.9 (2024-09-02)
 
 #### :bug: Bug Fix

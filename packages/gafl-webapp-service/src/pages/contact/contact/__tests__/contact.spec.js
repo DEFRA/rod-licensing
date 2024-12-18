@@ -122,15 +122,15 @@ describe('The contact preferences page', () => {
       }
     )
 
-    it('post response none sets how-contacted - letter, in the cache', async () => {
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    it('post response as post sets how-contacted - letter, in the cache', async () => {
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'post' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBeUndefined()
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
     })
 
     it('if letter is specified then the licence is subsequently changed to junior, contact type none is set in the cache, in the cache', async () => {
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'post' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
@@ -197,8 +197,8 @@ describe('The contact preferences page', () => {
       isPhysical.mockReturnValueOnce(false)
     })
 
-    it('post response none sets how-contacted - none in the cache', async () => {
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    it('post response none sets how-contacted - post in the cache', async () => {
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'post' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
@@ -216,7 +216,7 @@ describe('The contact preferences page', () => {
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'post' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
@@ -244,7 +244,7 @@ describe('The contact preferences page', () => {
     })
 
     it('controller redirects to the summary page', async () => {
-      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'post' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })

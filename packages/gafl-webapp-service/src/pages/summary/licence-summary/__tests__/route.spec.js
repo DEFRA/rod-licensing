@@ -7,7 +7,11 @@ import { licenceTypeDisplay } from '../../../../processors/licence-type-display.
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import mappingConstants from '../../../../processors/mapping-constants.js'
 import { displayPermissionPrice } from '../../../../processors/price-display.js'
+import { hasJunior } from '../../../../processors/concession-helper.js'
 
+jest.mock('../../../../processors/concession-helper.js', () => ({
+  hasJunior: jest.fn(() => false)
+}))
 jest.mock('../../../../processors/licence-type-display.js', () => ({
   licenceTypeDisplay: jest.fn(() => 'Special Canal Licence, Shopping Trollies and Old Wellies')
 }))
@@ -116,7 +120,7 @@ const getMockPermission = (licenseeOverrides = {}) => ({
   licenceToStart: 'after-payment',
   licenceStartDate: '2022-11-10',
   licenceType: 'Trout and coarse',
-  numberOfRods: '3',
+  numberOfRods: '2',
   permit: { cost: 6 }
 })
 
@@ -370,19 +374,30 @@ describe('licence-summary > route', () => {
     )
   })
 
+  it('calls hasJunior with permission', async () => {
+    const currentPermission = getMockNewPermission()
+    const mockRequest = getMockRequest({ currentPermission })
+
+    await getData(mockRequest)
+
+    expect(hasJunior).toHaveBeenCalledWith(currentPermission)
+  })
+
   describe('licence summary rows', () => {
     it.each`
-      desc                         | currentPermission
-      ${'1 year renewal'}          | ${getMockPermission()}
-      ${'1 year new licence'}      | ${getMockNewPermission()}
-      ${'1 year senior renewal'}   | ${getMockSeniorPermission()}
-      ${'8 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
-      ${'1 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
-      ${'Junior licence'}          | ${getMockJuniorPermission()}
-      ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
-      ${'Continuing permission'}   | ${getMockContinuingPermission()}
-      ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
-    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
+      desc                               | currentPermission                                             | junior
+      ${'1 year renewal'}                | ${getMockPermission()}                                        | ${false}
+      ${'1 year new licence'}            | ${getMockNewPermission()}                                     | ${false}
+      ${'1 year senior renewal'}         | ${getMockSeniorPermission()}                                  | ${false}
+      ${'8 day licence'}                 | ${{ ...getMockNewPermission(), licenceLength: '8D' }}         | ${false}
+      ${'1 day licence'}                 | ${{ ...getMockNewPermission(), licenceLength: '1D' }}         | ${false}
+      ${'Junior licence'}                | ${getMockJuniorPermission()}                                  | ${true}
+      ${'Blue badge concession'}         | ${getMockBlueBadgePermission()}                               | ${false}
+      ${'Continuing permission'}         | ${getMockContinuingPermission()}                              | ${false}
+      ${'Another date permission'}       | ${{ ...getMockPermission(), licenceToStart: 'another-date' }} | ${false}
+      ${'1 year new three rod licence '} | ${{ ...getMockNewPermission(), numberOfRods: '3' }}           | ${false}
+    `('creates licence summary name rows for $desc', async ({ currentPermission, junior }) => {
+      hasJunior.mockReturnValueOnce(junior)
       const mockRequest = getMockRequest({ currentPermission })
       const data = await getData(mockRequest)
       expect(data.licenceSummaryRows).toMatchSnapshot()
