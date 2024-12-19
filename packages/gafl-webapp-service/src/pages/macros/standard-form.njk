@@ -12,8 +12,7 @@
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" novalidate>
-
-          {% block notificationContent %}{% endblock %}
+            {% block notificationContent %}{% endblock %}
 
             {% call govukFieldset({
               describedBy: describedByTag,
@@ -23,10 +22,12 @@
                 isPageHeading: true
               }
             }) %}
-
                 {% block pageContent %}{% endblock %}
-
             {% endcall %}
+
+            <div class="pricing-summary-wrapper">
+                {% block pricingSummary %}{% endblock %}
+            </div>
 
             {{ govukButton({
                 attributes: { id: 'continue' },
@@ -38,6 +39,5 @@
             {{ csrf() }}
         </form>
     </div>
-    {% block pricingSummary %}{% endblock %}
 </div>
 {% endblock %}

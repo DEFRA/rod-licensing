@@ -100,7 +100,7 @@ div.initially-hidden {
 .payment-summary-wrap {
   position: -webkit-sticky;
   position: sticky;
-  top: 30px;
+  top: 30px; /* Sticky sidebar positioning */
 }
 
 .payment-summary {
@@ -112,4 +112,19 @@ div.initially-hidden {
 
 .phone-number {
   white-space: nowrap;
+}
+
+@media screen and (max-width: 768px) {
+  .pricing-summary-wrapper {
+      margin-bottom: 20px;
+  }
+
+  .payment-summary-wrap {
+      position: static;
+  }
+
+  .govuk-grid-column-two-thirds form {
+      display: flex;
+      flex-direction: column;
+  }
 }
