@@ -116,15 +116,15 @@ div.initially-hidden {
 
 @media screen and (max-width: 768px) {
   .pricing-summary-wrapper {
-      margin-bottom: 20px;
+    margin-bottom: 20px;
   }
 
   .payment-summary-wrap {
-      position: static;
+    position: static;
   }
 
   .govuk-grid-column-two-thirds form {
-      display: flex;
-      flex-direction: column;
+    display: flex;
+    flex-direction: column;
   }
 }
