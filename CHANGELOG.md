@@ -1,4 +1,14 @@
 
+## v1.58.0-rc.0 (2024-12-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2098](https://github.com/DEFRA/rod-licensing/pull/2098) New price increase ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#2099](https://github.com/DEFRA/rod-licensing/pull/2099) Payment edge case 2025 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.57.0-rc.12 (2024-12-13)
 
