@@ -18,6 +18,7 @@ describe('permission entity', () => {
         defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
         defra_datasource: 910400003,
         defra_renewal: true,
+        defra_rcpagreement: false,
         defra_licenceforyou: 1
       },
       optionSetData
@@ -32,6 +33,7 @@ describe('permission entity', () => {
       stagingId: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
       dataSource: expect.objectContaining({ id: 910400003, label: 'Web Sales', description: 'Web Sales' }),
       isRenewal: true,
+      isRecurringPayment: false,
       isLicenceForYou: expect.objectContaining({ id: 1, label: 'Yes', description: 'Yes' })
     }
 
@@ -76,6 +78,7 @@ describe('permission entity', () => {
     permission.stagingId = '71ad9a25-2a03-406b-a0e3-f4ff37799374'
     permission.dataSource = optionSetData.defra_datasource.options['910400003']
     permission.isRenewal = true
+    permission.isRecurringPayment = false
     permission.isLicenceForYou = optionSetData.defra_islicenceforyou.options['1']
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
@@ -97,7 +100,8 @@ describe('permission entity', () => {
         'defra_ContactId@odata.bind': `$${contact.uniqueContentId}`,
         'defra_Transaction@odata.bind': `$${transaction.uniqueContentId}`,
         'defra_POCLFileId@odata.bind': `$${poclFile.uniqueContentId}`,
-        defra_renewal: true
+        defra_renewal: true,
+        defra_rcpagreement: false
       })
     )
   })
