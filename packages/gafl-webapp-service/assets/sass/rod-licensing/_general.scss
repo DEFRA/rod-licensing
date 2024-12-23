@@ -113,3 +113,36 @@ div.initially-hidden {
 .phone-number {
   white-space: nowrap;
 }
+
+.page-layout {
+  display: flex;
+}
+
+.page-layout__main {
+  order: 1;
+}
+
+.page-layout__summary {
+  order: 2;
+}
+
+@media (max-width: 640px) {
+  .page-layout {
+    flex-direction: column;
+  }
+
+  .govuk-grid-column-two-thirds,
+  .govuk-grid-column-one-third {
+    float: none !important;
+    width: auto !important;
+  }
+
+  .page-layout__summary {
+    order: 1;
+    margin-bottom: 2em;
+  }
+
+  .page-layout__main {
+    order: 2;
+  }
+}
