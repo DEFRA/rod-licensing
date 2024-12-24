@@ -602,7 +602,7 @@
   "payment_cancelled_title": "Your payment has been cancelled",
   "payment_failed_expired": "The payment was not completed within 90 minutes of being created",
   "payment_failed_not_taken": "No money has been taken from your account.",
-  "payment_failed_rejected": "The payment was rejected by the payment provider. Please ensure that you entered your card details correctly and that you have sufficient funds in your account.",
+  "payment_failed_rejected": "The payment was rejected by the payment provider. Please ensure that you entered your card details correctly and that you have sufficient funds in your account",
   "payment_failed_title_1": "Your payment has expired",
   "payment_failed_title_2": "Your payment was rejected",
   "payment_failed_title_3": "Your payment has failed",
