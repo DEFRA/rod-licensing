@@ -188,7 +188,7 @@ describe('transaction service', () => {
         })
 
         // verifies PutCommand parameters
-        const expectedRecord = { ...mockRecord, 
+        const expectedRecord = { ...mockRecord,
           id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
           expires: expect.any(Number)
         }

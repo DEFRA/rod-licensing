@@ -39,7 +39,7 @@ describe('transaction service', () => {
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedResult = { ...mockPayload, 
+      const expectedResult = { ...mockPayload,
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
@@ -95,7 +95,7 @@ describe('transaction service', () => {
   describe('createTransactions', () => {
     it('accepts multiple transactions', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedRecord = {...mockPayload,
+      const expectedRecord = { ...mockPayload,
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
