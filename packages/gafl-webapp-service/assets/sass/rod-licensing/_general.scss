@@ -116,14 +116,18 @@ div.initially-hidden {
 
 .page-layout {
   display: flex;
-}
-
-.page-layout__main {
-  order: 1;
+  flex-direction: row;
 }
 
 .page-layout__summary {
   order: 2;
+  flex: 0 0 30%;
+  margin-right: 2em;
+}
+
+.page-layout__main {
+  order: 2;
+  flex: 1;
 }
 
 @media (max-width: 640px) {
@@ -131,18 +135,10 @@ div.initially-hidden {
     flex-direction: column;
   }
 
-  .govuk-grid-column-two-thirds,
-  .govuk-grid-column-one-third {
-    float: none !important;
-    width: auto !important;
-  }
-
-  .page-layout__summary {
-    order: 1;
-    margin-bottom: 2em;
-  }
-
+  .page-layout__summary,
   .page-layout__main {
-    order: 2;
+    flex: none;
+    width: 100%;
+    margin-right: 0;
   }
 }

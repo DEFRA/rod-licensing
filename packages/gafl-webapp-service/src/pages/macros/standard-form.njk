@@ -9,9 +9,14 @@
 
 {% block content %}
 <div class="govuk-grid-row page-layout">
+
+<!-- Pricing summary -->
+  <div class="page-layout__summary">
+    {% block pricingSummary %}{% endblock %}
+  </div>
   
-  <!-- Main content -->
-  <div class="govuk-grid-column-two-thirds page-layout__main">
+<!-- Main content -->
+  <div class="page-layout__main">
     {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
 
     <form method="post" novalidate>
@@ -39,10 +44,9 @@
     </form>
   </div>
   
-  <!-- Pricing summary (sidebar) -->
+  {# <!-- Pricing summary -->
   <div class="govuk-grid-column-one-third page-layout__summary">
     {% block pricingSummary %}{% endblock %}
-  </div>
+  </div> #}
 
-</div>
 {% endblock %}
