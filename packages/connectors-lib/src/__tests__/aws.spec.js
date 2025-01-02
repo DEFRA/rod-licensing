@@ -1,6 +1,7 @@
 import Config from '../config.js'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { createDocumentClient } from '../documentclient-decorator.js'
+
 const TEST_ENDPOINT = 'http://localhost:8080'
 const TEST_REGION = 'eu-west-2'
 
@@ -14,44 +15,116 @@ jest.mock('../documentclient-decorator.js', () => ({
   createDocumentClient: jest.fn()
 }))
 
+const getMockDocClient = () => ({
+  send: jest.fn(),
+  queryAllPromise: jest.fn(),
+  scanAllPromise: jest.fn(),
+  batchWriteAllPromise: jest.fn(),
+  createUpdateExpression: jest.fn()
+})
+
 describe('AWS Connectors', () => {
-  let mockDocClient
   beforeEach(() => {
     jest.resetAllMocks()
-
-    mockDocClient = {
-      send: jest.fn(),
-      queryAllPromise: jest.fn(),
-      scanAllPromise: jest.fn(),
-      batchWriteAllPromise: jest.fn(),
-      createUpdateExpression: jest.fn()
-    }
-    createDocumentClient.mockReturnValue(mockDocClient)
   })
 
-  it('configures dynamodb with a custom endpoint if one is defined in configuration', () => {
-    Config.aws.dynamodb.endpoint = TEST_ENDPOINT
-    const awsClients = require('../aws.js').default()
-    expect(DynamoDBClient).toHaveBeenCalledWith(
-      expect.objectContaining({
-        endpoint: TEST_ENDPOINT
-      })
-    )
-    expect(createDocumentClient).toHaveBeenCalledWith(expect.any(DynamoDBClient))
-    expect(awsClients.docClient).toBe(mockDocClient)
+  describe('DynamoDB configuration with custom endpoint', () => {
+    it('configures DynamoDBClient with the custom endpoint from the configuration', () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      Config.aws.dynamodb.endpoint = TEST_ENDPOINT
+      require('../aws.js').default()
+
+      expect(DynamoDBClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          endpoint: TEST_ENDPOINT
+        })
+      )
+    })
+
+    it('uses the custom endpoint to create a mock document client', () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      Config.aws.dynamodb.endpoint = TEST_ENDPOINT
+      require('../aws.js').default()
+
+      expect(createDocumentClient).toHaveBeenCalledWith(expect.any(DynamoDBClient))
+    })
+
+    it('assigns the mock document client to the returned AWS clients', () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      Config.aws.dynamodb.endpoint = TEST_ENDPOINT
+      const awsClients = require('../aws.js').default()
+
+      expect(awsClients.docClient).toBe(mockDocClient)
+    })
+
+    it('sets the endpoint and convertEmptyValues when Config.aws.dynamodb.endpoint is defined', () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      Config.aws.region = TEST_REGION
+      Config.aws.dynamodb.endpoint = TEST_ENDPOINT
+      require('../aws.js').default()
+
+      expect(DynamoDBClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          endpoint: TEST_ENDPOINT,
+          convertEmptyValues: true
+        })
+      )
+    })
   })
 
-  it('uses the default dynamodb endpoint if it is not overridden in configuration', () => {
-    process.env.AWS_REGION = TEST_REGION
-    Config.aws.region = TEST_REGION
-    const awsClients = require('../aws.js').default()
-    expect(DynamoDBClient).toHaveBeenCalledWith(
-      expect.objectContaining({
-        region: TEST_REGION
-      })
-    )
-    expect(createDocumentClient).toHaveBeenCalledWith(expect.any(DynamoDBClient))
-    expect(awsClients.docClient).toBe(mockDocClient)
+  describe.each([
+    { region: 'eu-west-2', description: 'uses eu-west-2 as the region' },
+    { region: 'us-east-1', description: 'uses us-east-1 as the region' }
+  ])('DynamoDB configuration with region (%s)', ({ region }) => {
+    it(`configures DynamoDBClient with the region ${region}`, () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      Config.aws.region = region
+      require('../aws.js').default()
+
+      expect(DynamoDBClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          region
+        })
+      )
+    })
+
+    it('does not set the endpoint when Config.aws.dynamodb.endpoint is not defined', () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      delete Config.aws.dynamodb.endpoint
+      require('../aws.js').default()
+
+      expect(DynamoDBClient).toHaveBeenCalledWith(
+        expect.not.objectContaining({
+          endpoint: expect.any(String)
+        })
+      )
+    })
+
+    it('does not set convertEmptyValues when Config.aws.dynamodb.endpoint is not defined', () => {
+      const mockDocClient = getMockDocClient()
+      createDocumentClient.mockReturnValue(mockDocClient)
+
+      delete Config.aws.dynamodb.endpoint
+      require('../aws.js').default()
+
+      expect(DynamoDBClient).toHaveBeenCalledWith(
+        expect.not.objectContaining({
+          convertEmptyValues: true
+        })
+      )
+    })
   })
 
   it('configures sqs with a custom endpoint if one is defined in configuration', async () => {
