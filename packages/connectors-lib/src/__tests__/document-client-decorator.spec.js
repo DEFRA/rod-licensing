@@ -4,11 +4,11 @@ import { createDocumentClient } from '../documentclient-decorator'
 
 describe('document client decorations', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)
-  let docClient
+  const docClient = createDocumentClient()
 
   beforeEach(() => {
     ddbMock.reset()
-    docClient = createDocumentClient()
+    // docClient = createDocumentClient()
   })
 
   afterEach(() => {

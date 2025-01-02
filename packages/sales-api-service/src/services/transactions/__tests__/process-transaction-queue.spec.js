@@ -188,10 +188,10 @@ describe('transaction service', () => {
         })
 
         // verifies PutCommand parameters
-        const expectedRecord = Object.assign({}, mockRecord, {
+        const expectedRecord = { ...mockRecord, 
           id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
           expires: expect.any(Number)
-        })
+        }
 
         expect(docClient.send.mock.calls[2][0].input).toEqual({
           TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,

@@ -29,10 +29,6 @@ describe('AWS Connectors', () => {
     createDocumentClient.mockReturnValue(mockDocClient)
   })
 
-  it('checks that mockDocClient is initialised correctly for dynamodb operations', () => {
-    expect(mockDocClient).toBeDefined()
-  })
-
   it('configures dynamodb with a custom endpoint if one is defined in configuration', () => {
     Config.aws.dynamodb.endpoint = TEST_ENDPOINT
     const awsClients = require('../aws.js').default()

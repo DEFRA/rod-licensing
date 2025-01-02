@@ -39,13 +39,13 @@ describe('transaction service', () => {
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedResult = Object.assign({}, mockPayload, {
+      const expectedResult = { ...mockPayload, 
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
         isRecurringPaymentSupported: true,
         status: { id: 'STAGED' }
-      })
+      }
 
       await createTransaction(mockPayload)
       expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
@@ -95,13 +95,13 @@ describe('transaction service', () => {
   describe('createTransactions', () => {
     it('accepts multiple transactions', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedRecord = Object.assign({}, mockPayload, {
+      const expectedRecord = {...mockPayload,
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
         isRecurringPaymentSupported: true,
         status: { id: 'STAGED' }
-      })
+      }
 
       await createTransactions([mockPayload, mockPayload])
       expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
