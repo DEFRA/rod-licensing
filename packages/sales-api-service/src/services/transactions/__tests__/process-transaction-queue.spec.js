@@ -398,10 +398,11 @@ describe('transaction service', () => {
           callingArgs.transaction = JSON.parse(JSON.stringify(transaction))
         })
         const mockRecord = mockFinalisedTransactionRecord()
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        const immutableMockRecord = JSON.parse(JSON.stringify(mockRecord))
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         // jest.fn args aren't immutable and transaction is changed in processQueue, so we use our clone that hasn't changed
-        expect(callingArgs.transaction).toEqual(mockRecord)
+        expect(callingArgs.transaction).toEqual(immutableMockRecord)
       })
 
       it('passes permission to generateRecurringPaymentRecord', async () => {
@@ -411,7 +412,7 @@ describe('transaction service', () => {
         for (const key of keysToCopy) {
           expectedPermissionData[key] = mockRecord.permissions[0][key]
         }
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
 
         await processQueue({ id: mockRecord.id })
 
@@ -422,7 +423,7 @@ describe('transaction service', () => {
         const rprSymbol = Symbol('rpr')
         const finalisedTransaction = mockFinalisedTransactionRecord()
         generateRecurringPaymentRecord.mockReturnValueOnce(rprSymbol)
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        docClient.send.mockResolvedValueOnce({ Item: finalisedTransaction })
         await processQueue({ id: finalisedTransaction.id })
         expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
       })
