@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.3 (2025-01-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2103](https://github.com/DEFRA/rod-licensing/pull/2103) Incorrect Link to Fisheries Report ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.58.0-rc.2 (2024-12-23)
 
 #### :rocket: Enhancement
