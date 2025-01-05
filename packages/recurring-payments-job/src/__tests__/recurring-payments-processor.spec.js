@@ -8,7 +8,9 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     preparePermissionDataForRenewal: jest.fn(() => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
-    createTransaction: jest.fn()
+    createTransaction: jest.fn(() => ({
+      cost: 30
+    }))
   }
 }))
 
@@ -53,7 +55,7 @@ describe('recurring-payments-processor', () => {
 
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
 
     await processRecurringPayments()
 
@@ -61,7 +63,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a transaction with the correct data', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     const isLicenceForYou = Symbol('isLicenceForYou')
     const isRenewal = Symbol('isRenewal')
@@ -108,7 +110,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('strips the concession name returned by preparePermissionDataForRenewal before passing to createTransaction', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: {
@@ -141,7 +143,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('assigns the correct startDate when licenceStartTime is present', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' },
@@ -159,7 +161,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('assigns the correct startDate when licenceStartTime is not present', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' },
@@ -176,7 +178,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('raises an error if createTransaction fails', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const error = 'Wuh-oh!'
     salesApi.createTransaction.mockImplementationOnce(() => {
       throw new Error(error)
@@ -184,6 +186,37 @@ describe('recurring-payments-processor', () => {
 
     await expect(processRecurringPayments()).rejects.toThrowError(error)
   })
+
+  it('logs that it has prepared the payment request', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    const agreementId = Symbol('agreementId')
+    const transactionId = Symbol('transactionId')
+
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
+
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      licensee: { countryCode: 'GB-ENG' }
+    })
+
+    salesApi.createTransaction.mockReturnValueOnce({
+      cost: 50,
+      id: transactionId
+    })
+
+    const expectedResult = {
+      amount: 5000,
+      description: 'Recurring payment TODO',
+      reference: transactionId,
+      authorisation_mode: 'agreement',
+      agreement_id: agreementId
+    }
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Prepared payment: ', expectedResult)
+  })
+
+  // pending('calls sendPayment')
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
     it('prepares the data for each one', async () => {
@@ -194,7 +227,7 @@ describe('recurring-payments-processor', () => {
 
       const mockGetDueRecurringPayments = []
       references.forEach(reference => {
-        mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: reference } } } })
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(reference))
       })
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
@@ -211,7 +244,7 @@ describe('recurring-payments-processor', () => {
     it('creates a transaction for each one', async () => {
       const mockGetDueRecurringPayments = []
       for (let i = 0; i < count; i++) {
-        mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: i } } } })
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i))
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
@@ -241,5 +274,12 @@ describe('recurring-payments-processor', () => {
 
       expect(salesApi.createTransaction.mock.calls).toEqual(expectedData)
     })
+
+    // pending('calls sendPayment for each one')
   })
+})
+
+const getMockDueRecurringPayment = (referenceNumber = '123', agreementId = '456') => ({
+  entity: { agreement_id: agreementId },
+  expanded: { activePermission: { entity: { referenceNumber } } }
 })
