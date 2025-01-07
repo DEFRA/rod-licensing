@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.6 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2105](https://github.com/DEFRA/rod-licensing/pull/2105) Add Welsh to Hidden Date Picker Text ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.58.0-rc.5 (2025-01-07)
 
 #### :bug: Bug Fix
