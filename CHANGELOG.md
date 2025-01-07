@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.5 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2104](https://github.com/DEFRA/rod-licensing/pull/2104) Welsh Missing From Payment Errors ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.58.0-rc.4 (2025-01-07)
 
 #### :bug: Bug Fix
