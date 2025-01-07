@@ -44,7 +44,7 @@ jest.mock('../../../../routes/page-route.js')
 
 const mockTransactionSet = jest.fn()
 
-const getMockRequest = (permission = getSamplePermission(), year, month, day) => ({
+const getMockRequest = (permission = getSamplePermission(), year, month, day, error) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -57,7 +57,8 @@ const getMockRequest = (permission = getSamplePermission(), year, month, day) =>
             'licence-start-date-year': year,
             'licence-start-date-month': month,
             'licence-start-date-day': day
-          }
+          },
+          error
         }),
         setCurrentPermission: jest.fn()
       },
@@ -131,6 +132,21 @@ describe('getData', () => {
     expect(displayExpiryDate).toHaveBeenCalledWith(request, permission)
   })
 
+  it.each([
+    ['full-date', 'object.missing'],
+    ['day', 'any.required']
+  ])('should add error details ({%s: %s}) to the page data', async (errorKey, errorValue) => {
+    const error = { [errorKey]: errorValue }
+
+    const result = await getData(getMockRequest(undefined, undefined, undefined, undefined, error))
+    expect(result.error).toEqual({ errorKey, errorValue })
+  })
+
+  it('omits error if there is no error', async () => {
+    const result = await getData(getMockRequest())
+    expect(result.error).toBeUndefined()
+  })
+
   it('getData returns expected outputs', async () => {
     const expected = await getData(getMockRequest())
     expect(expected).toMatchSnapshot()
@@ -186,39 +202,4 @@ describe('licenceStartTime and licenceToStart values', () => {
       })
     }
   )
-})
-
-describe('validator', () => {
-  const getMockOptions = renewedEndDate => ({
-    context: {
-      app: {
-        request: {
-          permission: {
-            renewedEndDate
-          }
-        }
-      }
-    }
-  })
-
-  const validator = pageRoute.mock.calls[0][2]
-  beforeEach(jest.clearAllMocks)
-
-  it('validation fails', () => {
-    return expect(() =>
-      validator(
-        { 'licence-start-date-year': 1990, 'licence-start-date-month': 11, 'licence-start-date-day': 11 },
-        getMockOptions('1990-10-10')
-      )
-    ).toThrow()
-  })
-
-  it('validation succeeds', () => {
-    return expect(
-      validator(
-        { 'licence-start-date-year': 1990, 'licence-start-date-month': 2, 'licence-start-date-day': 1 },
-        getMockOptions('1990-02-01')
-      )
-    ).toBeUndefined()
-  })
 })

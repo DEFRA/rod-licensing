@@ -6,11 +6,37 @@
 
 {%
     set errorMap = {
-        'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_format },
-            'date.max': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_max_1 + data.advancedPurchaseMaxDays + mssgs.renewal_start_date_error_max_2 + data.maxStartDate },
-            'date.min': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_min }
-        }
+      'full-date': {
+        'object.missing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error }
+      },
+      'day-and-month': {
+        'object.missing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_missing_day_and_month }
+      },
+      'day-and-year': {
+        'object.missing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_missing_day_and_year }
+      },
+      'month-and-year': {
+        'object.missing': { ref: '#licence-start-date-month', text: mssgs.licence_start_error_missing_month_and_year }
+      },
+      'day': {
+        'any.required': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_missing_day }
+      },
+      'month': {
+        'any.required': { ref: '#licence-start-date-month', text: mssgs.licence_start_error_missing_month }
+      },
+      'year': {
+        'any.required': { ref: '#licence-start-date-year', text: mssgs.licence_start_error_missing_year }
+      },
+      'non-numeric': {
+        'number.base': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_non_numeric }
+      },
+      'invalid-date': {
+        'any.custom': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_date_real }
+      },
+      'date-range': {
+        'date.min': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_min },
+        'date.max': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_max_1 + data.advancedPurchaseMaxDays + mssgs.renewal_start_date_error_max_2 + data.maxStartDate }
+      }
     }
 %}
 
@@ -43,7 +69,7 @@
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: mssgs.renewal_start_date_error_valid_date } if error,
+      errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
       hint: {
         text: mssgs.renewal_start_date_error_hint_1 + data.minStartDate + mssgs.and + data.maxStartDate
       }

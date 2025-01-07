@@ -1,33 +1,12 @@
 import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { dateFormats } from '../../../constants.js'
 import { RENEWAL_START_DATE, LICENCE_SUMMARY } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
-import Joi from 'joi'
-import JoiDate from '@hapi/joi-date'
 import moment from 'moment-timezone'
 import { displayExpiryDate, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { licenceToStart } from '../../licence-details/licence-to-start/update-transaction.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
-
-const JoiX = Joi.extend(JoiDate)
-
-const validator = (payload, options) => {
-  const { permission } = options.context.app.request
-  const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
-  const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
-
-  return Joi.assert(
-    { 'licence-start-date': licenceStartDate },
-    Joi.object({
-      'licence-start-date': JoiX.date()
-        .format(dateFormats)
-        .min(endDateMoment.clone().startOf('day'))
-        .max(endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
-        .required()
-    }).options({ abortEarly: false, allowUnknown: true })
-  )
-}
+import { renewalStartDateValidator } from '../../../schema/validators/validators.js'
 
 const setLicenceStartDateAndTime = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -64,20 +43,35 @@ const setLicenceStartDateAndTime = async request => {
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const page = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
 
   const expiryTimeString = displayExpiryDate(request, permission)
   const endDateMoment = moment.utc(permission.renewedEndDate, null, request.locale).tz(SERVICE_LOCAL_TIME)
 
-  return {
+  const pageData = {
     expiryTimeString,
     hasExpired: permission.renewedHasExpired,
     minStartDate: endDateMoment.format('DD MM YYYY'),
     maxStartDate: endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format('DD MM YYYY'),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS
   }
+
+  if (page?.error) {
+    const [errorKey] = Object.keys(page.error)
+    const errorValue = page.error[errorKey]
+    pageData.error = { errorKey, errorValue }
+  }
+
+  return pageData
 }
 
-const route = pageRoute(RENEWAL_START_DATE.page, RENEWAL_START_DATE.uri, validator, request => setLicenceStartDateAndTime(request), getData)
+const route = pageRoute(
+  RENEWAL_START_DATE.page,
+  RENEWAL_START_DATE.uri,
+  renewalStartDateValidator,
+  request => setLicenceStartDateAndTime(request),
+  getData
+)
 route.find(r => r.method === 'POST').options.ext = {
   onPostAuth: {
     method: async (request, reply) => {
