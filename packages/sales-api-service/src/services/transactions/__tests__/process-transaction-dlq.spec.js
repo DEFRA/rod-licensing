@@ -26,6 +26,7 @@ jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
   }
 }))
 
+// helper function
 const expectDynamoDbTtlUpdate = () => {
   expect(docClient.send).toHaveBeenCalledTimes(1)
   const updateCommandInstance = docClient.send.mock.calls[0][0]

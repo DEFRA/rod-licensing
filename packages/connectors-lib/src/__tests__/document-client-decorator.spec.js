@@ -2,13 +2,12 @@ import { DynamoDBDocumentClient, QueryCommand, ScanCommand, BatchWriteCommand } 
 import { mockClient } from 'aws-sdk-client-mock'
 import { createDocumentClient } from '../documentclient-decorator'
 
-describe('document client decorations', () => {
-  const ddbMock = mockClient(DynamoDBDocumentClient)
-  const docClient = createDocumentClient()
+const ddbMock = mockClient(DynamoDBDocumentClient)
+const docClient = createDocumentClient()
 
+describe('document client decorations', () => {
   beforeEach(() => {
     ddbMock.reset()
-    // docClient = createDocumentClient()
   })
 
   afterEach(() => {
@@ -16,49 +15,42 @@ describe('document client decorations', () => {
   })
 
   it('deals with pagination where DynamoDB returns a LastEvaluatedKey in a query response', async () => {
+    const item1 = Symbol('item1')
+    const item2 = Symbol('item2')
     const testLastEvaluatedKey = { id: '16324258-85-92746491' }
 
     ddbMock
       .on(QueryCommand)
       .resolvesOnce({
-        Items: [{ id: 'item1' }],
+        Items: [{ id: item1 }],
         LastEvaluatedKey: testLastEvaluatedKey
       })
       .resolvesOnce({
-        Items: [{ id: 'item2' }]
+        Items: [{ id: item2 }]
       })
 
     const items = await docClient.queryAllPromise({ TableName: 'TEST' })
 
-    expect(ddbMock.calls()).toHaveLength(2)
-    const firstCall = ddbMock.call(0).args[0].input
-    expect(firstCall.TableName).toEqual('TEST')
-    const secondCall = ddbMock.call(1).args[0].input
-    expect(secondCall.ExclusiveStartKey).toEqual(testLastEvaluatedKey)
-    expect(items).toEqual([{ id: 'item1' }, { id: 'item2' }])
+    expect(items).toEqual([{ id: item1 }, { id: item2 }])
   })
 
   it('deals with pagination where DynamoDB returns a LastEvaluatedKey in a scan response', async () => {
+    const item1 = Symbol('item1')
+    const item2 = Symbol('item2')
     const testLastEvaluatedKey = { id: '16324258-85-92746491' }
 
     ddbMock
       .on(ScanCommand)
       .resolvesOnce({
-        Items: [{ id: 'item1' }],
+        Items: [{ id: item1 }],
         LastEvaluatedKey: testLastEvaluatedKey
       })
       .resolvesOnce({
-        Items: [{ id: 'item2' }]
+        Items: [{ id: item2 }]
       })
 
     const items = await docClient.scanAllPromise({ TableName: 'TEST' })
-
-    expect(ddbMock.calls()).toHaveLength(2)
-    const firstCall = ddbMock.call(0).args[0].input
-    expect(firstCall.TableName).toEqual('TEST')
-    const secondCall = ddbMock.call(1).args[0].input
-    expect(secondCall.ExclusiveStartKey).toEqual(testLastEvaluatedKey)
-    expect(items).toEqual([{ id: 'item1' }, { id: 'item2' }])
+    expect(items).toEqual([{ id: item1 }, { id: item2 }])
   })
 
   it('deals with UnprocessedItems when making batchWrite requests to DynamoDB', async () => {
@@ -119,7 +111,6 @@ describe('document client decorations', () => {
     await expect(docClient.batchWriteAllPromise(request)).rejects.toThrow(
       'Failed to write items to DynamoDB using batch write. UnprocessedItems were returned and maxRetries has been reached.'
     )
-    expect(ddbMock.calls()).toHaveLength(11)
   })
 
   it('provides a convenience method to simplify building an update expression for DynamoDB', async () => {

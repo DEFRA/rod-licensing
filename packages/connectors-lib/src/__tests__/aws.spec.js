@@ -80,10 +80,7 @@ describe('AWS Connectors', () => {
     })
   })
 
-  describe.each([
-    { region: 'eu-west-2', description: 'uses eu-west-2 as the region' },
-    { region: 'us-east-1', description: 'uses us-east-1 as the region' }
-  ])('DynamoDB configuration with region (%s)', ({ region }) => {
+  describe.each([{ region: 'eu-west-2' }, { region: 'us-east-1' }])('DynamoDB configuration with default region (%s)', ({ region }) => {
     it(`configures DynamoDBClient with the region ${region}`, () => {
       const mockDocClient = getMockDocClient()
       createDocumentClient.mockReturnValue(mockDocClient)
@@ -98,7 +95,7 @@ describe('AWS Connectors', () => {
       )
     })
 
-    it('does not set the endpoint when Config.aws.dynamodb.endpoint is not defined', () => {
+    it('uses the default endpoint when Config.aws.dynamodb.endpoint is not defined', () => {
       const mockDocClient = getMockDocClient()
       createDocumentClient.mockReturnValue(mockDocClient)
 

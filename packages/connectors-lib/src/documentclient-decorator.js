@@ -3,13 +3,14 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, BatchWriteCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 const debug = db('connectors:aws')
 
-export const createDocumentClient = (dynamoDBInstance, options = {}) => {
+export const createDocumentClient = (options = {}) => {
   const client =
-    dynamoDBInstance ||
+    options.dynamoDBInstance ||
     new DynamoDBClient({
       ...options,
       region: options.region || process.env.AWS_REGION || 'eu-west-2'
     })
+
   const docClient = DynamoDBDocumentClient.from(client)
 
   // Support for large query/scan operations which return results in pages

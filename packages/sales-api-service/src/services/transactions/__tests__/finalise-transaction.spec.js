@@ -54,6 +54,45 @@ const getStagedTransactionRecord = () => {
   return record
 }
 
+// helper function - GetCommand
+const expectDynamoDbGet = mockRecord => {
+  expect(docClient.send).toHaveBeenCalledWith(expect.any(GetCommand))
+  const getCommandInstance = docClient.send.mock.calls[0][0]
+  expect(getCommandInstance).toBeInstanceOf(GetCommand)
+  expect(getCommandInstance.input).toEqual({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id: mockRecord.id },
+    ConsistentRead: true
+  })
+}
+
+// helper function - UpdateCommand
+const expectDynamoDbUpdate = (mockRecord, completionFields) => {
+  expect(docClient.send).toHaveBeenCalledWith(expect.any(UpdateCommand))
+  const updateCommandInstance = docClient.send.mock.calls[1][0]
+  expect(updateCommandInstance).toBeInstanceOf(UpdateCommand)
+  expect(updateCommandInstance.input).toEqual({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id: mockRecord.id },
+    ...docClient.createUpdateExpression({
+      ...completionFields,
+      permissions: mockRecord.permissions.map(p => ({
+        ...p,
+        issueDate: p.issueDate ?? completionFields.payment.timestamp,
+        startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
+        endDate: expect.any(String),
+        referenceNumber: expect.any(String),
+        licensee: {
+          ...p.licensee,
+          obfuscatedDob: expect.any(String)
+        }
+      })),
+      status: { id: TRANSACTION_STATUS.FINALISED }
+    }),
+    ReturnValues: 'ALL_NEW'
+  })
+}
+
 describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
@@ -64,45 +103,6 @@ describe('transaction service', () => {
     beforeEach(() => {
       jest.clearAllMocks()
     })
-
-    // helper function - GetCommand
-    const expectDynamoDbGet = mockRecord => {
-      expect(docClient.send).toHaveBeenCalledWith(expect.any(GetCommand))
-      const getCommandInstance = docClient.send.mock.calls[0][0]
-      expect(getCommandInstance).toBeInstanceOf(GetCommand)
-      expect(getCommandInstance.input).toEqual({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id: mockRecord.id },
-        ConsistentRead: true
-      })
-    }
-
-    // helper function - UpdateCommand
-    const expectDynamoDbUpdate = (mockRecord, completionFields) => {
-      expect(docClient.send).toHaveBeenCalledWith(expect.any(UpdateCommand))
-      const updateCommandInstance = docClient.send.mock.calls[1][0]
-      expect(updateCommandInstance).toBeInstanceOf(UpdateCommand)
-      expect(updateCommandInstance.input).toEqual({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id: mockRecord.id },
-        ...docClient.createUpdateExpression({
-          ...completionFields,
-          permissions: mockRecord.permissions.map(p => ({
-            ...p,
-            issueDate: p.issueDate ?? completionFields.payment.timestamp,
-            startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
-            endDate: expect.any(String),
-            referenceNumber: expect.any(String),
-            licensee: {
-              ...p.licensee,
-              obfuscatedDob: expect.any(String)
-            }
-          })),
-          status: { id: TRANSACTION_STATUS.FINALISED }
-        }),
-        ReturnValues: 'ALL_NEW'
-      })
-    }
 
     it.each([
       ['records with a predetermined issue and start date', getStagedTransactionRecord],
