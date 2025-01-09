@@ -8,45 +8,36 @@
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row page-layout">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+        <form method="post" novalidate>
 
-<!-- Pricing summary -->
-  <div class="page-layout__summary">
+          {% block notificationContent %}{% endblock %}
+
+            {% call govukFieldset({
+              describedBy: describedByTag,
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                {% block pageContent %}{% endblock %}
+
+            {% endcall %}
+
+            {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: mssgs.continue,
+                classes: "govuk-!-margin-top-5"
+            }) }}
+            {{ csrf() }}
+        </form>
+    </div>
     {% block pricingSummary %}{% endblock %}
-  </div>
-  
-<!-- Main content -->
-  <div class="page-layout__main">
-    {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
-
-    <form method="post" novalidate>
-      {% block notificationContent %}{% endblock %}
-
-      {% call govukFieldset({
-        describedBy: describedByTag,
-        legend: {
-          text: title,
-          classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-          isPageHeading: true
-        }
-      }) %}
-        {% block pageContent %}{% endblock %}
-      {% endcall %}
-      
-      {{ govukButton({
-        attributes: { id: 'continue' },
-        preventDoubleClick: true,
-        name: "continue",
-        text: mssgs.continue,
-        classes: "govuk-!-margin-top-5"
-      }) }}
-      {{ csrf() }}
-    </form>
-  </div>
-  
-  {# <!-- Pricing summary -->
-  <div class="govuk-grid-column-one-third page-layout__summary">
-    {% block pricingSummary %}{% endblock %}
-  </div> #}
-
+</div>
 {% endblock %}
