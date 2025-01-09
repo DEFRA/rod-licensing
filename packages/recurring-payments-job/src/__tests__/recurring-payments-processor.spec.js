@@ -1,5 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
+import { sendPayment } from '../services/govuk-pay-service.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -13,6 +14,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     }))
   }
 }))
+jest.mock('../services/govuk-pay-service.js')
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
@@ -187,8 +189,7 @@ describe('recurring-payments-processor', () => {
     await expect(processRecurringPayments()).rejects.toThrowError(error)
   })
 
-  it('logs that it has prepared the payment request', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+  it('prepares and sends the payment request', async () => {
     const agreementId = Symbol('agreementId')
     const transactionId = Symbol('transactionId')
 
@@ -203,7 +204,7 @@ describe('recurring-payments-processor', () => {
       id: transactionId
     })
 
-    const expectedResult = {
+    const expectedData = {
       amount: 5000,
       description: 'Recurring payment TODO',
       reference: transactionId,
@@ -213,10 +214,8 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Prepared payment: ', expectedResult)
+    expect(sendPayment).toHaveBeenCalledWith(expectedData)
   })
-
-  // pending('calls sendPayment')
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
     it('prepares the data for each one', async () => {
@@ -275,11 +274,49 @@ describe('recurring-payments-processor', () => {
       expect(salesApi.createTransaction.mock.calls).toEqual(expectedData)
     })
 
-    // pending('calls sendPayment for each one')
+    it('sends a payment for each one', async () => {
+      const mockGetDueRecurringPayments = []
+      for (let i = 0; i < count; i++) {
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i))
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+
+      const permits = []
+      for (let i = 0; i < count; i++) {
+        permits.push(Symbol(`permit${i}`))
+      }
+
+      permits.forEach(permit => {
+        salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+          licensee: { countryCode: 'GB-ENG' }
+        })
+
+        salesApi.createTransaction.mockReturnValueOnce({
+          cost: 50,
+          id: permit
+        })
+      })
+
+      const expectedData = []
+      permits.forEach(permit => {
+        expectedData.push([
+          {
+            amount: 5000,
+            description: 'Recurring payment TODO',
+            reference: permit,
+            authorisation_mode: 'agreement',
+            agreement_id: '456'
+          }
+        ])
+      })
+
+      await processRecurringPayments()
+      expect(sendPayment.mock.calls).toEqual(expectedData)
+    })
   })
 })
 
 const getMockDueRecurringPayment = (referenceNumber = '123', agreementId = '456') => ({
-  entity: { agreement_id: agreementId },
+  entity: { agreementId },
   expanded: { activePermission: { entity: { referenceNumber } } }
 })

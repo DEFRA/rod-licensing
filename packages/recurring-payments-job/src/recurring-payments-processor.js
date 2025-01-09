@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
-// import { sendPayment } from './services/govuk-pay-service.js'
+import { sendPayment } from './services/govuk-pay-service.js'
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -17,12 +17,12 @@ export const processRecurringPayments = async () => {
 
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
-  const agreementId = record.entity.agreement_id
+  const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber)
   await takeRecurringPayment(agreementId, transaction)
 }
 
-const createNewTransaction = async (referenceNumber) => {
+const createNewTransaction = async referenceNumber => {
   const transactionData = await processPermissionData(referenceNumber)
   console.log('Creating new transaction based on', referenceNumber)
   try {
@@ -37,10 +37,8 @@ const createNewTransaction = async (referenceNumber) => {
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  console.log('Requesting payment based on agreementId', agreementId)
-  console.log(preparedPayment)
-  // const paymentResponse = await sendPayment(preparedPayment)
-  // console.log('Payment response', JSON.stringify(paymentResponse))
+  console.log('Requesting payment:', preparedPayment)
+  await sendPayment(preparedPayment)
 }
 
 const processPermissionData = async referenceNumber => {
@@ -82,6 +80,5 @@ const preparePayment = (agreementId, transaction) => {
     agreement_id: agreementId
   }
 
-  console.log('Prepared payment: ', result)
   return result
 }
