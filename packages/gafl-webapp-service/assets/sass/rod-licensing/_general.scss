@@ -115,8 +115,9 @@ div.initially-hidden {
 }
 
 @media (max-width: 640px) {
-  .govuk-button {
+  #continue {
     position: absolute;
+    top: auto;
     bottom: 0px;
     left: 15px;
     right: 15px;
