@@ -74,7 +74,7 @@ const prepareStartDate = permission => {
 const preparePayment = (agreementId, transaction) => {
   const result = {
     amount: Math.round(transaction.cost * 100),
-    description: 'Recurring payment TODO',
+    description: 'The recurring card payment for your rod fishing licence',
     reference: transaction.id,
     authorisation_mode: 'agreement',
     agreement_id: agreementId

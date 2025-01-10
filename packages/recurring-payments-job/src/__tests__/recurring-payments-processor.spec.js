@@ -206,7 +206,7 @@ describe('recurring-payments-processor', () => {
 
     const expectedData = {
       amount: 5000,
-      description: 'Recurring payment TODO',
+      description: 'The recurring card payment for your rod fishing licence',
       reference: transactionId,
       authorisation_mode: 'agreement',
       agreement_id: agreementId
@@ -302,7 +302,7 @@ describe('recurring-payments-processor', () => {
         expectedData.push([
           {
             amount: 5000,
-            description: 'Recurring payment TODO',
+            description: 'The recurring card payment for your rod fishing licence',
             reference: permit,
             authorisation_mode: 'agreement',
             agreement_id: '456'
