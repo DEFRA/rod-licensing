@@ -118,13 +118,13 @@ div.initially-hidden {
   #continue {
     position: absolute;
     top: auto;
-    bottom: 0px;
+    bottom: 0;
     left: 15px;
     right: 15px;
     width: auto;
   }
 
-  .govuk-grid-row {
+  .govuk-grid-row:has(.payment-summary-wrap) {
     position: relative;
     padding-bottom: 75px;
   }
