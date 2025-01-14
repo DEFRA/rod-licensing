@@ -299,6 +299,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
+      "meta": "<meta name=\\"format-detection\\" content=\\"telephone=no\\">",
       "text": "contact-summary-license-non-physical",
     },
   },
@@ -364,6 +365,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
+      "meta": "<meta name=\\"format-detection\\" content=\\"telephone=no\\">",
       "text": "contact-summary-license-non-physical",
     },
   },
