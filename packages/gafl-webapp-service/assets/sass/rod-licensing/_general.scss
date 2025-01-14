@@ -115,17 +115,17 @@ div.initially-hidden {
 }
 
 @media (max-width: 640px) {
-  #continue {
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 15px;
-    right: 15px;
-    width: auto;
-  }
-
   .govuk-grid-row:has(.payment-summary-wrap) {
     position: relative;
     padding-bottom: 75px;
+
+    #continue {
+      position: absolute;
+      top: auto;
+      bottom: 0;
+      left: 15px;
+      right: 15px;
+      width: auto;
+    }
   }
 }
