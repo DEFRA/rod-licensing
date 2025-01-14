@@ -38,7 +38,7 @@ const createNewTransaction = async referenceNumber => {
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  await sendPayment(preparedPayment)
+  sendPayment(preparedPayment)
 }
 
 const processPermissionData = async referenceNumber => {

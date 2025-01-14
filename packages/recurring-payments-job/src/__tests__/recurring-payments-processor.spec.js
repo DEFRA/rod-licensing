@@ -276,8 +276,11 @@ describe('recurring-payments-processor', () => {
 
     it('sends a payment for each one', async () => {
       const mockGetDueRecurringPayments = []
+      const agreementIds = []
       for (let i = 0; i < count; i++) {
-        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i))
+        const agreementId = Symbol(`agreementId${1}`)
+        agreementIds.push(agreementId)
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i, agreementId))
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
@@ -286,26 +289,26 @@ describe('recurring-payments-processor', () => {
         permits.push(Symbol(`permit${i}`))
       }
 
-      permits.forEach(permit => {
+      permits.forEach((permit, i) => {
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
           licensee: { countryCode: 'GB-ENG' }
         })
 
         salesApi.createTransaction.mockReturnValueOnce({
-          cost: 50,
+          cost: i,
           id: permit
         })
       })
 
       const expectedData = []
-      permits.forEach(permit => {
+      permits.forEach((permit, i) => {
         expectedData.push([
           {
-            amount: 5000,
+            amount: i * 100,
             description: 'The recurring card payment for your rod fishing licence',
             reference: permit,
             authorisation_mode: 'agreement',
-            agreement_id: '456'
+            agreement_id: agreementIds[i]
           }
         ])
       })
