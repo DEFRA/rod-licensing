@@ -44,7 +44,7 @@ jest.mock('../../../../routes/page-route.js')
 
 const mockTransactionSet = jest.fn()
 
-const getMockRequest = (permission = getSamplePermission(), year, month, day, error) => ({
+const getMockRequest = ({ permission = getSamplePermission(), year = '2025', month = '1', day = '01', error = null } = {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -69,12 +69,19 @@ const getMockRequest = (permission = getSamplePermission(), year, month, day, er
     }
   }),
   i18n: {
-    getCatalog: () => [],
+    getCatalog: () => getMessages(),
     getLocales: () => []
   },
   url: {
     search: '?lang=cy'
   }
+})
+
+const getMessages = () => ({
+  and: 'and',
+  renewal_start_date_error_hint: 'Renewal start date error hint',
+  renewal_start_date_error_max_1: 'Renewal start date error max 1 ',
+  renewal_start_date_error_max_2: ' renewal start date error max 2'
 })
 
 const getSamplePermission = ({ renewedEndDate = '2023-01-10:00:00.000Z' } = {}) => ({
@@ -138,7 +145,7 @@ describe('getData', () => {
   ])('should add error details ({%s: %s}) to the page data', async (errorKey, errorValue) => {
     const error = { [errorKey]: errorValue }
 
-    const result = await getData(getMockRequest(undefined, undefined, undefined, undefined, error))
+    const result = await getData(getMockRequest({ error }))
     expect(result.error).toEqual({ errorKey, errorValue })
   })
 
@@ -159,7 +166,7 @@ describe('setLicenceStartDateAndTime', () => {
 
   it('ageConcessionHelper is called with permission', async () => {
     const permission = { licenceStartDate: '2023-02-11T12:00:00.000Z' }
-    await setLicenceStartDateAndTime(getMockRequest(permission))
+    await setLicenceStartDateAndTime(getMockRequest({ permission }))
     expect(ageConcessionHelper).toHaveBeenCalledWith(permission)
   })
 
@@ -183,7 +190,7 @@ describe('licenceStartTime and licenceToStart values', () => {
     ({ endHours, licenceToStartResult, licenceStartDate, renewedEndDate, year, month, day }) => {
       it('licenceStartTime', async () => {
         const permission = { licenceStartDate, renewedEndDate }
-        await setLicenceStartDateAndTime(getMockRequest(permission, year, month, day))
+        await setLicenceStartDateAndTime(getMockRequest({ permission, year, month, day }))
         expect(mockTransactionSet).toHaveBeenCalledWith(
           expect.objectContaining({
             licenceStartTime: endHours
@@ -193,7 +200,7 @@ describe('licenceStartTime and licenceToStart values', () => {
 
       it('licenceToStart', async () => {
         const permission = { licenceStartDate: licenceStartDate, renewedEndDate: renewedEndDate }
-        await setLicenceStartDateAndTime(getMockRequest(permission, year, month, day))
+        await setLicenceStartDateAndTime(getMockRequest({ permission, year, month, day }))
         expect(mockTransactionSet).toHaveBeenCalledWith(
           expect.objectContaining({
             licenceToStart: licenceToStartResult

@@ -743,7 +743,7 @@
   "renewal_inactive_title_4": "You can ",
   "renewal_inactive_title_link": "buy a new licence.",
   "renewal_start_date_error_format": "Not a valid date. Enter the date you want the licence to start on and include a day, month and year",
-  "renewal_start_date_error_hint_1": "Enter a date between ",
+  "renewal_start_date_error_hint": "Enter a date between ",
   "renewal_start_date_error_max_1": "Your new licence must start within ",
   "renewal_start_date_error_max_2": " days of your current licence expiring. Enter a date up to and including ",
   "renewal_start_date_error_min": "The licence must not start before your current licence has expired",

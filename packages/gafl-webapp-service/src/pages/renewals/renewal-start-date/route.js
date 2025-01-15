@@ -44,16 +44,20 @@ const setLicenceStartDateAndTime = async request => {
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const page = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
+  const mssgs = request.i18n.getCatalog()
 
   const expiryTimeString = displayExpiryDate(request, permission)
   const endDateMoment = moment.utc(permission.renewedEndDate, null, request.locale).tz(SERVICE_LOCAL_TIME)
+  const minStartDate = endDateMoment.format('DD MM YYYY')
+  const maxStartDate = endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format('DD MM YYYY')
 
   const pageData = {
     expiryTimeString,
     hasExpired: permission.renewedHasExpired,
-    minStartDate: endDateMoment.format('DD MM YYYY'),
-    maxStartDate: endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format('DD MM YYYY'),
-    advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS
+    advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
+    maxStartDateMessage:
+      mssgs.renewal_start_date_error_max_1 + ADVANCED_PURCHASE_MAX_DAYS + mssgs.renewal_start_date_error_max_2 + maxStartDate,
+    renewalHint: mssgs.renewal_start_date_error_hint + minStartDate + mssgs.and + maxStartDate
   }
 
   if (page?.error) {

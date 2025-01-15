@@ -35,7 +35,7 @@
       },
       'date-range': {
         'date.min': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_min },
-        'date.max': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_max_1 + data.advancedPurchaseMaxDays + mssgs.renewal_start_date_error_max_2 + data.maxStartDate }
+        'date.max': { ref: '#licence-start-date-day', text: data.maxStartDateMessage }
       }
     }
 %}
@@ -71,7 +71,7 @@
       items: dateInputItems,
       errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
       hint: {
-        text: mssgs.renewal_start_date_error_hint_1 + data.minStartDate + mssgs.and + data.maxStartDate
+        text: data.renewalHint
       }
     }) }}
 {% endblock %}
