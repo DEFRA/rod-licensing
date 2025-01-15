@@ -41,7 +41,7 @@ const CHANGE_CONTACT = 'change-contact'
 
 const META_TAG_TELEPHONE_NO = '<meta name="format-detection" content="telephone=no">'
 
-class RowGenerator {
+export class RowGenerator {
   constructor (request, permission) {
     this.request = request
     this.permission = permission

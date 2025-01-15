@@ -1,5 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`contact-summary > route generateContactRow should generate a contact row with meta tag when includeMeta is true 1`] = `
+Object {
+  "actions": Object {
+    "items": Array [
+      Object {
+        "attributes": Object {
+          "id": "change-licence-confirmation-option",
+        },
+        "href": Symbol(decoratedUri),
+        "text": "contact-summary-change",
+        "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+      },
+    ],
+  },
+  "key": Object {
+    "text": Symbol(contact-summary-row-contact),
+  },
+  "value": Object {
+    "meta": "<meta name=\\"format-detection\\" content=\\"telephone=no\\">",
+    "text": "Text message-contact-summary-text-sngl07123432817",
+  },
+}
+`;
+
+exports[`contact-summary > route generateContactRow should generate a contact row without meta tag when includeMeta is false 1`] = `
+Object {
+  "actions": Object {
+    "items": Array [
+      Object {
+        "attributes": Object {
+          "id": "change-licence-confirmation-option",
+        },
+        "href": Symbol(decoratedUri),
+        "text": "contact-summary-change",
+        "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+      },
+    ],
+  },
+  "key": Object {
+    "text": Symbol(contact-summary-row-contact),
+  },
+  "value": Object {
+    "text": "contact-summary-emailtest@example.com",
+  },
+}
+`;
+
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
