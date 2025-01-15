@@ -1,4 +1,58 @@
 
+## v1.58.0-rc.8 (2025-01-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2106](https://github.com/DEFRA/rod-licensing/pull/2106) Capitalising Date Entry Fields ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.7 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2107](https://github.com/DEFRA/rod-licensing/pull/2107) Added Welsh to Missing Address Error ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.6 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2105](https://github.com/DEFRA/rod-licensing/pull/2105) Add Welsh to Hidden Date Picker Text ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.5 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2104](https://github.com/DEFRA/rod-licensing/pull/2104) Welsh Missing From Payment Errors ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.4 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2102](https://github.com/DEFRA/rod-licensing/pull/2102) Add Missing Welsh to Newsletter Page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.3 (2025-01-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2103](https://github.com/DEFRA/rod-licensing/pull/2103) Incorrect Link to Fisheries Report ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.58.0-rc.2 (2024-12-23)
 
 #### :rocket: Enhancement
