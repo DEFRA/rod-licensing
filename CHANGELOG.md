@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.10 (2025-01-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2090](https://github.com/DEFRA/rod-licensing/pull/2090) Mobile phone links ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.58.0-rc.9 (2025-01-15)
 
 #### :bug: Bug Fix
