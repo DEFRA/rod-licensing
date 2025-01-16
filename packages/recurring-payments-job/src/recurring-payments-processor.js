@@ -19,7 +19,7 @@ const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber)
-  await takeRecurringPayment(agreementId, transaction)
+  takeRecurringPayment(agreementId, transaction)
 }
 
 const createNewTransaction = async referenceNumber => {
@@ -35,7 +35,7 @@ const createNewTransaction = async referenceNumber => {
   }
 }
 
-const takeRecurringPayment = async (agreementId, transaction) => {
+const takeRecurringPayment = (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
   sendPayment(preparedPayment)
