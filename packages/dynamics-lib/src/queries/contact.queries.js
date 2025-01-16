@@ -44,7 +44,7 @@ export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcod
   }`
   return new PredefinedQuery({
     root: Contact,
-    filter: filter,
+    filter,
     expand: []
   })
 }
