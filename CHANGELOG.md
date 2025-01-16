@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.11 (2025-01-16)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2109](https://github.com/DEFRA/rod-licensing/pull/2109) Recurring payment job sends payment requests to GOV.UK Pay ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.58.0-rc.10 (2025-01-16)
 
 #### :rocket: Enhancement
