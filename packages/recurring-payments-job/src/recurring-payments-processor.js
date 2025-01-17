@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
-import { sendPayment } from './services/govuk-pay-service.js'
+import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -19,7 +19,7 @@ const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber)
-  takeRecurringPayment(agreementId, transaction)
+  await takeRecurringPayment(agreementId, transaction)
 }
 
 const createNewTransaction = async referenceNumber => {
@@ -35,10 +35,11 @@ const createNewTransaction = async referenceNumber => {
   }
 }
 
-const takeRecurringPayment = (agreementId, transaction) => {
+const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
   sendPayment(preparedPayment)
+  await getPaymentStatus(preparedPayment)
 }
 
 const processPermissionData = async referenceNumber => {

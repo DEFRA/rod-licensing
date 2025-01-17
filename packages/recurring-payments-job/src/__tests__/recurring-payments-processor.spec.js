@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
-import { sendPayment } from '../services/govuk-pay-service.js'
+import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -215,6 +215,34 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(sendPayment).toHaveBeenCalledWith(expectedData)
+  })
+
+  it('fetches the payment request status', async () => {
+    const agreementId = Symbol('agreementId')
+    const transactionId = Symbol('transactionId')
+
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
+
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      licensee: { countryCode: 'GB-ENG' }
+    })
+
+    salesApi.createTransaction.mockReturnValueOnce({
+      cost: 50,
+      id: transactionId
+    })
+
+    const expectedData = {
+      amount: 5000,
+      description: 'The recurring card payment for your rod fishing licence',
+      reference: transactionId,
+      authorisation_mode: 'agreement',
+      agreement_id: agreementId
+    }
+
+    await processRecurringPayments()
+
+    expect(getPaymentStatus).toHaveBeenCalledWith(expectedData)
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
