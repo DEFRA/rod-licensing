@@ -105,7 +105,8 @@ const getSampleRequest = ({
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
   transactionCost = 1,
-  messages = getMessages()
+  messages = getMessages(),
+  agreementId
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -116,7 +117,8 @@ const getSampleRequest = ({
       },
       transaction: {
         get: async () => ({
-          cost: transactionCost
+          cost: transactionCost,
+          agreementId
         }),
         getCurrentPermission: () => permission
       }
@@ -205,17 +207,16 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    show     | recurring | expected
-    ${true}  | ${true}   | ${true}
-    ${true}  | ${false}  | ${false}
-    ${false} | ${false}  | ${false}
-    ${false} | ${true}   | ${false}
+    show     | agreementId  | expected
+    ${true}  | ${'foo123'}  | ${true}
+    ${true}  | ${undefined} | ${false}
+    ${false} | ${'foo123'}  | ${false}
+    ${false} | ${undefined} | ${false}
   `(
-    'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the permission recurring payment is $recurring',
-    async ({ show, recurring, expected }) => {
+    'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the transaction agreementId is $agreementId',
+    async ({ show, agreementId, expected }) => {
       process.env.SHOW_RECURRING_PAYMENTS = show
-      const permission = getSamplePermission({ isRecurringPayment: recurring })
-      const request = getSampleRequest({ permission })
+      const request = getSampleRequest({ agreementId })
       const { recurringPayment } = await getData(request)
 
       expect(recurringPayment).toBe(expected)
