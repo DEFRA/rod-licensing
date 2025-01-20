@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.12 (2025-01-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2111](https://github.com/DEFRA/rod-licensing/pull/2111) Check recurring status based on transaction ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.58.0-rc.11 (2025-01-16)
 
 #### :rocket: Enhancement
