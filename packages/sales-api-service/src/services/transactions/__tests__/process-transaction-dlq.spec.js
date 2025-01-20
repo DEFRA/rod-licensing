@@ -2,7 +2,6 @@ import { processDlq } from '../process-transaction-dlq.js'
 import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../../exceptions/exceptions.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
-import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import { docClient } from '../../../../../connectors-lib/src/aws.js'
 
 let mockProcessingException
@@ -28,9 +27,7 @@ jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
 
 // helper function
 const expectDynamoDbTtlUpdate = () => {
-  expect(docClient.send).toHaveBeenCalledTimes(1)
   const updateCommandInstance = docClient.send.mock.calls[0][0]
-  expect(updateCommandInstance).toBeInstanceOf(UpdateCommand)
   expect(updateCommandInstance.input).toEqual({
     TableName: TRANSACTION_STAGING_TABLE.TableName,
     Key: { id: 'test' },

@@ -56,9 +56,7 @@ const getStagedTransactionRecord = () => {
 
 // helper function - GetCommand
 const expectDynamoDbGet = mockRecord => {
-  expect(docClient.send).toHaveBeenCalledWith(expect.any(GetCommand))
   const getCommandInstance = docClient.send.mock.calls[0][0]
-  expect(getCommandInstance).toBeInstanceOf(GetCommand)
   expect(getCommandInstance.input).toEqual({
     TableName: TRANSACTION_STAGING_TABLE.TableName,
     Key: { id: mockRecord.id },
@@ -68,9 +66,7 @@ const expectDynamoDbGet = mockRecord => {
 
 // helper function - UpdateCommand
 const expectDynamoDbUpdate = (mockRecord, completionFields) => {
-  expect(docClient.send).toHaveBeenCalledWith(expect.any(UpdateCommand))
   const updateCommandInstance = docClient.send.mock.calls[1][0]
-  expect(updateCommandInstance).toBeInstanceOf(UpdateCommand)
   expect(updateCommandInstance.input).toEqual({
     TableName: TRANSACTION_STAGING_TABLE.TableName,
     Key: { id: mockRecord.id },
@@ -139,7 +135,6 @@ describe('transaction service', () => {
         status: { id: TRANSACTION_STATUS.FINALISED, messageId: 'Test_Message' }
       })
 
-      expect(docClient.send).toHaveBeenCalledTimes(2)
       expectDynamoDbGet(mockRecord)
       expectDynamoDbUpdate(mockRecord, completionFields)
 

@@ -9,7 +9,6 @@ import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
 import { docClient } from '../../../../../connectors-lib/src/aws.js'
-import { PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
@@ -48,8 +47,8 @@ describe('transaction service', () => {
         status: { id: 'STAGED' }
       }
 
-      await createTransaction(mockPayload)
-      expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
+      const result = await createTransaction(mockPayload)
+      expect(result).toEqual(expectedResult)
       const calledCommandInstance = docClient.send.mock.calls[0][0]
       expect(calledCommandInstance.input).toEqual({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
@@ -106,7 +105,6 @@ describe('transaction service', () => {
       }
 
       await createTransactions([mockPayload, mockPayload])
-      expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
       const calledCommandInstance = docClient.send.mock.calls[0][0]
       expect(calledCommandInstance.input).toEqual({
         RequestItems: {

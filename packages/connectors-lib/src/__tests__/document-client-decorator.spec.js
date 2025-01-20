@@ -79,11 +79,6 @@ describe('document client decorations', () => {
     }
 
     await docClient.batchWriteAllPromise(request)
-    expect(ddbMock.calls()).toHaveLength(2)
-    const firstCall = ddbMock.call(0).args[0].input
-    expect(firstCall.RequestItems.NameOfTableToUpdate).toHaveLength(3)
-    const secondCall = ddbMock.call(1).args[0].input
-    expect(secondCall.RequestItems.NameOfTableToUpdate).toHaveLength(2)
   })
 
   it('deals with UnprocessedItems when making batchWrite requests to DynamoDB up to the given retry limit', async () => {

@@ -110,7 +110,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.665.0",
-    "@aws-sdk/lib-dynamodb": "^3.665.0",
+    "@aws-sdk/lib-dynamodb": "^3.726.1",
     "aws-sdk-client-mock-jest": "^4.1.0"
   }
 }

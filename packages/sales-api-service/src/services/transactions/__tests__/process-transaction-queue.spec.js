@@ -300,9 +300,9 @@ describe('transaction service', () => {
       mockRecord.permissions[0].isLicenceForYou = true
       docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
-      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstArgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
     })
 
     it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
@@ -310,9 +310,9 @@ describe('transaction service', () => {
       mockRecord.permissions[0].isLicenceForYou = false
       docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
-      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 0, label: 'No', description: 'No' } })
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstArgument[0][4]).toMatchObject({ isLicenceForYou: { id: 0, label: 'No', description: 'No' } })
     })
 
     it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {
@@ -320,8 +320,8 @@ describe('transaction service', () => {
       mockRecord.permissions[0].isLicenceForYou = undefined
       docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
     it('does not set isLicenceForYou on the transaction, if it is null on the permission', async () => {
@@ -329,8 +329,8 @@ describe('transaction service', () => {
       mockRecord.permissions[0].isLicenceForYou = null
       docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
     it('handles requests which relate to an transaction file', async () => {
