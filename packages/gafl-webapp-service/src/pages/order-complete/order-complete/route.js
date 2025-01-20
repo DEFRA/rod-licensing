@@ -58,7 +58,7 @@ const postalFulfilment = permission => {
   }
 }
 
-const isRecurringPayment = transaction => !!(process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && transaction.agreementId)
+const isRecurringPayment = transaction => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && !!transaction.agreementId
 
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
