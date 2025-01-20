@@ -3,6 +3,15 @@ import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
+const PAYMENT_STATUS_DELAY = 60000
+const transactions = []
+
+const timeout = ms => {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+}
+
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
@@ -10,6 +19,10 @@ export const processRecurringPayments = async () => {
     const response = await salesApi.getDueRecurringPayments(date)
     console.log('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
+    if (response.length > 0) {
+      timeout(PAYMENT_STATUS_DELAY)
+      await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+    }
   } else {
     console.log('Recurring Payments job disabled')
   }
@@ -19,7 +32,7 @@ const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber)
-  await takeRecurringPayment(agreementId, transaction)
+  takeRecurringPayment(agreementId, transaction)
 }
 
 const createNewTransaction = async referenceNumber => {
@@ -27,6 +40,10 @@ const createNewTransaction = async referenceNumber => {
   console.log('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
+    transactions.push({
+      referenceNumber,
+      transaction: response
+    })
     console.log('New transaction created:', response)
     return response
   } catch (e) {
@@ -35,11 +52,10 @@ const createNewTransaction = async referenceNumber => {
   }
 }
 
-const takeRecurringPayment = async (agreementId, transaction) => {
+const takeRecurringPayment = (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
   sendPayment(preparedPayment)
-  await getPaymentStatus(preparedPayment)
 }
 
 const processPermissionData = async referenceNumber => {
@@ -82,4 +98,16 @@ const preparePayment = (agreementId, transaction) => {
   }
 
   return result
+}
+
+const processRecurringPaymentStatus = async record => {
+  const referenceNumber = record.expanded.activePermission.entity.referenceNumber
+  const paymentId = getPaymentId(referenceNumber)
+  const status = await getPaymentStatus(paymentId)
+  console.log(`Payment status for ${paymentId}: ${status}`)
+}
+
+const getPaymentId = referenceNumber => {
+  const transaction = transactions.find(t => t.referenceNumber === referenceNumber)?.transaction
+  return transaction?.id
 }

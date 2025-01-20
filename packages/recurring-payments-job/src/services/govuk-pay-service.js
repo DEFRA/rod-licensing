@@ -4,7 +4,7 @@ export const sendPayment = preparedPayment => {
   govUkPayApi.createPayment(preparedPayment, true)
 }
 
-export const getPaymentStatus = async preparedPayment => {
-  const status = await govUkPayApi.fetchPaymentStatus(preparedPayment.reference.transaction.id, true)
-  console.log('Recurring payment status:', status)
+export const getPaymentStatus = async paymentId => {
+  console.log('test')
+  await govUkPayApi.fetchPaymentStatus(paymentId, true)
 }

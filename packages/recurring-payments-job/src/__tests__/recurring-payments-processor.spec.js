@@ -14,11 +14,16 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     }))
   }
 }))
-jest.mock('../services/govuk-pay-service.js')
+
+jest.mock('../services/govuk-pay-service.js', () => ({
+  sendPayment: jest.fn(),
+  getPaymentStatus: jest.fn()
+}))
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.useFakeTimers()
     process.env.RUN_RECURRING_PAYMENTS = 'true'
   })
 
@@ -191,7 +196,7 @@ describe('recurring-payments-processor', () => {
 
   it('prepares and sends the payment request', async () => {
     const agreementId = Symbol('agreementId')
-    const transactionId = Symbol('transactionId')
+    const transactionId = 'transactionId'
 
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
 
@@ -217,32 +222,56 @@ describe('recurring-payments-processor', () => {
     expect(sendPayment).toHaveBeenCalledWith(expectedData)
   })
 
-  it('fetches the payment request status', async () => {
-    const agreementId = Symbol('agreementId')
-    const transactionId = Symbol('transactionId')
-
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
-
-    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
-      licensee: { countryCode: 'GB-ENG' }
+  it('should call getPaymentStatus with payment id', async () => {
+    const mockResponse = [
+      {
+        entity: { agreementId: 'agreement-1' },
+        expanded: {
+          activePermission: {
+            entity: {
+              referenceNumber: 'ref-1'
+            }
+          }
+        }
+      }
+    ]
+    salesApi.getDueRecurringPayments.mockResolvedValue(mockResponse)
+    salesApi.createTransaction.mockResolvedValue({
+      id: 'payment-id-1'
     })
-
-    salesApi.createTransaction.mockReturnValueOnce({
-      cost: 50,
-      id: transactionId
-    })
-
-    const expectedData = {
-      amount: 5000,
-      description: 'The recurring card payment for your rod fishing licence',
-      reference: transactionId,
-      authorisation_mode: 'agreement',
-      agreement_id: agreementId
-    }
+    getPaymentStatus.mockResolvedValueOnce('Success')
 
     await processRecurringPayments()
+    jest.advanceTimersByTime(60000)
 
-    expect(getPaymentStatus).toHaveBeenCalledWith(expectedData)
+    expect(getPaymentStatus).toHaveBeenCalledWith('payment-id-1')
+  })
+
+  it('should log payment status for recurring payment', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+    const mockResponse = [
+      {
+        entity: { agreementId: 'agreement-1' },
+        expanded: {
+          activePermission: {
+            entity: {
+              referenceNumber: 'ref-1'
+            }
+          }
+        }
+      }
+    ]
+    salesApi.getDueRecurringPayments.mockResolvedValue(mockResponse)
+    salesApi.createTransaction.mockResolvedValue({
+      id: 'payment-id-1'
+    })
+    getPaymentStatus.mockResolvedValueOnce('Success')
+
+    await processRecurringPayments()
+    jest.advanceTimersByTime(60000)
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Payment status for payment-id-1: Success')
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {

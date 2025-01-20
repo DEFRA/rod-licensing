@@ -27,34 +27,9 @@ describe('govuk-pay-service', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ status: 'success' })
       })
-      const transactionId = Symbol('transactionId')
-      const transaction = { id: transactionId }
-      const payload = {
-        amount: '100',
-        description: 'The recurring card payment for your rod fishing licence',
-        reference: { transaction }
-      }
-      await getPaymentStatus(payload)
-      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(transactionId, true)
-    })
-
-    it('should log the payment status', async () => {
-      const fetchPaymentStatusMockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ status: 'success' })
-      }
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue(fetchPaymentStatusMockResponse)
-      const transactionId = Symbol('transactionId')
-      const transaction = { id: transactionId }
-      const payload = {
-        amount: '100',
-        description: 'The recurring card payment for your rod fishing licence',
-        reference: { transaction }
-      }
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      await getPaymentStatus(payload)
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('Recurring payment status:', fetchPaymentStatusMockResponse)
+      const paymentId = Symbol('transactionId')
+      await getPaymentStatus(paymentId)
+      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, true)
     })
   })
 })
