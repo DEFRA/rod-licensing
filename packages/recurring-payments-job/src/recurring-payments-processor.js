@@ -12,6 +12,7 @@ export const processRecurringPayments = async () => {
     const response = await salesApi.getDueRecurringPayments(date)
     console.log('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
+    console.log('Recurring Payments processed:', payments)
   } else {
     console.log('Recurring Payments job disabled')
   }
