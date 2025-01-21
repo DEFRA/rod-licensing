@@ -5,7 +5,7 @@ jest.mock('@defra-fish/connectors-lib')
 
 describe('govuk-pay-service', () => {
   describe('sendPayment', () => {
-    it('should send provided payload data to Gov.UK Pay', () => {
+    it('should send provided payload data to Gov.UK Pay', async () => {
       govUkPayApi.createPayment.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
@@ -28,7 +28,7 @@ describe('govuk-pay-service', () => {
         json: jest.fn().mockResolvedValue({ status: 'success' })
       })
       const paymentId = Symbol('transactionId')
-      await getPaymentStatus(paymentId)
+      getPaymentStatus(paymentId)
       expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, true)
     })
   })

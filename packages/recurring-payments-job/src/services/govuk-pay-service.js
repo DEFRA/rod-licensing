@@ -5,6 +5,5 @@ export const sendPayment = preparedPayment => {
 }
 
 export const getPaymentStatus = async paymentId => {
-  console.log('test')
-  await govUkPayApi.fetchPaymentStatus(paymentId, true)
+  govUkPayApi.fetchPaymentStatus(paymentId, true)
 }
