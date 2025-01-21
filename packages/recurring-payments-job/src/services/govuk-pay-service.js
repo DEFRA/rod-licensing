@@ -5,5 +5,17 @@ export const sendPayment = preparedPayment => {
 }
 
 export const getPaymentStatus = async paymentId => {
-  await govUkPayApi.fetchPaymentStatus(paymentId, true)
+  if (!paymentId) {
+    throw new Error('Invalid payment ID')
+  }
+
+  const response = await govUkPayApi.fetchPaymentStatus(paymentId, true)
+
+  if (!response.ok) {
+    const errorDetails = await response.json()
+    throw new Error(errorDetails.error || 'Error fetching payment status')
+  }
+
+  const paymentStatus = await response.json()
+  return paymentStatus
 }

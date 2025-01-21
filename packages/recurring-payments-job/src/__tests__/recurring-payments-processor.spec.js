@@ -17,7 +17,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
 
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
-  getPaymentStatus: jest.fn(() => Promise.resolve('Success'))
+  getPaymentStatus: jest.fn()
 }))
 
 describe('recurring-payments-processor', () => {
@@ -249,7 +249,7 @@ describe('recurring-payments-processor', () => {
 
   it('should log payment status for recurring payment', async () => {
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-
+    const mockPaymentId = 'payment-id-1'
     const mockResponse = [
       {
         entity: { agreementId: 'agreement-1' },
@@ -264,14 +264,15 @@ describe('recurring-payments-processor', () => {
     ]
     salesApi.getDueRecurringPayments.mockResolvedValue(mockResponse)
     salesApi.createTransaction.mockResolvedValue({
-      id: 'payment-id-1'
+      id: mockPaymentId
     })
-    getPaymentStatus.mockResolvedValueOnce('Success')
+    const mockPaymentStatus = { code: 'P1234', description: 'Success' }
+    getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
 
     await processRecurringPayments()
     jest.advanceTimersByTime(60000)
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Payment status for payment-id-1: Success')
+    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockPaymentStatus}`)
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
