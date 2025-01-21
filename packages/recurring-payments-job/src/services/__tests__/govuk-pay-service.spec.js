@@ -28,7 +28,7 @@ describe('govuk-pay-service', () => {
         json: jest.fn().mockResolvedValue({ status: 'success' })
       })
       const paymentId = Symbol('transactionId')
-      getPaymentStatus(paymentId)
+      await getPaymentStatus(paymentId)
       expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, true)
     })
   })
