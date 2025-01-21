@@ -104,9 +104,8 @@ const processRecurringPaymentStatus = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const paymentId = getPaymentId(referenceNumber)
   console.log('Checking payment status for', paymentId)
-  getPaymentStatus(paymentId).then(status => {
-    console.log(`Payment status for ${paymentId}: ${status}`)
-  })
+  const status = await getPaymentStatus(paymentId)
+  console.log(`Payment status for ${paymentId}: ${status}`)
 }
 
 const getPaymentId = referenceNumber => {
