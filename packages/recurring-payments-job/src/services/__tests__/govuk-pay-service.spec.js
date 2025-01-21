@@ -29,7 +29,7 @@ describe('govuk-pay-service', () => {
       const unique = Symbol('payload')
       const payload = {
         amount: '100',
-        description: 'Recurring payment',
+        description: 'The recurring card payment for your rod fishing licence',
         reference: unique
       }
       await sendPayment(payload)
