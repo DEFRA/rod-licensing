@@ -17,7 +17,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
 
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
-  getPaymentStatus: jest.fn()
+  getPaymentStatus: jest.fn(() => Promise.resolve('Success'))
 }))
 
 describe('recurring-payments-processor', () => {
