@@ -7,6 +7,20 @@ describe('govuk-pay-service', () => {
   describe('sendPayment', () => {
     const preparedPayment = { id: '1234' }
 
+    it('sendPayment should return response from createPayment in json format', async () => {
+      const mockPreparedPayment = { id: 'test-payment-id' }
+      const mockResponse = { status: 'success', paymentId: 'abc123' }
+
+      const mockFetchResponse = {
+        json: jest.fn().mockResolvedValue(mockResponse)
+      }
+      govUkPayApi.createPayment.mockResolvedValue(mockFetchResponse)
+
+      const result = await sendPayment(mockPreparedPayment)
+
+      expect(result).toEqual(mockResponse)
+    })
+
     it('should send provided payload data to Gov.UK Pay', async () => {
       govUkPayApi.createPayment.mockResolvedValue({
         ok: true,

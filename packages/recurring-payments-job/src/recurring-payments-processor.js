@@ -3,6 +3,8 @@ import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { sendPayment } from './services/govuk-pay-service.js'
 
+const payments = []
+
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
@@ -38,7 +40,11 @@ const createNewTransaction = async referenceNumber => {
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  await sendPayment(preparedPayment)
+  const payment = await sendPayment(preparedPayment)
+  payments.push({
+    agreementId,
+    transaction: payment
+  })
 }
 
 const processPermissionData = async referenceNumber => {
