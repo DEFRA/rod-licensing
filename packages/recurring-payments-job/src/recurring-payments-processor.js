@@ -41,9 +41,10 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
   const payment = await sendPayment(preparedPayment)
+  console.log('Payment response:', payment)
   payments.push({
     agreementId,
-    transaction: payment
+    paymentId: payment.payment_id
   })
 }
 
