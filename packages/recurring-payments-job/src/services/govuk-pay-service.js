@@ -4,6 +4,6 @@ export const sendPayment = preparedPayment => {
   govUkPayApi.createPayment(preparedPayment, true)
 }
 
-export const getPaymentStatus = async paymentId => {
-  await govUkPayApi.fetchPaymentStatus(paymentId, true)
+export const getPaymentStatus = paymentId => {
+  govUkPayApi.fetchPaymentStatus(paymentId, true)
 }
