@@ -101,13 +101,13 @@ const preparePayment = (agreementId, transaction) => {
 }
 
 const processRecurringPaymentStatus = async record => {
-  const referenceNumber = record.expanded.activePermission.entity.referenceNumber
-  const paymentId = getPaymentId(referenceNumber)
+  const agreementId = record.entity.agreementId
+  const paymentId = getPaymentId(agreementId)
   const status = await getPaymentStatus(paymentId)
   console.log(`Payment status for ${paymentId}: ${status}`)
 }
 
-const getPaymentId = referenceNumber => {
-  const transaction = transactions.find(t => t.referenceNumber === referenceNumber)?.transaction
-  return transaction?.id
+const getPaymentId = agreementId => {
+  const payment = payments.find(p => p.agreementId === agreementId)
+  return payment.paymentId
 }

@@ -63,14 +63,14 @@ describe('govuk-pay-service', () => {
   })
 
   describe('getPaymentStatus', () => {
-    it('should call fetchPaymentStatus with payment id and true value for recurring payment', async () => {
+    it('should call fetchPaymentStatus with payment id', async () => {
       govUkPayApi.fetchPaymentStatus.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ code: 'P1234', description: 'Success' })
       })
       const paymentId = Symbol('transactionId')
       await getPaymentStatus(paymentId)
-      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, true)
+      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId)
     })
 
     it('should return the payment status on successful response', async () => {
@@ -103,7 +103,7 @@ describe('govuk-pay-service', () => {
       await expect(getPaymentStatus(paymentId)).rejects.toThrow('Failed to parse JSON')
     })
 
-    it('should handle invalid payment ID gracefully', async () => {
+    it('should handle invalid payment ID', async () => {
       const paymentId = null
       await expect(getPaymentStatus(paymentId)).rejects.toThrow('Invalid payment ID')
     })

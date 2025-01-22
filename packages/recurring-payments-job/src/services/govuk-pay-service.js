@@ -15,13 +15,18 @@ export const getPaymentStatus = async paymentId => {
     throw new Error('Invalid payment ID')
   }
 
-  const response = await govUkPayApi.fetchPaymentStatus(paymentId, true)
+  try {
+    const response = await govUkPayApi.fetchPaymentStatus(paymentId)
 
-  if (!response.ok) {
-    const errorDetails = await response.json()
-    throw new Error(errorDetails.error || 'Error fetching payment status')
+    if (!response.ok) {
+      const errorDetails = await response.json()
+      throw new Error(errorDetails.error || 'Error fetching payment status')
+    }
+
+    const paymentStatus = await response.json()
+    return paymentStatus
+  } catch (error) {
+    console.error('Error in getPaymentStatus:', error)
+    throw error
   }
-
-  const paymentStatus = await response.json()
-  return paymentStatus
 }

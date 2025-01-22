@@ -113,7 +113,7 @@ describe('recurring-payments-processor', () => {
       ]
     }
 
-    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'test-agreement-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
@@ -223,7 +223,7 @@ describe('recurring-payments-processor', () => {
       id: transactionId
     })
 
-    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     const expectedData = {
@@ -257,16 +257,18 @@ describe('recurring-payments-processor', () => {
       id: 'payment-id-1'
     })
     getPaymentStatus.mockResolvedValueOnce('Success')
+    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'agreement-1' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
     jest.advanceTimersByTime(60000)
 
-    expect(getPaymentStatus).toHaveBeenCalledWith('payment-id-1')
+    expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
   })
 
   it('should log payment status for recurring payment', async () => {
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    const mockPaymentId = 'payment-id-1'
+    const mockPaymentId = 'test-payment-id'
     const mockResponse = [
       {
         entity: { agreementId: 'agreement-1' },
@@ -283,6 +285,8 @@ describe('recurring-payments-processor', () => {
     salesApi.createTransaction.mockResolvedValue({
       id: mockPaymentId
     })
+    const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     const mockPaymentStatus = { code: 'P1234', description: 'Success' }
     getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
 
@@ -396,7 +400,7 @@ describe('recurring-payments-processor', () => {
   })
 })
 
-const getMockDueRecurringPayment = (referenceNumber = '123', agreementId = '456') => ({
+const getMockDueRecurringPayment = (referenceNumber = '123', agreementId = 'test-agreement-id') => ({
   entity: { agreementId },
   expanded: { activePermission: { entity: { referenceNumber } } }
 })
