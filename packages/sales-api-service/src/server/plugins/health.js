@@ -1,8 +1,9 @@
 import HapiAndHealthy from 'hapi-and-healthy'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import Project from '../../project.cjs'
-import { docClient, sqs } from '../../../../connectors-lib/src/aws.js'
 import { ListTablesCommand } from '@aws-sdk/client-dynamodb'
+import AWS from '../../../../connectors-lib/src/aws.js'
+const { docClient, sqs } = AWS
 
 export default {
   plugin: HapiAndHealthy,

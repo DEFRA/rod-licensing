@@ -2,7 +2,8 @@ import { processDlq } from '../process-transaction-dlq.js'
 import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../../exceptions/exceptions.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
-import { docClient } from '../../../../../connectors-lib/src/aws.js'
+import AWS from '../../../../../connectors-lib/src/aws.js'
+const { docClient } = AWS
 
 let mockProcessingException
 jest.mock('../process-transaction-queue.js', () => ({

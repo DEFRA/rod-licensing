@@ -4,7 +4,8 @@ import { createStagingExceptionFromError } from '../exceptions/exceptions.servic
 import { TRANSACTION_STAGING_TABLE } from '../../config.js'
 import db from 'debug'
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
-import { docClient } from '../../../../connectors-lib/src/aws.js'
+import AWS from '../../../../connectors-lib/src/aws.js'
+const { docClient } = AWS
 
 const debug = db('sales:transactions')
 

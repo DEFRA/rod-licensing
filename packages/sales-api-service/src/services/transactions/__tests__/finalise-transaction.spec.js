@@ -11,9 +11,9 @@ import BusinessRulesLib from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import { TRANSACTION_STATUS } from '../constants.js'
 import permissionsService from '../../permissions.service.js'
-import { docClient } from '../../../../../connectors-lib/src/aws.js'
-import { sqs } from '@defra-fish/connectors-lib'
 import { UpdateCommand, GetCommand } from '@aws-sdk/lib-dynamodb'
+import AWS from '../../../../../connectors-lib/src/aws.js'
+const { docClient, sqs } = AWS
 
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 
@@ -35,10 +35,7 @@ jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
   docClient: {
     send: jest.fn(),
     createUpdateExpression: jest.fn()
-  }
-}))
-
-jest.mock('@defra-fish/connectors-lib', () => ({
+  },
   sqs: {
     sendMessage: jest.fn()
   }

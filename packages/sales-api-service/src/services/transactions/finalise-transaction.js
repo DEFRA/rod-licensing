@@ -7,9 +7,9 @@ import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES } from '@defra-fi
 import moment from 'moment'
 import Boom from '@hapi/boom'
 import db from 'debug'
-import { sqs } from '@defra-fish/connectors-lib'
-import { docClient } from '../../../../connectors-lib/src/aws.js'
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import AWS from '../../../../connectors-lib/src/aws.js'
+const { docClient, sqs } = AWS
 
 const debug = db('sales:transactions')
 
