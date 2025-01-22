@@ -4,7 +4,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
-const transactions = []
+const payments = []
 
 const timeout = ms => {
   return new Promise(resolve => {
@@ -32,7 +32,7 @@ const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber)
-  takeRecurringPayment(agreementId, transaction)
+  await takeRecurringPayment(agreementId, transaction)
 }
 
 const createNewTransaction = async referenceNumber => {
@@ -40,10 +40,6 @@ const createNewTransaction = async referenceNumber => {
   console.log('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    transactions.push({
-      referenceNumber,
-      transaction: response
-    })
     console.log('New transaction created:', response)
     return response
   } catch (e) {
@@ -52,10 +48,14 @@ const createNewTransaction = async referenceNumber => {
   }
 }
 
-const takeRecurringPayment = (agreementId, transaction) => {
+const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  sendPayment(preparedPayment)
+  const payment = await sendPayment(preparedPayment)
+  payments.push({
+    agreementId,
+    paymentId: payment.payment_id
+  })
 }
 
 const processPermissionData = async referenceNumber => {

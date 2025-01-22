@@ -41,7 +41,7 @@ export const getData = async request => {
     digitalConfirmation: digital && permission.licensee.postalFulfilment,
     digitalLicence: digital && !permission.licensee.postalFulfilment,
     postalLicence: permission.licensee.postalFulfilment,
-    recurringPayment: isRecurringPayment(permission),
+    recurringPayment: isRecurringPayment(transaction),
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
@@ -58,7 +58,7 @@ const postalFulfilment = permission => {
   }
 }
 
-const isRecurringPayment = permission => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && permission.isRecurringPayment
+const isRecurringPayment = transaction => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && !!transaction.agreementId
 
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
