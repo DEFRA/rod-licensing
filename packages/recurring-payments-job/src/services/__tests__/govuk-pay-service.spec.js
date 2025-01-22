@@ -84,28 +84,37 @@ describe('govuk-pay-service', () => {
       expect(result).toEqual(mockPaymentStatus)
     })
 
-    it('should throw an error if the response is not ok', async () => {
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue({
+    it('should throw an error when payment ID is invalid', async () => {
+      await expect(getPaymentStatus(null)).rejects.toThrow('Invalid payment ID')
+    })
+
+    it('should throw an error when response is not ok', async () => {
+      const mockErrorDetails = { error: 'Payment not found' }
+      const mockFetchResponse = {
         ok: false,
-        status: 404,
-        json: jest.fn().mockResolvedValue({ error: 'Payment not found' })
-      })
-      const paymentId = 'invalid-payment-id'
-      await expect(getPaymentStatus(paymentId)).rejects.toThrow('Payment not found')
+        json: jest.fn().mockResolvedValue(mockErrorDetails)
+      }
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
+
+      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Payment not found')
     })
 
-    it('should throw an error if JSON parsing fails', async () => {
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue({
-        ok: true,
-        json: jest.fn().mockRejectedValue(new Error('Failed to parse JSON'))
-      })
-      const paymentId = 'valid-payment-id'
-      await expect(getPaymentStatus(paymentId)).rejects.toThrow('Failed to parse JSON')
+    it('should throw an error when response is not ok but errorDetails has no value', async () => {
+      const mockErrorDetails = {}
+      const mockFetchResponse = {
+        ok: false,
+        json: jest.fn().mockResolvedValue(mockErrorDetails)
+      }
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
+
+      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Error fetching payment status')
     })
 
-    it('should handle invalid payment ID', async () => {
-      const paymentId = null
-      await expect(getPaymentStatus(paymentId)).rejects.toThrow('Invalid payment ID')
+    it('should throw an error when fetchPaymentStatus fails', async () => {
+      const mockError = new Error('Network error')
+      govUkPayApi.fetchPaymentStatus.mockRejectedValue(mockError)
+
+      await expect(getPaymentStatus('test-payment-id')).rejects.toThrow('Network error')
     })
   })
 })

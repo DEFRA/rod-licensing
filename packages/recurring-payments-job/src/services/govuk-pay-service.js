@@ -20,6 +20,7 @@ export const getPaymentStatus = async paymentId => {
 
     if (!response.ok) {
       const errorDetails = await response.json()
+      console.log(errorDetails)
       throw new Error(errorDetails.error || 'Error fetching payment status')
     }
 
