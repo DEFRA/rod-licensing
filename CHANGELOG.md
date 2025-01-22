@@ -1,4 +1,13 @@
 
+## v1.58.0-rc.13 (2025-01-22)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2112](https://github.com/DEFRA/rod-licensing/pull/2112) Get id from payment creation request ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.58.0-rc.12 (2025-01-20)
 
 #### :rocket: Enhancement
