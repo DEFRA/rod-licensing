@@ -14,7 +14,9 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     }))
   }
 }))
-jest.mock('../services/govuk-pay-service.js')
+jest.mock('../services/govuk-pay-service.js', () => ({
+  sendPayment: jest.fn()
+}))
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
@@ -58,6 +60,8 @@ describe('recurring-payments-processor', () => {
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -106,6 +110,9 @@ describe('recurring-payments-processor', () => {
       ]
     }
 
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+
     await processRecurringPayments()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
@@ -126,6 +133,9 @@ describe('recurring-payments-processor', () => {
         }
       ]
     })
+
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -153,6 +163,9 @@ describe('recurring-payments-processor', () => {
       licenceStartTime: 15
     })
 
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+
     await processRecurringPayments()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(
@@ -169,6 +182,9 @@ describe('recurring-payments-processor', () => {
       licensee: { countryCode: 'GB-ENG' },
       licenceStartDate: '2020-03-14'
     })
+
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -204,6 +220,9 @@ describe('recurring-payments-processor', () => {
       id: transactionId
     })
 
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+
     const expectedData = {
       amount: 5000,
       description: 'The recurring card payment for your rod fishing licence',
@@ -229,6 +248,8 @@ describe('recurring-payments-processor', () => {
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment(reference))
       })
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+      const mockPaymentResponse = { payment_id: 'test-payment-id' }
+      sendPayment.mockResolvedValue(mockPaymentResponse)
 
       const expectedData = []
       references.forEach(reference => {
