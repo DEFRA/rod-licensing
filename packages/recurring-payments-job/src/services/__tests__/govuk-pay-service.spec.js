@@ -63,14 +63,14 @@ describe('govuk-pay-service', () => {
   })
 
   describe('getPaymentStatus', () => {
-    it('should call fetchPaymentStatus with payment id', async () => {
+    it('should call fetchPaymentStatus with payment id and true for recurring payments', async () => {
       govUkPayApi.fetchPaymentStatus.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ code: 'P1234', description: 'Success' })
       })
       const paymentId = Symbol('transactionId')
       await getPaymentStatus(paymentId)
-      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId)
+      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, true)
     })
 
     it('should return the payment status on successful response', async () => {

@@ -16,7 +16,7 @@ export const getPaymentStatus = async paymentId => {
   }
 
   try {
-    const response = await govUkPayApi.fetchPaymentStatus(paymentId)
+    const response = await govUkPayApi.fetchPaymentStatus(paymentId, true)
 
     if (!response.ok) {
       const errorDetails = await response.json()

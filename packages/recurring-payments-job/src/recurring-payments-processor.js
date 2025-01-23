@@ -103,9 +103,8 @@ const preparePayment = (agreementId, transaction) => {
 const processRecurringPaymentStatus = async record => {
   const agreementId = record.entity.agreementId
   const paymentId = getPaymentId(agreementId)
-  console.log('paymentId:', paymentId)
   const status = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${status}`)
+  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status.state.status)}`)
 }
 
 const getPaymentId = agreementId => {

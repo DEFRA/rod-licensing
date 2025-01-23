@@ -65,6 +65,7 @@ describe('recurring-payments-processor', () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     await processRecurringPayments()
 
@@ -115,6 +116,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'test-agreement-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     await processRecurringPayments()
 
@@ -139,6 +141,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     await processRecurringPayments()
 
@@ -168,6 +171,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     await processRecurringPayments()
 
@@ -188,6 +192,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     await processRecurringPayments()
 
@@ -225,6 +230,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     const expectedData = {
       amount: 5000,
@@ -256,7 +262,7 @@ describe('recurring-payments-processor', () => {
     salesApi.createTransaction.mockResolvedValue({
       id: 'payment-id-1'
     })
-    getPaymentStatus.mockResolvedValueOnce('Success')
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
@@ -287,13 +293,14 @@ describe('recurring-payments-processor', () => {
     })
     const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    const mockPaymentStatus = { code: 'P1234', description: 'Success' }
+    const mockPaymentStatus = { state: { status: 'Success' } }
     getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
+    const mockStatus = JSON.stringify(mockPaymentStatus.state.status)
 
     await processRecurringPayments()
     jest.advanceTimersByTime(60000)
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockPaymentStatus}`)
+    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
@@ -310,6 +317,8 @@ describe('recurring-payments-processor', () => {
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
       const mockPaymentResponse = { payment_id: 'test-payment-id' }
       sendPayment.mockResolvedValue(mockPaymentResponse)
+      const mockPaymentStatus = { state: { status: 'Success' } }
+      getPaymentStatus.mockResolvedValue(mockPaymentStatus)
 
       const expectedData = []
       references.forEach(reference => {
@@ -396,6 +405,44 @@ describe('recurring-payments-processor', () => {
 
       await processRecurringPayments()
       expect(sendPayment.mock.calls).toEqual(expectedData)
+    })
+
+    it('gets the payment status for each one', async () => {
+      const mockGetDueRecurringPayments = []
+      const agreementIds = []
+      for (let i = 0; i < count; i++) {
+        const agreementId = Symbol(`agreementId${1}`)
+        agreementIds.push(agreementId)
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i, agreementId))
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+
+      const permits = []
+      for (let i = 0; i < count; i++) {
+        permits.push(Symbol(`permit${i}`))
+      }
+
+      permits.forEach((permit, i) => {
+        salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+          licensee: { countryCode: 'GB-ENG' }
+        })
+
+        salesApi.createTransaction.mockReturnValueOnce({
+          cost: i,
+          id: permit
+        })
+      })
+
+      const expectedData = []
+      permits.forEach(() => {
+        expectedData.push(['test-payment-id'])
+      })
+
+      const mockPaymentResponse = { payment_id: 'test-payment-id' }
+      sendPayment.mockResolvedValue(mockPaymentResponse)
+
+      await processRecurringPayments()
+      expect(getPaymentStatus.mock.calls).toEqual(expectedData)
     })
   })
 })
