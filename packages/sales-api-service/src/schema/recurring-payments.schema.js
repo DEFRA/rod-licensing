@@ -1,0 +1,21 @@
+import Joi from 'joi'
+import { commonContactSchema } from './contact.schema.js'
+import { finalisedPermissionSchemaContent } from './permission.schema.js'
+
+export const dueRecurringPaymentsResponseSchema = Joi.object({
+  id: Joi.string().guid().required(),
+  name: Joi.string().required(),
+  status: Joi.number().required(),
+  nextDueDate: Joi.string().isoDate().required(),
+  cancelledDate: Joi.string().isoDate().allow(null).required(),
+  cancelledReason: Joi.string().allow(null).required(),
+  endDate: Joi.string().isoDate().required(),
+  agreementId: Joi.string().guid().required(),
+  activePermission: Joi.string().guid().required(),
+  contactId: Joi.string().guid().required(),
+  publicId: Joi.string().required(),
+  expanded: Joi.object({
+    contact: { entity: commonContactSchema },
+    activePermission: { entity: finalisedPermissionSchemaContent }
+  })
+})
