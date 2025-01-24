@@ -5,13 +5,14 @@ const debug = db('connectors:aws')
 
 export const createDocumentClient = (options = {}) => {
   const client =
-    options.dynamoDBInstance ||
+    aptions.dynamoDBInstance ||
     new DynamoDBClient({
       ...options,
       region: options.region || process.env.AWS_REGION || 'eu-west-2'
     })
 
   const docClient = DynamoDBDocumentClient.from(client)
+  console.log('createDocumentClient called with options:', options)
 
   // Support for large query/scan operations which return results in pages
   const wrapPagedDocumentClientOperation = operationName => {
