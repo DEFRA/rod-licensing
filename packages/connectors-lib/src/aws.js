@@ -14,11 +14,10 @@ export default function () {
     })
   })
 
-  console.log('Config.aws.region:', Config.aws.region);
-  console.log('Config.aws.dynamodb.endpoint:', Config.aws.dynamodb.endpoint);
+  console.log('Config.aws.region:', Config.aws.region)
+  console.log('Config.aws.dynamodb.endpoint:', Config.aws.dynamodb.endpoint)
 
   const docClient = createDocumentClient(dynamoDBInstance)
-  
   console.log('Real docClient initialized:', !!docClient)
 
   return {

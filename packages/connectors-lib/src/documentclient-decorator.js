@@ -5,7 +5,7 @@ const debug = db('connectors:aws')
 
 export const createDocumentClient = (options = {}) => {
   const client =
-    aptions.dynamoDBInstance ||
+    options.dynamoDBInstance ||
     new DynamoDBClient({
       ...options,
       region: options.region || process.env.AWS_REGION || 'eu-west-2'
