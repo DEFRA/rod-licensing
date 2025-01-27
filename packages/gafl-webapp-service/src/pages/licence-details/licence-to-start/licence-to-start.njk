@@ -48,21 +48,21 @@
 {% set dateInputItems = [
     {
       name: "day",
-      label: mssgs.dob_day,
+      label: mssgs.date_day,
       classes: "govuk-input--width-2 govuk-input--error" if data.isDayError else "govuk-input--width-2",
       value: payload['licence-start-date-day'],
       attributes: { maxlength : 2 }
     },
     {
       name: "month",
-      label: mssgs.dob_month,
+      label: mssgs.date_month,
       classes: "govuk-input--width-2 govuk-input--error" if data.isMonthError else "govuk-input--width-2",
       value: payload['licence-start-date-month'],
       attributes: { maxlength : 2 }
     },
     {
       name: "year",
-      label: mssgs.dob_year,
+      label: mssgs.date_year,
       classes: "govuk-input--width-4 govuk-input--error" if data.isYearError else "govuk-input--width-4",
       value: payload['licence-start-date-year'],
       attributes: { maxlength : 4 }

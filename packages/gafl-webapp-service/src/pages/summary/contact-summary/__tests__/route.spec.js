@@ -38,9 +38,8 @@ jest.mock('../../../../processors/licence-type-display.js', () => ({
   isPhysical: jest.fn(() => true)
 }))
 
-const mockRoute = Symbol('mock-route')
-const route = require('../route.js').default
-jest.mock('../../../../routes/page-route.js', () => jest.fn(() => mockRoute))
+const route = require('../route.js')
+jest.mock('../../../../routes/page-route.js')
 const getData = pageRoute.mock.calls[1][4]
 
 const getMockCatalog = overrides => ({
@@ -62,8 +61,8 @@ const getMockCatalog = overrides => ({
   contact_summary_row_contact: Symbol('contact-summary-row-contact'),
   contact_summary_row_licence_details: Symbol('contact-summary-row-licence-details'),
   contact_summary_row_newsletter: Symbol('contact-summary-row-newsletter'),
-  contact_summary_text_sngl: 'contact-summary-text-sngl',
-  contact_summary_text_plrl: 'contact-summary-text-plrl',
+  contact_summary_text_sngl: 'Text message-contact-summary-text-sngl',
+  contact_summary_text_plrl: 'Text messages-contact-summary-text-plrl',
   contact_summary_title: Symbol('contact-summary-title'),
   no: 'negative, Ghost Rider',
   yes: 'aye',
@@ -125,10 +124,6 @@ const getRequestMock = ({
 })
 
 describe('contact-summary > route', () => {
-  it('should return result of pageRoute call', () => {
-    expect(route).toEqual(mockRoute)
-  })
-
   it('should set status.fromSummary to seen', async () => {
     const mockPermission = jest.fn()
     const mockRequest = getRequestMock({ setStatusPermission: mockPermission })
@@ -169,7 +164,6 @@ describe('contact-summary > route', () => {
     const mssgCatalog = getMockCatalog({
       [mssgKey]: mssg
     })
-    console.log('mssgcat: ', mssgCatalog.yes)
     const samplePermission = getMockPermission({
       preferredMethodOfNewsletter
     })
@@ -334,6 +328,61 @@ describe('contact-summary > route', () => {
       }
       const mockRequest = getRequestMock({ status })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_CONFIRMATION_METHOD.uri)
+    })
+  })
+
+  describe('generateContactRow', () => {
+    it('should generate a contact row with meta tag when includeMeta is true', () => {
+      const permission = {
+        licensee: {
+          preferredMethodOfReminder: 'Text Me',
+          preferredMethodOfConfirmation: 'Text Me',
+          mobilePhone: '07123432817'
+        }
+      }
+      const rowGenerator = new route.RowGenerator(getRequestMock(), permission)
+      const decoratedUri = Symbol('decoratedUri')
+      addLanguageCodeToUri.mockReturnValue(decoratedUri)
+      const row = rowGenerator.generateContactRow({
+        label: 'contact_summary_row_contact',
+        href: LICENCE_CONFIRMATION_METHOD.uri,
+        visuallyHiddenText: 'contact_summary_hidden_licence_confirmation',
+        id: 'change-licence-confirmation-option',
+        contactTextSpec: {
+          EMAIL: 'contact_summary_email',
+          TEXT: 'contact_summary_text_sngl',
+          DEFAULT: 'contact_summary_default'
+        },
+        includeMeta: true
+      })
+
+      expect(row).toMatchSnapshot()
+    })
+
+    it('should generate a contact row without meta tag when includeMeta is false', async () => {
+      const permission = {
+        licensee: {
+          preferredMethodOfReminder: 'Email Me',
+          preferredMethodOfConfirmation: 'Email Me',
+          email: 'test@example.com'
+        }
+      }
+      const rowGenerator = new route.RowGenerator(getRequestMock(), permission)
+      const decoratedUri = Symbol('decoratedUri')
+      addLanguageCodeToUri.mockReturnValue(decoratedUri)
+      const row = rowGenerator.generateContactRow({
+        label: 'contact_summary_row_contact',
+        href: LICENCE_CONFIRMATION_METHOD.uri,
+        visuallyHiddenText: 'contact_summary_hidden_licence_confirmation',
+        id: 'change-licence-confirmation-option',
+        contactTextSpec: {
+          EMAIL: 'contact_summary_email',
+          TEXT: 'contact_summary_text_sngl',
+          DEFAULT: 'contact_summary_default'
+        }
+      })
+
+      expect(row).toMatchSnapshot()
     })
   })
 })

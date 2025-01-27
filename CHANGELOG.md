@@ -1,4 +1,123 @@
 
+## v1.58.0-rc.13 (2025-01-22)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2112](https://github.com/DEFRA/rod-licensing/pull/2112) Get id from payment creation request ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.58.0-rc.12 (2025-01-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2111](https://github.com/DEFRA/rod-licensing/pull/2111) Check recurring status based on transaction ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.58.0-rc.11 (2025-01-16)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2109](https://github.com/DEFRA/rod-licensing/pull/2109) Recurring payment job sends payment requests to GOV.UK Pay ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.58.0-rc.10 (2025-01-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2090](https://github.com/DEFRA/rod-licensing/pull/2090) Mobile phone links ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.58.0-rc.9 (2025-01-15)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2101](https://github.com/DEFRA/rod-licensing/pull/2101) Move continue button to below the pricing summary ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.8 (2025-01-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2106](https://github.com/DEFRA/rod-licensing/pull/2106) Capitalising Date Entry Fields ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.7 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2107](https://github.com/DEFRA/rod-licensing/pull/2107) Added Welsh to Missing Address Error ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.6 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2105](https://github.com/DEFRA/rod-licensing/pull/2105) Add Welsh to Hidden Date Picker Text ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.5 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2104](https://github.com/DEFRA/rod-licensing/pull/2104) Welsh Missing From Payment Errors ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.4 (2025-01-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2102](https://github.com/DEFRA/rod-licensing/pull/2102) Add Missing Welsh to Newsletter Page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.3 (2025-01-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2103](https://github.com/DEFRA/rod-licensing/pull/2103) Incorrect Link to Fisheries Report ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.58.0-rc.2 (2024-12-23)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`
+  * [#2096](https://github.com/DEFRA/rod-licensing/pull/2096) Update order complete page RCP logic ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.58.0-rc.0 (2024-12-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2098](https://github.com/DEFRA/rod-licensing/pull/2098) New price increase ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#2099](https://github.com/DEFRA/rod-licensing/pull/2099) Payment edge case 2025 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.57.0-rc.12 (2024-12-13)
 

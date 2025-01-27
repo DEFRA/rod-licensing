@@ -1,5 +1,4 @@
 import pageRoute from '../../../routes/page-route.js'
-import { validForRecurringPayment } from '../../../processors/recurring-pay-helper.js'
 import Boom from '@hapi/boom'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../constants.js'
 import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_DETAILS } from '../../../uri.js'
@@ -42,7 +41,7 @@ export const getData = async request => {
     digitalConfirmation: digital && permission.licensee.postalFulfilment,
     digitalLicence: digital && !permission.licensee.postalFulfilment,
     postalLicence: permission.licensee.postalFulfilment,
-    recurringPayment: isRecurringPayment(status, permission),
+    recurringPayment: isRecurringPayment(transaction),
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
@@ -59,7 +58,7 @@ const postalFulfilment = permission => {
   }
 }
 
-const isRecurringPayment = (status, permission) => validForRecurringPayment(permission) && status.permissions[0]['set-up-payment']
+const isRecurringPayment = transaction => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && !!transaction.agreementId
 
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||

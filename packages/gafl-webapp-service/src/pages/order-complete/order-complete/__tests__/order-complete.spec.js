@@ -5,7 +5,6 @@ import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.j
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import { displayPrice } from '../../../../processors/price-display.js'
-import { validForRecurringPayment } from '../../../../processors/recurring-pay-helper.js'
 
 jest.mock('../../../../processors/recurring-pay-helper.js')
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -50,14 +49,16 @@ const getSamplePermission = ({
   licenceType = LICENCE_TYPE['trout-and-coarse'],
   isLicenceForYou = true,
   licenceLength = '12M',
-  licensee = getSampleLicensee()
+  licensee = getSampleLicensee(),
+  isRecurringPayment = false
 } = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
   licensee,
   isLicenceForYou,
   licenceType,
   referenceNumber,
-  licenceLength
+  licenceLength,
+  isRecurringPayment
 })
 
 const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true, setUpPayment = true } = {}) => ({
@@ -104,7 +105,8 @@ const getSampleRequest = ({
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
   transactionCost = 1,
-  messages = getMessages()
+  messages = getMessages(),
+  agreementId
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -115,7 +117,8 @@ const getSampleRequest = ({
       },
       transaction: {
         get: async () => ({
-          cost: transactionCost
+          cost: transactionCost,
+          agreementId
         }),
         getCurrentPermission: () => permission
       }
@@ -203,27 +206,22 @@ describe('The order completion handler', () => {
     expect(displayStartTime).toHaveBeenCalledWith(request, permission)
   })
 
-  it('validForRecurringPayment is called with a permission', async () => {
-    const permission = getSamplePermission()
-
-    await getData(getSampleRequest({ permission }))
-
-    expect(validForRecurringPayment).toHaveBeenCalledWith(permission)
-  })
-
   it.each`
-    agreement | valid    | expected
-    ${true}   | ${true}  | ${true}
-    ${true}   | ${false} | ${false}
-    ${false}  | ${false} | ${false}
-    ${false}  | ${true}  | ${false}
+    show     | agreementId  | expected
+    ${true}  | ${'foo123'}  | ${true}
+    ${true}  | ${undefined} | ${false}
+    ${false} | ${'foo123'}  | ${false}
+    ${false} | ${undefined} | ${false}
   `(
-    'recurringPayment returns $expected when status for setup of recurring payment agreement is $agreement and valid for recurring payment is $valid',
-    async ({ agreement, valid, expected }) => {
-      validForRecurringPayment.mockReturnValueOnce(valid)
-      const completionStatus = getSampleCompletionStatus({ setUpPayment: agreement })
-      const { recurringPayment } = await getData(getSampleRequest({ completionStatus }))
+    'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the transaction agreementId is $agreementId',
+    async ({ show, agreementId, expected }) => {
+      process.env.SHOW_RECURRING_PAYMENTS = show
+      const request = getSampleRequest({ agreementId })
+      const { recurringPayment } = await getData(request)
+
       expect(recurringPayment).toBe(expected)
+
+      delete process.env.SHOW_RECURRING_PAYMENTS
     }
   )
 

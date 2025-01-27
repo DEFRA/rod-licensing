@@ -1,5 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
+import { sendPayment } from '../services/govuk-pay-service.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -8,8 +9,13 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     preparePermissionDataForRenewal: jest.fn(() => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
-    createTransaction: jest.fn()
+    createTransaction: jest.fn(() => ({
+      cost: 30
+    }))
   }
+}))
+jest.mock('../services/govuk-pay-service.js', () => ({
+  sendPayment: jest.fn()
 }))
 
 describe('recurring-payments-processor', () => {
@@ -53,7 +59,9 @@ describe('recurring-payments-processor', () => {
 
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -61,7 +69,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a transaction with the correct data', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     const isLicenceForYou = Symbol('isLicenceForYou')
     const isRenewal = Symbol('isRenewal')
@@ -102,13 +110,16 @@ describe('recurring-payments-processor', () => {
       ]
     }
 
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+
     await processRecurringPayments()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
   })
 
   it('strips the concession name returned by preparePermissionDataForRenewal before passing to createTransaction', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: {
@@ -122,6 +133,9 @@ describe('recurring-payments-processor', () => {
         }
       ]
     })
+
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -141,13 +155,16 @@ describe('recurring-payments-processor', () => {
   })
 
   it('assigns the correct startDate when licenceStartTime is present', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' },
       licenceStartDate: '2020-03-14',
       licenceStartTime: 15
     })
+
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -159,12 +176,15 @@ describe('recurring-payments-processor', () => {
   })
 
   it('assigns the correct startDate when licenceStartTime is not present', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' },
       licenceStartDate: '2020-03-14'
     })
+
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
 
@@ -176,13 +196,44 @@ describe('recurring-payments-processor', () => {
   })
 
   it('raises an error if createTransaction fails', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const error = 'Wuh-oh!'
     salesApi.createTransaction.mockImplementationOnce(() => {
       throw new Error(error)
     })
 
     await expect(processRecurringPayments()).rejects.toThrowError(error)
+  })
+
+  it('prepares and sends the payment request', async () => {
+    const agreementId = Symbol('agreementId')
+    const transactionId = Symbol('transactionId')
+
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
+
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      licensee: { countryCode: 'GB-ENG' }
+    })
+
+    salesApi.createTransaction.mockReturnValueOnce({
+      cost: 50,
+      id: transactionId
+    })
+
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+
+    const expectedData = {
+      amount: 5000,
+      description: 'The recurring card payment for your rod fishing licence',
+      reference: transactionId,
+      authorisation_mode: 'agreement',
+      agreement_id: agreementId
+    }
+
+    await processRecurringPayments()
+
+    expect(sendPayment).toHaveBeenCalledWith(expectedData)
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
@@ -194,9 +245,11 @@ describe('recurring-payments-processor', () => {
 
       const mockGetDueRecurringPayments = []
       references.forEach(reference => {
-        mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: reference } } } })
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(reference))
       })
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+      const mockPaymentResponse = { payment_id: 'test-payment-id' }
+      sendPayment.mockResolvedValue(mockPaymentResponse)
 
       const expectedData = []
       references.forEach(reference => {
@@ -211,7 +264,7 @@ describe('recurring-payments-processor', () => {
     it('creates a transaction for each one', async () => {
       const mockGetDueRecurringPayments = []
       for (let i = 0; i < count; i++) {
-        mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: i } } } })
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i))
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
@@ -241,5 +294,53 @@ describe('recurring-payments-processor', () => {
 
       expect(salesApi.createTransaction.mock.calls).toEqual(expectedData)
     })
+
+    it('sends a payment for each one', async () => {
+      const mockGetDueRecurringPayments = []
+      const agreementIds = []
+      for (let i = 0; i < count; i++) {
+        const agreementId = Symbol(`agreementId${1}`)
+        agreementIds.push(agreementId)
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i, agreementId))
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+
+      const permits = []
+      for (let i = 0; i < count; i++) {
+        permits.push(Symbol(`permit${i}`))
+      }
+
+      permits.forEach((permit, i) => {
+        salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+          licensee: { countryCode: 'GB-ENG' }
+        })
+
+        salesApi.createTransaction.mockReturnValueOnce({
+          cost: i,
+          id: permit
+        })
+      })
+
+      const expectedData = []
+      permits.forEach((permit, i) => {
+        expectedData.push([
+          {
+            amount: i * 100,
+            description: 'The recurring card payment for your rod fishing licence',
+            reference: permit,
+            authorisation_mode: 'agreement',
+            agreement_id: agreementIds[i]
+          }
+        ])
+      })
+
+      await processRecurringPayments()
+      expect(sendPayment.mock.calls).toEqual(expectedData)
+    })
   })
+})
+
+const getMockDueRecurringPayment = (referenceNumber = '123', agreementId = '456') => ({
+  entity: { agreementId },
+  expanded: { activePermission: { entity: { referenceNumber } } }
 })

@@ -1,6 +1,9 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
+import { sendPayment } from './services/govuk-pay-service.js'
+
+const payments = []
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -9,6 +12,7 @@ export const processRecurringPayments = async () => {
     const response = await salesApi.getDueRecurringPayments(date)
     console.log('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
+    console.log('Recurring Payments processed:', payments)
   } else {
     console.log('Recurring Payments job disabled')
   }
@@ -16,15 +20,32 @@ export const processRecurringPayments = async () => {
 
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
+  const agreementId = record.entity.agreementId
+  const transaction = await createNewTransaction(referenceNumber)
+  await takeRecurringPayment(agreementId, transaction)
+}
+
+const createNewTransaction = async referenceNumber => {
   const transactionData = await processPermissionData(referenceNumber)
   console.log('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
     console.log('New transaction created:', response)
+    return response
   } catch (e) {
     console.log('Error creating transaction', JSON.stringify(transactionData))
     throw e
   }
+}
+
+const takeRecurringPayment = async (agreementId, transaction) => {
+  const preparedPayment = preparePayment(agreementId, transaction)
+  console.log('Requesting payment:', preparedPayment)
+  const payment = await sendPayment(preparedPayment)
+  payments.push({
+    agreementId,
+    paymentId: payment.payment_id
+  })
 }
 
 const processPermissionData = async referenceNumber => {
@@ -55,4 +76,16 @@ const prepareStartDate = permission => {
     .add(permission.licenceStartTime ?? 0, 'hours')
     .utc()
     .toISOString()
+}
+
+const preparePayment = (agreementId, transaction) => {
+  const result = {
+    amount: Math.round(transaction.cost * 100),
+    description: 'The recurring card payment for your rod fishing licence',
+    reference: transaction.id,
+    authorisation_mode: 'agreement',
+    agreement_id: agreementId
+  }
+
+  return result
 }

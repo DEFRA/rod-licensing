@@ -39,7 +39,9 @@ const CONTACT_TEXT_PHYSICAL = {
 
 const CHANGE_CONTACT = 'change-contact'
 
-class RowGenerator {
+const META_TAG_TELEPHONE_NO = '<meta name="format-detection" content="telephone=no">'
+
+export class RowGenerator {
   constructor (request, permission) {
     this.request = request
     this.permission = permission
@@ -68,9 +70,9 @@ class RowGenerator {
     }
   }
 
-  _generateRow (label, text, rawHref, visuallyHiddenText, id) {
+  _generateRow ({ label, text, rawHref, visuallyHiddenText, id, includeMeta = false }) {
     const href = addLanguageCodeToUri(this.request, rawHref)
-    return {
+    const row = {
       key: {
         text: label
       },
@@ -90,10 +92,22 @@ class RowGenerator {
         }
       })
     }
+
+    if (includeMeta) {
+      row.value.meta = META_TAG_TELEPHONE_NO
+    }
+
+    return row
   }
 
   generateStandardRow (label, text, rawHref, visuallyHiddenText, id) {
-    return this._generateRow(this.labels[label], this.labels[text], rawHref, this.labels[visuallyHiddenText], id)
+    return this._generateRow({
+      label: this.labels[label],
+      text: this.labels[text],
+      rawHref,
+      visuallyHiddenText: this.labels[visuallyHiddenText],
+      id
+    })
   }
 
   generateAddressRow (countryName) {
@@ -102,21 +116,28 @@ class RowGenerator {
       .filter(Boolean)
       .join(', ')
 
-    return this._generateRow(
-      this.labels.contact_summary_row_address,
+    return this._generateRow({
+      label: this.labels.contact_summary_row_address,
       text,
-      ADDRESS_LOOKUP.uri,
-      this.labels.contact_summary_hidden_address,
-      'change-address'
-    )
+      rawHref: ADDRESS_LOOKUP.uri,
+      visuallyHiddenText: this.labels.contact_summary_hidden_address,
+      id: 'change-address'
+    })
   }
 
-  generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
+  generateContactRow ({ label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT, includeMeta = false }) {
     const contactText =
       label === 'contact_summary_row_contact'
         ? this._getPreferredMethodOfReminderText(contactTextSpec)
         : this._getPreferredMethodOfConfirmation(contactTextSpec)
-    return this._generateRow(this.labels[label], contactText, href, this.labels[visuallyHiddenText], id)
+    return this._generateRow({
+      label: this.labels[label],
+      text: contactText,
+      rawHref: href,
+      visuallyHiddenText: this.labels[visuallyHiddenText],
+      id,
+      includeMeta
+    })
   }
 }
 
@@ -145,6 +166,8 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const rowGenerator = new RowGenerator(request, permission)
 
   const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
+  const confirmationText = permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
+  const reminderText = permission.licensee.preferredMethodOfReminder === HOW_CONTACTED.text
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
@@ -155,42 +178,46 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
           'contact_summary_hidden_licence_fulfilment',
           'change-licence-fulfilment-option'
         ),
-        rowGenerator.generateContactRow(
-          'contact_summary_row_licence_conf',
-          LICENCE_CONFIRMATION_METHOD.uri,
-          'contact_summary_hidden_licence_confirmation',
-          'change-licence-confirmation-option'
-        )
+        rowGenerator.generateContactRow({
+          label: 'contact_summary_row_licence_conf',
+          href: LICENCE_CONFIRMATION_METHOD.uri,
+          visuallyHiddenText: 'contact_summary_hidden_licence_confirmation',
+          id: 'change-licence-confirmation-option',
+          includeMeta: confirmationText
+        })
       )
     } else {
       licenseeSummaryArray.push(
-        rowGenerator.generateContactRow(
-          'contact_summary_row_licence',
-          LICENCE_FULFILMENT.uri,
-          'contact_summary_hidden_licence_confirmation',
-          'change-licence-confirmation-option'
-        )
+        rowGenerator.generateContactRow({
+          label: 'contact_summary_row_licence',
+          href: LICENCE_FULFILMENT.uri,
+          visuallyHiddenText: 'contact_summary_hidden_licence_confirmation',
+          id: 'change-licence-confirmation-option',
+          includeMeta: confirmationText
+        })
       )
     }
 
     licenseeSummaryArray.push(
-      rowGenerator.generateContactRow(
-        'contact_summary_row_contact',
-        CONTACT.uri,
-        'contact_summary_hidden_contact',
-        CHANGE_CONTACT,
-        CONTACT_TEXT_PHYSICAL
-      )
+      rowGenerator.generateContactRow({
+        label: 'contact_summary_row_contact',
+        href: CONTACT.uri,
+        visuallyHiddenText: 'contact_summary_hidden_contact',
+        id: CHANGE_CONTACT,
+        contactTextSpec: CONTACT_TEXT_PHYSICAL,
+        includeMeta: reminderText
+      })
     )
   } else {
     licenseeSummaryArray.push(
-      rowGenerator.generateContactRow(
-        'contact_summary_row_licence_details',
-        CONTACT.uri,
-        'contact_summary_hidden_contact',
-        CHANGE_CONTACT,
-        CONTACT_TEXT_NON_PHYSICAL
-      )
+      rowGenerator.generateContactRow({
+        label: 'contact_summary_row_licence_details',
+        href: CONTACT.uri,
+        visuallyHiddenText: 'contact_summary_hidden_contact',
+        id: CHANGE_CONTACT,
+        contactTextSpec: CONTACT_TEXT_NON_PHYSICAL,
+        includeMeta: reminderText
+      })
     )
   }
 
