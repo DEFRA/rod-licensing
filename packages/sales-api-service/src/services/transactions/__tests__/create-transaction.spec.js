@@ -8,8 +8,7 @@ import {
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
-import AWS from '../../../../../connectors-lib/src/aws.js'
-const { docClient } = AWS
+import { AWS } from '@defra-fish/connectors-lib'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
@@ -23,11 +22,15 @@ jest.mock('../../reference-data.service.js', () => ({
   })
 }))
 
-jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn()
-  }
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      send: jest.fn()
+    }
+  }))
 }))
+
+const { docClient } = AWS.mock.results[0].value
 
 describe('transaction service', () => {
   beforeAll(() => {

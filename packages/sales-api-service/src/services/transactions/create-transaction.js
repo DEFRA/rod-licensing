@@ -6,8 +6,9 @@ import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
-import AWS from '../../../../connectors-lib/src/aws.js'
-const { docClient } = AWS
+import { AWS } from '@defra-fish/connectors-lib'
+// import AWS from '../../../../connectors-lib/src/aws.js'
+const { docClient } = AWS()
 
 const debug = db('sales:transactions')
 
