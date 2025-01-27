@@ -15,29 +15,26 @@
 %}
 
 {% set troutAndCoarse2Rod %}
-    <p class="govuk-body-m">
-        {{ mssgs.licence_type_troute_two_rod }}
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_rules }}</a>{{ mssgs.and }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.full_stop }}
-     </p>
+    <p class="govuk-body-m"> {{ mssgs.licence_type_trout_two_rod }}</p>
 {% endset -%}
 
 {% set troutAndCoarse3Rod %}
-    <p class="govuk-body-m">
-        {{ mssgs.licence_type_troute_three_rod }}
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_rules }}</a>{{ mssgs.and }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.full_stop }}
-    </p>
+    <p class="govuk-body-m"> {{ mssgs.licence_type_trout_three_rod }}</p>
 {% endset -%}
 
 {% set salmonAndSeaTrout %}
     {% if data.hasJunior %}<p class="govuk-body-m">{{ mssgs.licence_type_salmon_junior }}</p>{% endif %}
-    {{ govukWarningText({
-      text: mssgs.licence_type_salmon_acr_warning,
-      iconFallbackText: "Warning",
-      classes: "govuk-!-margin-top-6"
-    }) }}
     <p class="govuk-body-m">
-        {{ mssgs.licence_type_salmon_acr_note_1 }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_2 }}</a>
-        {{ mssgs.licence_type_salmon_acr_note_3 }}</p>
+        {{ mssgs.licence_type_salmon_acr_note_1 }}</p>
+    <p class="govuk-body-m">
+        {% if data.isLicenceForYou %}
+            {{ mssgs.licence_type_salmon_acr_note_2 }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_link }}</a>
+            {{ mssgs.licence_type_salmon_acr_note_3 }}
+        {% else %}
+            {{ mssgs.licence_type_salmon_acr_note_2_BOBO }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_link }}</a>
+            {{ mssgs.licence_type_salmon_acr_note_3_BOBO }}
+        {% endif %}
+    </p>
 {% endset -%}
 
 {% set items = [
@@ -59,7 +56,6 @@
             id: 'selector-' + data.licenseTypes.salmonAndSeaTrout,
             text: mssgs.licence_type_radio_salmon,
             value: "salmon-and-sea-trout",
-            hint: { text: mssgs.licence_type_radio_salmon_hint },
             checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
             conditional: { html: salmonAndSeaTrout }
         }
@@ -67,10 +63,11 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">{{ mssgs.licence_type_attended_rods_note }}</p>
+    <p class="govuk-body-m">{{ mssgs.licence_type_attended_rods_note }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/freshwater-rod-fishing-rules">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.full_stop }}
+    </p>
     {{ govukRadios({
         idPrefix: "licence-type",
-        name: "licence-type",
+        name: "licence-type",   
         items: items,
         errorMessage: { text: mssgs.licence_type_error_choose } if error
     }) }}
