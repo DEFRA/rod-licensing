@@ -84,7 +84,8 @@ const preparePayment = (agreementId, transaction) => {
     description: 'The recurring card payment for your rod fishing licence',
     reference: transaction.id,
     authorisation_mode: 'agreement',
-    agreement_id: agreementId
+    agreement_id: agreementId,
+    email: transaction.permissions[0].licensee.email
   }
 
   return result

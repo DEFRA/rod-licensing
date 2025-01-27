@@ -10,7 +10,8 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
     createTransaction: jest.fn(() => ({
-      cost: 30
+      cost: 30,
+      permissions: [{ licensee: {} }]
     }))
   }
 }))
@@ -77,6 +78,7 @@ describe('recurring-payments-processor', () => {
     const permitId = Symbol('permitId')
     const firstName = Symbol('firstName')
     const lastName = Symbol('lastName')
+    const email = Symbol('email')
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       isLicenceForYou,
@@ -85,7 +87,8 @@ describe('recurring-payments-processor', () => {
         firstName,
         lastName,
         country,
-        countryCode: 'GB-ENG'
+        countryCode: 'GB-ENG',
+        email
       },
       licenceStartDate: '2020-01-01',
       licenceStartTime: 3,
@@ -102,7 +105,8 @@ describe('recurring-payments-processor', () => {
           licensee: {
             firstName,
             lastName,
-            country
+            country,
+            email
           },
           permitId,
           startDate: '2020-01-01T03:00:00.000Z'
@@ -208,6 +212,7 @@ describe('recurring-payments-processor', () => {
   it('prepares and sends the payment request', async () => {
     const agreementId = Symbol('agreementId')
     const transactionId = Symbol('transactionId')
+    const email = Symbol('email')
 
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
 
@@ -217,7 +222,8 @@ describe('recurring-payments-processor', () => {
 
     salesApi.createTransaction.mockReturnValueOnce({
       cost: 50,
-      id: transactionId
+      id: transactionId,
+      permissions: [{ licensee: { email } }]
     })
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
@@ -228,7 +234,8 @@ describe('recurring-payments-processor', () => {
       description: 'The recurring card payment for your rod fishing licence',
       reference: transactionId,
       authorisation_mode: 'agreement',
-      agreement_id: agreementId
+      agreement_id: agreementId,
+      email
     }
 
     await processRecurringPayments()
@@ -317,7 +324,8 @@ describe('recurring-payments-processor', () => {
 
         salesApi.createTransaction.mockReturnValueOnce({
           cost: i,
-          id: permit
+          id: permit,
+          permissions: [{ licensee: {} }]
         })
       })
 
