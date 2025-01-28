@@ -6,12 +6,6 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 
-const timeout = ms => {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms)
-  })
-}
-
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
@@ -20,7 +14,7 @@ export const processRecurringPayments = async () => {
     console.log('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
     if (response.length > 0) {
-      timeout(PAYMENT_STATUS_DELAY)
+      await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
     }
   } else {
@@ -103,12 +97,13 @@ const preparePayment = (agreementId, transaction) => {
 const processRecurringPaymentStatus = async record => {
   const agreementId = record.entity.agreementId
   const paymentId = getPaymentId(agreementId)
-  const status = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status.state.status)}`)
+  const {
+    state: { status }
+  } = await getPaymentStatus(paymentId)
+  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
 }
 
 const getPaymentId = agreementId => {
-  console.log('payments:', payments)
   const payment = payments.find(p => p.agreementId === agreementId)
   return payment.paymentId
 }

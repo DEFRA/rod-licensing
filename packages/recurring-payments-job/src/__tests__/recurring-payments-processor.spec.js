@@ -20,11 +20,20 @@ jest.mock('../services/govuk-pay-service.js', () => ({
   getPaymentStatus: jest.fn()
 }))
 
+const PAYMENT_STATUS_DELAY = 60000
+
 describe('recurring-payments-processor', () => {
+  const originalSetTimeout = global.setTimeout
   beforeEach(() => {
     jest.clearAllMocks()
     jest.useFakeTimers()
     process.env.RUN_RECURRING_PAYMENTS = 'true'
+    global.setTimeout = jest.fn((cb, ms) => cb())
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+    global.setTimeout = originalSetTimeout
   })
 
   it('console log displays "Recurring Payments job disabled" when env is false', async () => {
@@ -303,6 +312,30 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
   })
 
+  it('should call setTimeout with correct delay when there are recurring payments', async () => {
+    const referenceNumber = Symbol('reference')
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(referenceNumber)])
+    const mockPaymentResponse = { payment_id: 'test-payment-id' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
+
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
+
+    await processRecurringPayments()
+
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), PAYMENT_STATUS_DELAY)
+  })
+
+  it('should not call setTimeout when there are no recurring payments', async () => {
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([])
+
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
+
+    await processRecurringPayments()
+
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
+  })
+
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
     it('prepares the data for each one', async () => {
       const references = []
@@ -434,15 +467,17 @@ describe('recurring-payments-processor', () => {
       })
 
       const expectedData = []
-      permits.forEach(() => {
-        expectedData.push(['test-payment-id'])
+      permits.forEach((_, index) => {
+        const paymentId = `payment-id-${index}`
+        expectedData.push(paymentId)
+        const mockPaymentResponse = { payment_id: paymentId }
+        sendPayment.mockResolvedValueOnce(mockPaymentResponse)
       })
 
-      const mockPaymentResponse = { payment_id: 'test-payment-id' }
-      sendPayment.mockResolvedValue(mockPaymentResponse)
-
       await processRecurringPayments()
-      expect(getPaymentStatus.mock.calls).toEqual(expectedData)
+      expectedData.forEach(paymentId => {
+        expect(getPaymentStatus).toHaveBeenCalledWith(paymentId)
+      })
     })
   })
 })

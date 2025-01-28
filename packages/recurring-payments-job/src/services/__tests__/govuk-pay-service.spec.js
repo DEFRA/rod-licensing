@@ -84,7 +84,7 @@ describe('govuk-pay-service', () => {
       expect(result).toEqual(mockPaymentStatus)
     })
 
-    it('should throw an error when payment ID is invalid', async () => {
+    it('should throw an error when payment ID is not provided', async () => {
       await expect(getPaymentStatus(null)).rejects.toThrow('Invalid payment ID')
     })
 
