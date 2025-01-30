@@ -57,20 +57,43 @@ describe('getDueRecurringPaymentsSchema', () => {
     await expect(() => dueRecurringPaymentsResponseSchema.validateAsync(getSampleData())).not.toThrow()
   })
 
-  it.each(['name', 'nextDueDate', 'endDate', 'agreementId'])('throws an error if %s is missing', async property => {
+  it.each([
+    'id',
+    'name',
+    'status',
+    'nextDueDate',
+    'cancelledDate',
+    'cancelledReason',
+    'endDate',
+    'agreementId',
+    'activePermission',
+    'contactId',
+    'publicId'
+  ])('throws an error if %s is missing', async property => {
     const sampleData = getSampleData()
     delete sampleData[property]
     expect(() => dueRecurringPaymentsResponseSchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
   it.each([
+    ['id', 'not-a-guid'],
     ['name', 99],
+    ['status', 'not-a-number'],
     ['nextDueDate', 'not-a-date'],
+    ['cancelledDate', 'not-a-date'],
+    ['cancelledReason', 99],
+    ['endDate', 'not-a-date'],
     ['agreementId', 'not-a-guid'],
-    ['contactId', 'still-not-a-guid']
+    ['activePermission', 'not-a-guid'],
+    ['contactId', 'still-not-a-guid'],
+    ['publicId', 99]
   ])('throws an error if %s is not the correct type', async (property, value) => {
     const sampleData = getSampleData()
     sampleData[property] = value
     expect(() => dueRecurringPaymentsResponseSchema.validateAsync(sampleData)).rejects.toThrow()
+  })
+
+  it('snapshot test schema', async () => {
+    expect(dueRecurringPaymentsResponseSchema).toMatchSnapshot()
   })
 })
