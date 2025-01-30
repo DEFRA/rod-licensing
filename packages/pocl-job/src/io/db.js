@@ -1,6 +1,7 @@
 import config from '../config.js'
-import { docClient } from '../../../connectors-lib/src/aws.js'
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS()
 
 /**
  * Update the POCL file staging table to add or update the entry for the provided filename

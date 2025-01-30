@@ -18,7 +18,7 @@ export default function () {
   console.log('Config.aws.dynamodb.endpoint:', Config.aws.dynamodb.endpoint)
 
   const docClient = createDocumentClient(dynamoDBInstance)
-  console.log('Real docClient initialized:', !!docClient)
+  console.log('Real docClient initialised:', !!docClient)
 
   return {
     ddb: dynamoDBInstance,

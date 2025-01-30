@@ -2,8 +2,7 @@ import { processDlq } from '../process-transaction-dlq.js'
 import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../../exceptions/exceptions.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
-import AWS from '../../../../../connectors-lib/src/aws.js'
-const { docClient } = AWS
+import { AWS } from '@defra-fish/connectors-lib'
 
 let mockProcessingException
 jest.mock('../process-transaction-queue.js', () => ({
@@ -20,11 +19,15 @@ jest.mock('../retrieve-transaction.js', () => ({
 
 jest.mock('../../exceptions/exceptions.service.js')
 
-jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn()
-  }
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      send: jest.fn()
+    }
+  }))
 }))
+
+const { docClient } = AWS.mock.results[0].value
 
 // helper function
 const expectDynamoDbTtlUpdate = () => {

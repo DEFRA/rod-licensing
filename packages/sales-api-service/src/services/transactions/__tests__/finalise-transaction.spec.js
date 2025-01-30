@@ -12,8 +12,7 @@ import moment from 'moment'
 import { TRANSACTION_STATUS } from '../constants.js'
 import permissionsService from '../../permissions.service.js'
 import { UpdateCommand, GetCommand } from '@aws-sdk/lib-dynamodb'
-import AWS from '../../../../../connectors-lib/src/aws.js'
-const { docClient, sqs } = AWS
+import { AWS } from '@defra-fish/connectors-lib'
 
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 
@@ -31,15 +30,19 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
-jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn(),
-    createUpdateExpression: jest.fn()
-  },
-  sqs: {
-    sendMessage: jest.fn()
-  }
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      send: jest.fn(),
+      createUpdateExpression: jest.fn()
+    },
+    sqs: {
+      sendMessage: jest.fn()
+    }
+  }))
 }))
+
+const { docClient, sqs } = AWS.mock.results[0].value
 
 const getStagedTransactionRecord = () => {
   const record = mockStagedTransactionRecord()

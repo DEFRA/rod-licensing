@@ -1,5 +1,5 @@
 import * as db from '../db.js'
-import { docClient } from '../../../../connectors-lib/src/aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 
 jest.mock('../../config.js', () => ({
@@ -10,15 +10,19 @@ jest.mock('../../config.js', () => ({
   }
 }))
 
-jest.mock('../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn(),
-    scanAllPromise: jest.fn(),
-    queryAllPromise: jest.fn(),
-    batchWriteAllPromise: jest.fn(),
-    createUpdateExpression: jest.fn()
-  }
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      send: jest.fn(),
+      scanAllPromise: jest.fn(),
+      queryAllPromise: jest.fn(),
+      batchWriteAllPromise: jest.fn(),
+      createUpdateExpression: jest.fn()
+    }
+  }))
 }))
+
+const { docClient } = AWS.mock.results[0].value
 
 describe('database operations', () => {
   const TEST_FILENAME = 'testfile.xml'

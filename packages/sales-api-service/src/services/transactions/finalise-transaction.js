@@ -8,9 +8,8 @@ import moment from 'moment'
 import Boom from '@hapi/boom'
 import db from 'debug'
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
-import AWS from '../../../../connectors-lib/src/aws.js'
-const { docClient, sqs } = AWS
-
+import { AWS } from '@defra-fish/connectors-lib'
+const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
 const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {

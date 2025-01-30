@@ -1,9 +1,8 @@
 import { PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { PAYMENTS_TABLE } from '../../config.js'
 import db from 'debug'
-// import { docClient } from '../../../../connectors-lib/src/aws.js'
-import AWS from '../../../../connectors-lib/src/aws.js'
-const { docClient } = AWS
+import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS()
 
 const debug = db('sales:paymentjournals')
 

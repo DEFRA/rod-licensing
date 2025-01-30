@@ -1,24 +1,28 @@
 import { PAYMENTS_TABLE } from '../../../config.js'
 import { createPaymentJournal, updatePaymentJournal, getPaymentJournal, queryJournalsByTimestamp } from '../payment-journals.service.js'
-import { docClient } from '../../../../../connectors-lib/src/aws.js'
 import { PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import { AWS } from '@defra-fish/connectors-lib'
 
-jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn(),
-    createUpdateExpression: jest.fn(payload =>
-      Object.entries(payload).reduce(
-        (acc, [k, v], idx) => {
-          acc.UpdateExpression += `${idx > 0 ? ',' : ''}#${k} = :${k}`
-          acc.ExpressionAttributeNames[`#${k}`] = k
-          acc.ExpressionAttributeValues[`:${k}`] = v
-          return acc
-        },
-        { UpdateExpression: 'SET ', ExpressionAttributeNames: {}, ExpressionAttributeValues: {} }
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      send: jest.fn(),
+      createUpdateExpression: jest.fn(payload =>
+        Object.entries(payload).reduce(
+          (acc, [k, v], idx) => {
+            acc.UpdateExpression += `${idx > 0 ? ',' : ''}#${k} = :${k}`
+            acc.ExpressionAttributeNames[`#${k}`] = k
+            acc.ExpressionAttributeValues[`:${k}`] = v
+            return acc
+          },
+          { UpdateExpression: 'SET ', ExpressionAttributeNames: {}, ExpressionAttributeValues: {} }
+        )
       )
-    )
-  }
+    }
+  }))
 }))
+
+const { docClient } = AWS.mock.results[0].value
 
 describe('payment-journals service', () => {
   beforeAll(async () => {
