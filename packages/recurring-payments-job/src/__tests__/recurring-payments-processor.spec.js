@@ -23,17 +23,10 @@ jest.mock('../services/govuk-pay-service.js', () => ({
 const PAYMENT_STATUS_DELAY = 60000
 
 describe('recurring-payments-processor', () => {
-  const originalSetTimeout = global.setTimeout
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.useFakeTimers()
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     global.setTimeout = jest.fn((cb, ms) => cb())
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
-    global.setTimeout = originalSetTimeout
   })
 
   it('console log displays "Recurring Payments job disabled" when env is false', async () => {
