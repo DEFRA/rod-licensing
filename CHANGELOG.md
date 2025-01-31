@@ -1,4 +1,13 @@
 
+## v1.59.0-rc.1 (2025-01-31)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2113](https://github.com/DEFRA/rod-licensing/pull/2113) Validate RP Request ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.59.0-rc.0 (2025-01-31)
 
 #### :rocket: Enhancement
