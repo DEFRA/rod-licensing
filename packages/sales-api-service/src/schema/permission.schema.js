@@ -5,25 +5,24 @@ import { optionSetOption } from './option-set.schema.js'
 import { createReferenceDataEntityValidator } from './validators/validators.js'
 import { Permit } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
-import { v4 as uuid } from 'uuid'
 
 const issueDateSchema = Joi.string()
   .isoDate()
   .required()
   .allow(null)
   .description('An ISO8601 compatible date string defining when the permission was issued')
-  .example(new Date().toISOString())
+  .example('2025-01-01T00:00:00.000Z')
 const startDateSchema = Joi.string()
   .isoDate()
   .required()
   .allow(null)
   .description('An ISO8601 compatible date string defining when the permission commences')
-  .example(new Date().toISOString())
+  .example('2025-01-01T00:00:00.000Z')
 const endDateSchema = Joi.string()
   .isoDate()
   .required()
   .description('An ISO8601 compatible date string defining when the permission expires')
-  .example(new Date().toISOString())
+  .example('2025-01-01T00:00:00.000Z')
 
 export const stagedPermissionSchema = Joi.object({
   permitId: Joi.string()
@@ -41,12 +40,12 @@ export const stagedPermissionSchema = Joi.object({
 }).label('staged-permission')
 
 export const finalisedPermissionSchemaContent = {
-  id: Joi.string().guid().required().example(uuid()),
+  id: Joi.string().guid().required().example('a17fc331-141b-4fc0-8549-329d6934fadb'),
   referenceNumber: validation.permission.createPermissionNumberValidator(Joi),
   issueDate: issueDateSchema,
   startDate: startDateSchema,
   endDate: endDateSchema,
-  stagingId: Joi.string().guid().required().example(uuid()),
+  stagingId: Joi.string().guid().required().example('a17fc331-141b-4fc0-8549-329d6934fadb'),
   dataSource: optionSetOption
 }
 
