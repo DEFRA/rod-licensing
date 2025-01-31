@@ -1,4 +1,7 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
+import { Contact } from '../entities/contact.entity.js'
+import { escapeODataStringValue } from '../client/util.js'
+import { PredefinedQuery } from './predefined-query.js'
 
 /**
  * @typedef {Object} ContactByLicenceAndPostcode
@@ -32,4 +35,16 @@ export const contactForLicensee = (permissionReferenceNumberLast6Characters, lic
   }
 
   return dynamicsClient.executeUnboundAction('defra_GetContactByLicenceAndPostcode', request)
+}
+
+export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcode) => {
+  const { postcode, birthDate } = Contact.definition.mappings
+  const filter = `${postcode.field} eq '${escapeODataStringValue(licenseePostcode)}' and ${birthDate.field} eq ${licenseeBirthDate} and ${
+    Contact.definition.defaultFilter
+  }`
+  return new PredefinedQuery({
+    root: Contact,
+    filter,
+    expand: []
+  })
 }
