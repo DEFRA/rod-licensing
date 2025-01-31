@@ -6,23 +6,24 @@ import { createReferenceDataEntityValidator } from './validators/validators.js'
 import { Permit } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 
+const DATE_EXAMPLE = '2025-01-01T00:00:00.000Z'
 const issueDateSchema = Joi.string()
   .isoDate()
   .required()
   .allow(null)
   .description('An ISO8601 compatible date string defining when the permission was issued')
-  .example('2025-01-01T00:00:00.000Z')
+  .example(DATE_EXAMPLE)
 const startDateSchema = Joi.string()
   .isoDate()
   .required()
   .allow(null)
   .description('An ISO8601 compatible date string defining when the permission commences')
-  .example('2025-01-01T00:00:00.000Z')
+  .example(DATE_EXAMPLE)
 const endDateSchema = Joi.string()
   .isoDate()
   .required()
   .description('An ISO8601 compatible date string defining when the permission expires')
-  .example('2025-01-01T00:00:00.000Z')
+  .example(DATE_EXAMPLE)
 
 export const stagedPermissionSchema = Joi.object({
   permitId: Joi.string()
