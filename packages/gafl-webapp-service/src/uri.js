@@ -86,3 +86,4 @@ export const GET_PRICING_LENGTHS = { uri: '/buy/get-pricing/lengths' }
 
 export const FRESHWATER_FISING_RULES = { uri: 'https://www.gov.uk/freshwater-rod-fishing-rules' }
 export const LOCAL_BYELAWS = { uri: 'https://www.gov.uk/government/collections/local-fishing-byelaws' }
+export const CATCH_RETURN = { uri: 'https://www.gov.uk/catch-return' }
