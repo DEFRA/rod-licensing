@@ -28,10 +28,10 @@
         {{ mssgs.licence_type_salmon_acr_note_1 }}</p>
     <p class="govuk-body-m">
         {% if data.isLicenceForYou %}
-            {{ mssgs.licence_type_salmon_acr_note_2 }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_link }}</a>
+            {{ mssgs.licence_type_salmon_acr_note_2 }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.catchReturn }}">{{ mssgs.licence_type_salmon_acr_note_link }}</a>
             {{ mssgs.licence_type_salmon_acr_note_3 }}
         {% else %}
-            {{ mssgs.licence_type_salmon_acr_note_2_BOBO }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_link }}</a>
+            {{ mssgs.licence_type_salmon_acr_note_2_BOBO }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.catchReturn }}">{{ mssgs.licence_type_salmon_acr_note_link }}</a>
             {{ mssgs.licence_type_salmon_acr_note_3_BOBO }}
         {% endif %}
     </p>
@@ -63,7 +63,7 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">{{ mssgs.licence_type_attended_rods_note }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/freshwater-rod-fishing-rules">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.full_stop }}
+    <p class="govuk-body-m">{{ mssgs.licence_type_attended_rods_note }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.full_stop }}
     </p>
     {{ govukRadios({
         idPrefix: "licence-type",

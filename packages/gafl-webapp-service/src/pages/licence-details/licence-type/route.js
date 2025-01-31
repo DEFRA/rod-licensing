@@ -29,7 +29,8 @@ export const getData = async request => {
     hasJunior: concessionHelper.hasJunior(permission),
     uri: {
       freshWaterFishingRules: FRESHWATER_FISING_RULES.uri,
-      localByelaws: LOCAL_BYELAWS.uri
+      localByelaws: LOCAL_BYELAWS.uri,
+      catchReturn: CATCH_RETURN.uri
     }
   }
 }
