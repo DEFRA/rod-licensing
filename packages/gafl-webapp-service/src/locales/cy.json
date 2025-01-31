@@ -743,7 +743,7 @@
   "renewal_inactive_title_4": "You can ",
   "renewal_inactive_title_link": "buy a new licence.",
   "renewal_start_date_error_format": "Nid yw hwn yn ddyddiad dilys. Rhowch y dyddied yr hoffech i’r drwydded ddechrau gan gynnwys y diwrnod, mis a’r flwyddyn",
-  "renewal_start_date_error_hint_1": "Rhowch ddyddiad rhwng ",
+  "renewal_start_date_error_hint": "Rhowch ddyddiad rhwng ",
   "renewal_start_date_error_max_1": "Mae’n rhaid i’r trwydded newydd ddechrau o fewn ",
   "renewal_start_date_error_max_2": " diwrnod i ddyddiad terfyn eich trwydded bresennol. Rhowch ddyddiad hyd at a gan gynnwys ",
   "renewal_start_date_error_min": "Ni all y drwydded ddechrau cyn i’ch trwydded bresennol ddod i ben",

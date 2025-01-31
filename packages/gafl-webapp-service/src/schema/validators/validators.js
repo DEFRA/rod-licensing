@@ -43,6 +43,19 @@ export const startDateValidator = payload => {
   }
 }
 
+export const renewalStartDateValidator = (payload, options) => {
+  const { permission } = options.context.app.request
+  const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
+  const day = payload['licence-start-date-day']
+  const month = payload['licence-start-date-month']
+  const year = payload['licence-start-date-year']
+
+  const minDate = endDateMoment.clone().startOf('day').toDate()
+  const maxDate = endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').toDate()
+
+  validateDate(day, month, year, minDate, maxDate)
+}
+
 export const getDateErrorFlags = error => {
   const errorFlags = { isDayError: false, isMonthError: false, isYearError: false }
   const commonErrors = ['full-date', 'invalid-date', 'date-range', 'non-numeric']

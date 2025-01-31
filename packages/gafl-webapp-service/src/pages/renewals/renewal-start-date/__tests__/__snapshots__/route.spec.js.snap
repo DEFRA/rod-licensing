@@ -5,7 +5,7 @@ Object {
   "advancedPurchaseMaxDays": 30,
   "expiryTimeString": Symbol(expiryDate),
   "hasExpired": undefined,
-  "maxStartDate": "09 02 2023",
-  "minStartDate": "10 01 2023",
+  "maxStartDateMessage": "Renewal start date error max 1 30 renewal start date error max 209 02 2023",
+  "renewalHint": "Renewal start date error hint10 01 2023and09 02 2023",
 }
 `;
