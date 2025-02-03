@@ -10,7 +10,11 @@ import moment from 'moment'
 import { airbrake } from '@defra-fish/connectors-lib'
 
 export default async (opts = { port: SERVER.Port }) => {
-  airbrake.initialise()
+  try {
+    airbrake.initialise()
+  } catch (error) {
+    console.error('Airbrake initialisation failed:', error)
+  }
 
   const server = new Hapi.Server(
     Object.assign(
