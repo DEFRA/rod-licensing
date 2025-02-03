@@ -1,8 +1,9 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
-import { sendPayment } from './services/govuk-pay-service.js'
+import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
+const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 
 export const processRecurringPayments = async () => {
@@ -12,7 +13,10 @@ export const processRecurringPayments = async () => {
     const response = await salesApi.getDueRecurringPayments(date)
     console.log('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
-    console.log('Recurring Payments processed:', payments)
+    if (response.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+      await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+    }
   } else {
     console.log('Recurring Payments job disabled')
   }
@@ -88,4 +92,18 @@ const preparePayment = (agreementId, transaction) => {
   }
 
   return result
+}
+
+const processRecurringPaymentStatus = async record => {
+  const agreementId = record.entity.agreementId
+  const paymentId = getPaymentId(agreementId)
+  const {
+    state: { status }
+  } = await getPaymentStatus(paymentId)
+  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
+}
+
+const getPaymentId = agreementId => {
+  const payment = payments.find(p => p.agreementId === agreementId)
+  return payment.paymentId
 }
