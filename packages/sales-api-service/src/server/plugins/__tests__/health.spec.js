@@ -13,7 +13,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
   }))
 }))
 
-const { docClient } = AWS.mock.results[0].value
+const { docClient, sqs } = AWS.mock.results[0].value
 
 let server = null
 
