@@ -1,15 +1,19 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
-import { docClient, sqs } from '../../../../../connectors-lib/src/aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 
-jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn()
-  },
-  sqs: {
-    listQueues: jest.fn()
-  }
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: { send: jest.fn() },
+    sqs: {
+      listQueues: jest.fn().mockReturnValue({
+        promise: jest.fn().mockResolvedValue({ QueueUrls: ['TestQueue'] })
+      })
+    }
+  }))
 }))
+
+const { docClient } = AWS.mock.results[0].value
 
 let server = null
 
