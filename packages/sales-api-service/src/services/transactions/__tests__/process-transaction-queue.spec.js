@@ -65,13 +65,16 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
-jest.mock('@defra-fish/connectors-lib', () => ({
-  AWS: jest.fn(() => ({
-    docClient: {
-      send: jest.fn()
-    }
-  }))
-}))
+jest.mock('@defra-fish/connectors-lib', () => {
+  const mockDocClient = {
+    send: jest.fn()
+  }
+  return {
+    AWS: jest.fn(() => ({
+      docClient: mockDocClient
+    }))
+  }
+})
 
 const { docClient } = AWS.mock.results[0].value
 
