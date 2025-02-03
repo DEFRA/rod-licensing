@@ -1,4 +1,13 @@
 
+## v1.59.0-rc.4 (2025-02-03)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2110](https://github.com/DEFRA/rod-licensing/pull/2110) RP job set status of payment request ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.59.0-rc.3 (2025-01-31)
 
 #### :rocket: Enhancement
