@@ -2,28 +2,44 @@ import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import { AWS } from '@defra-fish/connectors-lib'
 
-jest.mock('@defra-fish/connectors-lib', () => ({
-  AWS: jest.fn(() => ({
-    docClient: { send: jest.fn() },
-    sqs: {
-      listQueues: jest.fn().mockReturnValue({
-        promise: jest.fn().mockResolvedValue({ QueueUrls: ['TestQueue'] })
+// import * as connectors from '@defra-fish/connectors-lib'
+// console.log('Airbrake:', connectors.airbrake)
+
+jest.mock('@defra-fish/connectors-lib', () => {
+  const actual = jest.requireActual('@defra-fish/connectors-lib')
+
+  const mockDocClient = {
+    send: jest.fn()
+  }
+
+  const mockSqs = {
+    SQS: {
+      __init: jest.fn(config => {
+        mockSqs.expectedResponses = config.expectedResponses
       })
-    }
-  }))
-}))
+    },
+    listQueues: jest.fn(() => {
+      return {
+        promise: () => Promise.resolve(mockSqs.expectedResponses.listQueues)
+      }
+    }),
+    sendMessage: jest.fn()
+  }
+  return {
+    ...actual,
+    AWS: jest.fn(() => ({
+      docClient: mockDocClient,
+      sqs: mockSqs
+    }))
+  }
+})
 
 const { docClient, sqs } = AWS.mock.results[0].value
 
 let server = null
-
 describe('hapi healthcheck', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
-  })
-
-  beforeEach(() => {
-    jest.clearAllMocks()
   })
 
   afterAll(async () => {
@@ -39,8 +55,10 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
-    sqs.listQueues.mockReturnValue({
-      promise: jest.fn().mockResolvedValue({ QueueUrls: ['TestQueue'] })
+    sqs.SQS.__init({
+      expectedResponses: {
+        listQueues: { QueueUrls: ['TestQueue'] }
+      }
     })
 
     docClient.send.mockResolvedValueOnce({ TableNames: ['TestTable'] })

@@ -42,7 +42,7 @@
     "@types/hapi__hapi": "^20.0.10",
     "@types/jest": "^27.4.0",
     "aws-sdk-client-mock": "^4.1.0",
-    "aws-sdk-mock": "^6.2.0",
+    "aws-sdk-mock": "^6.2.1",
     "babel-jest": "^27.5.1",
     "clone-deep": "^4.0.1",
     "dynamics-web-api": "^1.7.3",
