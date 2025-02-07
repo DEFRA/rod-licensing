@@ -64,7 +64,13 @@
 
 {% block pageContent %}
     <p class="govuk-body-m">
-        {{ mssgs.licence_type_attended_rods_note if data.isLicenceForYou else mssgs.licence_type_attended_rods_note_BOBO }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.full_stop }}
+        {% if data.isLicenceForYou %}
+            {{ mssgs.licence_type_attended_rods_note }}
+        {% else %}
+            {{ mssgs.licence_type_attended_rods_note_BOBO }}
+        {% endif %}
+        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_byelaws }}</a>
+        {{ mssgs.full_stop }}
     </p>
     {{ govukRadios({
         idPrefix: "licence-type",
