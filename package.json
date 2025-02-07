@@ -105,5 +105,8 @@
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "silent": true
+  },
+  "dependencies": {
+    "http-status-codes": "^2.3.0"
   }
 }

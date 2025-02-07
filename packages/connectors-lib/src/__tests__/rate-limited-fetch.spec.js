@@ -2,7 +2,6 @@ import rateLimitedFetch from '../rate-limited-fetch.js'
 import fetch from 'node-fetch'
 
 jest.mock('node-fetch', () => jest.fn(() => ({ status: 200 })))
-// jest.spyOn(global, 'setTimeout')
 
 describe('rateLimitedFetch', () => {
   beforeEach(jest.clearAllMocks)

@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import { StatusCodes } from 'http-status-codes'
 
 const doFetch = async (delay, ...args) => {
   if (delay > 0) {
@@ -12,8 +13,9 @@ export default async (...args) => {
   while (delays.length) {
     const currentDelay = delays.shift() * 1000
     const response = await doFetch(currentDelay, ...args)
-    if (response.status !== 429) {
+    if (response.status !== StatusCodes.TOO_MANY_REQUESTS) {
       return response
     }
   }
+  return null
 }
