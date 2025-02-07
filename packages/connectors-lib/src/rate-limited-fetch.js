@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 
 const doFetch = async (delay, ...args) => {
   if (delay > 0) {
-    await new Promise(resolve => setTimeout(() => resolve(), delay))
+    await new Promise(resolve => setTimeout(resolve, delay))
   }
   return fetch(...args)
 }
