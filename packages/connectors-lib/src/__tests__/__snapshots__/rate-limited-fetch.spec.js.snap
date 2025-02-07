@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rateLimitedFetch Testing delays of [1, 2, 4] seconds calls setTimeout and fetch in expected sequency 1`] = `
+Array [
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+  Object {
+    "setTimeout": Array [
+      [Function],
+      1000,
+    ],
+  },
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+  Object {
+    "setTimeout": Array [
+      [Function],
+      2000,
+    ],
+  },
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+  Object {
+    "setTimeout": Array [
+      [Function],
+      4000,
+    ],
+  },
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+]
+`;
+
+exports[`rateLimitedFetch Testing delays of [1, 2] seconds calls setTimeout and fetch in expected sequency 1`] = `
+Array [
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+  Object {
+    "setTimeout": Array [
+      [Function],
+      1000,
+    ],
+  },
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+  Object {
+    "setTimeout": Array [
+      [Function],
+      2000,
+    ],
+  },
+  Object {
+    "fetch": Array [
+      "https://api.example.com",
+    ],
+  },
+  Object {
+    "setTimeout": Array [
+      [Function],
+      4000,
+    ],
+  },
+]
+`;
