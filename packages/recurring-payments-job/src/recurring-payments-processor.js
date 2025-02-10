@@ -6,16 +6,33 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 
+const retry = async (fn, retries = 3, delay = 1000) => {
+  try {
+    return await fn()
+  } catch (error) {
+    if (retries === 0) throw error
+    console.log(`Retrying... Attempts left: ${retries}`)
+    await new Promise(resolve => setTimeout(resolve, delay))
+    return retry(fn, retries - 1, delay * 2)
+  }
+}
+
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
-    const response = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found: ', response)
-    await Promise.all(response.map(record => processRecurringPayment(record)))
-    if (response.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
-      await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+    try {
+      const response = await salesApi.getDueRecurringPayments(date)
+      console.log('Recurring Payments found: ', response)
+      await Promise.all(response.map(record => processRecurringPayment(record)))
+      if (response.length > 0) {
+        await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+        await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+      }
+    } catch (error) {
+      console.error('Error fetching due recurring payments:', error)
+      // abort the run if systems are down at the start of a run
+      return
     }
   } else {
     console.log('Recurring Payments job disabled')
@@ -45,11 +62,16 @@ const createNewTransaction = async referenceNumber => {
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  const payment = await sendPayment(preparedPayment)
-  payments.push({
-    agreementId,
-    paymentId: payment.payment_id
-  })
+  try {
+    const payment = await retry(() => sendPayment(preparedPayment))
+    payments.push({
+      agreementId,
+      paymentId: payment.payment_id
+    })
+  } catch (error) {
+    console.error('Error sending payment for agreement:', agreementId, 'Error:', error)
+    // continue with run if systems are down mid-run
+  }
 }
 
 const processPermissionData = async referenceNumber => {
@@ -97,10 +119,15 @@ const preparePayment = (agreementId, transaction) => {
 const processRecurringPaymentStatus = async record => {
   const agreementId = record.entity.agreementId
   const paymentId = getPaymentId(agreementId)
-  const {
-    state: { status }
-  } = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
+  try {
+    const {
+      state: { status }
+    } = await retry(() => getPaymentStatus(paymentId))
+    console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
+  } catch (error) {
+    console.error('Error fetching payment status for payment:', paymentId, 'Error:', error)
+    // continue with run if systems are down mid-run
+  }
 }
 
 const getPaymentId = agreementId => {
