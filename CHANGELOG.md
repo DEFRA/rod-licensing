@@ -1,4 +1,13 @@
 
+## v1.59.0-rc.5 (2025-02-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2120](https://github.com/DEFRA/rod-licensing/pull/2120) CORRECTIONS - Implement new content for licence selection page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.59.0-rc.4 (2025-02-03)
 
 #### :rocket: Enhancement
