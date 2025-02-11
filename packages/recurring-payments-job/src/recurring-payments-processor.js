@@ -32,7 +32,7 @@ export const processRecurringPayments = async () => {
     } catch (error) {
       console.error('Error fetching due recurring payments:', error)
       // abort the run if systems are down at the start of a run
-      return
+      // return
     }
   } else {
     console.log('Recurring Payments job disabled')
