@@ -6,7 +6,7 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 
-const retry = async (fn, retries = 3, delay = 1000) => {
+export const retry = async (fn, retries = 3, delay = 5000) => {
   try {
     return await fn()
   } catch (error) {
@@ -31,8 +31,6 @@ export const processRecurringPayments = async () => {
       }
     } catch (error) {
       console.error('Error fetching due recurring payments:', error)
-      // abort the run if systems are down at the start of a run
-      // return
     }
   } else {
     console.log('Recurring Payments job disabled')
@@ -70,7 +68,6 @@ const takeRecurringPayment = async (agreementId, transaction) => {
     })
   } catch (error) {
     console.error('Error sending payment for agreement:', agreementId, 'Error:', error)
-    // continue with run if systems are down mid-run
   }
 }
 
@@ -126,7 +123,6 @@ const processRecurringPaymentStatus = async record => {
     console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
   } catch (error) {
     console.error('Error fetching payment status for payment:', paymentId, 'Error:', error)
-    // continue with run if systems are down mid-run
   }
 }
 
