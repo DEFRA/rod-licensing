@@ -5,6 +5,7 @@ import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.j
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import { displayPrice } from '../../../../processors/price-display.js'
+import { isRecurringPayment } from '../../../../processors/recurring-pay-helper.js'
 
 jest.mock('../../../../processors/recurring-pay-helper.js')
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -61,6 +62,11 @@ const getSamplePermission = ({
   isRecurringPayment
 })
 
+const getSampleTransaction = ({ transactionCost = 1, agreementId } = {}) => ({
+  cost: transactionCost,
+  agreementId
+})
+
 const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true, setUpPayment = true } = {}) => ({
   [COMPLETION_STATUS.agreed]: agreed,
   [COMPLETION_STATUS.posted]: posted,
@@ -102,11 +108,12 @@ const getMessages = () => ({
 const getSampleRequest = ({
   completionStatus = getSampleCompletionStatus(),
   permission = getSamplePermission(),
+  transactionCost = 1,
+  agreementId,
+  transaction = getSampleTransaction({ transactionCost, agreementId }),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
-  transactionCost = 1,
-  messages = getMessages(),
-  agreementId
+  messages = getMessages()
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -116,10 +123,7 @@ const getSampleRequest = ({
         set: statusSet
       },
       transaction: {
-        get: async () => ({
-          cost: transactionCost,
-          agreementId
-        }),
+        get: async () => transaction,
         getCurrentPermission: () => permission
       }
     }
@@ -206,30 +210,25 @@ describe('The order completion handler', () => {
     expect(displayStartTime).toHaveBeenCalledWith(request, permission)
   })
 
-  it.each`
-    show     | agreementId  | expected
-    ${true}  | ${'foo123'}  | ${true}
-    ${true}  | ${undefined} | ${false}
-    ${false} | ${'foo123'}  | ${false}
-    ${false} | ${undefined} | ${false}
-  `(
-    'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the transaction agreementId is $agreementId',
-    async ({ show, agreementId, expected }) => {
-      process.env.SHOW_RECURRING_PAYMENTS = show
-      const request = getSampleRequest({ agreementId })
-      const { recurringPayment } = await getData(request)
-
-      expect(recurringPayment).toBe(expected)
-
-      delete process.env.SHOW_RECURRING_PAYMENTS
-    }
-  )
-
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
     const startTime = Symbol('one minute to midnight')
     displayStartTime.mockReturnValueOnce(startTime)
     const { startTimeStringTitle } = await getData(getSampleRequest())
     expect(startTimeStringTitle).toBe(startTime)
+  })
+
+  it('passes transaction to isRecurringPayment', async () => {
+    const transaction = getSampleTransaction({ agreementId: Symbol('agreement') })
+    const request = getSampleRequest({ transaction })
+    await getData(request)
+    expect(isRecurringPayment).toHaveBeenCalledWith(transaction)
+  })
+
+  it('uses isRecurringPayment to generate recurringPayment', async () => {
+    const expectedValue = Symbol('yep!')
+    isRecurringPayment.mockReturnValueOnce(expectedValue)
+    const { recurringPayment } = await getData(getSampleRequest())
+    expect(recurringPayment).toBe(expectedValue)
   })
 
   it.each`

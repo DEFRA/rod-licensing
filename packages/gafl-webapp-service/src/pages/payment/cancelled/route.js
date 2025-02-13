@@ -3,11 +3,13 @@ import pageRoute from '../../../routes/page-route.js'
 import { PAYMENT_CANCELLED, NEW_TRANSACTION } from '../../../uri.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+import { isRecurringPayment } from '../../../processors/recurring-pay-helper.js'
 
 import { COMPLETION_STATUS } from '../../../constants.js'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
+  const transaction = await request.cache().helpers.transaction.get()
 
   // If the payment created flag is not set to true then throw an exception
   if (!status[COMPLETION_STATUS.paymentCreated]) {
@@ -15,6 +17,7 @@ export const getData = async request => {
   }
 
   return {
+    recurringPayment: isRecurringPayment(transaction),
     uri: {
       new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }

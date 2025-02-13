@@ -21,3 +21,5 @@ export const validForRecurringPayment = permission => {
     process.env.CHANNEL?.toLowerCase() !== 'telesales'
   )
 }
+
+export const isRecurringPayment = transaction => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && !!transaction.agreementId

@@ -8,6 +8,7 @@ import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { displayPrice } from '../../../processors/price-display.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { isRecurringPayment } from '../../../processors/recurring-pay-helper.js'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -57,8 +58,6 @@ const postalFulfilment = permission => {
     return 'non_postal'
   }
 }
-
-const isRecurringPayment = transaction => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && !!transaction.agreementId
 
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
