@@ -394,7 +394,7 @@ describe('recurring-payments-processor', () => {
       jest.clearAllMocks()
     })
 
-    it('should retry the specified number of times (3x) on failure', async () => {
+    it('should retry the job three times on failure', async () => {
       const retries = 3
       const delay = 1000
 
