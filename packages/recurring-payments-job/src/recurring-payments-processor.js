@@ -30,7 +30,7 @@ const processRecurringPayment = async record => {
 }
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
-  const transactionData = await processPermissionData(agreementId, referenceNumber)
+  const transactionData = await processPermissionData(referenceNumber, agreementId)
   console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
@@ -52,8 +52,8 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   })
 }
 
-const processPermissionData = async (agreementId, referenceNumber) => {
-  console.log('Preparing data based on', referenceNumber, ', Agreement ID:', agreementId)
+const processPermissionData = async (referenceNumber, agreementId) => {
+  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
