@@ -25,13 +25,13 @@ export const processRecurringPayments = async () => {
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
-  const transaction = await createNewTransaction(referenceNumber)
+  const transaction = await createNewTransaction(referenceNumber, agreementId)
   await takeRecurringPayment(agreementId, transaction)
 }
 
-const createNewTransaction = async referenceNumber => {
-  const transactionData = await processPermissionData(referenceNumber)
-  console.log('Creating new transaction based on', referenceNumber)
+const createNewTransaction = async (referenceNumber, agreementId) => {
+  const transactionData = await processPermissionData(agreementId, referenceNumber)
+  console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
     console.log('New transaction created:', response)
@@ -52,12 +52,13 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   })
 }
 
-const processPermissionData = async referenceNumber => {
-  console.log('Preparing data based on', referenceNumber)
+const processPermissionData = async (agreementId, referenceNumber) => {
+  console.log('Preparing data based on', referenceNumber, ', Agreement ID:', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
     dataSource: 'Recurring Payment',
+    agreementId,
     permissions: [
       {
         isLicenceForYou: data.isLicenceForYou,
