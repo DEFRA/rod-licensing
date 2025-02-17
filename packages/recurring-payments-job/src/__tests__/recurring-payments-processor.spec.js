@@ -100,6 +100,7 @@ describe('recurring-payments-processor', () => {
 
     const expectedData = {
       dataSource: 'Recurring Payment',
+      agreementId: 'test-agreement-id',
       permissions: [
         {
           isLicenceForYou,
@@ -269,7 +270,7 @@ describe('recurring-payments-processor', () => {
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
-    jest.advanceTimersByTime(60000)
+    jest.useFakeTimers(60000)
 
     expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
   })
@@ -380,6 +381,7 @@ describe('recurring-payments-processor', () => {
         expectedData.push([
           {
             dataSource: 'Recurring Payment',
+            agreementId: 'test-agreement-id',
             permissions: [expect.objectContaining({ permitId: permit })]
           }
         ])
