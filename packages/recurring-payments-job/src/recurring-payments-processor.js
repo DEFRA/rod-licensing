@@ -5,6 +5,7 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
+const permissions = []
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -48,13 +49,18 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   const payment = await sendPayment(preparedPayment)
   payments.push({
     agreementId,
-    paymentId: payment.payment_id
+    paymentId: payment.payment_id,
+    transaction
   })
 }
 
 const processPermissionData = async referenceNumber => {
   console.log('Preparing data based on', referenceNumber)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
+  permissions.push({
+    data,
+    referenceNumber
+  })
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
     dataSource: 'Recurring Payment',
@@ -100,7 +106,25 @@ const processRecurringPaymentStatus = async record => {
   const {
     state: { status }
   } = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
+  const paymentStatus = JSON.stringify(status)
+  console.log(`Payment status for ${paymentId}: ${paymentStatus}`)
+  if (paymentStatus === '"Success"') {
+    const { transaction } = payments.find(p => p.agreementId === agreementId)
+    const contact = record.expanded.contact
+    const permission = await getPermissionData(record, contact, transaction)
+    await salesApi.processRecurringPayment(salesApi.generateRecurringPaymentRecord(transaction, permission), contact)
+  }
+}
+
+const getPermissionData = async (record, contact, transaction) => {
+  const { data } = permissions.find(p => p.referenceNumber === record.expanded.activePermission.entity.referenceNumber)
+  data.startDate = new Date(data.licenceStartDate.setFullYear(data.licenceStartDate.getFullYear() + 1))
+  data.endDate = new Date(data.endDate.setFullYear(data.endDate.getFullYear() + 1))
+  data.nextDueDate = new Date(data.nextDueDate.setFullYear(data.nextDueDate.getFullYear() + 1))
+  data.referenceNumber = await salesApi.generatePermissionNumber(data, transaction.dataSource)
+  data.licensee.obfuscatedDob = contact.entity.obfuscatedDob
+
+  return data
 }
 
 const getPaymentId = agreementId => {

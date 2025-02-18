@@ -1,4 +1,4 @@
-import { generatePermissionNumber, calculateEndDate, generate } from '../permissions.service.js'
+import { generatePermissionNumber, calculateEndDate, generate, createRecurringPaymentPermission } from '../permissions.service.js'
 import moment from 'moment'
 import {
   MOCK_12MONTH_SENIOR_PERMIT,
@@ -8,6 +8,7 @@ import {
   MOCK_CONCESSION
 } from '../../__mocks__/test-data.js'
 import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
+import { persist } from '@defra-fish/dynamics-lib'
 
 jest.mock('@defra-fish/business-rules-lib', () => {
   const brl = jest.requireActual('@defra-fish/business-rules-lib')
@@ -16,6 +17,11 @@ jest.mock('@defra-fish/business-rules-lib', () => {
     isSenior: jest.fn(brl.isSenior)
   }
 })
+
+jest.mock('@defra-fish/dynamics-lib', () => ({
+  ...jest.requireActual('@defra-fish/dynamics-lib'),
+  persist: jest.fn()
+}))
 
 jest.mock('../reference-data.service.js', () => ({
   ...jest.requireActual('../reference-data.service.js'),
@@ -156,6 +162,54 @@ describe('permissions service', () => {
         results.push(generate(i, ['AB', '123']))
       }
       expect(results).toEqual(['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'A1', 'A2', 'A3', 'B1', 'B2', 'B3'])
+    })
+  })
+
+  describe('createRecurringPaymentPermission', () => {
+    it('persist is called with new permission', async () => {
+      const mockPermissionData = {
+        referenceNumber: '12345',
+        issueDate: '2025-02-17T08:55:45.524Z',
+        startDate: '2025-02-17T08:55:45.524Z',
+        endDate: '2026-02-17T08:55:45.524Z',
+        dataSource: 'Web',
+        isRenewal: false,
+        licensee: { firstName: 'John', lastName: 'Doe', birthDate: '1990-01-01' },
+        permitId: 'some-permit-id',
+        isLicenceForYou: 'yes'
+      }
+
+      await createRecurringPaymentPermission(mockPermissionData)
+
+      const expectedPermission = {
+        referenceNumber: mockPermissionData.referenceNumber,
+        issueDate: mockPermissionData.issueDate,
+        startDate: mockPermissionData.startDate,
+        endDate: mockPermissionData.endDate,
+        dataSource: mockPermissionData.dataSource,
+        isRenewal: mockPermissionData.isRenewal,
+        isLicenceForYou: mockPermissionData.isLicenceForYou,
+        licensee: mockPermissionData.licensee,
+        permitId: mockPermissionData.permitId
+      }
+
+      expect(persist).toHaveBeenCalledWith([expect.objectContaining(expectedPermission)])
+    })
+
+    it('throws an error if permission data is missing', async () => {
+      await expect(createRecurringPaymentPermission(null, 'TestUser')).rejects.toThrow('Missing permission data')
+    })
+
+    it('throws an error if licensee is missing', async () => {
+      await expect(createRecurringPaymentPermission({ permitId: 'some-permit-id' }, 'TestUser')).rejects.toThrow(
+        'Missing permission data'
+      )
+    })
+
+    it('throws an error if permitId is missing', async () => {
+      await expect(
+        createRecurringPaymentPermission({ licensee: { firstName: 'John', lastName: 'Doe' } }, 'TestUser')
+      ).rejects.toThrow('Missing permission data')
     })
   })
 })

@@ -295,3 +295,40 @@ export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL
  */
 export const preparePermissionDataForRenewal = async referenceNumber =>
   exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
+
+/**
+ * Generate a recurring payment record
+ *
+ * @param transactionRecord the transaction data
+ * @param permission the related permission
+ * @returns {Promise<*>} the API response
+ * @throws on a non-2xx response
+ */
+export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
+  return exec2xxOrThrow(
+    call(new URL(`/generateRecurringPaymentRecord/${transactionRecord}/${permission}`, urlBase), 'get')
+  )
+}
+
+/**
+ * Process a recurring payment instruction
+ *
+ * @param {Object} transactionRecord - The transaction details
+ * @param {Object} contact - The associated contact details
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const processRecurringPayment = async (transactionRecord, contact) => {
+  return exec2xxOrThrow(call(new URL(`/processRecurringPayment/${transactionRecord}/${contact}`, urlBase), 'get'))
+}
+
+/**
+ * Create a new permission from new recurring payment
+ *
+ * @param {Object} permissionData - The permission details to be created
+ * @returns {Promise<*>} - The created permission response
+ * @throws on a non-2xx response
+ */
+export const createPermission = async (permissionData) => {
+  return exec2xxOrThrow(call(new URL('/createRecurringPaymentPermission', urlBase), 'post', permissionData))
+}

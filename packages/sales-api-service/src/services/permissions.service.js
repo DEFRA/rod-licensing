@@ -1,4 +1,4 @@
-import { Permission, Permit } from '@defra-fish/dynamics-lib'
+import { Permission, Permit, persist } from '@defra-fish/dynamics-lib'
 import { isJunior, isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import { redis } from './ioredis.service.js'
@@ -135,4 +135,15 @@ export const calculateLuhn = value => {
     sum += Math.floor(addend / 10) + (addend % 10)
   }
   return (10 - (sum % 10)) % 10
+}
+
+export const createRecurringPaymentPermission = async (permissionData) => {
+  if (!permissionData || !permissionData.licensee || !permissionData.permitId) {
+    throw new Error('Missing permission data')
+  }
+
+  let permission = new Permission()
+  permission = permissionData
+
+  await persist([permission])
 }
