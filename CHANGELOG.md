@@ -1,4 +1,13 @@
 
+## v1.59.0-rc.9 (2025-02-18)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2125](https://github.com/DEFRA/rod-licensing/pull/2125) Missing Welsh from Licence-type selection page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.59.0-rc.8 (2025-02-18)
 
 #### :rocket: Enhancement
