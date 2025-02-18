@@ -1,4 +1,13 @@
 
+## v1.59.0-rc.8 (2025-02-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2123](https://github.com/DEFRA/rod-licensing/pull/2123) Clarify RP agreement status when first payment does not go through ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.59.0-rc.7 (2025-02-18)
 
 #### :rocket: Enhancement
