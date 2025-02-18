@@ -1,4 +1,15 @@
 
+## v1.59.0-rc.6 (2025-02-18)
+
+#### :rocket: Enhancement
+* Other
+  * [#2127](https://github.com/DEFRA/rod-licensing/pull/2127) Update GitHub Actions build script ([@lailien3](https://github.com/lailien3))
+* `recurring-payments-job`
+  * [#2124](https://github.com/DEFRA/rod-licensing/pull/2124) Amend recurring payment transaction to contain reference to recurring payment ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.59.0-rc.5 (2025-02-11)
 
 #### :rocket: Enhancement
