@@ -1,4 +1,13 @@
 
+## v1.59.0-rc.7 (2025-02-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2126](https://github.com/DEFRA/rod-licensing/pull/2126) Add NextRecurringPayment to RecurringPayment entity ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.59.0-rc.6 (2025-02-18)
 
 #### :rocket: Enhancement
