@@ -600,6 +600,7 @@
   "payment_cancelled_title": "Mae eich taliad wedi cael ei ganslo",
   "payment_failed_expired": "Ni chafodd y taliad ei gwblhau o fewn 90 munud o greu’r cais",
   "payment_failed_not_taken": "Nid oes unrhyw arian wedi cael ei dynnu o’ch cyfrif.",
+  "payment_failed_not_taken_recurring": "Nid oes unrhyw arian wedi cael ei dynnu o’ch cyfrif ac nid yw eich manylion talu wedi cael eu harbed ar gyfer y taliad cerdyn sy’n ailadrodd.",
   "payment_failed_rejected": "Mae’r taliad wedi cael ei wrthod gan ddarparwr y taliad. Sicrhewch eich bod wedi mewnbynnu manylion eich cerdyn yn gywir a bod digon o arian ar gael yn eich cyfrif",
   "payment_failed_title_1": "Mae eich cais i dalu wedi dod i ben",
   "payment_failed_title_2": "Mae eich taliad wedi cael ei wrthod",
