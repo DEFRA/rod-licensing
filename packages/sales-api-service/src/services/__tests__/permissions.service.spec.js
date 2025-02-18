@@ -201,15 +201,13 @@ describe('permissions service', () => {
     })
 
     it('throws an error if licensee is missing', async () => {
-      await expect(createRecurringPaymentPermission({ permitId: 'some-permit-id' }, 'TestUser')).rejects.toThrow(
-        'Missing permission data'
-      )
+      await expect(createRecurringPaymentPermission({ permitId: 'some-permit-id' }, 'TestUser')).rejects.toThrow('Missing permission data')
     })
 
     it('throws an error if permitId is missing', async () => {
-      await expect(
-        createRecurringPaymentPermission({ licensee: { firstName: 'John', lastName: 'Doe' } }, 'TestUser')
-      ).rejects.toThrow('Missing permission data')
+      await expect(createRecurringPaymentPermission({ licensee: { firstName: 'John', lastName: 'Doe' } }, 'TestUser')).rejects.toThrow(
+        'Missing permission data'
+      )
     })
   })
 })

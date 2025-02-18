@@ -16,7 +16,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     })),
     processRecurringPayment: jest.fn(),
     generateRecurringPaymentRecord: jest.fn(),
-    generatePermissionNumber: jest.fn(() => ('123'))
+    generatePermissionNumber: jest.fn(() => '123')
   }
 }))
 
@@ -26,7 +26,7 @@ jest.mock('../services/govuk-pay-service.js', () => ({
 }))
 
 const PAYMENT_STATUS_DELAY = 60000
-const getDate = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())
+const getDate = date => new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
@@ -470,7 +470,7 @@ describe('recurring-payments-processor', () => {
     const transaction = await salesApi.createTransaction()
     sendPayment.mockResolvedValueOnce({ payment_id: 'payment-id' })
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
-    const getDate = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    const getDate = date => new Date(date.getFullYear(), date.getMonth(), date.getDate())
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' },
       referenceNumber: '123',
@@ -484,17 +484,14 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
     jest.advanceTimersByTime(PAYMENT_STATUS_DELAY)
 
-    expect(salesApi.generateRecurringPaymentRecord).toHaveBeenCalledWith(
-      transaction,
-      {
-        licensee: { countryCode: 'GB-ENG', obfuscatedDob: '1234' },
-        referenceNumber,
-        endDate: getDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1))),
-        nextDueDate: getDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1))),
-        startDate: getDate(new Date()),
-        licenceStartDate: getDate(new Date())
-      }
-    )
+    expect(salesApi.generateRecurringPaymentRecord).toHaveBeenCalledWith(transaction, {
+      licensee: { countryCode: 'GB-ENG', obfuscatedDob: '1234' },
+      referenceNumber,
+      endDate: getDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1))),
+      nextDueDate: getDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1))),
+      startDate: getDate(new Date()),
+      licenceStartDate: getDate(new Date())
+    })
   })
 
   it('should not call generateRecurringPaymentRecord when payment is not successful', async () => {
@@ -692,7 +689,11 @@ describe('recurring-payments-processor', () => {
   })
 })
 
-const getMockDueRecurringPayment = ({ referenceNumber = '123', agreementId = 'test-agreement-id', contact = { entity: { obfuscatedDob: '1234' } } }) => ({
+const getMockDueRecurringPayment = ({
+  referenceNumber = '123',
+  agreementId = 'test-agreement-id',
+  contact = { entity: { obfuscatedDob: '1234' } }
+}) => ({
   entity: { agreementId },
   expanded: {
     activePermission: {

@@ -1,5 +1,9 @@
 import recurringPayments from '../recurring-payments.js'
-import { generateRecurringPaymentRecord, getRecurringPayments, processRecurringPayment } from '../../../services/recurring-payments.service.js'
+import {
+  generateRecurringPaymentRecord,
+  getRecurringPayments,
+  processRecurringPayment
+} from '../../../services/recurring-payments.service.js'
 import { createRecurringPaymentPermission } from '../../../services/permissions.service.js'
 
 const [

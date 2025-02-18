@@ -137,7 +137,7 @@ export const calculateLuhn = value => {
   return (10 - (sum % 10)) % 10
 }
 
-export const createRecurringPaymentPermission = async (permissionData) => {
+export const createRecurringPaymentPermission = async permissionData => {
   if (!permissionData || !permissionData.licensee || !permissionData.permitId) {
     throw new Error('Missing permission data')
   }

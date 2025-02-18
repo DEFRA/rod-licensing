@@ -305,9 +305,7 @@ export const preparePermissionDataForRenewal = async referenceNumber =>
  * @throws on a non-2xx response
  */
 export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
-  return exec2xxOrThrow(
-    call(new URL(`/generateRecurringPaymentRecord/${transactionRecord}/${permission}`, urlBase), 'get')
-  )
+  return exec2xxOrThrow(call(new URL(`/generateRecurringPaymentRecord/${transactionRecord}/${permission}`, urlBase), 'get'))
 }
 
 /**
@@ -329,6 +327,6 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
  * @returns {Promise<*>} - The created permission response
  * @throws on a non-2xx response
  */
-export const createPermission = async (permissionData) => {
+export const createPermission = async permissionData => {
   return exec2xxOrThrow(call(new URL('/createRecurringPaymentPermission', urlBase), 'post', permissionData))
 }
