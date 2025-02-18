@@ -205,7 +205,7 @@ describe('recurring-payments-processor', () => {
     )
   })
 
-  it('logs an error if createTransaction fails', async () => {
+  it('raises and logs an error if createTransaction fails', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const error = new Error('Wuh-oh!')
