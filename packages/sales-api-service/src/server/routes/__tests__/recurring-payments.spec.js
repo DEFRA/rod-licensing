@@ -1,3 +1,4 @@
+import recurringPayments from '../recurring-payments.js'
 import { getRecurringPayments } from '../../../services/recurring-payments.service.js'
 
 const [
