@@ -66,5 +66,4 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   return { recurringPayment: null }
 }
 
-export const processRP = async () => {
-}
+export const processRP = async () => {}
