@@ -68,10 +68,6 @@ describe('recurring-payments-processor', () => {
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
-    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
-      licensee: { countryCode: 'GB-ENG' },
-      referenceNumber: '123'
-    })
 
     await processRecurringPayments()
 
@@ -97,6 +93,7 @@ describe('recurring-payments-processor', () => {
         country,
         countryCode: 'GB-ENG'
       },
+      licenceStartDate: '2020-01-01',
       licenceStartTime: 3,
       permitId
     })
@@ -113,8 +110,8 @@ describe('recurring-payments-processor', () => {
             lastName,
             country
           },
-          concessions: undefined,
-          permitId
+          permitId,
+          startDate: '2020-01-01T03:00:00.000Z'
         }
       ]
     }
@@ -170,6 +167,7 @@ describe('recurring-payments-processor', () => {
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' },
+      licenceStartDate: '2020-03-14',
       licenceStartTime: 15
     })
 
@@ -235,13 +233,6 @@ describe('recurring-payments-processor', () => {
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
-    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
-      licensee: { countryCode: 'GB-ENG' },
-      referenceNumber: '123',
-      endDate: new Date(),
-      nextDueDate: new Date(),
-      startDate: new Date()
-    })
 
     const expectedData = {
       amount: 5000,
@@ -265,11 +256,6 @@ describe('recurring-payments-processor', () => {
             entity: {
               referenceNumber: 'ref-1'
             }
-          },
-          contact: {
-            entity: {
-              obfuscatedDob: '1234'
-            }
           }
         }
       }
@@ -279,10 +265,6 @@ describe('recurring-payments-processor', () => {
       id: 'payment-id-1'
     })
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
-    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
-      licensee: { countryCode: 'GB-ENG' },
-      referenceNumber: '123'
-    })
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
@@ -303,11 +285,6 @@ describe('recurring-payments-processor', () => {
             entity: {
               referenceNumber: 'ref-1'
             }
-          },
-          contact: {
-            entity: {
-              obfuscatedDob: '1234'
-            }
           }
         }
       }
@@ -321,10 +298,6 @@ describe('recurring-payments-processor', () => {
     const mockPaymentStatus = { state: { status: 'Success' } }
     getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
     const mockStatus = JSON.stringify(mockPaymentStatus.state.status)
-    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
-      licensee: { countryCode: 'GB-ENG' },
-      referenceNumber: '123'
-    })
 
     await processRecurringPayments()
     jest.advanceTimersByTime(60000)
@@ -338,10 +311,6 @@ describe('recurring-payments-processor', () => {
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
-    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
-      licensee: { countryCode: 'GB-ENG' },
-      referenceNumber: '123'
-    })
 
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
 
