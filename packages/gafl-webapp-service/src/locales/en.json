@@ -415,7 +415,6 @@
   "licence_length_one_day": "1 day licences are valid for 24 hours from the start time that you select.",
   "licence_length_title_other": "How long do they want the licence for?",
   "licence_length_title_you": "How long do you want your licence for?",
-
   "licence_not_found_title": "We cannot find a licence matching the details you provided",
   "licence_not_found_body_1": "Check you have entered your details correctly - ",
   "licence_not_found_body_previous_page": "go back to the previous page",
@@ -423,7 +422,6 @@
   "licence_not_found_body_ea_link": "enquiries@environment-agency.gov.uk",
   "licence_not_found_body_3": " or calling 03708 506 506 (8am to 6pm, Monday to Friday, except public holidays). ",
   "licence_not_found_body_call_charges_link": "View call charges (opens in new tab)",
-
   "licence_num": "Licence number",
   "licence_start_days": " days",
   "licence_start_enter_todays_date": "Enter today’s date if you want the 1-day or 8-day licence to start later today.",
