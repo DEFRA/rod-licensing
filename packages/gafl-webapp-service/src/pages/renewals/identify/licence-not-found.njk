@@ -1,0 +1,23 @@
+{% extends "layout.njk" %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+
+{% set title = data.title %}
+
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {% call govukFieldset({
+                legend: {
+                    text: title,
+                    classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                    isPageHeading: true
+                }
+            }) %}
+
+            {% endcall %}
+        </div>
+    </div>
+{% endblock %}
