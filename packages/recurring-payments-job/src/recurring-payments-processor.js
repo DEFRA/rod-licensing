@@ -109,22 +109,10 @@ const processRecurringPaymentStatus = async record => {
   const paymentStatus = JSON.stringify(status)
   console.log(`Payment status for ${paymentId}: ${paymentStatus}`)
   if (paymentStatus === '"Success"') {
-    const { transaction } = payments.find(p => p.agreementId === agreementId)
-    const contact = record.expanded.contact
-    const permission = await getPermissionData(record, contact, transaction)
-    await salesApi.processRecurringPayment(salesApi.generateRecurringPaymentRecord(transaction, permission), contact)
+    // const { transaction } = payments.find(p => p.agreementId === agreementId)
+    // const contact = record.expanded.contact
+    await salesApi.processRP()
   }
-}
-
-const getPermissionData = async (record, contact, transaction) => {
-  const { data } = permissions.find(p => p.referenceNumber === record.expanded.activePermission.entity.referenceNumber)
-  data.startDate = new Date(data.licenceStartDate.setFullYear(data.licenceStartDate.getFullYear() + 1))
-  data.endDate = new Date(data.endDate.setFullYear(data.endDate.getFullYear() + 1))
-  data.nextDueDate = new Date(data.nextDueDate.setFullYear(data.nextDueDate.getFullYear() + 1))
-  data.referenceNumber = await salesApi.generatePermissionNumber(data, transaction.dataSource)
-  data.licensee.obfuscatedDob = contact.entity.obfuscatedDob
-
-  return data
 }
 
 const getPaymentId = agreementId => {
