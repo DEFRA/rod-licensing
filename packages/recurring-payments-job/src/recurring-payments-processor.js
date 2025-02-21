@@ -6,19 +6,6 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 
-export const retry = async (fn, retries = 3, delay = 5000) => {
-  try {
-    return await fn()
-  } catch (error) {
-    if (retries === 0) {
-      throw error
-    }
-    console.log(`Error: ${error}. Retrying... Attempts left: ${retries}`)
-    await new Promise(resolve => setTimeout(resolve, delay))
-    return retry(fn, retries - 1, delay * 2)
-  }
-}
-
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
@@ -63,7 +50,7 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
   try {
-    const payment = await retry(() => sendPayment(preparedPayment))
+    const payment = await sendPayment(preparedPayment)
     payments.push({
       agreementId,
       paymentId: payment.payment_id
@@ -121,7 +108,7 @@ const processRecurringPaymentStatus = async record => {
   try {
     const {
       state: { status }
-    } = await retry(() => getPaymentStatus(paymentId))
+    } = await getPaymentStatus(paymentId)
     console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
   } catch (error) {
     console.error('Error fetching payment status for payment:', paymentId, 'Error:', error)

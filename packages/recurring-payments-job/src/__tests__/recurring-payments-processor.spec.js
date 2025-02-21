@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { processRecurringPayments, retry } from '../recurring-payments-processor.js'
+import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
 
 jest.mock('@defra-fish/business-rules-lib')
@@ -362,63 +362,30 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.preparePermissionDataForRenewal).not.toHaveBeenCalled()
   })
 
-  it('should retry sendPayment after a mid-run failure and log job progress upon success', async () => {
-    const record = getMockDueRecurringPayment()
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce([record])
-    salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
-    salesApi.createTransaction.mockResolvedValueOnce({ cost: 30, id: 'trans1' })
+  // it('should retry sendPayment after a mid-run failure and log job progress upon success', async () => {
+  //   const record = getMockDueRecurringPayment()
+  //   salesApi.getDueRecurringPayments.mockResolvedValueOnce([record])
+  //   salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
+  //   salesApi.createTransaction.mockResolvedValueOnce({ cost: 30, id: 'trans1' })
 
-    sendPayment
-      .mockRejectedValueOnce(new Error('Temporary error'))
-      .mockResolvedValueOnce({ payment_id: 'test-payment-id', agreementId: record.entity.agreementId })
+  //   sendPayment
+  //     .mockRejectedValueOnce(new Error('Temporary error'))
+  //     .mockResolvedValueOnce({ payment_id: 'test-payment-id', agreementId: record.entity.agreementId })
 
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+  //   const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
 
-    await processRecurringPayments()
+  //   await processRecurringPayments()
 
-    expect({
-      sendPaymentCalls: sendPayment.mock.calls.length,
-      logMessages: consoleLogSpy.mock.calls.map(call => call[0])
-    }).toMatchObject({
-      sendPaymentCalls: 2,
-      logMessages: expect.arrayContaining(['Recurring Payments job enabled', 'Recurring Payments found: ', 'Preparing data based on'])
-    })
-
-    consoleLogSpy.mockRestore()
-  })
-
-  describe('retry function', () => {
-    const mockSendPayment = sendPayment
-
-    afterEach(() => {
-      jest.clearAllMocks()
-    })
-
-    it('should retry the job three times on failure', async () => {
-      const retries = 3
-      const delay = 1000
-
-      mockSendPayment
-        .mockRejectedValueOnce(new Error('Network Error'))
-        .mockRejectedValueOnce(new Error('Network Error'))
-        .mockResolvedValue('Payment Success')
-
-      const result = await retry(() => mockSendPayment(), retries, delay)
-
-      expect(mockSendPayment).toHaveBeenCalledTimes(3)
-      expect(result).toBe('Payment Success')
-    })
-
-    it('should throw an error after exceeding the maximum number of retries', async () => {
-      const retries = 2
-      const delay = 1000
-
-      mockSendPayment.mockRejectedValue(new Error('Network Error'))
-
-      await expect(retry(() => mockSendPayment(), retries, delay)).rejects.toThrow('Network Error')
-      expect(mockSendPayment).toHaveBeenCalledTimes(3)
-    })
-  })
+  //   expect({
+  //     sendPaymentCalls: sendPayment.mock.calls.length,
+  //     logMessages: consoleLogSpy.mock.calls.map(call => call[0])
+  //   }).toMatchObject({
+  //     sendPaymentCalls: 2,
+  //     logMessages: expect.arrayContaining(['Recurring Payments job enabled', 'Recurring Payments found: ', 'Preparing data based on'])
+  //   })
+  //
+  //   consoleLogSpy.mockRestore()
+  // })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
     it('prepares the data for each one', async () => {
