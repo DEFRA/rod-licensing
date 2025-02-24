@@ -1,5 +1,10 @@
 import { findDueRecurringPayments, Permission } from '@defra-fish/dynamics-lib'
-import { getRecurringPayments, processRecurringPayment, generateRecurringPaymentRecord, processRPResult } from '../recurring-payments.service.js'
+import {
+  getRecurringPayments,
+  processRecurringPayment,
+  generateRecurringPaymentRecord,
+  processRPResult
+} from '../recurring-payments.service.js'
 import { createHash } from 'node:crypto'
 import sqs from '@defra-fish/connectors-lib'
 
