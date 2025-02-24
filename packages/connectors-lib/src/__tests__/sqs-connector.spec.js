@@ -64,7 +64,7 @@ describe('sqs-connector', () => {
     })
 
     it('returns necessary information on a non-ok response', async () => {
-      fetch.mockReturnalue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
       await expect(sqs.call(new URL(TEST_HREF))).resolves.toEqual({
         ok: false,
         status: 404,
@@ -109,7 +109,7 @@ describe('sqs-connector', () => {
       })
 
       await expect(sqs.receiver()).resolves.toEqual(expectedResponse)
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult', {
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/receiver', {
         method: 'post',
         headers: expect.any(Object),
         timeout: 20000
@@ -125,7 +125,7 @@ describe('sqs-connector', () => {
       })
 
       await expect(sqs.receiver()).rejects.toThrow('Internal Server Error')
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult', {
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/receiver', {
         method: 'post',
         headers: expect.any(Object),
         timeout: 20000

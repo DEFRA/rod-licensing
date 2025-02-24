@@ -11,7 +11,8 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     })),
     createTransaction: jest.fn(() => ({
       cost: 30
-    }))
+    })),
+    processRPResult: jest.fn()
   }
 }))
 

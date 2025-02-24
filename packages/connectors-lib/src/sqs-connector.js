@@ -1,3 +1,4 @@
+import fetch from 'node-fetch'
 import db from 'debug'
 const SQS_RECIEVER_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SQS_RECIEVER_TIMEOUT_MS_DEFAULT = 20000

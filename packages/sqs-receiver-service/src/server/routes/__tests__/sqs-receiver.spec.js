@@ -7,9 +7,7 @@ const [
   }
 ] = sqsReceiver
 
-jest.mock('../../../receiver.js', () => ({
-  receiver: jest.fn()
-}))
+jest.mock('../../../receiver.js', () => jest.fn())
 
 describe('sqs receiver', () => {
   beforeEach(jest.clearAllMocks)
