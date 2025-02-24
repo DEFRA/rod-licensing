@@ -1,9 +1,10 @@
 import fetch from 'node-fetch'
 import db from 'debug'
-const SQS_RECIEVER_URL_DEFAULT = 'http://0.0.0.0:4000'
+const SQS_RECIEVER_URL_DEFAULT = 'https://0.0.0.0:4000'
 const SQS_RECIEVER_TIMEOUT_MS_DEFAULT = 20000
 const urlBase = process.env.SALES_API_URL || SQS_RECIEVER_URL_DEFAULT
 const debug = db('connectors:sales-api')
+const STATUS_CODE = 204
 
 /**
  * Make a request to the sales API
@@ -26,7 +27,7 @@ export const call = async (url, method = 'get', payload = null) => {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: response.status !== 204 ? await parseResponseBody(response) : undefined
+    body: response.status !== STATUS_CODE ? await parseResponseBody(response) : undefined
   }
   debug(
     'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',

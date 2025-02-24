@@ -109,7 +109,7 @@ describe('sqs-connector', () => {
       })
 
       await expect(sqs.receiver()).resolves.toEqual(expectedResponse)
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/receiver', {
+      expect(fetch).toHaveBeenCalledWith('https://0.0.0.0:4000/receiver', {
         method: 'post',
         headers: expect.any(Object),
         timeout: 20000
@@ -125,7 +125,7 @@ describe('sqs-connector', () => {
       })
 
       await expect(sqs.receiver()).rejects.toThrow('Internal Server Error')
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/receiver', {
+      expect(fetch).toHaveBeenCalledWith('https://0.0.0.0:4000/receiver', {
         method: 'post',
         headers: expect.any(Object),
         timeout: 20000

@@ -5,7 +5,6 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
-const permissions = []
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -57,10 +56,6 @@ const takeRecurringPayment = async (agreementId, transaction) => {
 const processPermissionData = async referenceNumber => {
   console.log('Preparing data based on', referenceNumber)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
-  permissions.push({
-    data,
-    referenceNumber
-  })
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
     dataSource: 'Recurring Payment',
