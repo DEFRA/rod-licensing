@@ -109,9 +109,7 @@ const processRecurringPaymentStatus = async record => {
   const paymentStatus = JSON.stringify(status)
   console.log(`Payment status for ${paymentId}: ${paymentStatus}`)
   if (paymentStatus === '"Success"') {
-    // const { transaction } = payments.find(p => p.agreementId === agreementId)
-    // const contact = record.expanded.contact
-    await salesApi.processRP()
+    await salesApi.processRPResult()
   }
 }
 

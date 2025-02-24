@@ -1,12 +1,18 @@
 import { findDueRecurringPayments, Permission } from '@defra-fish/dynamics-lib'
-import { getRecurringPayments, processRecurringPayment, generateRecurringPaymentRecord } from '../recurring-payments.service.js'
+import { getRecurringPayments, processRecurringPayment, generateRecurringPaymentRecord, processRPResult } from '../recurring-payments.service.js'
 import { createHash } from 'node:crypto'
+import sqs from '@defra-fish/connectors-lib'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   executeQuery: jest.fn(),
   findById: jest.fn(),
   findDueRecurringPayments: jest.fn()
+}))
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  ...jest.requireActual('@defra-fish/connectors-lib'),
+  receiver: jest.fn()
 }))
 
 jest.mock('node:crypto', () => ({
@@ -337,6 +343,50 @@ describe('recurring payments service', () => {
       const rpRecord = generateRecurringPaymentRecord(sampleTransaction)
 
       expect(rpRecord.payment.recurring).toBeFalsy()
+    })
+  })
+
+  describe('processRPResult', () => {
+    it('should call receiver', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+      await processRPResult()
+
+      expect(sqs.receiver).toHaveBeenCalled()
+
+      consoleLogSpy.mockRestore()
+    })
+
+    it('should log that it is starting', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+      await processRPResult()
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('Starting the receiver')
+
+      consoleLogSpy.mockRestore()
+    })
+
+    it('once receiver called it logs that it have executed', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+      await processRPResult()
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('Receiver executed successfully.')
+
+      consoleLogSpy.mockRestore()
+    })
+
+    it('should log error message if receiver throws an error', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMessage = 'Receiver error'
+      sqs.receiver.mockRejectedValueOnce(new Error(errorMessage))
+
+      await processRPResult()
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error while running receiver:', new Error(errorMessage))
+
+      consoleErrorSpy.mockRestore()
     })
   })
 })

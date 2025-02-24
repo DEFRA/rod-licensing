@@ -2,6 +2,7 @@ import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra
 import { createHash } from 'node:crypto'
 import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
+import sqs from '@defra-fish/connectors-lib'
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
 
@@ -66,4 +67,12 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   return { recurringPayment: null }
 }
 
-export const processRP = async () => {}
+export const processRPResult = async () => {
+  try {
+    console.log('Starting the receiver')
+    await sqs.receiver()
+    console.log('Receiver executed successfully.')
+  } catch (error) {
+    console.error('Error while running receiver:', error)
+  }
+}

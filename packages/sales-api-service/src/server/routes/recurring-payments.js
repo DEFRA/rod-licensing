@@ -1,5 +1,5 @@
 import { dueRecurringPaymentsResponseSchema } from '../../schema/recurring-payments.schema.js'
-import { getRecurringPayments, processRP } from '../../services/recurring-payments.service.js'
+import { getRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
 
 export default [
   {
@@ -24,12 +24,11 @@ export default [
     }
   },
   {
-    method: 'GET',
-    path: '/processRP',
+    method: 'POST',
+    path: '/processRPResult',
     options: {
-      handler: async (request, h) => {
-        const result = processRP()
-        return h.response(result)
+      handler: async () => {
+        await processRPResult()
       },
       description: 'Generate a recurring payment record',
       tags: ['api', 'recurring-payments'],
