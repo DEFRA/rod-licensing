@@ -1,8 +1,15 @@
 import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
+import { getAdjustedStartDate } from '../services/transactions/finalise-transaction.js'
+import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
 import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
+import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import moment from 'moment'
-import sqs from '@defra-fish/connectors-lib'
+import { AWS } from '@defra-fish/connectors-lib'
+import { permission } from 'node:process'
+const { sqs, docClient } = AWS()
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
 
@@ -67,12 +74,45 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   return { recurringPayment: null }
 }
 
-export const processRPResult = async () => {
+export const processRPResult = async transaction => {
   try {
-    console.log('Starting the receiver')
-    await sqs.receiver()
-    console.log('Receiver executed successfully.')
+    for (const permission of transaction.permissions) {
+      permission.issueDate = moment(permission.issueDate).add(1, 'year').toDate()
+      const startDate = moment(permission.startDate).add(1, 'year').toDate()
+
+      permission.startDate = getAdjustedStartDate({
+        startDate,
+        dataSource: transaction.dataSource,
+        issueDate: permission.issueDate
+      })
+      permission.endDate = await calculateEndDate(permission)
+      permission.referenceNumber = await generatePermissionNumber(permission, transaction.dataSource)
+      permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
+    }
+
+    const id = transaction.id
+    await docClient
+      .update({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { id },
+        ...docClient.createUpdateExpression({
+          ...permission,
+          permissions: transaction.permissions,
+          status: { id: TRANSACTION_STATUS.FINALISED }
+        }),
+        ReturnValues: 'ALL_NEW'
+      })
+      .promise()
+
+    await sqs
+      .sendMessage({
+        QueueUrl: TRANSACTION_QUEUE.Url,
+        MessageGroupId: id,
+        MessageDeduplicationId: id,
+        MessageBody: JSON.stringify({ id })
+      })
+      .promise()
   } catch (error) {
-    console.error('Error while running receiver:', error)
+    console.error('Error while processing recurring payment result:', error)
   }
 }

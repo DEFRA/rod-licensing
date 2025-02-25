@@ -304,6 +304,6 @@ export const preparePermissionDataForRenewal = async referenceNumber =>
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const processRPResult = async () => {
-  return exec2xxOrThrow(call(new URL('/processRPResult', urlBase), 'post'))
+export const processRPResult = async transaction => {
+  return exec2xxOrThrow(call(new URL(`/processRPResult/${transaction}`, urlBase), 'post'))
 }

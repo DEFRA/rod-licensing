@@ -5,8 +5,13 @@ import {
   generateRecurringPaymentRecord,
   processRPResult
 } from '../recurring-payments.service.js'
+import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
+import { getAdjustedStartDate } from '../../services/transactions/finalise-transaction.js'
+import { getObfuscatedDob } from '../contacts.service.js'
 import { createHash } from 'node:crypto'
-import sqs from '@defra-fish/connectors-lib'
+import { AWS } from '@defra-fish/connectors-lib'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
+import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -27,6 +32,20 @@ jest.mock('node:crypto', () => ({
   }))
 }))
 
+jest.mock('../contacts.service.js', () => ({
+  getObfuscatedDob: jest.fn()
+}))
+
+jest.mock('../permissions.service.js', () => ({
+  calculateEndDate: jest.fn(),
+  generatePermissionNumber: jest.fn()
+}))
+
+jest.mock('../../services/transactions/finalise-transaction.js', () => ({
+  getAdjustedStartDate: jest.fn()
+}))
+
+const { sqs, docClient } = AWS()
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
 const getMockRecurringPayment = () => ({
@@ -99,6 +118,21 @@ const getMockPermission = () => ({
   }
 })
 
+const getMockTransaction = () => ({
+  id: 'test-id',
+  dataSource: 'RCP',
+  permissions: [
+    {
+      issueDate: new Date('2024-01-01'),
+      startDate: new Date('2024-01-01'),
+      licensee: {
+        firstName: 'Test',
+        lastName: 'User'
+      }
+    }
+  ]
+})
+
 describe('recurring payments service', () => {
   const createSimpleSampleTransactionRecord = () => ({ payment: { recurring: true }, permissions: [{}] })
   const createSamplePermission = overrides => {
@@ -117,6 +151,11 @@ describe('recurring payments service', () => {
   }
 
   beforeEach(jest.clearAllMocks)
+  beforeAll(() => {
+    TRANSACTION_QUEUE.Url = 'TestUrl'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+  })
+
   describe('getRecurringPayments', () => {
     it('should equal result of findDueRecurringPayments query', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
@@ -352,46 +391,136 @@ describe('recurring payments service', () => {
   })
 
   describe('processRPResult', () => {
-    it('should call receiver', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-
-      await processRPResult()
-
-      expect(sqs.receiver).toHaveBeenCalled()
-
-      consoleLogSpy.mockRestore()
+    beforeEach(() => {
+      jest.clearAllMocks()
     })
 
-    it('should log that it is starting', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    it('should call getAdjustedStartDate with expected params', async () => {
+      const startDate = new Date('2024-01-01')
+      const issueDate = new Date('2024-01-01')
+      const dataSource = Symbol('data-source')
+      const mockTransaction = {
+        id: 'test-id',
+        dataSource,
+        permissions: [
+          {
+            issueDate,
+            startDate,
+            licensee: {
+              firstName: 'Test',
+              lastName: 'User'
+            }
+          }
+        ]
+      }
+      await processRPResult(mockTransaction)
 
-      await processRPResult()
+      const expected = {
+        startDate: new Date('2025-01-01'),
+        dataSource,
+        issueDate: new Date('2025-01-01')
+      }
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('Starting the receiver')
-
-      consoleLogSpy.mockRestore()
+      expect(getAdjustedStartDate).toHaveBeenCalledWith(expected)
     })
 
-    it('once receiver called it logs that it have executed', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    it('should call calculateEndDate with permission', async () => {
+      const permission = {
+        issueDate: new Date('2024-01-01'),
+        startDate: new Date('2024-01-01'),
+        licensee: {
+          firstName: 'Test',
+          lastName: 'User'
+        }
+      }
+      const mockTransaction = {
+        id: 'test-id',
+        dataSource: 'RCP',
+        permissions: [permission]
+      }
+      await processRPResult(mockTransaction)
 
-      await processRPResult()
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('Receiver executed successfully.')
-
-      consoleLogSpy.mockRestore()
+      expect(calculateEndDate).toHaveBeenCalledWith(permission)
     })
 
-    it('should log error message if receiver throws an error', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const errorMessage = 'Receiver error'
-      sqs.receiver.mockRejectedValueOnce(new Error(errorMessage))
+    it('should call generatePermissionNumber with permission and data source', async () => {
+      const permission = {
+        issueDate: new Date('2024-01-01'),
+        startDate: new Date('2024-01-01'),
+        licensee: {
+          firstName: 'Test',
+          lastName: 'User'
+        }
+      }
+      const dataSource = Symbol('data-source')
+      const mockTransaction = {
+        id: 'test-id',
+        dataSource,
+        permissions: [permission]
+      }
+      await processRPResult(mockTransaction)
 
-      await processRPResult()
+      expect(generatePermissionNumber).toHaveBeenCalledWith(permission, dataSource)
+    })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error while running receiver:', new Error(errorMessage))
+    it('should call getObfuscatedDob with licensee', async () => {
+      const permission = {
+        issueDate: new Date('2024-01-01'),
+        startDate: new Date('2024-01-01'),
+        licensee: {
+          firstName: 'Test',
+          lastName: 'User'
+        }
+      }
+      const mockTransaction = {
+        id: 'test-id',
+        dataSource: 'RCP',
+        permissions: [permission]
+      }
+      await processRPResult(mockTransaction)
 
-      consoleErrorSpy.mockRestore()
+      expect(getObfuscatedDob).toHaveBeenCalledWith(permission.licensee)
+    })
+
+    it('should call docClient.update with expected params', async () => {
+      const mockTransaction = getMockTransaction()
+      await processRPResult(mockTransaction)
+
+      expect(docClient.update).toHaveBeenCalledWith({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { id: 'test-id' },
+        ...docClient.createUpdateExpression({
+          permissions: expect.any(Array),
+          status: { id: TRANSACTION_STATUS.FINALISED }
+        }),
+        ReturnValues: 'ALL_NEW'
+      })
+    })
+
+    it('should call sqs.sendMessage with expected params', async () => {
+      const mockTransaction = getMockTransaction()
+      await processRPResult(mockTransaction)
+
+      expect(sqs.sendMessage).toHaveBeenCalledWith({
+        QueueUrl: TRANSACTION_QUEUE.Url,
+        MessageGroupId: 'test-id',
+        MessageDeduplicationId: 'test-id',
+        MessageBody: JSON.stringify({ id: 'test-id' })
+      })
+    })
+
+    it('should log error when exception occurs', async () => {
+      const mockTransaction = getMockTransaction()
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+      const mockError = new Error('Test error')
+      docClient.update.mockReturnValue({
+        promise: jest.fn().mockRejectedValue(mockError)
+      })
+
+      await processRPResult(mockTransaction)
+
+      expect(consoleSpy).toHaveBeenCalledWith('Error while processing recurring payment result:', mockError)
+      consoleSpy.mockRestore()
     })
   })
 })
