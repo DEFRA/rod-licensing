@@ -117,7 +117,7 @@ describe('HTTP Request Batcher', () => {
   //   })
   // })
 
-  describe('pausing requests', () => {
+  describe('multiple batches', () => {
     beforeEach(() => {
       jest.useFakeTimers()
       jest.spyOn(global, 'setTimeout')
@@ -134,7 +134,7 @@ describe('HTTP Request Batcher', () => {
       return batcher
     }
 
-    it('delays for one second', async () => {
+    it('delays for one second between batches', async () => {
       const batcher = setupBatcherAndAddRequest()
       batcher.fetch()
       await Promise.all(fetch.mock.results.map(r => r.value))
@@ -163,6 +163,27 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://api.example.com')
       await batcher.fetch()
       expect(setTimeout).not.toHaveBeenCalled()
+    })
+
+    it("sends final batch if it doesn't form a full batch", async () => {
+      const batcher = new HTTPRequestBatcher(2)
+      for (let x = 0; x < 3; x++) {
+        batcher.addRequest('https://api.example.com')
+      }
+      const batchPromise = batcher.fetch()
+      await Promise.all(fetch.mock.results.map(r => r.value))
+      jest.runAllTimers()
+      await batchPromise
+      expect(fetch).toHaveBeenCalledTimes(3)
+    })
+
+    it('stores all responses', async () => {
+      const batcher = new HTTPRequestBatcher(1)
+      batcher.addRequest('https://api.example.com')
+      batcher.addRequest('https://alt-api.example.com')
+      global.setTimeout.mockImplementationOnce(cb => cb())
+      await batcher.fetch()
+      expect(batcher.responses).toEqual([{ status: 200 }, { status: 200 }])
     })
   })
 })
