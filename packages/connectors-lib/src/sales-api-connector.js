@@ -297,10 +297,9 @@ export const preparePermissionDataForRenewal = async referenceNumber =>
   exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
 
 /**
- * Process a recurring payment instruction
+ * Process a recurring payment result
  *
- * @param {Object} transactionRecord - The transaction details
- * @param {Object} contact - The associated contact details
+ * @param id
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
