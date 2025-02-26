@@ -12,6 +12,7 @@ import { createHash } from 'node:crypto'
 import { AWS } from '@defra-fish/connectors-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
+import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -43,6 +44,10 @@ jest.mock('../permissions.service.js', () => ({
 
 jest.mock('../../services/transactions/finalise-transaction.js', () => ({
   getAdjustedStartDate: jest.fn()
+}))
+
+jest.mock('../../services/transactions/retrieve-transaction.js', () => ({
+  retrieveStagedTransaction: jest.fn()
 }))
 
 const { sqs, docClient } = AWS()
@@ -395,6 +400,14 @@ describe('recurring payments service', () => {
       jest.clearAllMocks()
     })
 
+    it('should call retrieveStagedTransaction with id', async () => {
+      const mockTransaction = getMockTransaction()
+
+      await processRPResult(mockTransaction.id)
+
+      expect(retrieveStagedTransaction).toHaveBeenCalledWith('test-id')
+    })
+
     it('should call getAdjustedStartDate with expected params', async () => {
       const startDate = new Date('2024-01-01')
       const issueDate = new Date('2024-01-01')
@@ -413,7 +426,9 @@ describe('recurring payments service', () => {
           }
         ]
       }
-      await processRPResult(mockTransaction)
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+
+      await processRPResult(mockTransaction.id)
 
       const expected = {
         startDate: new Date('2025-01-01'),
@@ -438,7 +453,9 @@ describe('recurring payments service', () => {
         dataSource: 'RCP',
         permissions: [permission]
       }
-      await processRPResult(mockTransaction)
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+
+      await processRPResult(mockTransaction.id)
 
       expect(calculateEndDate).toHaveBeenCalledWith(permission)
     })
@@ -458,7 +475,9 @@ describe('recurring payments service', () => {
         dataSource,
         permissions: [permission]
       }
-      await processRPResult(mockTransaction)
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+
+      await processRPResult(mockTransaction.id)
 
       expect(generatePermissionNumber).toHaveBeenCalledWith(permission, dataSource)
     })
@@ -477,14 +496,18 @@ describe('recurring payments service', () => {
         dataSource: 'RCP',
         permissions: [permission]
       }
-      await processRPResult(mockTransaction)
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+
+      await processRPResult(mockTransaction.id)
 
       expect(getObfuscatedDob).toHaveBeenCalledWith(permission.licensee)
     })
 
     it('should call docClient.update with expected params', async () => {
       const mockTransaction = getMockTransaction()
-      await processRPResult(mockTransaction)
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+
+      await processRPResult(mockTransaction.id)
 
       expect(docClient.update).toHaveBeenCalledWith({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
@@ -499,7 +522,9 @@ describe('recurring payments service', () => {
 
     it('should call sqs.sendMessage with expected params', async () => {
       const mockTransaction = getMockTransaction()
-      await processRPResult(mockTransaction)
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+
+      await processRPResult(mockTransaction.id)
 
       expect(sqs.sendMessage).toHaveBeenCalledWith({
         QueueUrl: TRANSACTION_QUEUE.Url,
@@ -511,13 +536,14 @@ describe('recurring payments service', () => {
 
     it('should log error when exception occurs', async () => {
       const mockTransaction = getMockTransaction()
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
       const mockError = new Error('Test error')
       docClient.update.mockReturnValue({
         promise: jest.fn().mockRejectedValue(mockError)
       })
 
-      await processRPResult(mockTransaction)
+      await processRPResult(mockTransaction.id)
 
       expect(consoleSpy).toHaveBeenCalledWith('Error while processing recurring payment result:', mockError)
       consoleSpy.mockRestore()

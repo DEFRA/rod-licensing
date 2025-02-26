@@ -25,11 +25,11 @@ export default [
   },
   {
     method: 'POST',
-    path: '/processRPResult/{transaction}',
+    path: '/processRPResult/{id}',
     options: {
-      handler: async (request, h) => {
-        const { transaction } = request.params
-        await processRPResult(transaction)
+      handler: async request => {
+        const { id } = request.params
+        await processRPResult(id)
       },
       description: 'Generate a recurring payment record',
       tags: ['api', 'recurring-payments'],

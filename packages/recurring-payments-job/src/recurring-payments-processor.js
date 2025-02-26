@@ -105,7 +105,7 @@ const processRecurringPaymentStatus = async record => {
   console.log(`Payment status for ${paymentId}: ${paymentStatus}`)
   if (paymentStatus === '"Success"') {
     const transaction = payments.find(p => p.paymentId === paymentId).transaction
-    await salesApi.processRPResult(transaction)
+    await salesApi.processRPResult(transaction.id)
   }
 }
 

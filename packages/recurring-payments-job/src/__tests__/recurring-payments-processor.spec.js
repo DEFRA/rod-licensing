@@ -331,7 +331,7 @@ describe('recurring-payments-processor', () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
-  it('payment status is Success then should call processRPResult with transaction', async () => {
+  it('payment status is Success then should call processRPResult with transaction id', async () => {
     const mockPaymentId = 'test-payment-id'
     const mockResponse = [
       {
@@ -356,8 +356,9 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
     jest.advanceTimersByTime(60000)
 
-    expect(salesApi.processRPResult).toHaveBeenCalledWith(transaction)
+    expect(salesApi.processRPResult).toHaveBeenCalledWith(transaction.id)
   })
+
   it('payment status is not a Success then should not call processRPResult ', async () => {
     const mockPaymentId = 'test-payment-id'
     const mockResponse = [

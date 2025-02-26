@@ -15,8 +15,8 @@ jest.mock('../../../services/recurring-payments.service.js', () => ({
   processRPResult: jest.fn()
 }))
 
-const getMockRequest = ({ date = '2023-10-19', transaction = { id: 'transaction' } }) => ({
-  params: { date, transaction }
+const getMockRequest = ({ date = '2023-10-19', id = 'transaction' }) => ({
+  params: { date, id }
 })
 
 const getMockResponseToolkit = () => ({
@@ -42,11 +42,11 @@ describe('recurring payments', () => {
   })
 
   describe('processRPResult', () => {
-    it('should call processRPResult with transaction', async () => {
-      const transaction = Symbol('transaction')
-      const request = getMockRequest({ transaction })
+    it('should call processRPResult with transaction id', async () => {
+      const id = Symbol('transaction')
+      const request = getMockRequest({ id })
       await prpHandler(request)
-      expect(processRPResult).toHaveBeenCalled()
+      expect(processRPResult).toHaveBeenCalledWith(id)
     })
   })
 })
