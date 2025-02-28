@@ -26,22 +26,34 @@ export default class HTTPRequestBatcher {
     this._requests.push({ url, options })
   }
 
-  _sendBatch (fetchRequests, position) {
+  _sendBatch (fetchRequests) {
     return fetchRequests.length === this._batchSize
   }
 
   async fetch () {
+    const requestQueue = [...this._requests]
+    const sentRequests = []
     const fetchRequests = []
-    for (let position = 0; position < this._requests.length; position++) {
-      fetchRequests.push(fetch(this._requests[position].url, this._requests[position].options))
-      console.log('fetchRequests', fetchRequests)
-      if (this._sendBatch(fetchRequests, position)) {
-        this._responses.push(...(await Promise.all(fetchRequests)))
-        if (position !== this._requests.length - 1) {
+    while (requestQueue.length) {
+      const request = requestQueue.shift()
+      fetchRequests.push(fetch(request.url, request.options))
+      sentRequests.push({ attempts: 1, ...request })
+      if (this._sendBatch(fetchRequests)) {
+        const batchResponses = await Promise.all(fetchRequests)
+        this._responses.push(...batchResponses)
+        for (let x = 0; x < batchResponses.length; x++) {
+          const response = batchResponses[x]
+          if (response.status === 429 && sentRequests[x].attempts < 2) {
+            requestQueue.push({ ...sentRequests[x], attempts: sentRequests[x].attempts + 1 })
+            this._batchSize = Math.max(this._batchSize - 1, 1)
+          }
+        }
+        fetchRequests.length = 0
+        sentRequests.length = 0
+        if (requestQueue.length) {
           // don't wait if this is the last batch
           await new Promise(resolve => setTimeout(() => resolve(), 1000))
         }
-        fetchRequests.length = 0
       }
     }
   }
