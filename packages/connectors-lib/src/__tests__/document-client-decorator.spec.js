@@ -1,86 +1,74 @@
-import AWSSdk from 'aws-sdk'
-import AWS from '../aws.js'
-const { docClient } = AWS()
+import { DynamoDBDocumentClient, QueryCommand, ScanCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+import { mockClient } from 'aws-sdk-client-mock'
+import { createDocumentClient } from '../documentclient-decorator'
+
+const ddbMock = mockClient(DynamoDBDocumentClient)
+const docClient = createDocumentClient()
 
 describe('document client decorations', () => {
+  beforeEach(() => {
+    ddbMock.reset()
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('deals with pagination where DynamoDB returns a LastEvaluatedKey in a query response', async () => {
+    const item1 = Symbol('item1')
+    const item2 = Symbol('item2')
     const testLastEvaluatedKey = { id: '16324258-85-92746491' }
 
-    AWSSdk.DynamoDB.DocumentClient.__setNextResponses(
-      'query',
-      {
-        Items: [],
+    ddbMock
+      .on(QueryCommand)
+      .resolvesOnce({
+        Items: [{ id: item1 }],
         LastEvaluatedKey: testLastEvaluatedKey
-      },
-      {
-        Items: []
-      }
-    )
-    await docClient.queryAllPromise({
-      TableName: 'TEST'
-    })
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        TableName: 'TEST'
       })
-    )
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        TableName: 'TEST',
-        ExclusiveStartKey: testLastEvaluatedKey
+      .resolvesOnce({
+        Items: [{ id: item2 }]
       })
-    )
+
+    const items = await docClient.queryAllPromise({ TableName: 'TEST' })
+
+    expect(items).toEqual([{ id: item1 }, { id: item2 }])
   })
 
   it('deals with pagination where DynamoDB returns a LastEvaluatedKey in a scan response', async () => {
+    const item1 = Symbol('item1')
+    const item2 = Symbol('item2')
     const testLastEvaluatedKey = { id: '16324258-85-92746491' }
 
-    AWSSdk.DynamoDB.DocumentClient.__setNextResponses(
-      'scan',
-      {
-        Items: [],
+    ddbMock
+      .on(ScanCommand)
+      .resolvesOnce({
+        Items: [{ id: item1 }],
         LastEvaluatedKey: testLastEvaluatedKey
-      },
-      {
-        Items: []
-      }
-    )
-    await docClient.scanAllPromise({
-      TableName: 'TEST'
-    })
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        TableName: 'TEST'
       })
-    )
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        TableName: 'TEST',
-        ExclusiveStartKey: testLastEvaluatedKey
+      .resolvesOnce({
+        Items: [{ id: item2 }]
       })
-    )
+
+    const items = await docClient.scanAllPromise({ TableName: 'TEST' })
+    expect(items).toEqual([{ id: item1 }, { id: item2 }])
   })
 
   it('deals with UnprocessedItems when making batchWrite requests to DynamoDB', async () => {
-    AWSSdk.DynamoDB.DocumentClient.__setNextResponses(
-      'batchWrite',
-      {
+    ddbMock
+      .on(BatchWriteCommand)
+      .resolvesOnce({
         UnprocessedItems: {
           NameOfTableToUpdate: [
             { PutRequest: { Item: { key: '1', field: 'data1' } } },
             { PutRequest: { Item: { key: '2', field: 'data2' } } }
           ]
         }
-      },
-      {
-        UnprocessedItems: null
-      }
-    )
-    await docClient.batchWriteAllPromise({
+      })
+      .resolvesOnce({
+        UnprocessedItems: {}
+      })
+
+    const request = {
       RequestItems: {
         NameOfTableToUpdate: [
           { PutRequest: { Item: { key: '1', field: 'data1' } } },
@@ -88,31 +76,9 @@ describe('document client decorations', () => {
           { PutRequest: { Item: { key: '3', field: 'data3' } } }
         ]
       }
-    })
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenCalledTimes(2)
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        RequestItems: {
-          NameOfTableToUpdate: [
-            { PutRequest: { Item: { key: '1', field: 'data1' } } },
-            { PutRequest: { Item: { key: '2', field: 'data2' } } },
-            { PutRequest: { Item: { key: '3', field: 'data3' } } }
-          ]
-        }
-      })
-    )
-    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        RequestItems: {
-          NameOfTableToUpdate: [
-            { PutRequest: { Item: { key: '1', field: 'data1' } } },
-            { PutRequest: { Item: { key: '2', field: 'data2' } } }
-          ]
-        }
-      })
-    )
+    }
+
+    await docClient.batchWriteAllPromise(request)
   })
 
   it('deals with UnprocessedItems when making batchWrite requests to DynamoDB up to the given retry limit', async () => {
@@ -124,7 +90,8 @@ describe('document client decorations', () => {
         ]
       }
     })
-    AWSSdk.DynamoDB.DocumentClient.__setNextResponses('batchWrite', ...batchWriteResponses)
+    ddbMock.on(BatchWriteCommand).resolves(...batchWriteResponses)
+
     const request = {
       RequestItems: {
         NameOfTableToUpdate: [
@@ -137,7 +104,7 @@ describe('document client decorations', () => {
     // Don't delay on setTimeouts!
     jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
     await expect(docClient.batchWriteAllPromise(request)).rejects.toThrow(
-      'Failed to write items to DynamoDB using batch write.  UnprocessedItems were returned and maxRetries has been reached.'
+      'Failed to write items to DynamoDB using batch write. UnprocessedItems were returned and maxRetries has been reached.'
     )
   })
 

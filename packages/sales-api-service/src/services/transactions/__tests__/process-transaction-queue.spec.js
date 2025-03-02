@@ -23,10 +23,10 @@ import {
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
-import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
+import { AWS } from '@defra-fish/connectors-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -65,6 +65,19 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
+jest.mock('@defra-fish/connectors-lib', () => {
+  const mockDocClient = {
+    send: jest.fn()
+  }
+  return {
+    AWS: jest.fn(() => ({
+      docClient: mockDocClient
+    }))
+  }
+})
+
+const { docClient } = AWS.mock.results[0].value
+
 jest.mock('../../recurring-payments.service.js')
 
 describe('transaction service', () => {
@@ -73,7 +86,9 @@ describe('transaction service', () => {
     processRecurringPayment.mockResolvedValue({})
   })
 
-  beforeEach(jest.clearAllMocks)
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
@@ -157,35 +172,40 @@ describe('transaction service', () => {
         ]
       ])('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
         const mockRecord = initialiseMockTransactionRecord()
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send
+          .mockResolvedValueOnce({ Item: mockRecord }) // GetCommand response
+          .mockResolvedValueOnce({}) // DeleteCommand response
+          .mockResolvedValueOnce({}) // PutCommand response
+
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
         expect(persist).toBeCalledWith(entityExpectations, undefined)
-        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
-          expect.objectContaining({
-            TableName: TRANSACTION_STAGING_TABLE.TableName,
-            Key: { id: mockRecord.id },
-            ConsistentRead: true
-          })
-        )
-        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.delete).toBeCalledWith(
-          expect.objectContaining({
-            TableName: TRANSACTION_STAGING_TABLE.TableName,
-            Key: { id: mockRecord.id }
-          })
-        )
-        const expectedRecord = Object.assign(mockRecord, {
-          id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
-          expires: expect.any(Number)
+
+        // verifies GetCommand parameters
+        expect(docClient.send.mock.calls[0][0].input).toEqual({
+          TableName: TRANSACTION_STAGING_TABLE.TableName,
+          Key: { id: mockRecord.id },
+          ConsistentRead: true
         })
 
-        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
-          expect.objectContaining({
-            TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
-            Item: expectedRecord,
-            ConditionExpression: 'attribute_not_exists(id)'
-          })
-        )
+        // verifies DeleteCommand parameters
+        expect(docClient.send.mock.calls[1][0].input).toEqual({
+          TableName: TRANSACTION_STAGING_TABLE.TableName,
+          Key: { id: mockRecord.id }
+        })
+
+        // verifies PutCommand parameters
+        const expectedRecord = {
+          ...mockRecord,
+          id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+          expires: expect.any(Number)
+        }
+
+        expect(docClient.send.mock.calls[2][0].input).toEqual({
+          TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+          Item: expectedRecord,
+          ConditionExpression: 'attribute_not_exists(id)'
+        })
       })
     })
 
@@ -201,7 +221,7 @@ describe('transaction service', () => {
       it('includes a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -220,7 +240,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -248,7 +268,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -266,7 +286,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -285,46 +305,46 @@ describe('transaction service', () => {
     it('sets isLicenceForYou to Yes on the transaction, if it is true on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = true
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
-      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstArgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
     })
 
     it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = false
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
-      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 0, label: 'No', description: 'No' } })
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstArgument[0][4]).toMatchObject({ isLicenceForYou: { id: 0, label: 'No', description: 'No' } })
     })
 
     it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = undefined
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
     it('does not set isLicenceForYou on the transaction, if it is null on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = null
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-      const persistMockFirstAgument = persist.mock.calls[0]
-      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+      const persistMockFirstArgument = persist.mock.calls[0]
+      expect(persistMockFirstArgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
     it('handles requests which relate to an transaction file', async () => {
       const transactionFilename = 'test-file.xml'
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.transactionFile = transactionFilename
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToAlternateKey')
       const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToAlternateKey')
       const testPoclFileEntity = new PoclFile()
@@ -336,7 +356,7 @@ describe('transaction service', () => {
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
+      docClient.send.mockResolvedValueOnce({})
       try {
         await processQueue({ id: mockRecord.id })
       } catch (e) {
@@ -349,7 +369,7 @@ describe('transaction service', () => {
       const setup = async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.payment.amount = cost
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         const {
           mock: {
@@ -382,10 +402,11 @@ describe('transaction service', () => {
           callingArgs.transaction = JSON.parse(JSON.stringify(transaction))
         })
         const mockRecord = mockFinalisedTransactionRecord()
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        const immutableMockRecord = JSON.parse(JSON.stringify(mockRecord))
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         // jest.fn args aren't immutable and transaction is changed in processQueue, so we use our clone that hasn't changed
-        expect(callingArgs.transaction).toEqual(mockRecord)
+        expect(callingArgs.transaction).toEqual(immutableMockRecord)
       })
 
       it('passes permission to generateRecurringPaymentRecord', async () => {
@@ -395,7 +416,7 @@ describe('transaction service', () => {
         for (const key of keysToCopy) {
           expectedPermissionData[key] = mockRecord.permissions[0][key]
         }
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
 
         await processQueue({ id: mockRecord.id })
 
@@ -406,7 +427,7 @@ describe('transaction service', () => {
         const rprSymbol = Symbol('rpr')
         const finalisedTransaction = mockFinalisedTransactionRecord()
         generateRecurringPaymentRecord.mockReturnValueOnce(rprSymbol)
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        docClient.send.mockResolvedValueOnce({ Item: finalisedTransaction })
         await processQueue({ id: finalisedTransaction.id })
         expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
       })
