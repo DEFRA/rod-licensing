@@ -58,8 +58,3 @@ export default class HTTPRequestBatcher {
     }
   }
 }
-
-// todo:
-// 1) process requests that don't form a complete batch ✅
-// 2) responses has a bug where it only stores that last batch of responses ✅
-// 3) if a 429 response is received, it should be retried in the next batch. Batch size should be reduced by 1 for each 429 response received
