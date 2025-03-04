@@ -25,7 +25,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
   getPaymentStatus: jest.fn(),
-  queueRecurringPayment: jest.fn(() => ({ fetch: jest.fn()}))
+  queueRecurringPayment: jest.fn(() => ({ fetch: jest.fn() }))
 }))
 
 const PAYMENT_STATUS_DELAY = 60000
@@ -223,21 +223,13 @@ describe('recurring-payments-processor', () => {
     await expect(processRecurringPayments()).rejects.toThrowError(error)
   })
 
-  it.only('class test', () => {
-    const mockClass = jest.fn()
-    mockClass.mockReturnValueOnce({ func: jest.fn() })
-    const instance = new mockClass()
-    console.log(instance.func())
-    expect(instance.func).toHaveBeenCalled()
-  })
-
   it.only('prepares and queues the payment request', async () => {
     const agreementId = Symbol('agreementId')
     const transactionId = 'transactionId'
-    HTTPRequestBatcher.mockImplementationOnce(() => {
+    HTTPRequestBatcher.mockImplementationOnce(function () {
       this.addRequest = jest.fn()
       this.fetch = jest.fn(() => {
-        this.responses = [{ json: Promise.resolve({ payment_id: 'test-payment-id', agreement_id }) }]
+        this.responses = [{ json: Promise.resolve({ payment_id: 'test-payment-id', agreement_id: agreementId }) }]
       })
     })
 
@@ -252,7 +244,7 @@ describe('recurring-payments-processor', () => {
       id: transactionId
     })
 
-    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
+    // const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
     // sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
@@ -266,10 +258,7 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(queueRecurringPayment).toHaveBeenCalledWith(
-      expectedData,
-      expect.any(HTTPRequestBatcher)
-    )
+    expect(queueRecurringPayment).toHaveBeenCalledWith(expectedData, expect.any(HTTPRequestBatcher))
   })
 
   it('should call getPaymentStatus with payment id', async () => {

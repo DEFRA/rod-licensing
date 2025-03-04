@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi, govUkPayApi, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
-import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
+import { getPaymentStatus } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
@@ -15,6 +15,13 @@ export const processRecurringPayments = async () => {
 
     const batcher = new HTTPRequestBatcher()
     await Promise.all(response.map(record => processRecurringPayment(record, batcher)))
+    await batcher.fetch()
+    payments.push(
+      ...(await Promise.all(batcher.responses.map(r => r.json()))).map(payment => ({
+        agreementId: payment.agreement_id,
+        paymentId: payment.payment_id
+      }))
+    )
     if (response.length > 0) {
       await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
