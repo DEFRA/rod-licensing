@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { salesApi, govUkPayApi, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
@@ -12,7 +12,9 @@ export const processRecurringPayments = async () => {
     const date = new Date().toISOString().split('T')[0]
     const response = await salesApi.getDueRecurringPayments(date)
     console.log('Recurring Payments found: ', response)
-    await Promise.all(response.map(record => processRecurringPayment(record)))
+
+    const batcher = new HTTPRequestBatcher()
+    await Promise.all(response.map(record => processRecurringPayment(record, batcher)))
     if (response.length > 0) {
       await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
@@ -22,11 +24,11 @@ export const processRecurringPayments = async () => {
   }
 }
 
-const processRecurringPayment = async record => {
+const processRecurringPayment = async (record, batcher) => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber)
-  await takeRecurringPayment(agreementId, transaction)
+  await takeRecurringPayment(agreementId, transaction, batcher)
 }
 
 const createNewTransaction = async referenceNumber => {
@@ -42,14 +44,16 @@ const createNewTransaction = async referenceNumber => {
   }
 }
 
-const takeRecurringPayment = async (agreementId, transaction) => {
+const takeRecurringPayment = async (agreementId, transaction, batcher) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  const payment = await sendPayment(preparedPayment)
-  payments.push({
-    agreementId,
-    paymentId: payment.payment_id
-  })
+  govUkPayApi.queueRecurringPayment(preparedPayment, batcher)
+
+  // const payment = await sendPayment(preparedPayment)
+  // payments.push({
+  //   agreementId,
+  //   paymentId: payment.payment_id
+  // })
 }
 
 const processPermissionData = async referenceNumber => {
