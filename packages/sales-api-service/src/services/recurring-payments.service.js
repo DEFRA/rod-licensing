@@ -3,10 +3,11 @@ import { calculateEndDate, generatePermissionNumber } from './permissions.servic
 import { getAdjustedStartDate } from '../services/transactions/finalise-transaction.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
+import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 const { sqs, docClient } = AWS()
@@ -74,44 +75,53 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   return { recurringPayment: null }
 }
 
-export const processRPResult = async id => {
-  const transactionRecord = await retrieveStagedTransaction(id)
-  try {
-    for (const permission of transactionRecord.permissions) {
-      permission.issueDate = moment(permission.issueDate).add(1, 'year').toDate()
-      const startDate = moment(permission.startDate).add(1, 'year').toDate()
-
-      permission.startDate = getAdjustedStartDate({
-        startDate,
-        dataSource: transactionRecord.dataSource,
-        issueDate: permission.issueDate
-      })
-      permission.endDate = await calculateEndDate(permission)
-      permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
-      permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
-    }
-
-    await docClient
-      .update({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id },
-        ...docClient.createUpdateExpression({
-          permissions: transactionRecord.permissions,
-          status: { id: TRANSACTION_STATUS.FINALISED }
-        }),
-        ReturnValues: 'ALL_NEW'
-      })
-      .promise()
-
-    await sqs
-      .sendMessage({
-        QueueUrl: TRANSACTION_QUEUE.Url,
-        MessageGroupId: id,
-        MessageDeduplicationId: id,
-        MessageBody: JSON.stringify({ id })
-      })
-      .promise()
-  } catch (error) {
-    console.error('Error while processing recurring payment result:', error)
+export const processRPResult = async (transactionId, paymentId, createdDate) => {
+  const transactionRecord = await retrieveStagedTransaction(transactionId)
+  if (await getPaymentJournal(transactionId)) {
+    await updatePaymentJournal(transactionId, {
+      paymentReference: paymentId,
+      paymentTimestamp: createdDate,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  } else {
+    await createPaymentJournal(transactionId, {
+      paymentReference: paymentId,
+      paymentTimestamp: createdDate,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
   }
+  const [permission] = transactionRecord.permissions
+  permission.issueDate = moment(permission.issueDate).add(1, 'year').toDate()
+  const startDate = moment(permission.startDate).add(1, 'year').toDate()
+
+  permission.startDate = getAdjustedStartDate({
+    startDate,
+    dataSource: transactionRecord.dataSource,
+    issueDate: permission.issueDate
+  })
+  permission.endDate = await calculateEndDate(permission)
+  permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+  permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
+
+  await docClient
+    .update({
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
+      Key: { transactionId },
+      ...docClient.createUpdateExpression({
+        permissions: transactionRecord.permissions,
+        status: { id: TRANSACTION_STATUS.FINALISED }
+      }),
+      ReturnValues: 'ALL_NEW'
+    })
+    .promise()
+
+  await sqs
+    .sendMessage({
+      QueueUrl: TRANSACTION_QUEUE.Url,
+      MessageGroupId: transactionId,
+      MessageDeduplicationId: transactionId,
+      MessageBody: JSON.stringify({ transactionId })
+    })
+    .promise()
+  return { permission }
 }

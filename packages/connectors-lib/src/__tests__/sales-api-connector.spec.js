@@ -659,17 +659,19 @@ describe('sales-api-connector', () => {
 
   describe('processRPResult', () => {
     it('calls the endpoint and returns the expected response', async () => {
-      const id = 'transaction-id'
-      const expectedResponse = { transaction: 'transaction' }
+      const transactionId = 'transaction-id'
+      const paymentId = 'payment-id'
+      const createdDate = '2025-01-01T00:00:00.000Z'
+      const expectedResponse = { transactionId, paymentId, createdDate }
       fetch.mockReturnValue({
         ok: true,
         status: 200,
         statusText: 'OK',
         text: async () => JSON.stringify(expectedResponse)
       })
-      await expect(salesApi.processRPResult(id)).resolves.toEqual(expectedResponse)
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult/transaction-id', {
-        method: 'post',
+      await expect(salesApi.processRPResult('transaction-id', 'payment-id', '2025-01-01T00:00:00.000Z')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult/transaction-id/payment-id/2025-01-01T00:00:00.000Z', {
+        method: 'get',
         headers: expect.any(Object),
         timeout: 20000
       })
@@ -683,9 +685,11 @@ describe('sales-api-connector', () => {
         text: async () => 'Server Error'
       })
 
-      await expect(salesApi.processRPResult('transaction-id')).rejects.toThrow('Internal Server Error')
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult/transaction-id', {
-        method: 'post',
+      await expect(salesApi.processRPResult('transaction-id', 'payment-id', '2025-01-01T00:00:00.000Z')).rejects.toThrow(
+        'Internal Server Error'
+      )
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult/transaction-id/payment-id/2025-01-01T00:00:00.000Z', {
+        method: 'get',
         headers: expect.any(Object),
         timeout: 20000
       })

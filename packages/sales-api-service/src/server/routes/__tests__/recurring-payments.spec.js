@@ -15,8 +15,13 @@ jest.mock('../../../services/recurring-payments.service.js', () => ({
   processRPResult: jest.fn()
 }))
 
-const getMockRequest = ({ date = '2023-10-19', id = 'transaction' }) => ({
-  params: { date, id }
+const getMockRequest = ({
+  date = '2023-10-19',
+  transactionId = 'transaction-id',
+  paymentId = 'payment-id',
+  createdDate = 'created-date'
+}) => ({
+  params: { date, transactionId, paymentId, createdDate }
 })
 
 const getMockResponseToolkit = () => ({
@@ -42,11 +47,19 @@ describe('recurring payments', () => {
   })
 
   describe('processRPResult', () => {
-    it('should call processRPResult with transaction id', async () => {
-      const id = Symbol('transaction')
-      const request = getMockRequest({ id })
-      await prpHandler(request)
-      expect(processRPResult).toHaveBeenCalledWith(id)
+    it('handler should return continue response', async () => {
+      const request = getMockRequest({})
+      const responseToolkit = getMockResponseToolkit()
+      expect(await prpHandler(request, responseToolkit)).toEqual(responseToolkit.continue)
+    })
+
+    it('should call processRPResult with transaction id, payment id and createdDate', async () => {
+      const transactionId = Symbol('transaction-id')
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      const request = getMockRequest({ transactionId, paymentId, createdDate })
+      await prpHandler(request, getMockResponseToolkit())
+      expect(processRPResult).toHaveBeenCalledWith(transactionId, paymentId, createdDate)
     })
   })
 })

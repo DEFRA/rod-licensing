@@ -13,6 +13,8 @@ import { AWS } from '@defra-fish/connectors-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
+import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
+import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -48,6 +50,23 @@ jest.mock('../../services/transactions/finalise-transaction.js', () => ({
 
 jest.mock('../../services/transactions/retrieve-transaction.js', () => ({
   retrieveStagedTransaction: jest.fn()
+}))
+
+jest.mock('../../services/paymentjournals/payment-journals.service.js', () => ({
+  createPaymentJournal: jest.fn(),
+  getPaymentJournal: jest.fn(),
+  updatePaymentJournal: jest.fn()
+}))
+
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  ADVANCED_PURCHASE_MAX_DAYS: 30,
+  PAYMENT_JOURNAL_STATUS_CODES: {
+    InProgress: 'InProgressCode',
+    Cancelled: 'CancelledCode',
+    Failed: 'FailedCode',
+    Expired: 'ExpiredCode',
+    Completed: 'CompletedCode'
+  }
 }))
 
 const { sqs, docClient } = AWS()
@@ -400,12 +419,78 @@ describe('recurring payments service', () => {
       jest.clearAllMocks()
     })
 
-    it('should call retrieveStagedTransaction with id', async () => {
+    it('should call retrieveStagedTransaction with transaction id', async () => {
       const mockTransaction = getMockTransaction()
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      await processRPResult(mockTransaction.id)
+      expect(retrieveStagedTransaction).toHaveBeenCalledWith(mockTransaction.id)
+    })
 
-      expect(retrieveStagedTransaction).toHaveBeenCalledWith('test-id')
+    it('should call await getPaymentJournal with transaction id', async () => {
+      const mockTransaction = getMockTransaction()
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
+
+      expect(retrieveStagedTransaction).toHaveBeenCalledWith(mockTransaction.id)
+    })
+
+    it('if getPaymentJournal is true then updatePaymentJournal is called with expected params', async () => {
+      const mockTransaction = getMockTransaction()
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      getPaymentJournal.mockResolvedValueOnce(true)
+      const expctedParams = {
+        paymentReference: paymentId,
+        paymentTimestamp: createdDate,
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      }
+
+      await processRPResult(mockTransaction.id, paymentId, createdDate)
+
+      expect(updatePaymentJournal).toHaveBeenCalledWith(mockTransaction.id, expctedParams)
+    })
+
+    it('if getPaymentJournal is false then updatePaymentJournal is not called', async () => {
+      const mockTransaction = getMockTransaction()
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      getPaymentJournal.mockResolvedValueOnce(false)
+
+      await processRPResult(mockTransaction.id, paymentId, createdDate)
+
+      expect(updatePaymentJournal).not.toHaveBeenCalled()
+    })
+
+    it('if getPaymentJournal is false then createPaymentJournal is called with expected params', async () => {
+      const mockTransaction = getMockTransaction()
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      getPaymentJournal.mockResolvedValueOnce(false)
+      const expctedParams = {
+        paymentReference: paymentId,
+        paymentTimestamp: createdDate,
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      }
+
+      await processRPResult(mockTransaction.id, paymentId, createdDate)
+
+      expect(createPaymentJournal).toHaveBeenCalledWith(mockTransaction.id, expctedParams)
+    })
+
+    it('if getPaymentJournal is true then createPaymentJournal is not called', async () => {
+      const mockTransaction = getMockTransaction()
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      getPaymentJournal.mockResolvedValueOnce(true)
+
+      await processRPResult(mockTransaction.id, paymentId, createdDate)
+
+      expect(createPaymentJournal).not.toHaveBeenCalled()
     })
 
     it('should call getAdjustedStartDate with expected params', async () => {
@@ -428,7 +513,7 @@ describe('recurring payments service', () => {
       }
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
-      await processRPResult(mockTransaction.id)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
       const expected = {
         startDate: new Date('2025-01-01'),
@@ -455,7 +540,7 @@ describe('recurring payments service', () => {
       }
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
-      await processRPResult(mockTransaction.id)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
       expect(calculateEndDate).toHaveBeenCalledWith(permission)
     })
@@ -477,7 +562,7 @@ describe('recurring payments service', () => {
       }
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
-      await processRPResult(mockTransaction.id)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
       expect(generatePermissionNumber).toHaveBeenCalledWith(permission, dataSource)
     })
@@ -498,22 +583,35 @@ describe('recurring payments service', () => {
       }
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
-      await processRPResult(mockTransaction.id)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
       expect(getObfuscatedDob).toHaveBeenCalledWith(permission.licensee)
     })
 
     it('should call docClient.update with expected params', async () => {
       const mockTransaction = getMockTransaction()
+      const expectedPermissions = [
+        {
+          endDate: undefined,
+          issueDate: new Date('2025-01-01'),
+          licensee: {
+            firstName: 'Test',
+            lastName: 'User',
+            obfuscatedDob: undefined
+          },
+          referenceNumber: undefined,
+          startDate: undefined
+        }
+      ]
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
-      await processRPResult(mockTransaction.id)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
       expect(docClient.update).toHaveBeenCalledWith({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id: 'test-id' },
+        Key: { transactionId: 'test-id' },
         ...docClient.createUpdateExpression({
-          permissions: expect.any(Array),
+          permissions: expectedPermissions,
           status: { id: TRANSACTION_STATUS.FINALISED }
         }),
         ReturnValues: 'ALL_NEW'
@@ -524,29 +622,14 @@ describe('recurring payments service', () => {
       const mockTransaction = getMockTransaction()
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
-      await processRPResult(mockTransaction.id)
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
       expect(sqs.sendMessage).toHaveBeenCalledWith({
         QueueUrl: TRANSACTION_QUEUE.Url,
         MessageGroupId: 'test-id',
         MessageDeduplicationId: 'test-id',
-        MessageBody: JSON.stringify({ id: 'test-id' })
+        MessageBody: JSON.stringify({ transactionId: 'test-id' })
       })
-    })
-
-    it('should log error when exception occurs', async () => {
-      const mockTransaction = getMockTransaction()
-      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-      const mockError = new Error('Test error')
-      docClient.update.mockReturnValue({
-        promise: jest.fn().mockRejectedValue(mockError)
-      })
-
-      await processRPResult(mockTransaction.id)
-
-      expect(consoleSpy).toHaveBeenCalledWith('Error while processing recurring payment result:', mockError)
-      consoleSpy.mockRestore()
     })
   })
 })

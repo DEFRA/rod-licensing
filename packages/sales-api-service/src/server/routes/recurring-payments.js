@@ -24,19 +24,20 @@ export default [
     }
   },
   {
-    method: 'POST',
-    path: '/processRPResult/{id}',
+    method: 'GET',
+    path: '/processRPResult/{transactionId}/{paymentId}/{createdDate}',
     options: {
-      handler: async request => {
-        const { id } = request.params
-        await processRPResult(id)
+      handler: async (request, h) => {
+        const { transactionId, paymentId, createdDate } = request.params
+        const result = await processRPResult(transactionId, paymentId, createdDate)
+        return h.response(result)
       },
-      description: 'Generate a recurring payment record',
+      description: 'Generate a permission from a recurring payment record',
       tags: ['api', 'recurring-payments'],
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { description: 'Recurring payment record generated successfully' }
+            200: { description: 'New permission from recurring payment record generated successfully' }
           },
           order: 2
         }
