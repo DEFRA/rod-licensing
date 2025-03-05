@@ -589,7 +589,19 @@ describe('recurring payments service', () => {
     })
 
     it('should call docClient.update with expected params', async () => {
-      const mockTransaction = getMockTransaction()
+      const permission = {
+        issueDate: new Date('2024-01-01'),
+        startDate: new Date('2024-01-01'),
+        licensee: {
+          firstName: 'Test',
+          lastName: 'User'
+        }
+      }
+      const mockTransaction = {
+        id: 'test-id',
+        dataSource: 'RCP',
+        permissions: [permission]
+      }
       const expectedPermissions = [
         {
           endDate: undefined,
@@ -611,6 +623,7 @@ describe('recurring payments service', () => {
         TableName: TRANSACTION_STAGING_TABLE.TableName,
         Key: { transactionId: 'test-id' },
         ...docClient.createUpdateExpression({
+          payload: permission,
           permissions: expectedPermissions,
           status: { id: TRANSACTION_STATUS.FINALISED }
         }),

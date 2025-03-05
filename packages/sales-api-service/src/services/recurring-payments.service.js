@@ -103,25 +103,34 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
   permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
-  await docClient
-    .update({
-      TableName: TRANSACTION_STAGING_TABLE.TableName,
-      Key: { transactionId },
-      ...docClient.createUpdateExpression({
-        permissions: transactionRecord.permissions,
-        status: { id: TRANSACTION_STATUS.FINALISED }
-      }),
-      ReturnValues: 'ALL_NEW'
-    })
-    .promise()
+  try {
+    await docClient
+      .update({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { transactionId },
+        ...docClient.createUpdateExpression({
+          payload: permission,
+          permissions: transactionRecord.permissions,
+          status: { id: TRANSACTION_STATUS.FINALISED }
+        }),
+        ReturnValues: 'ALL_NEW'
+      })
+      .promise()
+  } catch (e) {
+    console.log('docClient: ', e)
+  }
 
-  await sqs
-    .sendMessage({
-      QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: transactionId,
-      MessageDeduplicationId: transactionId,
-      MessageBody: JSON.stringify({ transactionId })
-    })
-    .promise()
+  try {
+    await sqs
+      .sendMessage({
+        QueueUrl: TRANSACTION_QUEUE.Url,
+        MessageGroupId: transactionId,
+        MessageDeduplicationId: transactionId,
+        MessageBody: JSON.stringify({ transactionId })
+      })
+      .promise()
+  } catch (e) {
+    console.log('sqs: ', e)
+  }
   return { permission }
 }
