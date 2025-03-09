@@ -19,7 +19,8 @@ export const processRecurringPayments = async () => {
         await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
       }
     } catch (error) {
-      console.error('Error fetching due recurring payments:', error)
+      console.error('Run aborted. Error fetching due recurring payments:', error)
+      throw error
     }
   } else {
     console.log('Recurring Payments job disabled')

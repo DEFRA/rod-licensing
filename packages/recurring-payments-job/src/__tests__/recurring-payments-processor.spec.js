@@ -74,6 +74,18 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.preparePermissionDataForRenewal).toHaveBeenCalledWith(referenceNumber)
   })
 
+  it('aborts the run if there is the systems are down at the start of the run', async () => {
+    const error = new Error('Systems down')
+    salesApi.getDueRecurringPayments.mockRejectedValueOnce(error)
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    await expect(processRecurringPayments()).rejects.toThrow(error)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Run aborted. Error fetching due recurring payments:', error)
+
+    consoleErrorSpy.mockRestore()
+  })
+
   it('creates a transaction with the correct data', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
