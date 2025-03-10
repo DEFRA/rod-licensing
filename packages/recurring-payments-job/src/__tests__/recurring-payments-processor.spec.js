@@ -1,4 +1,4 @@
-import { salesApi, queueRecurringPayment, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
+import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
 
@@ -12,20 +12,12 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     createTransaction: jest.fn(() => ({
       cost: 30
     }))
-  },
-  govUkPayApi: {
-    queueRecurringPayment: jest.fn()
-  },
-  HTTPRequestBatcher: jest.fn(() => {
-    this.addRequest = jest.fn()
-    this.fetch = jest.fn()
-  })
+  }
 }))
 
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
-  getPaymentStatus: jest.fn(),
-  queueRecurringPayment: jest.fn(() => ({ fetch: jest.fn() }))
+  getPaymentStatus: jest.fn()
 }))
 
 const PAYMENT_STATUS_DELAY = 60000
@@ -108,6 +100,7 @@ describe('recurring-payments-processor', () => {
 
     const expectedData = {
       dataSource: 'Recurring Payment',
+      agreementId: 'test-agreement-id',
       permissions: [
         {
           isLicenceForYou,
@@ -223,15 +216,9 @@ describe('recurring-payments-processor', () => {
     await expect(processRecurringPayments()).rejects.toThrowError(error)
   })
 
-  it.only('prepares and queues the payment request', async () => {
+  it('prepares and sends the payment request', async () => {
     const agreementId = Symbol('agreementId')
     const transactionId = 'transactionId'
-    HTTPRequestBatcher.mockImplementationOnce(function () {
-      this.addRequest = jest.fn()
-      this.fetch = jest.fn(() => {
-        this.responses = [{ json: Promise.resolve({ payment_id: 'test-payment-id', agreement_id: agreementId }) }]
-      })
-    })
 
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
 
@@ -244,8 +231,8 @@ describe('recurring-payments-processor', () => {
       id: transactionId
     })
 
-    // const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
-    // sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Success' } })
 
     const expectedData = {
@@ -258,7 +245,7 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(queueRecurringPayment).toHaveBeenCalledWith(expectedData, expect.any(HTTPRequestBatcher))
+    expect(sendPayment).toHaveBeenCalledWith(expectedData)
   })
 
   it('should call getPaymentStatus with payment id', async () => {
@@ -283,6 +270,7 @@ describe('recurring-payments-processor', () => {
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
+    jest.useFakeTimers(60000)
 
     expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
   })
@@ -313,6 +301,7 @@ describe('recurring-payments-processor', () => {
     const mockStatus = JSON.stringify(mockPaymentStatus.state.status)
 
     await processRecurringPayments()
+    jest.advanceTimersByTime(60000)
 
     expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
   })
@@ -392,6 +381,7 @@ describe('recurring-payments-processor', () => {
         expectedData.push([
           {
             dataSource: 'Recurring Payment',
+            agreementId: 'test-agreement-id',
             permissions: [expect.objectContaining({ permitId: permit })]
           }
         ])
