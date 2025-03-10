@@ -17,7 +17,7 @@ describe('HTTP Request Batcher', () => {
     })
   })
 
-  it('initialises with a default batch size of 10', () => {
+  it('initialises with a default batch size of 50', () => {
     const batcher = new HTTPRequestBatcher()
     expect(batcher.batchSize).toBe(50)
   })
