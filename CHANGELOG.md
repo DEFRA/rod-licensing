@@ -1,4 +1,96 @@
 
+## v1.59.0-rc.9 (2025-02-18)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2125](https://github.com/DEFRA/rod-licensing/pull/2125) Missing Welsh from Licence-type selection page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.59.0-rc.8 (2025-02-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2123](https://github.com/DEFRA/rod-licensing/pull/2123) Clarify RP agreement status when first payment does not go through ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.59.0-rc.7 (2025-02-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2126](https://github.com/DEFRA/rod-licensing/pull/2126) Add NextRecurringPayment to RecurringPayment entity ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.59.0-rc.6 (2025-02-18)
+
+#### :rocket: Enhancement
+* Other
+  * [#2127](https://github.com/DEFRA/rod-licensing/pull/2127) Update GitHub Actions build script ([@lailien3](https://github.com/lailien3))
+* `recurring-payments-job`
+  * [#2124](https://github.com/DEFRA/rod-licensing/pull/2124) Amend recurring payment transaction to contain reference to recurring payment ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.59.0-rc.5 (2025-02-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2120](https://github.com/DEFRA/rod-licensing/pull/2120) CORRECTIONS - Implement new content for licence selection page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.59.0-rc.4 (2025-02-03)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2110](https://github.com/DEFRA/rod-licensing/pull/2110) RP job set status of payment request ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.59.0-rc.3 (2025-01-31)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2116](https://github.com/DEFRA/rod-licensing/pull/2116) Licence selection new content update ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.59.0-rc.2 (2025-01-31)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2108](https://github.com/DEFRA/rod-licensing/pull/2108) Date validation easy renewals ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.59.0-rc.1 (2025-01-31)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2113](https://github.com/DEFRA/rod-licensing/pull/2113) Validate RP Request ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.59.0-rc.0 (2025-01-31)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#2080](https://github.com/DEFRA/rod-licensing/pull/2080) Easy renewal query ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.58.0-rc.13 (2025-01-22)
 

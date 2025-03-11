@@ -1,4 +1,4 @@
-import { LICENCE_TYPE, FRESHWATER_FISING_RULES, LOCAL_BYELAWS } from '../../../uri.js'
+import { LICENCE_TYPE, FRESHWATER_FISING_RULES, LOCAL_BYELAWS, CATCH_RETURN } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { pricingDetail } from '../../../processors/pricing-summary.js'
 import Joi from 'joi'
@@ -29,7 +29,8 @@ export const getData = async request => {
     hasJunior: concessionHelper.hasJunior(permission),
     uri: {
       freshWaterFishingRules: FRESHWATER_FISING_RULES.uri,
-      localByelaws: LOCAL_BYELAWS.uri
+      localByelaws: LOCAL_BYELAWS.uri,
+      catchReturn: CATCH_RETURN.uri
     }
   }
 }

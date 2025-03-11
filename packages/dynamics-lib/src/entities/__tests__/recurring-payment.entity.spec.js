@@ -6,7 +6,7 @@ describe('recurring payment entity', () => {
     optionSetData = await retrieveGlobalOptionSets().cached()
   })
 
-  const createRecurringPayment = (contact, permission, cancelledDate, cancelledReason) => {
+  const createRecurringPayment = ({ contact, permission, cancelledDate = null, cancelledReason = null, nextRecurringPayment } = {}) => {
     const recurringPayment = new RecurringPayment()
 
     recurringPayment.name = 'Test Name'
@@ -20,6 +20,9 @@ describe('recurring payment entity', () => {
 
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
+    if (nextRecurringPayment) {
+      recurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, nextRecurringPayment)
+    }
 
     return recurringPayment
   }
@@ -37,7 +40,8 @@ describe('recurring payment entity', () => {
       defra_publicid: '649-213',
       statecode: 1,
       _defra_contact_value: 'b3d33cln-2e83-ea11-a811-000d3a649213',
-      _defra_activepermission_value: 'a5b24adf-2e83-ea11-a811-000d3a649213'
+      _defra_activepermission_value: 'a5b24adf-2e83-ea11-a811-000d3a649213',
+      _defra_nextrecurringpayment_value: 'q4ra6lma-2e83-ea11-a811-000d3a649213'
     }
 
     const response = { ...defaultResponse, ...overrides }
@@ -72,12 +76,12 @@ describe('recurring payment entity', () => {
     it('maps to dynamics', async () => {
       const contact = new Contact()
       const permission = new Permission()
-      const recurringPayment = createRecurringPayment(
+      const recurringPayment = createRecurringPayment({
         contact,
         permission,
-        '2019-10-14T00:00:00Z',
-        optionSetData.defra_cancelledreason.options['910400195']
-      )
+        cancelledDate: '2019-10-14T00:00:00Z',
+        cancelledReason: optionSetData.defra_cancelledreason.options['910400195']
+      })
       const dynamicsEntity = recurringPayment.toRequestBody()
       expect(dynamicsEntity).toMatchObject(
         expect.objectContaining({
@@ -123,7 +127,7 @@ describe('recurring payment entity', () => {
     it('maps to dynamics', async () => {
       const contact = new Contact()
       const permission = new Permission()
-      const recurringPayment = createRecurringPayment(contact, permission, null, null)
+      const recurringPayment = createRecurringPayment({ contact, permission })
       const dynamicsEntity = recurringPayment.toRequestBody()
       expect(dynamicsEntity).toMatchObject(
         expect.objectContaining({
@@ -137,6 +141,31 @@ describe('recurring payment entity', () => {
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
+        })
+      )
+    })
+  })
+
+  describe('mappings with a nextRecurringPayment', () => {
+    it('maps to dynamics', async () => {
+      const contact = new Contact()
+      const permission = new Permission()
+      const nextRecurringPayment = new RecurringPayment()
+      const recurringPayment = createRecurringPayment({ contact, permission, nextRecurringPayment })
+      const dynamicsEntity = recurringPayment.toRequestBody()
+      expect(dynamicsEntity).toMatchObject(
+        expect.objectContaining({
+          defra_name: 'Test Name',
+          defra_nextduedate: '2019-12-14T00:00:00Z',
+          defra_cancelleddate: null,
+          defra_cancelledreason: null,
+          defra_enddate: '2019-12-15T00:00:00Z',
+          defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
+          defra_publicid: '649-213',
+          statecode: 1,
+          'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
+          'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`,
+          'defra_NextRecurringPayment@odata.bind': `$${nextRecurringPayment.uniqueContentId}`
         })
       )
     })

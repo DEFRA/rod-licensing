@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { dateOfBirthValidator, startDateValidator, getDateErrorFlags } from '../validators.js'
+import { dateOfBirthValidator, startDateValidator, getDateErrorFlags, renewalStartDateValidator } from '../validators.js'
 import moment from 'moment-timezone'
 const dateSchema = require('../../date.schema.js')
 
@@ -204,5 +204,89 @@ describe('getErrorFlags', () => {
     const result = getDateErrorFlags(error)
 
     expect(result).toEqual(expect.objectContaining(expected))
+  })
+})
+
+describe('renewalStartDateValidator', () => {
+  beforeEach(jest.clearAllMocks)
+
+  const getSamplePayload = ({ day = '', month = '', year = '' } = {}) => ({
+    'licence-start-date-day': day,
+    'licence-start-date-month': month,
+    'licence-start-date-year': year
+  })
+  const renewedEndDate = moment()
+  const options = {
+    context: {
+      app: {
+        request: {
+          permission: {
+            renewedEndDate: renewedEndDate.toISOString()
+          }
+        }
+      }
+    }
+  }
+  it('throws an error for a licence starting before today', () => {
+    const renewedDate = moment().subtract(1, 'day')
+    const samplePayload = getSamplePayload({
+      day: renewedDate.format('DD'),
+      month: renewedDate.format('MM'),
+      year: renewedDate.format('YYYY')
+    })
+    expect(() => renewalStartDateValidator(samplePayload, options)).toThrow()
+  })
+
+  it('throws an error for a licence starting more than 30 days hence', () => {
+    const renewedDate = moment().add(31, 'days')
+    const samplePayload = getSamplePayload({
+      day: renewedDate.format('DD'),
+      month: renewedDate.format('MM'),
+      year: renewedDate.format('YYYY')
+    })
+    expect(() => renewalStartDateValidator(samplePayload, options)).toThrow()
+  })
+
+  it('validates for a date within the next 30 days', () => {
+    const renewedDate = moment().add(4, 'days')
+    const samplePayload = getSamplePayload({
+      day: renewedDate.format('DD'),
+      month: renewedDate.format('MM'),
+      year: renewedDate.format('YYYY')
+    })
+    expect(() => renewalStartDateValidator(samplePayload, options)).not.toThrow()
+  })
+
+  it.each([
+    ['01', '03', '1994'],
+    ['10', '12', '2004']
+  ])('passes start date day (%s), month (%s) and year (%s) to dateSchemaInput', (day, month, year) => {
+    setupMocks()
+    renewalStartDateValidator(getSamplePayload({ day, month, year }), options)
+    expect(dateSchema.dateSchemaInput).toHaveBeenCalledWith(day, month, year)
+    tearDownMocks()
+  })
+
+  it('passes dateSchemaInput output and dateSchema to Joi.assert', () => {
+    setupMocks()
+    const dsi = Symbol('dsi')
+    dateSchema.dateSchemaInput.mockReturnValueOnce(dsi)
+    renewalStartDateValidator(getSamplePayload(), options)
+    expect(Joi.assert).toHaveBeenCalledWith(dsi, dateSchema.dateSchema)
+    tearDownMocks()
+  })
+
+  it('passes validation if licence is set to start after payment', () => {
+    const samplePayload = getSamplePayload({
+      day: moment().format('DD'),
+      month: moment().format('MM'),
+      year: moment().format('YYYY')
+    })
+    expect(() => renewalStartDateValidator(samplePayload, options)).not.toThrow()
+  })
+
+  it('throws an error if licence-to-start is set to an invalid value', () => {
+    const samplePayload = { 'licence-to-start': '12th-of-never' }
+    expect(() => renewalStartDateValidator(samplePayload, options)).toThrow()
   })
 })
