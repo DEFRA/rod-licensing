@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import db from 'debug'
+import { StatusCodes } from 'http-status-codes'
 
 const debug = db('connectors:http-request-batcher')
 export default class HTTPRequestBatcher {
@@ -33,8 +34,23 @@ export default class HTTPRequestBatcher {
     this._requests.push({ url, options })
   }
 
-  _sendBatch (fetchRequests) {
-    return fetchRequests.length === this._batchSize
+  async _sendBatch (fetchRequests, sentRequests, requestQueue) {
+    const batchResponses = await Promise.all(fetchRequests)
+    this._responses.push(...batchResponses)
+    for (let x = 0; x < batchResponses.length; x++) {
+      const response = batchResponses[x]
+      if (response.status === StatusCodes.TOO_MANY_REQUESTS && sentRequests[x].attempts < 2) {
+        requestQueue.push({ ...sentRequests[x], attempts: sentRequests[x].attempts + 1 })
+        this._batchSize = Math.max(this._batchSize - 1, 1)
+        debug(`429 response received for ${sentRequests[x].url}, reducing batch size to ${this._batchSize}`)
+      }
+    }
+    fetchRequests.length = 0
+    sentRequests.length = 0
+    if (requestQueue.length) {
+      // don't wait if this is the last batch
+      await new Promise(resolve => setTimeout(resolve, this._delay))
+    }
   }
 
   async fetch () {
@@ -48,23 +64,8 @@ export default class HTTPRequestBatcher {
       const request = requestQueue.shift()
       fetchRequests.push(fetch(request.url, request.options))
       sentRequests.push({ attempts: 1, ...request })
-      if (this._sendBatch(fetchRequests)) {
-        const batchResponses = await Promise.all(fetchRequests)
-        this._responses.push(...batchResponses)
-        for (let x = 0; x < batchResponses.length; x++) {
-          const response = batchResponses[x]
-          if (response.status === 429 && sentRequests[x].attempts < 2) {
-            requestQueue.push({ ...sentRequests[x], attempts: sentRequests[x].attempts + 1 })
-            this._batchSize = Math.max(this._batchSize - 1, 1)
-            debug(`429 response received for ${sentRequests[x].url}, reducing batch size to ${this._batchSize}`)
-          }
-        }
-        fetchRequests.length = 0
-        sentRequests.length = 0
-        if (requestQueue.length) {
-          // don't wait if this is the last batch
-          await new Promise(resolve => setTimeout(resolve, this._delay))
-        }
+      if (fetchRequests.length === this._batchSize) {
+        await this._sendBatch(fetchRequests, sentRequests, requestQueue)
       }
     }
     debug('Batched fetch complete')
