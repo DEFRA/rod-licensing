@@ -22,4 +22,4 @@ export const validForRecurringPayment = permission => {
   )
 }
 
-export const isRecurringPayment = transaction => process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && !!transaction.agreementId
+export const isRecurringPayment = transaction => !!transaction.agreementId
