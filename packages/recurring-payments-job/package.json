@@ -36,6 +36,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "debug": "^4.3.3",
     "@defra-fish/business-rules-lib": "1.59.0-rc.9",
     "@defra-fish/connectors-lib": "1.59.0-rc.9",
     "commander": "^7.2.0",

@@ -1,6 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
+import db from 'debug'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -14,12 +15,13 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     }))
   }
 }))
-
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
   getPaymentStatus: jest.fn()
 }))
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
+const debugMock = db.mock.results[0].value
 const PAYMENT_STATUS_DELAY = 60000
 
 describe('recurring-payments-processor', () => {
@@ -29,21 +31,18 @@ describe('recurring-payments-processor', () => {
     global.setTimeout = jest.fn((cb, ms) => cb())
   })
 
-  it('console log displays "Recurring Payments job disabled" when env is false', async () => {
+  it('debug displays "Recurring Payments job disabled" when env is false', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'false'
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
 
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job disabled')
+    expect(debugMock).toHaveBeenCalledWith('Recurring Payments job disabled')
   })
 
-  it('console log displays "Recurring Payments job enabled" when env is true', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-
+  it('debug displays "Recurring Payments job enabled" when env is true', async () => {
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
+    expect(debugMock).toHaveBeenCalledWith('Recurring Payments job enabled')
   })
 
   it('get recurring payments is called when env is true', async () => {
@@ -54,12 +53,10 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
 
-  it('console log displays "Recurring Payments found: " when env is true', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-
+  it('debug displays "Recurring Payments found: " when env is true', async () => {
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', [])
+    expect(debugMock).toHaveBeenCalledWith('Recurring Payments found: ', [])
   })
 
   it('prepares the data for found recurring payments', async () => {
@@ -275,8 +272,7 @@ describe('recurring-payments-processor', () => {
     expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
   })
 
-  it('should log payment status for recurring payment', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+  it('debug should log payment status for recurring payment', async () => {
     const mockPaymentId = 'test-payment-id'
     const mockResponse = [
       {
@@ -303,7 +299,7 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
     jest.advanceTimersByTime(60000)
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
+    expect(debugMock).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
