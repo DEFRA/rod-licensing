@@ -10,7 +10,7 @@ import { PredefinedQuery } from './predefined-query.js'
 export const findDueRecurringPayments = date => {
   const { contact, activePermission } = RecurringPayment.definition.relationships
 
-  const filter = `Microsoft.Dynamics.CRM.On(PropertyName='defra_nextduedate', PropertyValue='${date}')`
+  const filter = `defra_nextduedate eq '${date}' and defra_cancelleddate eq null`
 
   return new PredefinedQuery({
     root: RecurringPayment,
