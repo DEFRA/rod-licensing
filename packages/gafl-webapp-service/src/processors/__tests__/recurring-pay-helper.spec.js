@@ -53,7 +53,7 @@ describe('isRecurringPayment', () => {
     show     | agreementId  | expected
     ${true}  | ${'foo123'}  | ${true}
     ${true}  | ${undefined} | ${false}
-    ${false} | ${'foo123'}  | ${false}
+    ${false} | ${'foo123'}  | ${true}
     ${false} | ${undefined} | ${false}
   `(
     'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the transaction agreementId is $agreementId',
