@@ -76,6 +76,7 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
 }
 
 export const processRPResult = async (transactionId, paymentId, createdDate) => {
+  console.log('processRPResult: ', transactionId, paymentId, createdDate)
   const transactionRecord = await retrieveStagedTransaction(transactionId)
   if (await getPaymentJournal(transactionId)) {
     await updatePaymentJournal(transactionId, {
@@ -104,6 +105,19 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
   try {
+    const r = await docClient.get({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { transactionId } })
+    const item = await r.send()
+    console.log(`${(new Date()).toISOString()} item: `, item)
+  } catch (e) {
+    console.log('error getting item', e)
+  }
+
+  try {
+    // console.log('update expresssion: ', JSON.stringify(docClient.createUpdateExpression({
+    //   payload: permission,
+    //   permissions: transactionRecord.permissions,
+    //   status: { id: TRANSACTION_STATUS.FINALISED }
+    // }), undefined, '\t'))
     await docClient
       .update({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
@@ -117,20 +131,20 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
       })
       .promise()
   } catch (e) {
-    console.log('docClient: ', e)
+    console.log('error updating item', e)
   }
 
-  try {
-    await sqs
-      .sendMessage({
-        QueueUrl: TRANSACTION_QUEUE.Url,
-        MessageGroupId: transactionId,
-        MessageDeduplicationId: transactionId,
-        MessageBody: JSON.stringify({ transactionId })
-      })
-      .promise()
-  } catch (e) {
-    console.log('sqs: ', e)
-  }
+  // try {
+  //   await sqs
+  //     .sendMessage({
+  //       QueueUrl: TRANSACTION_QUEUE.Url,
+  //       MessageGroupId: transactionId,
+  //       MessageDeduplicationId: transactionId,
+  //       MessageBody: JSON.stringify({ transactionId })
+  //     })
+  //     .promise()
+  // } catch (e) {
+  //   console.log('sqs: ', e)
+  // }
   return { permission }
 }

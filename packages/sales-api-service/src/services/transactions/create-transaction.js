@@ -15,6 +15,13 @@ const debug = db('sales:transactions')
  * @returns {Promise<*>}
  */
 export async function createTransaction (payload) {
+  console.log('AWS values', {
+    SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_REGION: process.env.AWS_REGION,
+    AWS_SQS_ENDPOINT: process.env.AWS_SQS_ENDPOINT,
+    AWS_DYNAMODB_ENDPOINT: process.env.AWS_DYNAMODB_ENDPOINT
+  })
   const record = await createTransactionRecord(payload)
   await docClient
     .put({ TableName: TRANSACTION_STAGING_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
