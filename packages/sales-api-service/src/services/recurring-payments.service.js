@@ -121,7 +121,7 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
     await docClient
       .update({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { transactionId },
+        Key: { id: transactionId },
         ...docClient.createUpdateExpression({
           payload: permission,
           permissions: transactionRecord.permissions,
