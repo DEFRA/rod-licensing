@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@defra-fish/business-rules-lib": "1.59.0-rc.4",
-    "@defra-fish/connectors-lib": "1.59.0-rc.4",
+    "@defra-fish/connectors-lib": "1.59.0-rc.processRP",
     "commander": "^7.2.0",
     "moment-timezone": "^0.5.34"
   }
