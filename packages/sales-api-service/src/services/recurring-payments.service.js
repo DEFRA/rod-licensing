@@ -3,7 +3,7 @@ import { calculateEndDate, generatePermissionNumber } from './permissions.servic
 import { getAdjustedStartDate } from '../services/transactions/finalise-transaction.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
@@ -103,34 +103,33 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
   permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
-  try {
-    await docClient
-      .update({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id: transactionId },
-        ...docClient.createUpdateExpression({
-          payload: permission,
-          permissions: transactionRecord.permissions,
-          status: { id: TRANSACTION_STATUS.FINALISED }
-        }),
-        ReturnValues: 'ALL_NEW'
-      })
-      .promise()
-  } catch (e) {
-    console.log('error updating item', e)
-  }
+  await docClient
+    .update({
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
+      Key: { id: transactionId },
+      ...docClient.createUpdateExpression({
+        payload: permission,
+        permissions: transactionRecord.permissions,
+        status: { id: TRANSACTION_STATUS.FINALISED },
+        payment: {
+          amount: transactionRecord.cost,
+          method: TRANSACTION_SOURCE.govPay,
+          source: PAYMENT_TYPE.debit,
+          timestamp: new Date().toISOString()
+        }
+      }),
+      ReturnValues: 'ALL_NEW'
+    })
+    .promise()
 
-  try {
-    await sqs
-      .sendMessage({
-        QueueUrl: TRANSACTION_QUEUE.Url,
-        MessageGroupId: transactionId,
-        MessageDeduplicationId: transactionId,
-        MessageBody: JSON.stringify({ transactionId })
-      })
-      .promise()
-  } catch (e) {
-    console.log('sqs: ', e)
-  }
+  await sqs
+    .sendMessage({
+      QueueUrl: TRANSACTION_QUEUE.Url,
+      MessageGroupId: transactionId,
+      MessageDeduplicationId: transactionId,
+      MessageBody: JSON.stringify({ id: transactionId })
+    })
+    .promise()
+
   return { permission }
 }

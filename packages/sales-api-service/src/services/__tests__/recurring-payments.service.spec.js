@@ -14,7 +14,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
-import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -66,6 +66,12 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
     Failed: 'FailedCode',
     Expired: 'ExpiredCode',
     Completed: 'CompletedCode'
+  },
+  TRANSACTION_SOURCE: {
+    govPay: Symbol('govpay')
+  },
+  PAYMENT_TYPE: {
+    debit: Symbol('debit')
   }
 }))
 
@@ -589,6 +595,8 @@ describe('recurring payments service', () => {
     })
 
     it('should call docClient.update with expected params', async () => {
+      const fakeNow = '2024-03-19T14:09:00.000Z'
+      jest.useFakeTimers().setSystemTime(new Date(fakeNow))
       const permission = {
         issueDate: new Date('2024-01-01'),
         startDate: new Date('2024-01-01'),
@@ -600,7 +608,8 @@ describe('recurring payments service', () => {
       const mockTransaction = {
         id: 'test-id',
         dataSource: 'RCP',
-        permissions: [permission]
+        permissions: [permission],
+        cost: 38.72
       }
       const expectedPermissions = [
         {
@@ -621,14 +630,21 @@ describe('recurring payments service', () => {
 
       expect(docClient.update).toHaveBeenCalledWith({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { transactionId: 'test-id' },
+        Key: { id: 'test-id' },
         ...docClient.createUpdateExpression({
           payload: permission,
           permissions: expectedPermissions,
-          status: { id: TRANSACTION_STATUS.FINALISED }
+          status: { id: TRANSACTION_STATUS.FINALISED },
+          payment: {
+            amount: mockTransaction.cost,
+            method: TRANSACTION_SOURCE.govPay,
+            source: PAYMENT_TYPE.debit,
+            timestamp: fakeNow
+          }
         }),
         ReturnValues: 'ALL_NEW'
       })
+      jest.useRealTimers()
     })
 
     it('should call sqs.sendMessage with expected params', async () => {
@@ -641,7 +657,7 @@ describe('recurring payments service', () => {
         QueueUrl: TRANSACTION_QUEUE.Url,
         MessageGroupId: 'test-id',
         MessageDeduplicationId: 'test-id',
-        MessageBody: JSON.stringify({ transactionId: 'test-id' })
+        MessageBody: JSON.stringify({ id: 'test-id' })
       })
     })
   })
