@@ -48,7 +48,9 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   const payment = await sendPayment(preparedPayment)
   payments.push({
     agreementId,
-    paymentId: payment.payment_id
+    paymentId: payment.payment_id,
+    created_date: payment.created_date,
+    transaction
   })
 }
 
@@ -101,10 +103,13 @@ const processRecurringPaymentStatus = async record => {
   const {
     state: { status }
   } = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
+  const paymentStatus = JSON.stringify(status)
+  if (paymentStatus === '"success"') {
+    const payment = payments.find(p => p.paymentId === paymentId)
+    await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
+  }
 }
 
 const getPaymentId = agreementId => {
-  const payment = payments.find(p => p.agreementId === agreementId)
-  return payment.paymentId
+  return payments.find(p => p.agreementId === agreementId).paymentId
 }

@@ -1,7 +1,16 @@
 import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
+import { getAdjustedStartDate } from '../services/transactions/finalise-transaction.js'
+import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
+import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
+import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
+import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
 import moment from 'moment'
+import { AWS } from '@defra-fish/connectors-lib'
+const { sqs, docClient } = AWS()
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
 
@@ -64,4 +73,63 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     return { recurringPayment }
   }
   return { recurringPayment: null }
+}
+
+export const processRPResult = async (transactionId, paymentId, createdDate) => {
+  const transactionRecord = await retrieveStagedTransaction(transactionId)
+  if (await getPaymentJournal(transactionId)) {
+    await updatePaymentJournal(transactionId, {
+      paymentReference: paymentId,
+      paymentTimestamp: createdDate,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  } else {
+    await createPaymentJournal(transactionId, {
+      paymentReference: paymentId,
+      paymentTimestamp: createdDate,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  }
+  const [permission] = transactionRecord.permissions
+  permission.issueDate = moment(permission.issueDate).add(1, 'year').toDate()
+  const startDate = moment(permission.startDate).add(1, 'year').toDate()
+
+  permission.startDate = getAdjustedStartDate({
+    startDate,
+    dataSource: transactionRecord.dataSource,
+    issueDate: permission.issueDate
+  })
+  permission.endDate = await calculateEndDate(permission)
+  permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+  permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
+
+  await docClient
+    .update({
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
+      Key: { id: transactionId },
+      ...docClient.createUpdateExpression({
+        payload: permission,
+        permissions: transactionRecord.permissions,
+        status: { id: TRANSACTION_STATUS.FINALISED },
+        payment: {
+          amount: transactionRecord.cost,
+          method: TRANSACTION_SOURCE.govPay,
+          source: PAYMENT_TYPE.debit,
+          timestamp: new Date().toISOString()
+        }
+      }),
+      ReturnValues: 'ALL_NEW'
+    })
+    .promise()
+
+  await sqs
+    .sendMessage({
+      QueueUrl: TRANSACTION_QUEUE.Url,
+      MessageGroupId: transactionId,
+      MessageDeduplicationId: transactionId,
+      MessageBody: JSON.stringify({ id: transactionId })
+    })
+    .promise()
+
+  return { permission }
 }
