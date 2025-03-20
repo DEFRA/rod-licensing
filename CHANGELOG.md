@@ -1,4 +1,13 @@
 
+## v1.60.0-rc.0 (2025-03-20)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2132](https://github.com/DEFRA/rod-licensing/pull/2132) RCP cancellation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.59.0-rc.9 (2025-02-18)
 
