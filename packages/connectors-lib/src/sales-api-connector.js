@@ -295,3 +295,16 @@ export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL
  */
 export const preparePermissionDataForRenewal = async referenceNumber =>
   exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
+
+export const linkRecurringPayments = async (oldRecurringPayment, newRecurringPayment) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `/linkRecurringPayments/${oldRecurringPayment}?${querystring.stringify({
+          newRecurringPayment
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )

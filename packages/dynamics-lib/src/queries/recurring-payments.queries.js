@@ -18,3 +18,22 @@ export const findDueRecurringPayments = date => {
     expand: [contact, activePermission]
   })
 }
+
+/**
+ * Builds a query to retrieve active recurring payment for a given date and agreementId
+ *
+ * @param date current date used for lookup
+ * @returns {PredefinedQuery}
+ */
+export const findRecurringPaymentByDateAndAgreementId = (date, agreement) => {
+  const { nextDueDate, agreementId } = RecurringPayment.definition.mappings
+
+  const filter = `${nextDueDate.field} eq ${date} and ${agreementId.field} eq ${agreement}`
+
+  return new PredefinedQuery({
+    root: RecurringPayment,
+    filter: filter
+  })
+}
+
+

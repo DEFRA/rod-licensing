@@ -12,7 +12,7 @@ import {
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, FULFILMENT_SWITCHOVER_DATE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
-import { generateRecurringPaymentRecord, processRecurringPayment } from '../recurring-payments.service.js'
+import { generateRecurringPaymentRecord, processRecurringPayment, linkRecurringPayments } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
@@ -77,6 +77,10 @@ export async function processQueue ({ id }) {
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       entities.push(recurringPayment)
+
+      const oldRecurringPayment = await linkRecurringPayments(recurringPayment)
+      entities.push(oldRecurringPayment)
+
       const paymentInstruction = new RecurringPaymentInstruction()
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)

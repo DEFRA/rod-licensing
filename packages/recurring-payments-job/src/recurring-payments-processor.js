@@ -102,9 +102,17 @@ const processRecurringPaymentStatus = async record => {
     state: { status }
   } = await getPaymentStatus(paymentId)
   console.log(`Payment status for ${paymentId}: ${JSON.stringify(status)}`)
+  // IWTF-3659 stuff goes here, return newPermission record from await salesApi.processRPResult
+  // if payment processed successfully:
+  linkRecurringPayments(record, newPermission)
 }
 
 const getPaymentId = agreementId => {
   const payment = payments.find(p => p.agreementId === agreementId)
   return payment.paymentId
+}
+
+const linkRecurringPayments = async (oldRecurringPayment, newPermission) => {
+  const newRecurringPayment = newPermission.recurringPayment
+  await salesApi.linkRecurringPayments(oldRecurringPayment.id, newRecurringPayment.id)
 }

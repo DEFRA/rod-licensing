@@ -65,3 +65,9 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   }
   return { recurringPayment: null }
 }
+
+export const linkRecurringPayments = async (newRecurringPayment) => {
+  const oldRecurringPayment = // find somehow???
+  oldRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, newRecurringPayment)
+  return { oldRecurringPayment }
+}
