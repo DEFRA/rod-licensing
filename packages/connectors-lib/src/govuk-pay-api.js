@@ -32,6 +32,15 @@ export const createRecurringPaymentAgreement = async preparedPayment => {
   }
 }
 
+export const queueRecurringPayment = async (preparedPayment, batcher) => {
+  batcher.addRequest(process.env.GOV_PAY_RCP_API_URL, {
+    headers: headers(true),
+    method: 'post',
+    body: JSON.stringify(preparedPayment),
+    timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+  })
+}
+
 /**
  * Create a new payment
  * @param preparedPayment - see the GOV.UK pay API reference for details

@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { salesApi } from '@defra-fish/connectors-lib'
-import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
+import { salesApi, govUkPayApi, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
+import { getPaymentStatus } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
@@ -12,7 +12,16 @@ export const processRecurringPayments = async () => {
     const date = new Date().toISOString().split('T')[0]
     const response = await salesApi.getDueRecurringPayments(date)
     console.log('Recurring Payments found: ', response)
-    await Promise.all(response.map(record => processRecurringPayment(record)))
+
+    const batcher = new HTTPRequestBatcher()
+    await Promise.all(response.map(record => processRecurringPayment(record, batcher)))
+    await batcher.fetch()
+    payments.push(
+      ...(await Promise.all(batcher.responses.map(r => r.json()))).map(payment => ({
+        agreementId: payment.agreement_id,
+        paymentId: payment.payment_id
+      }))
+    )
     if (response.length > 0) {
       await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
@@ -22,16 +31,16 @@ export const processRecurringPayments = async () => {
   }
 }
 
-const processRecurringPayment = async record => {
+const processRecurringPayment = async (record, batcher) => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
-  const transaction = await createNewTransaction(referenceNumber, agreementId)
-  await takeRecurringPayment(agreementId, transaction)
+  const transaction = await createNewTransaction(referenceNumber)
+  await takeRecurringPayment(agreementId, transaction, batcher)
 }
 
-const createNewTransaction = async (referenceNumber, agreementId) => {
-  const transactionData = await processPermissionData(referenceNumber, agreementId)
-  console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
+const createNewTransaction = async referenceNumber => {
+  const transactionData = await processPermissionData(referenceNumber)
+  console.log('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
     console.log('New transaction created:', response)
@@ -42,23 +51,24 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
   }
 }
 
-const takeRecurringPayment = async (agreementId, transaction) => {
+const takeRecurringPayment = async (agreementId, transaction, batcher) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  const payment = await sendPayment(preparedPayment)
-  payments.push({
-    agreementId,
-    paymentId: payment.payment_id
-  })
+  govUkPayApi.queueRecurringPayment(preparedPayment, batcher)
+
+  // const payment = await sendPayment(preparedPayment)
+  // payments.push({
+  //   agreementId,
+  //   paymentId: payment.payment_id
+  // })
 }
 
-const processPermissionData = async (referenceNumber, agreementId) => {
-  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
+const processPermissionData = async referenceNumber => {
+  console.log('Preparing data based on', referenceNumber)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
     dataSource: 'Recurring Payment',
-    agreementId,
     permissions: [
       {
         isLicenceForYou: data.isLicenceForYou,
