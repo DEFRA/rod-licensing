@@ -31,7 +31,12 @@
                 {% elseif data['failure-code'] === data.codes.REJECTED %}
                     <p class="govuk-body-m">{{ mssgs.payment_failed_rejected }}</p>
                 {% endif %}
-                <p class="govuk-body-m">{{ mssgs.payment_failed_not_taken }}</p>
+
+                {% if data.recurringPayment %}
+                    <p class="govuk-body-m">{{ mssgs.payment_failed_not_taken_recurring }}</p>
+                {% else %}
+                    <p class="govuk-body-m">{{ mssgs.payment_failed_not_taken }}</p>
+                {% endif %}
 
             {% endcall %}
 
