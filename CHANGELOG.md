@@ -1,4 +1,13 @@
 
+## v1.60.0-rc.1 (2025-03-20)
+
+#### :rocket: Enhancement
+* `connectors-lib`
+  * [#2121](https://github.com/DEFRA/rod-licensing/pull/2121) HTTP Request Batcher ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.60.0-rc.0 (2025-03-20)
 
 #### :bug: Bug Fix
