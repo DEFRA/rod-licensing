@@ -1,8 +1,42 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
-import AwsMock from 'aws-sdk'
-let server = null
+import { AWS } from '@defra-fish/connectors-lib'
 
+// import * as connectors from '@defra-fish/connectors-lib'
+// console.log('Airbrake:', connectors.airbrake)
+
+jest.mock('@defra-fish/connectors-lib', () => {
+  const actual = jest.requireActual('@defra-fish/connectors-lib')
+
+  const mockDocClient = {
+    send: jest.fn()
+  }
+
+  const mockSqs = {
+    SQS: {
+      __init: jest.fn(config => {
+        mockSqs.expectedResponses = config.expectedResponses
+      })
+    },
+    listQueues: jest.fn(() => {
+      return {
+        promise: () => Promise.resolve(mockSqs.expectedResponses.listQueues)
+      }
+    }),
+    sendMessage: jest.fn()
+  }
+  return {
+    ...actual,
+    AWS: jest.fn(() => ({
+      docClient: mockDocClient,
+      sqs: mockSqs
+    }))
+  }
+})
+
+const { docClient, sqs } = AWS.mock.results[0].value
+
+let server = null
 describe('hapi healthcheck', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
@@ -21,16 +55,14 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
-    AwsMock.SQS.__init({
+    sqs.SQS.__init({
       expectedResponses: {
         listQueues: { QueueUrls: ['TestQueue'] }
       }
     })
-    AwsMock.DynamoDB.__init({
-      expectedResponses: {
-        listTables: { TableNames: ['TestTable'] }
-      }
-    })
+
+    docClient.send.mockResolvedValueOnce({ TableNames: ['TestTable'] })
+
     const result = await server.inject({
       method: 'GET',
       url: '/service-status?v&h'
