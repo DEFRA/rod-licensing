@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.59.0-rc.processRP",
+  "version": "1.59.0-rc.4",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
