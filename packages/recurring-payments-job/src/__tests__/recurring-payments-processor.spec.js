@@ -23,6 +23,19 @@ jest.mock('../services/govuk-pay-service.js', () => ({
 }))
 
 const PAYMENT_STATUS_DELAY = 60000
+const getPaymentStatusSuccess = () => ({ state: { status: 'success' } })
+const getMockPaymentRequestResponse = () => [
+  {
+    entity: { agreementId: 'agreement-1' },
+    expanded: {
+      activePermission: {
+        entity: {
+          referenceNumber: 'ref-1'
+        }
+      }
+    }
+  }
+]
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
@@ -69,7 +82,7 @@ describe('recurring-payments-processor', () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
     const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
@@ -120,7 +133,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'test-agreement-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
@@ -145,7 +158,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
@@ -175,7 +188,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
@@ -196,7 +209,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
@@ -234,7 +247,7 @@ describe('recurring-payments-processor', () => {
 
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     const expectedData = {
       amount: 5000,
@@ -266,12 +279,11 @@ describe('recurring-payments-processor', () => {
     salesApi.createTransaction.mockResolvedValueOnce({
       id: 'payment-id-1'
     })
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     await processRecurringPayments()
-    jest.advanceTimersByTime(60000)
 
     expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
   })
@@ -297,7 +309,7 @@ describe('recurring-payments-processor', () => {
     })
     const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    const mockPaymentStatus = { state: { status: 'success' } }
+    const mockPaymentStatus = getPaymentStatusSuccess()
     getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
     const mockStatus = JSON.stringify(mockPaymentStatus.state.status)
 
@@ -312,7 +324,7 @@ describe('recurring-payments-processor', () => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(referenceNumber)])
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'success' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
 
@@ -331,59 +343,28 @@ describe('recurring-payments-processor', () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
-  it('payment status is success then should call processRPResult with transaction id, payment id and created date', async () => {
+  it('calls processRPResult with transaction id, payment id and created date when payment is successful', async () => {
     const mockTransactionId = 'test-transaction-id'
     const mockPaymentId = 'test-payment-id'
     const mockPaymentCreatedDate = '2025-01-01T00:00:00.000Z'
-    const mockResponse = [
-      {
-        entity: { agreementId: 'agreement-1' },
-        expanded: {
-          activePermission: {
-            entity: {
-              referenceNumber: 'ref-1'
-            }
-          }
-        }
-      }
-    ]
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
-    const transaction = { id: mockTransactionId, cost: 30 }
-    salesApi.createTransaction.mockResolvedValueOnce(transaction)
-    const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1', created_date: mockPaymentCreatedDate }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    const mockPaymentStatus = { state: { status: 'success' } }
-    getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
+    salesApi.createTransaction.mockResolvedValueOnce({ id: mockTransactionId, cost: 30 })
+    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1', created_date: mockPaymentCreatedDate })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
-    jest.advanceTimersByTime(60000)
 
-    expect(salesApi.processRPResult).toHaveBeenCalledWith(transaction.id, mockPaymentResponse.payment_id, mockPaymentResponse.created_date)
+    expect(salesApi.processRPResult).toHaveBeenCalledWith(mockTransactionId, mockPaymentId, mockPaymentCreatedDate)
   })
 
-  it('payment status is not a success then should not call processRPResult ', async () => {
+  it("doesn't call processRPResult if payment status is not successful", async () => {
     const mockPaymentId = 'test-payment-id'
-    const mockResponse = [
-      {
-        entity: { agreementId: 'agreement-1' },
-        expanded: {
-          activePermission: {
-            entity: {
-              referenceNumber: 'ref-1'
-            }
-          }
-        }
-      }
-    ]
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId, cost: 30 })
-    const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    const mockPaymentStatus = { state: { status: 'Pending' } }
-    getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
+    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1' })
+    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Pending' } })
 
     await processRecurringPayments()
-    jest.advanceTimersByTime(60000)
 
     expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
   })
@@ -402,7 +383,7 @@ describe('recurring-payments-processor', () => {
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
       const mockPaymentResponse = { payment_id: 'test-payment-id' }
       sendPayment.mockResolvedValue(mockPaymentResponse)
-      const mockPaymentStatus = { state: { status: 'success' } }
+      const mockPaymentStatus = getPaymentStatusSuccess()
       getPaymentStatus.mockResolvedValue(mockPaymentStatus)
 
       const expectedData = []
