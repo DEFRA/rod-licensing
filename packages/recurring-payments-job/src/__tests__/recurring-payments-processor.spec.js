@@ -314,7 +314,6 @@ describe('recurring-payments-processor', () => {
     const mockStatus = JSON.stringify(mockPaymentStatus.state.status)
 
     await processRecurringPayments()
-    jest.advanceTimersByTime(60000)
 
     expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
   })
