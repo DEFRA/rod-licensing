@@ -5,6 +5,7 @@ import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
+const PAYMENT_STATUS_SUCCESS = 'success'
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -102,9 +103,8 @@ const processRecurringPaymentStatus = async record => {
   const {
     state: { status }
   } = await getPaymentStatus(paymentId)
-  const paymentStatus = JSON.stringify(status)
-  console.log(`Payment status for ${paymentId}: ${paymentStatus}`)
-  if (paymentStatus === '"success"') {
+  console.log(`Payment status for ${paymentId}: ${status}`)
+  if (status === PAYMENT_STATUS_SUCCESS) {
     const payment = payments.find(p => p.paymentId === paymentId)
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
   }

@@ -309,13 +309,11 @@ describe('recurring-payments-processor', () => {
     })
     const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    const mockPaymentStatus = getPaymentStatusSuccess()
-    getPaymentStatus.mockResolvedValueOnce(mockPaymentStatus)
-    const mockStatus = JSON.stringify(mockPaymentStatus.state.status)
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus}`)
+    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: success`)
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
