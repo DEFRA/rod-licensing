@@ -1,14 +1,15 @@
 import pageRoute from '../../../../routes/page-route.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { getData, validator } from '../route.js'
-import { IDENTIFY, NEW_TRANSACTION } from '../../../../uri.js'
+import { getData, validator, identifyNextPage } from '../route.js'
+import { IDENTIFY, AUTHENTICATE, NEW_TRANSACTION, LICENCE_NOT_FOUND } from '../../../../uri.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 jest.mock('../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../uri.js', () => ({
   IDENTIFY: { page: 'identify page', uri: 'identify uri' },
   AUTHENTICATE: { uri: Symbol('authenticate uri') },
-  NEW_TRANSACTION: { uri: Symbol('new transaction uri') }
+  NEW_TRANSACTION: { uri: Symbol('new transaction uri') },
+  LICENCE_NOT_FOUND: { page: 'licence-not-found', uri: '/buy/renew/licence-not-found' }
 }))
 jest.mock('../../../../processors/uri-helper.js')
 jest.mock('../../../../schema/validators/validators.js')
@@ -139,5 +140,34 @@ describe('validator', () => {
     const payload = getMockRequest()
     validator(payload)
     expect(dateOfBirthValidator).toHaveBeenCalledWith(payload)
+  })
+})
+
+describe('identifyNextPage', () => {
+  const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
+    cache: () => ({
+      helpers: {
+        status: {
+          getCurrentPermission: () => ({
+            referenceNumber: referenceNumber
+          })
+        },
+        page: {
+          getCurrentPermission: pageGet
+        }
+      }
+    })
+  })
+
+  it('returns LICENCE_NOT_FOUND.uri if no referenceNumber', async () => {
+    const request = getMockRequest()
+    const result = await identifyNextPage(request)
+    expect(result).toEqual(LICENCE_NOT_FOUND.uri)
+  })
+
+  it('returns AUTHENTICATE.uri if referenceNumber exists', async () => {
+    const request = getMockRequest('013AH6')
+    const result = await identifyNextPage(request)
+    expect(result).toEqual(AUTHENTICATE.uri)
   })
 })
