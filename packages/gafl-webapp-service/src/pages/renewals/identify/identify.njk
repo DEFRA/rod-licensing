@@ -11,7 +11,7 @@
 
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
-{%
+{# {%
     set errorMap = {
         'referenceNumber' : {
             'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
@@ -57,7 +57,7 @@
             'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
         }
     }
-%}
+%} #}
 
 {% set dateInputItems = [
     {
@@ -87,7 +87,7 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+        {# {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }} #}
         <form method="post" class="govuk-!-margin-bottom-6">
             {% call govukFieldset({
               describedBy: "ref-hint date-of-birth-hint postcode-hint",
