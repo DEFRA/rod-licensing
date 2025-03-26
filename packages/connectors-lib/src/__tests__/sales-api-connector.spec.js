@@ -658,22 +658,33 @@ describe('sales-api-connector', () => {
   })
 
   describe('processRPResult', () => {
-    it('calls the endpoint and returns the expected response', async () => {
-      const transactionId = 'transaction-id'
-      const paymentId = 'payment-id'
-      const createdDate = '2025-01-01T00:00:00.000Z'
-      const expectedResponse = { transactionId, paymentId, createdDate }
-      fetch.mockReturnValue({
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        text: async () => JSON.stringify(expectedResponse)
+    describe.each([
+      ['transaction-id', 'payment-id', '2025-01-01T00:00:00.000Z'],
+      ['abc-123', 'def-456', '2025-02-15T23:49:32.386Z']
+    ])("Processing payment for transaction id '%s'", (transactionId, paymentId, createdDate) => {
+      beforeEach(() => {
+        fetch.mockReturnValue({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ transactionId, paymentId, createdDate })
+        })
       })
-      await expect(salesApi.processRPResult('transaction-id', 'payment-id', '2025-01-01T00:00:00.000Z')).resolves.toEqual(expectedResponse)
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult/transaction-id/payment-id/2025-01-01T00:00:00.000Z', {
-        method: 'get',
-        headers: expect.any(Object),
-        timeout: 20000
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.processRPResult(transactionId, paymentId, createdDate)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/processRPResult/${transactionId}/${paymentId}/${createdDate}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.processRPResult(transactionId, paymentId, createdDate)
+
+        expect(processedResult).toEqual({ transactionId, paymentId, createdDate })
       })
     })
 

@@ -15,6 +15,7 @@ import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
+const AWSMocks = {}
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -23,10 +24,14 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findDueRecurringPayments: jest.fn()
 }))
 
-jest.mock('@defra-fish/connectors-lib', () => ({
-  ...jest.requireActual('@defra-fish/connectors-lib'),
-  receiver: jest.fn()
-}))
+jest.mock('@defra-fish/connectors-lib', () => {
+  const realConnectors = jest.requireActual('@defra-fish/connectors-lib')
+  return {
+    ...realConnectors,
+    AWS: jest.fn(() => realConnectors.AWS()),
+    receiver: jest.fn()
+  }
+})
 
 jest.mock('node:crypto', () => ({
   createHash: jest.fn(() => ({
@@ -75,7 +80,6 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   }
 }))
 
-const { sqs, docClient } = AWS()
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
 const getMockRecurringPayment = () => ({
@@ -148,8 +152,8 @@ const getMockPermission = () => ({
   }
 })
 
-const getMockTransaction = () => ({
-  id: 'test-id',
+const getMockTransaction = (id = 'test-id') => ({
+  id,
   dataSource: 'RCP',
   permissions: [
     {
@@ -184,6 +188,14 @@ describe('recurring payments service', () => {
   beforeAll(() => {
     TRANSACTION_QUEUE.Url = 'TestUrl'
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    const [
+      {
+        value: { docClient, sqs }
+      }
+    ] = AWS.mock.results
+    AWSMocks.docClient = docClient
+    AWSMocks.sqs = sqs
+    Object.freeze(AWSMocks)
   })
 
   describe('getRecurringPayments', () => {
@@ -420,21 +432,23 @@ describe('recurring payments service', () => {
     })
   })
 
-  describe('processRPResult', () => {
+  describe.each(['abc-123', 'hyt678iuhy78uijhgtrfg', 'jhu7i8u7yh-jhu78u'])('processRPResult with transaction id %s', transactionId => {
     beforeEach(() => {
-      jest.clearAllMocks()
+      jest.useFakeTimers().setSystemTime(new Date('2024-03-12T09:57:23.745Z'))
     })
-
+    afterEach(() => {
+      jest.useRealTimers()
+    })
     it('should call retrieveStagedTransaction with transaction id', async () => {
-      const mockTransaction = getMockTransaction()
+      const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
-      await processRPResult(mockTransaction.id, '123', '2025-01-01')
+      await processRPResult(transactionId, '123', '2025-01-01')
 
-      expect(retrieveStagedTransaction).toHaveBeenCalledWith(mockTransaction.id)
+      expect(retrieveStagedTransaction).toHaveBeenCalledWith(transactionId)
     })
 
     it('should call await getPaymentJournal with transaction id', async () => {
-      const mockTransaction = getMockTransaction()
+      const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
@@ -442,7 +456,7 @@ describe('recurring payments service', () => {
     })
 
     it('if getPaymentJournal is true then updatePaymentJournal is called with expected params', async () => {
-      const mockTransaction = getMockTransaction()
+      const mockTransaction = getMockTransaction(transactionId)
       const paymentId = Symbol('payment-id')
       const createdDate = Symbol('created-date')
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
@@ -459,7 +473,7 @@ describe('recurring payments service', () => {
     })
 
     it('if getPaymentJournal is false then updatePaymentJournal is not called', async () => {
-      const mockTransaction = getMockTransaction()
+      const mockTransaction = getMockTransaction(transactionId)
       const paymentId = Symbol('payment-id')
       const createdDate = Symbol('created-date')
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
@@ -471,7 +485,7 @@ describe('recurring payments service', () => {
     })
 
     it('if getPaymentJournal is false then createPaymentJournal is called with expected params', async () => {
-      const mockTransaction = getMockTransaction()
+      const mockTransaction = getMockTransaction(transactionId)
       const paymentId = Symbol('payment-id')
       const createdDate = Symbol('created-date')
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
@@ -488,7 +502,7 @@ describe('recurring payments service', () => {
     })
 
     it('if getPaymentJournal is true then createPaymentJournal is not called', async () => {
-      const mockTransaction = getMockTransaction()
+      const mockTransaction = getMockTransaction(transactionId)
       const paymentId = Symbol('payment-id')
       const createdDate = Symbol('created-date')
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
@@ -500,51 +514,29 @@ describe('recurring payments service', () => {
     })
 
     it('should call getAdjustedStartDate with expected params', async () => {
-      const startDate = new Date('2024-01-01')
-      const issueDate = new Date('2024-01-01')
+      const fakeNow = '2024-03-15T09:57:23.745Z'
+      jest.setSystemTime(new Date(fakeNow))
       const dataSource = Symbol('data-source')
-      const mockTransaction = {
-        id: 'test-id',
-        dataSource,
-        permissions: [
-          {
-            issueDate,
-            startDate,
-            licensee: {
-              firstName: 'Test',
-              lastName: 'User'
-            }
-          }
-        ]
-      }
+      const mockTransaction = getMockTransaction(transactionId)
+      mockTransaction.dataSource = dataSource
+      mockTransaction.permissions[0].startDate = '2024-03-19T14:09:00.000Z'
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      const expected = {
-        startDate: new Date('2025-01-01'),
+      expect(getAdjustedStartDate).toHaveBeenCalledWith({
+        startDate: '2025-03-19T14:09:00.000Z', // 1 year in the future
         dataSource,
-        issueDate: new Date('2025-01-01')
-      }
-
-      expect(getAdjustedStartDate).toHaveBeenCalledWith(expected)
+        issueDate: fakeNow
+      })
     })
 
     it('should call calculateEndDate with permission', async () => {
-      const permission = {
-        issueDate: new Date('2024-01-01'),
-        startDate: new Date('2024-01-01'),
-        licensee: {
-          firstName: 'Test',
-          lastName: 'User'
-        }
-      }
-      const mockTransaction = {
-        id: 'test-id',
-        dataSource: 'RCP',
-        permissions: [permission]
-      }
+      const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      const {
+        permissions: [permission]
+      } = mockTransaction
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
@@ -552,41 +544,23 @@ describe('recurring payments service', () => {
     })
 
     it('should call generatePermissionNumber with permission and data source', async () => {
-      const permission = {
-        issueDate: new Date('2024-01-01'),
-        startDate: new Date('2024-01-01'),
-        licensee: {
-          firstName: 'Test',
-          lastName: 'User'
-        }
-      }
-      const dataSource = Symbol('data-source')
-      const mockTransaction = {
-        id: 'test-id',
-        dataSource,
+      const mockTransaction = getMockTransaction(transactionId)
+      mockTransaction.dataSource = Symbol('data-source')
+      const {
         permissions: [permission]
-      }
+      } = mockTransaction
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      expect(generatePermissionNumber).toHaveBeenCalledWith(permission, dataSource)
+      expect(generatePermissionNumber).toHaveBeenCalledWith(permission, mockTransaction.dataSource)
     })
 
     it('should call getObfuscatedDob with licensee', async () => {
-      const permission = {
-        issueDate: new Date('2024-01-01'),
-        startDate: new Date('2024-01-01'),
-        licensee: {
-          firstName: 'Test',
-          lastName: 'User'
-        }
-      }
-      const mockTransaction = {
-        id: 'test-id',
-        dataSource: 'RCP',
+      const mockTransaction = getMockTransaction(transactionId)
+      const {
         permissions: [permission]
-      }
+      } = mockTransaction
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
@@ -594,70 +568,77 @@ describe('recurring payments service', () => {
       expect(getObfuscatedDob).toHaveBeenCalledWith(permission.licensee)
     })
 
-    it('should call docClient.update with expected params', async () => {
+    it('should call AWSMocks.docClient.createUpdateExpression with payload, permissions, status and payment details', async () => {
+      jest.spyOn(AWSMocks.docClient, 'createUpdateExpression')
       const fakeNow = '2024-03-19T14:09:00.000Z'
-      jest.useFakeTimers().setSystemTime(new Date(fakeNow))
+      jest.setSystemTime(new Date(fakeNow))
+      const mockTransaction = getMockTransaction(transactionId)
       const permission = {
-        issueDate: new Date('2024-01-01'),
-        startDate: new Date('2024-01-01'),
-        licensee: {
-          firstName: 'Test',
-          lastName: 'User'
-        }
-      }
-      const mockTransaction = {
-        id: 'test-id',
+        issueDate: fakeNow,
         dataSource: 'RCP',
-        permissions: [permission],
-        cost: 38.72
-      }
-      const expectedPermissions = [
-        {
-          endDate: undefined,
-          issueDate: new Date('2025-01-01'),
-          licensee: {
-            firstName: 'Test',
-            lastName: 'User',
-            obfuscatedDob: undefined
-          },
-          referenceNumber: undefined,
-          startDate: undefined
+        licensee: {
+          firstName: 'Brenin',
+          lastName: 'Pysgotwr',
+          obfuscatedDob: '987654678'
         }
-      ]
+      }
+      const expectedPermission = {
+        ...permission,
+        startDate: '2025-03-19T14:09:00.000Z',
+        endDate: '2026-03-18T23:59:59.999Z',
+        referenceNumber: '123abc'
+      }
+      mockTransaction.cost = 23.46
+      mockTransaction.permissions = [permission]
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      generatePermissionNumber.mockReturnValueOnce(expectedPermission.referenceNumber)
+      calculateEndDate.mockReturnValueOnce(expectedPermission.endDate)
+      getAdjustedStartDate.mockReturnValueOnce(expectedPermission.startDate)
 
-      await processRPResult(mockTransaction.id, '123', '2025-01-01')
+      await processRPResult(transactionId, '123abc', '2025-01-01')
 
-      expect(docClient.update).toHaveBeenCalledWith({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id: 'test-id' },
-        ...docClient.createUpdateExpression({
-          payload: permission,
-          permissions: expectedPermissions,
-          status: { id: TRANSACTION_STATUS.FINALISED },
-          payment: {
-            amount: mockTransaction.cost,
-            method: TRANSACTION_SOURCE.govPay,
-            source: PAYMENT_TYPE.debit,
-            timestamp: fakeNow
-          }
-        }),
-        ReturnValues: 'ALL_NEW'
+      expect(AWSMocks.docClient.createUpdateExpression).toHaveBeenCalledWith({
+        payload: expect.objectContaining(expectedPermission),
+        permissions: expect.arrayContaining([expectedPermission]),
+        status: expect.objectContaining({ id: TRANSACTION_STATUS.FINALISED }),
+        payment: expect.objectContaining({
+          amount: mockTransaction.cost,
+          method: TRANSACTION_SOURCE.govPay,
+          source: PAYMENT_TYPE.debit,
+          timestamp: fakeNow
+        })
       })
-      jest.useRealTimers()
     })
 
-    it('should call sqs.sendMessage with expected params', async () => {
-      const mockTransaction = getMockTransaction()
+    it('should call AWSMocks.docClient.update with expected params', async () => {
+      jest.spyOn(AWSMocks.docClient, 'createUpdateExpression')
+      const mockTransaction = getMockTransaction(transactionId)
+      mockTransaction.cost = 38.72
+      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
+      const updateExpression = { expression: Symbol('update expression') }
+      AWSMocks.docClient.createUpdateExpression.mockReturnValue(updateExpression)
+
+      await processRPResult(mockTransaction.id, '123', '2025-01-01')
+
+      expect(AWSMocks.docClient.update).toHaveBeenCalledWith({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { id: transactionId },
+        ...updateExpression,
+        ReturnValues: 'ALL_NEW'
+      })
+    })
+
+    it('should call AWSMocks.sqs.sendMessage with expected params', async () => {
+      const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      expect(sqs.sendMessage).toHaveBeenCalledWith({
+      expect(AWSMocks.sqs.sendMessage).toHaveBeenCalledWith({
         QueueUrl: TRANSACTION_QUEUE.Url,
-        MessageGroupId: 'test-id',
-        MessageDeduplicationId: 'test-id',
-        MessageBody: JSON.stringify({ id: 'test-id' })
+        MessageGroupId: transactionId,
+        MessageDeduplicationId: transactionId,
+        MessageBody: JSON.stringify({ id: transactionId })
       })
     })
   })

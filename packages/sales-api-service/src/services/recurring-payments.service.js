@@ -91,8 +91,8 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
     })
   }
   const [permission] = transactionRecord.permissions
-  permission.issueDate = moment(permission.issueDate).add(1, 'year').toDate()
-  const startDate = moment(permission.startDate).add(1, 'year').toDate()
+  permission.issueDate = new Date().toISOString()
+  const startDate = moment(permission.startDate).add(1, 'year').toISOString()
 
   permission.startDate = getAdjustedStartDate({
     startDate,
