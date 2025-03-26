@@ -115,6 +115,7 @@ describe('recurring-payments-processor', () => {
 
     const expectedData = {
       dataSource: 'Recurring Payment',
+      agreementId: 'test-agreement-id',
       permissions: [
         {
           isLicenceForYou,
@@ -417,6 +418,7 @@ describe('recurring-payments-processor', () => {
         expectedData.push([
           {
             dataSource: 'Recurring Payment',
+            agreementId: 'test-agreement-id',
             permissions: [expect.objectContaining({ permitId: permit })]
           }
         ])

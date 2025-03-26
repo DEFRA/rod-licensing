@@ -23,11 +23,13 @@ export class RecurringPayment extends BaseEntity {
       agreementId: { field: 'defra_agreementid', type: 'string' },
       activePermission: { field: '_defra_activepermission_value', type: 'string' },
       contactId: { field: '_defra_contact_value', type: 'string' },
-      publicId: { field: 'defra_publicid', type: 'string' }
+      publicId: { field: 'defra_publicid', type: 'string' },
+      nextRecurringPayment: { field: '_defra_nextrecurringpayment_value', type: 'string' }
     },
     relationships: {
       contact: { property: 'defra_Contact', entity: Contact, parent: true },
-      activePermission: { property: 'defra_ActivePermission', entity: Permission, parent: true }
+      activePermission: { property: 'defra_ActivePermission', entity: Permission, parent: true },
+      nextRecurringPayment: { property: 'defra_NextRecurringPayment', entity: RecurringPayment, parent: true }
     }
   }))
 

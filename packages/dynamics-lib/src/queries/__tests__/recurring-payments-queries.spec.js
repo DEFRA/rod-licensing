@@ -9,8 +9,7 @@ describe('Recurring Payment Queries', () => {
 
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
-        filter:
-          "Microsoft.Dynamics.CRM.On(PropertyName='defra_nextduedate', PropertyValue='Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)')",
+        filter: "defra_nextduedate eq 'Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)' and defra_cancelleddate eq null",
         select: [
           'defra_recurringpaymentid',
           'defra_name',
@@ -22,7 +21,8 @@ describe('Recurring Payment Queries', () => {
           'defra_agreementid',
           '_defra_activepermission_value',
           '_defra_contact_value',
-          'defra_publicid'
+          'defra_publicid',
+          '_defra_nextrecurringpayment_value'
         ],
         expand: [{ property: 'defra_Contact' }, { property: 'defra_ActivePermission' }]
       })
