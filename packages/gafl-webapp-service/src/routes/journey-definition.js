@@ -28,7 +28,8 @@ import {
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE,
   CHOOSE_PAYMENT,
-  SET_UP_PAYMENT
+  SET_UP_PAYMENT,
+  LICENCE_NOT_FOUND
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -410,6 +411,9 @@ export default [
   {
     current: IDENTIFY,
     next: {
+      [CommonResults.RENEWAL_ERROR]: {
+        page: LICENCE_NOT_FOUND
+      },
       [CommonResults.OK]: {
         page: LICENCE_SUMMARY
       }
