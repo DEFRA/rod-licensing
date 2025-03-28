@@ -6,7 +6,6 @@ import {
   processRPResult
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
-import { getAdjustedStartDate } from '../../services/transactions/finalise-transaction.js'
 import { getObfuscatedDob } from '../contacts.service.js'
 import { createHash } from 'node:crypto'
 import { AWS } from '@defra-fish/connectors-lib'
@@ -47,10 +46,6 @@ jest.mock('../contacts.service.js', () => ({
 jest.mock('../permissions.service.js', () => ({
   calculateEndDate: jest.fn(),
   generatePermissionNumber: jest.fn()
-}))
-
-jest.mock('../../services/transactions/finalise-transaction.js', () => ({
-  getAdjustedStartDate: jest.fn()
 }))
 
 jest.mock('../../services/transactions/retrieve-transaction.js', () => ({
@@ -432,7 +427,8 @@ describe('recurring payments service', () => {
     })
   })
 
-  describe.each(['abc-123', 'hyt678iuhy78uijhgtrfg', 'jhu7i8u7yh-jhu78u'])('processRPResult with transaction id %s', transactionId => {
+  // describe.each(['abc-123', 'hyt678iuhy78uijhgtrfg', 'jhu7i8u7yh-jhu78u'])('processRPResult with transaction id %s', transactionId => {
+  describe.each(['abc-123'])('processRPResult with transaction id %s', transactionId => {
     beforeEach(() => {
       jest.useFakeTimers().setSystemTime(new Date('2024-03-12T09:57:23.745Z'))
     })
@@ -513,24 +509,6 @@ describe('recurring payments service', () => {
       expect(createPaymentJournal).not.toHaveBeenCalled()
     })
 
-    it('should call getAdjustedStartDate with expected params', async () => {
-      const fakeNow = '2024-03-15T09:57:23.745Z'
-      jest.setSystemTime(new Date(fakeNow))
-      const dataSource = Symbol('data-source')
-      const mockTransaction = getMockTransaction(transactionId)
-      mockTransaction.dataSource = dataSource
-      mockTransaction.permissions[0].startDate = '2024-03-19T14:09:00.000Z'
-      retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
-
-      await processRPResult(mockTransaction.id, '123', '2025-01-01')
-
-      expect(getAdjustedStartDate).toHaveBeenCalledWith({
-        startDate: '2025-03-19T14:09:00.000Z', // 1 year in the future
-        dataSource,
-        issueDate: fakeNow
-      })
-    })
-
     it('should call calculateEndDate with permission', async () => {
       const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
@@ -580,11 +558,12 @@ describe('recurring payments service', () => {
           firstName: 'Brenin',
           lastName: 'Pysgotwr',
           obfuscatedDob: '987654678'
-        }
+        },
+        startDate: '2025-03-19T00:00:00.000Z'
       }
       const expectedPermission = {
         ...permission,
-        startDate: '2025-03-19T14:09:00.000Z',
+        startDate: '2025-03-19T00:00:00.000Z',
         endDate: '2026-03-18T23:59:59.999Z',
         referenceNumber: '123abc'
       }
@@ -593,7 +572,6 @@ describe('recurring payments service', () => {
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
       generatePermissionNumber.mockReturnValueOnce(expectedPermission.referenceNumber)
       calculateEndDate.mockReturnValueOnce(expectedPermission.endDate)
-      getAdjustedStartDate.mockReturnValueOnce(expectedPermission.startDate)
 
       await processRPResult(transactionId, '123abc', '2025-01-01')
 

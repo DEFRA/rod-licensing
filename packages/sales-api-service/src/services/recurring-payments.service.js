@@ -1,6 +1,5 @@
 import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
-import { getAdjustedStartDate } from '../services/transactions/finalise-transaction.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
 import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
@@ -92,13 +91,7 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   }
   const [permission] = transactionRecord.permissions
   permission.issueDate = new Date().toISOString()
-  const startDate = moment(permission.startDate).add(1, 'year').toISOString()
 
-  permission.startDate = getAdjustedStartDate({
-    startDate,
-    dataSource: transactionRecord.dataSource,
-    issueDate: permission.issueDate
-  })
   permission.endDate = await calculateEndDate(permission)
   permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
   permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
