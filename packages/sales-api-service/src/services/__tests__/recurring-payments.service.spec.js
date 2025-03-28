@@ -427,8 +427,7 @@ describe('recurring payments service', () => {
     })
   })
 
-  // describe.each(['abc-123', 'hyt678iuhy78uijhgtrfg', 'jhu7i8u7yh-jhu78u'])('processRPResult with transaction id %s', transactionId => {
-  describe.each(['abc-123'])('processRPResult with transaction id %s', transactionId => {
+  describe.each(['abc-123', 'hyt678iuhy78uijhgtrfg', 'jhu7i8u7yh-jhu78u'])('processRPResult with transaction id %s', transactionId => {
     beforeEach(() => {
       jest.useFakeTimers().setSystemTime(new Date('2024-03-12T09:57:23.745Z'))
     })
