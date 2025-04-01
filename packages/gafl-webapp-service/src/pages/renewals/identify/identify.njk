@@ -11,15 +11,11 @@
 
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
-{# {%
+{%
     set errorMap = {
         'referenceNumber' : {
             'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
-            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' },
-            'string.invalid': {
-                text: mssgs.identify_error_invalid_1 + payload.referenceNumber + mssgs.identify_error_invalid_2,
-                ref: "#ref"
-            }
+            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },
@@ -57,7 +53,7 @@
             'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
         }
     }
-%} #}
+%}
 
 {% set dateInputItems = [
     {
@@ -87,7 +83,7 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {# {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }} #}
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
             {% call govukFieldset({
               describedBy: "ref-hint date-of-birth-hint postcode-hint",
