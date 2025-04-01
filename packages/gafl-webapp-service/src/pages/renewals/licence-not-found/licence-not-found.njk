@@ -5,25 +5,23 @@
 {% block pageTitle %}{{ title }}{{ mssgs.licence_not_found_title }}{% endblock %}
 
 {% block content %}
+
+<a href="/buy/renew/identify" class="govuk-back-link govuk-!-margin-bottom-7">{{ mssgs.back }}</a>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
     <h1 class="govuk-heading-l">{{ mssgs.licence_not_found_title }}</h1>
-
     <p class="govuk-body">
       {{ mssgs.licence_not_found_body_1 }}
-      <a href="javascript:history.back()">{{ mssgs.licence_not_found_body_previous_page }}</a> {{ mssgs.full_stop }}
+      <a href="/buy/renew/identify">{{ mssgs.licence_not_found_body_previous_page }}</a>{{ mssgs.full_stop }}
     </p>
-
     <p class="govuk-body">
       {{ mssgs.licence_not_found_body_2 }}
       <a href="mailto:enquiries@environment-agency.gov.uk">{{ mssgs.licence_not_found_body_ea_link }}</a>
       {{ mssgs.licence_not_found_body_3 }}
       <a href="https://www.gov.uk/call-charges" target="_blank" rel="noopener">
-        {{ mssgs.licence_not_found_body_call_charges_link }}
-      </a> {{ mssgs.full_stop }}
+        {{ mssgs.licence_not_found_body_call_charges_link }}</a>{{ mssgs.full_stop }}
     </p>
-
   </div>
 </div>
 {% endblock %}
