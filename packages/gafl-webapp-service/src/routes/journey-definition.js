@@ -423,11 +423,6 @@ export default [
 
   {
     current: LICENCE_NOT_FOUND,
-    next: {
-      [CommonResults.OK]: {
-        page: AGREED
-      }
-    },
     backLink: IDENTIFY.uri
   },
 
