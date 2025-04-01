@@ -1,5 +1,5 @@
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
-import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../uri.js'
+import { IDENTIFY, RENEWAL_INACTIVE, LICENCE_NOT_FOUND, CONTROLLER } from '../uri.js'
 import { RENEWAL_ERROR_REASON } from '../constants.js'
 import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import Joi from 'joi'
@@ -42,10 +42,10 @@ export default async (request, h) => {
   }
 
   if (!authenticationResult) {
-    payload.referenceNumber = referenceNumber
-    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
-    await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
-    return h.redirectWithLanguageCode(IDENTIFY.uri)
+    // payload.referenceNumber = referenceNumber
+    // await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
+    // await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
+    return h.redirectWithLanguageCode(LICENCE_NOT_FOUND.uri)
   } else {
     // Test for 12 month licence
     const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().tz(SERVICE_LOCAL_TIME).startOf('day'), 'days')

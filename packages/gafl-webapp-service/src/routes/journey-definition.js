@@ -411,9 +411,6 @@ export default [
   {
     current: IDENTIFY,
     next: {
-      [CommonResults.RENEWAL_ERROR]: {
-        page: LICENCE_NOT_FOUND
-      },
       [CommonResults.OK]: {
         page: LICENCE_SUMMARY
       }

@@ -1,11 +1,10 @@
-import { IDENTIFY, NEW_TRANSACTION } from '../../../uri.js'
+import { IDENTIFY, NEW_TRANSACTION, AUTHENTICATE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../schema/validators/validators.js'
-import { nextPage } from '../../../routes/next-page.js'
 
 export const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
@@ -54,4 +53,4 @@ export const validator = payload => {
   )
 }
 
-export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, nextPage, getData)
+export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)

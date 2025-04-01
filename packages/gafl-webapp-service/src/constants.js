@@ -49,8 +49,7 @@ export const CommonResults = {
   OK: 'ok',
   NO: 'no',
   YES: 'yes',
-  RECURRING: 'recurring',
-  RENEWAL_ERROR: 'renewal-error'
+  RECURRING: 'recurring'
 }
 
 export const ShowDigitalLicencePages = {
