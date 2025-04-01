@@ -1,4 +1,13 @@
 
+## v1.60.0-rc.4 (2025-04-01)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`, `sales-api-service`
+  * [#2119](https://github.com/DEFRA/rod-licensing/pull/2119) RP Job save permission ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.60.0-rc.3 (2025-04-01)
 
 #### :rocket: Enhancement
