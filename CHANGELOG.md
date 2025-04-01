@@ -1,4 +1,13 @@
 
+## v1.60.0-rc.2 (2025-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2136](https://github.com/DEFRA/rod-licensing/pull/2136) Ability to turn off rcp ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.60.0-rc.1 (2025-03-20)
 
 #### :rocket: Enhancement
