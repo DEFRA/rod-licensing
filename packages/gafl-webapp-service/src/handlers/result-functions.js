@@ -19,8 +19,7 @@ import {
   NAME,
   TERMS_AND_CONDITIONS,
   CHOOSE_PAYMENT,
-  IDENTIFY,
-  LICENCE_NOT_FOUND
+  IDENTIFY
 } from '../uri.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
@@ -41,7 +40,6 @@ import licenceSummary from '../pages/summary/licence-summary/result-function.js'
 import termsAndConditions from '../pages/terms-and-conditions/result-function.js'
 import choosePayment from '../pages/recurring-payments/choose-payment/result-function.js'
 import identify from '../pages/renewals/identify/result-function.js'
-import licenceNotFound from '../pages/renewals/licence-not-found/result-function.js'
 
 /**
  * The result function determines the navigation in the route definition
@@ -64,6 +62,5 @@ export default {
   [LICENCE_SUMMARY.page]: licenceSummary,
   [TERMS_AND_CONDITIONS.page]: termsAndConditions,
   [CHOOSE_PAYMENT.page]: choosePayment,
-  [IDENTIFY.page]: identify,
-  [LICENCE_NOT_FOUND.page]: licenceNotFound
+  [IDENTIFY.page]: identify
 }

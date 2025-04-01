@@ -25,6 +25,7 @@ import paymentFailed from '../pages/payment/failed/update-transaction.js'
 
 import termsAndConditions from '../pages/terms-and-conditions/update-transaction.js'
 import renewalInactive from '../pages/renewals/renewal-inactive/update-transaction.js'
+import licenceNotFound from '../pages/renewals/licence-not-found/result-function.js'
 
 import choosePayment from '../pages/recurring-payments/choose-payment/update-transaction.js'
 import setupRecurring from '../pages/recurring-payments/set-up-payment/update-transaction.js'
@@ -49,6 +50,7 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
   RENEWAL_INACTIVE,
+  LICENCE_NOT_FOUND,
   CHOOSE_PAYMENT,
   SET_UP_PAYMENT
 } from '../uri.js'
@@ -73,6 +75,7 @@ export default {
   [PAYMENT_FAILED.page]: paymentFailed,
   [PAYMENT_CANCELLED.page]: paymentCancelled,
   [RENEWAL_INACTIVE.page]: renewalInactive,
+  [LICENCE_NOT_FOUND.page]: licenceNotFound,
   [CHOOSE_PAYMENT.page]: choosePayment,
   [SET_UP_PAYMENT.page]: setupRecurring
 }
