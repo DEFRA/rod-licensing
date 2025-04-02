@@ -4,7 +4,20 @@ import AwsMock from 'aws-sdk'
 import { FulfilmentRequestFile } from '@defra-fish/dynamics-lib'
 import { fulfilmentDataTransformer } from '../../transform/fulfilment-transform.js'
 
-jest.mock('fs')
+jest.mock('fs', () => {
+  const originalFs = jest.requireActual('fs')
+  return {
+    ...originalFs,
+    promises: {
+      readFile: jest.fn().mockResolvedValue('mocked file content')
+    },
+    createWriteStream: jest.fn(() => ({
+      on: jest.fn(),
+      end: jest.fn()
+    }))
+  }
+})
+
 jest.mock('stream')
 jest.mock('../../config.js', () => ({
   s3: {

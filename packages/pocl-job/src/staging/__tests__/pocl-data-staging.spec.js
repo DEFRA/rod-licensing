@@ -10,7 +10,6 @@ import fs from 'fs'
 jest.mock('../create-transactions.js')
 jest.mock('../finalise-transactions.js')
 jest.mock('../../io/db.js')
-jest.mock('fs')
 jest.mock('md5-file', () => () => 'test-md5')
 
 jest.mock('@defra-fish/connectors-lib', () => {
@@ -20,6 +19,17 @@ jest.mock('@defra-fish/connectors-lib', () => {
     salesApi: {
       ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => {}) }), {})
     }
+  }
+})
+
+jest.mock('fs', () => {
+  const originalFs = jest.requireActual('fs')
+  return {
+    ...originalFs,
+    promises: {
+      readFile: jest.fn().mockResolvedValue('mocked file content')
+    },
+    statSync: jest.fn(() => ({ size: 1024 }))
   }
 })
 
