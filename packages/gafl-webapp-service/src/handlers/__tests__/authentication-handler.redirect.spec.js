@@ -42,7 +42,7 @@ const getSampleAuthResult = (description = 'M', durationMagnitude = 12) => ({
 })
 
 describe.each([
-  [false, 'identify', LICENCE_NOT_FOUND.uri, 1],
+  [false, 'licence not found', LICENCE_NOT_FOUND.uri, 1],
   [getSampleAuthResult(), 'controller', CONTROLLER.uri, -1],
   [getSampleAuthResult(), 'renewal inactive', RENEWAL_INACTIVE.uri, 61],
   [getSampleAuthResult(), 'renewal inactive', RENEWAL_INACTIVE.uri, -61],
