@@ -1,7 +1,7 @@
 import pageRoute from '../../../../routes/page-route.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData, validator } from '../route.js'
-import { IDENTIFY, AUTHENTICATE, NEW_TRANSACTION, LICENCE_NOT_FOUND } from '../../../../uri.js'
+import { IDENTIFY, NEW_TRANSACTION } from '../../../../uri.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 jest.mock('../../../../routes/page-route.js', () => jest.fn())
@@ -142,32 +142,3 @@ describe('validator', () => {
     expect(dateOfBirthValidator).toHaveBeenCalledWith(payload)
   })
 })
-
-// describe('identifyNextPage', () => {
-//   const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
-//     cache: () => ({
-//       helpers: {
-//         status: {
-//           getCurrentPermission: () => ({
-//             referenceNumber: referenceNumber
-//           })
-//         },
-//         page: {
-//           getCurrentPermission: pageGet
-//         }
-//       }
-//     })
-//   })
-
-//   it('returns LICENCE_NOT_FOUND.uri if no referenceNumber', async () => {
-//     const request = getMockRequest()
-//     const result = await identifyNextPage(request)
-//     expect(result).toEqual(LICENCE_NOT_FOUND.uri)
-//   })
-
-//   it('returns AUTHENTICATE.uri if referenceNumber exists', async () => {
-//     const request = getMockRequest('013AH6')
-//     const result = await identifyNextPage(request)
-//     expect(result).toEqual(AUTHENTICATE.uri)
-//   })
-// })
