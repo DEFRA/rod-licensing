@@ -8,8 +8,7 @@ jest.mock('../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../uri.js', () => ({
   IDENTIFY: { page: 'identify page', uri: 'identify uri' },
   AUTHENTICATE: { uri: Symbol('authenticate uri') },
-  NEW_TRANSACTION: { uri: Symbol('new transaction uri') },
-  LICENCE_NOT_FOUND: { page: 'licence-not-found', uri: '/buy/renew/licence-not-found' }
+  NEW_TRANSACTION: { uri: Symbol('new transaction uri') }
 }))
 jest.mock('../../../../processors/uri-helper.js')
 jest.mock('../../../../schema/validators/validators.js')
