@@ -50,20 +50,15 @@ describe('validForRecurringPayment', () => {
 
 describe('isRecurringPayment', () => {
   it.each`
-    show     | agreementId  | expected
-    ${true}  | ${'foo123'}  | ${true}
-    ${true}  | ${undefined} | ${false}
-    ${false} | ${'foo123'}  | ${false}
-    ${false} | ${undefined} | ${false}
-  `(
-    'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the transaction agreementId is $agreementId',
-    async ({ show, agreementId, expected }) => {
-      process.env.SHOW_RECURRING_PAYMENTS = show
-      const transaction = { agreementId }
+    agreementId  | expected
+    ${'foo123'}  | ${true}
+    ${undefined} | ${false}
+  `('recurringPayment returns $expected when transaction agreementId is $agreementId', async ({ show, agreementId, expected }) => {
+    process.env.SHOW_RECURRING_PAYMENTS = show
+    const transaction = { agreementId }
 
-      expect(isRecurringPayment(transaction)).toBe(expected)
+    expect(isRecurringPayment(transaction)).toBe(expected)
 
-      delete process.env.SHOW_RECURRING_PAYMENTS
-    }
-  )
+    delete process.env.SHOW_RECURRING_PAYMENTS
+  })
 })
