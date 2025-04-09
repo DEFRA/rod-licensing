@@ -6,8 +6,8 @@ import { createDocumentClient } from '../documentclient-decorator.js'
 
 jest.mock('../documentclient-decorator.js')
 
-describe('docClient is a special flower', () => {
-  it('passes convertEmptyValues flag', () => {
+describe('AWS Special cases', () => {
+  it('document clientpasses convertEmptyValues flag', () => {
     let spiedOptions
     createDocumentClient.mockImplementation(options => {
       spiedOptions = options
