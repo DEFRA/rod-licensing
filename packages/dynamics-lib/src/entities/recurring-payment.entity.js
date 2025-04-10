@@ -24,7 +24,8 @@ export class RecurringPayment extends BaseEntity {
       activePermission: { field: '_defra_activepermission_value', type: 'string' },
       contactId: { field: '_defra_contact_value', type: 'string' },
       publicId: { field: 'defra_publicid', type: 'string' },
-      nextRecurringPayment: { field: '_defra_nextrecurringpayment_value', type: 'string' }
+      nextRecurringPayment: { field: '_defra_nextrecurringpayment_value', type: 'string' },
+      lastDigitsCardNumber: { field: 'defra_last_digits_card_number', type: 'integer' }
     },
     relationships: {
       contact: { property: 'defra_Contact', entity: Contact, parent: true },
@@ -135,5 +136,17 @@ export class RecurringPayment extends BaseEntity {
 
   set status (status) {
     super._setState('status', status)
+  }
+
+  /**
+   * Last four digits of card number
+   * @type {integer}
+   */
+  get lastDigitsCardNumber () {
+    return super._getState('lastDigitsCardNumber')
+  }
+
+  set lastDigitsCardNumber (lastDigitsCardNumber) {
+    super._setState('lastDigitsCardNumber', lastDigitsCardNumber)
   }
 }
