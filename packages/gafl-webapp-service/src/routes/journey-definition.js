@@ -28,7 +28,8 @@ import {
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE,
   CHOOSE_PAYMENT,
-  SET_UP_PAYMENT
+  SET_UP_PAYMENT,
+  LICENCE_NOT_FOUND
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -413,7 +414,13 @@ export default [
       [CommonResults.OK]: {
         page: LICENCE_SUMMARY
       }
-    }
+    },
+    backLink: IDENTIFY.uri
+  },
+
+  {
+    current: LICENCE_NOT_FOUND,
+    backLink: IDENTIFY.uri
   },
 
   // The change start time is handled directly - not via the controller, as it has dynamic validation

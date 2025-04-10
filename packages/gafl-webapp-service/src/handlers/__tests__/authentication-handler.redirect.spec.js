@@ -1,13 +1,15 @@
 import handler from '../authentication-handler.js'
-import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../../uri.js'
+import { LICENCE_NOT_FOUND, CONTROLLER, RENEWAL_INACTIVE } from '../../uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
 jest.mock('../../processors/uri-helper.js')
 jest.mock('../page-handler.js', () => ({ errorShimm: () => {} }))
 jest.mock('../../uri.js', () => ({
   IDENTIFY: {
-    page: 'identify page',
-    uri: Symbol('identify uri')
+    page: 'identify page'
+  },
+  LICENCE_NOT_FOUND: {
+    uri: Symbol('licence not found uri')
   },
   CONTROLLER: {
     uri: Symbol('controller uri')
@@ -40,7 +42,7 @@ const getSampleAuthResult = (description = 'M', durationMagnitude = 12) => ({
 })
 
 describe.each([
-  [false, 'identify', IDENTIFY.uri, 1],
+  [false, 'licence not found', LICENCE_NOT_FOUND.uri, 1],
   [getSampleAuthResult(), 'controller', CONTROLLER.uri, -1],
   [getSampleAuthResult(), 'renewal inactive', RENEWAL_INACTIVE.uri, 61],
   [getSampleAuthResult(), 'renewal inactive', RENEWAL_INACTIVE.uri, -61],
