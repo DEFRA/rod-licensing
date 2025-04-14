@@ -88,7 +88,7 @@ export async function processQueue ({ id }) {
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.recurringPayment, recurringPayment)
       entities.push(paymentInstruction)
 
-      const existingRecurringPayment = findNewestExistingRecurringPaymentInCrm(recurringPayment.agreementId)
+      const existingRecurringPayment = await findNewestExistingRecurringPaymentInCrm(recurringPayment.agreementId)
       if (existingRecurringPayment) {
         existingRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, recurringPayment)
         entities.push(existingRecurringPayment)
