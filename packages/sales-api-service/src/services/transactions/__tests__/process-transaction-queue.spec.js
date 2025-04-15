@@ -7,10 +7,10 @@ import {
   FulfilmentRequest,
   Permission,
   PoclFile,
+  RecurringPayment,
   RecurringPaymentInstruction,
   Transaction,
-  TransactionJournal,
-  RecurringPayment
+  TransactionJournal
 } from '@defra-fish/dynamics-lib'
 import {
   mockFinalisedTransactionRecord,
@@ -26,7 +26,11 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
+import {
+  findNewestExistingRecurringPaymentInCrm,
+  processRecurringPayment,
+  generateRecurringPaymentRecord
+} from '../../recurring-payments.service.js'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -65,7 +69,11 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
-jest.mock('../../recurring-payments.service.js')
+jest.mock('../../recurring-payments.service.js', () => ({
+  findNewestExistingRecurringPaymentInCrm: jest.fn(),
+  generateRecurringPaymentRecord: jest.fn(),
+  processRecurringPayment: jest.fn()
+}))
 
 describe('transaction service', () => {
   beforeAll(() => {
@@ -409,6 +417,35 @@ describe('transaction service', () => {
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
         await processQueue({ id: finalisedTransaction.id })
         expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
+      })
+
+      it('checks for existing recurring payments with the same agreementId', async () => {
+        const agreementId = Symbol('agreementId')
+        const mockRecurringPayment = { agreementId }
+        const finalisedTransaction = mockFinalisedTransactionRecord()
+        processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+
+        await processQueue({ id: finalisedTransaction.id })
+
+        expect(findNewestExistingRecurringPaymentInCrm).toHaveBeenCalledWith(agreementId)
+      })
+
+      it("assigns the new RecurringPayment as the existing RecurringPayment's nextRecurringPayment", async () => {
+        const agreementId = Symbol('agreementId')
+        const mockRecurringPayment = { agreementId }
+        const mockExistingRecurringPayment = { bindToEntity: jest.fn() }
+        const finalisedTransaction = mockFinalisedTransactionRecord()
+        processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(mockExistingRecurringPayment)
+
+        await processQueue({ id: finalisedTransaction.id })
+
+        expect(mockExistingRecurringPayment.bindToEntity).toHaveBeenCalledWith(
+          RecurringPayment.definition.relationships.nextRecurringPayment,
+          mockRecurringPayment
+        )
       })
     })
   })
