@@ -13,7 +13,7 @@ import Boom from '@hapi/boom'
 import db from 'debug'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
-import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
+import { sendPayment, getPaymentStatus, sendRecurringPayment, getRecurringPaymentAgreement } from '../services/payment/govuk-pay-service.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
@@ -69,11 +69,13 @@ const createRecurringPayment = async (request, transaction, status) => {
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
   const paymentResponse = await sendRecurringPayment(preparedPayment)
+  const agreementResponse = await getRecurringPaymentAgreement(paymentResponse.agreement_id)
 
   debug(`Created agreement with id ${paymentResponse.agreement_id}`)
   status[COMPLETION_STATUS.recurringAgreement] = true
 
   transaction.agreementId = paymentResponse.agreement_id
+  transaction.lastDigitsCardNumber = agreementResponse.payment_instrument.card_details.last_digits_card_number
 
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.transaction.set(transaction)

@@ -39,7 +39,8 @@ export const generateRecurringPaymentRecord = (transactionRecord, permission) =>
           cancelledReason: null,
           endDate,
           agreementId: transactionRecord.agreementId,
-          status: 1
+          status: 1,
+          last_digits_card_number: transactionRecord.lastDigitsCardNumber
         }
       },
       permissions: [permission]
@@ -54,6 +55,7 @@ export const generateRecurringPaymentRecord = (transactionRecord, permission) =>
  * @returns {Promise<{recurringPayment: RecurringPayment | null}>}
  */
 export const processRecurringPayment = async (transactionRecord, contact) => {
+  console.log('transactionRecord: ', transactionRecord)
   const hash = createHash('sha256')
   if (transactionRecord.payment?.recurring) {
     const recurringPayment = new RecurringPayment()
@@ -66,6 +68,7 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = hash.digest('base64')
     recurringPayment.status = transactionRecord.payment.recurring.status
+    recurringPayment.last_digits_card_number = transactionRecord.payment.recurring.lastDigitsCardNumber
     const [permission] = transactionRecord.permissions
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)

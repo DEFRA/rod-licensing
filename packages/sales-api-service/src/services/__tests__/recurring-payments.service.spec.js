@@ -280,7 +280,7 @@ describe('recurring payments service', () => {
   })
 
   describe('generateRecurringPaymentRecord', () => {
-    const createFinalisedSampleTransaction = (agreementId, permission) => ({
+    const createFinalisedSampleTransaction = (agreementId, permission, lastDigitsCardNumber) => ({
       expires: 1732892402,
       cost: 35.8,
       isRecurringPaymentSupported: true,
@@ -303,7 +303,8 @@ describe('recurring payments service', () => {
       id: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
       dataSource: 'Web Sales',
       transactionId: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
-      status: { id: 'FINALISED' }
+      status: { id: 'FINALISED' },
+      lastDigitsCardNumber
     })
 
     it.each([
@@ -315,7 +316,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-22T15:00:45.922Z',
           endDate: '2025-11-21T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        1234
       ],
       [
         'next day start - next due on end date minus ten days',
@@ -325,7 +327,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-22T15:00:45.922Z',
           endDate: '2025-11-22T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        5678
       ],
       [
         'starts ten days after issue - next due on issue date plus one year',
@@ -335,7 +338,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-12T15:00:45.922Z',
           endDate: '2025-11-21T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        9012
       ],
       [
         'starts twenty days after issue - next due on issue date plus one year',
@@ -345,7 +349,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-12T15:00:45.922Z',
           endDate: '2025-01-30T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        3456
       ],
       [
         "issued on 29th Feb '24, starts on 30th March '24 - next due on 28th Feb '25",
@@ -355,7 +360,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-02-29T12:38:24.123Z',
           endDate: '2025-03-29T23:59:59.999Z'
         },
-        '2025-02-28T00:00:00.000Z'
+        '2025-02-28T00:00:00.000Z',
+        7890
       ],
       [
         "issued on 30th March '25 at 1am, starts at 1:30am - next due on 20th March '26",
@@ -365,10 +371,11 @@ describe('recurring payments service', () => {
           issueDate: '2025-03-30T01:00:00.000Z',
           endDate: '2026-03-29T23:59:59.999Z'
         },
-        '2026-03-20T00:00:00.000Z'
+        '2026-03-20T00:00:00.000Z',
+        1199
       ]
-    ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate) => {
-      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData)
+    ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumber) => {
+      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData, lastDigitsCardNumber)
       const permission = createSamplePermission(permissionData)
 
       const rpRecord = generateRecurringPaymentRecord(sampleTransaction, permission)
@@ -383,7 +390,8 @@ describe('recurring payments service', () => {
               cancelledReason: null,
               endDate: permissionData.endDate,
               agreementId,
-              status: 1
+              status: 1,
+              last_digits_card_number: lastDigitsCardNumber
             })
           }),
           permissions: expect.arrayContaining([permission])

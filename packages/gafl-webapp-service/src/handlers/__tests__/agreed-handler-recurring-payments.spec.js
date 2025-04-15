@@ -2,7 +2,12 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
 import agreedHandler from '../agreed-handler.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../../processors/payment.js'
-import { sendPayment, sendRecurringPayment, getPaymentStatus } from '../../services/payment/govuk-pay-service.js'
+import {
+  sendPayment,
+  sendRecurringPayment,
+  getPaymentStatus,
+  getRecurringPaymentAgreement
+} from '../../services/payment/govuk-pay-service.js'
 import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
 import db from 'debug'
@@ -18,7 +23,8 @@ jest.mock('../../services/payment/govuk-pay-service.js', () => ({
     }
   })),
   getPaymentStatus: jest.fn(),
-  sendRecurringPayment: jest.fn(() => ({ agreementId: 'agr-eem-ent-id1' }))
+  sendRecurringPayment: jest.fn(() => ({ agreementId: 'agr-eem-ent-id1' })),
+  getRecurringPaymentAgreement: jest.fn(() => ({ payment_instrument: { card_details: { last_digits_card_number: '1234' } } }))
 }))
 jest.mock('../../processors/api-transaction.js')
 jest.mock('@defra-fish/connectors-lib')
@@ -104,6 +110,14 @@ describe('The agreed handler', () => {
       prepareRecurringPaymentAgreement.mockResolvedValueOnce(preparedPayment)
       await agreedHandler(getMockRequest(), getRequestToolkit())
       expect(sendRecurringPayment).toHaveBeenCalledWith(preparedPayment)
+    })
+
+    it('gets the recurring payment agreement information sending agreement id to Gov.UK Pay', async () => {
+      const agreementId = 'agreementId'
+      const mockSendRecurringPayment = { agreement_id: agreementId }
+      sendRecurringPayment.mockResolvedValueOnce(mockSendRecurringPayment)
+      await agreedHandler(getMockRequest(), getRequestToolkit())
+      expect(getRecurringPaymentAgreement).toHaveBeenCalledWith(agreementId)
     })
 
     describe('when there is a cost and recurringAgreement status is set to true', () => {
