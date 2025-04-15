@@ -130,7 +130,7 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
 export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
   const matchingRecords = await executeQuery(findRecurringPaymentsByAgreementId(agreementId))
   if (matchingRecords) {
-    return matchingRecords.toSorted((a, b) => a.endDate.localeCompare(b.endDate)).pop()
+    return [...matchingRecords].sort((a, b) => a.endDate.localeCompare(b.endDate)).pop()
   } else {
     return false
   }
