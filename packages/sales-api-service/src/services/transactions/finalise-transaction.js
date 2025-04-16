@@ -48,26 +48,24 @@ export async function finaliseTransaction ({ id, ...payload }) {
     permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
   }
 
-  const { Attributes: updatedRecord } = await docClient
-    .update({
-      TableName: TRANSACTION_STAGING_TABLE.TableName,
-      Key: { id },
-      ...docClient.createUpdateExpression({
-        ...payload,
-        permissions: transactionRecord.permissions,
-        status: { id: TRANSACTION_STATUS.FINALISED }
-      }),
-      ReturnValues: 'ALL_NEW'
-    })
+  const { Attributes: updatedRecord } = await docClient.update({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id },
+    ...docClient.createUpdateExpression({
+      ...payload,
+      permissions: transactionRecord.permissions,
+      status: { id: TRANSACTION_STATUS.FINALISED }
+    }),
+    ReturnValues: 'ALL_NEW'
+  })
   debug('Updated transaction record for identifier %s', id)
 
-  const receipt = await sqs
-    .sendMessage({
-      QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: id,
-      MessageDeduplicationId: id,
-      MessageBody: JSON.stringify({ id })
-    })
+  const receipt = await sqs.sendMessage({
+    QueueUrl: TRANSACTION_QUEUE.Url,
+    MessageGroupId: id,
+    MessageDeduplicationId: id,
+    MessageBody: JSON.stringify({ id })
+  })
 
   debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
   updatedRecord.status.messageId = receipt.MessageId

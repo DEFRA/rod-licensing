@@ -1,6 +1,5 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
-import { AWS } from '@defra-fish/connectors-lib'
 let server = null
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -12,7 +11,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
         TableNames: ['TestTable']
       })
     },
-    sqs:{
+    sqs: {
       listQueues: () => ({
         connection: 'sqs',
         status: 'ok',

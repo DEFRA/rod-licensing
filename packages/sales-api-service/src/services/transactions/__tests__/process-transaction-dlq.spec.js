@@ -3,7 +3,7 @@ import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../../exceptions/exceptions.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
-const { mock: { results: [{ value: { docClient } }] } } = AWS
+const { docClient } = AWS.mock.results[0].value
 
 let mockProcessingException
 jest.mock('../process-transaction-queue.js', () => ({

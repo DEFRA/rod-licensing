@@ -14,8 +14,7 @@ import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
-
-const { mock: { results: [{ value: { docClient, sqs } }] } } = AWS
+const { docClient, sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),

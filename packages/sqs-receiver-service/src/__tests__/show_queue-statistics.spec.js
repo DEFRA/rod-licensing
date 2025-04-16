@@ -2,7 +2,7 @@ import { AWS } from '@defra-fish/connectors-lib'
 import showQueueStatistics from '../show-queue-statistics.js'
 import testEnv from '../../test-env'
 import debug from 'debug'
-const { mock: { results: [{ value: { sqs } }] } } = AWS
+const { sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   AWS: jest.fn(() => ({

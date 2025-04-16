@@ -1,10 +1,9 @@
 'use strict'
 
 import deleteMessages from '../delete-messages'
-import { mockClient } from 'aws-sdk-client-mock'
-import { SQS, DeleteMessageBatchCommand } from '@aws-sdk/client-sqs'
+import { DeleteMessageBatchCommand } from '@aws-sdk/client-sqs'
 import { AWS } from '@defra-fish/connectors-lib'
-const { mock: { results: [{ value: { sqs } }] } } = AWS
+const { sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   AWS: jest.fn(() => ({
@@ -36,7 +35,7 @@ describe('Delete messages successfully', () => {
         handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b3',
         status: 4200
       }
-    ])  
+    ])
   })
 
   it('deletes all messages with one call', () => {
@@ -66,8 +65,6 @@ describe('Delete messages successfully', () => {
       })
     )
   })
-
-  expect(sqs.send).toHaveBeenCalledwith
 })
 
 test('Delete messages nothing to delete', async () => {

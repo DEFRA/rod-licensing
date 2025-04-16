@@ -5,11 +5,10 @@ import { v4 as uuidv4 } from 'uuid'
 
 // import receiver from '../receiver'
 
-
 jest.mock('@defra-fish/connectors-lib', () => {
   const AWS = jest.fn(() => ({
     sqs: {
-      getQueueAttributes: jest.fn(() => ({ 
+      getQueueAttributes: jest.fn(() => ({
         Attributes: {
           ApproximateNumberOfMessagesDelayed: 0,
           ApproximateNumberOfMessagesNotVisible: 0,

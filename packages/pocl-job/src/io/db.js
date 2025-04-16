@@ -10,12 +10,11 @@ const { docClient } = AWS()
  * @returns {Promise<void>}
  */
 export const updateFileStagingTable = async ({ filename, ...entries }) => {
-  await docClient
-    .update({
-      TableName: config.db.fileStagingTable,
-      Key: { filename },
-      ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
-    })
+  await docClient.update({
+    TableName: config.db.fileStagingTable,
+    Key: { filename },
+    ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
+  })
 }
 
 /**

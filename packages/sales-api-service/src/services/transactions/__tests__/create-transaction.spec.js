@@ -9,8 +9,8 @@ import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS.mock.results[0].value
 
-const { mock: { results: [{ value: { docClient } }] } } = AWS
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),

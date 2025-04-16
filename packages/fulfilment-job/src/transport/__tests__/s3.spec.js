@@ -3,7 +3,7 @@ import stream from 'stream'
 import { FulfilmentRequestFile } from '@defra-fish/dynamics-lib'
 import { fulfilmentDataTransformer } from '../../transform/fulfilment-transform.js'
 import { AWS } from '@defra-fish/connectors-lib'
-const { mock: { results: [{ value: { s3 } }] } } = AWS
+const { s3 } = AWS.mock.results[0].value
 
 jest.mock('stream')
 jest.mock('../../config.js', () => ({
@@ -58,13 +58,13 @@ describe('s3', () => {
       beforeEach(() => {
         s3.listObjectsV2.mockResolvedValueOnce({
           Contents: [{ Key: '/example.json/part0' }, { Key: '/example.json/part1' }]
-        })  
+        })
       })
 
       it('first stream matches createReadStream result from s3 object', async () => {
         const testFile = Object.assign(new FulfilmentRequestFile(), { fileName: 'example.json' })
         const [stream1] = await readS3PartFiles(testFile)
-        expect(s3.getObject.mock.results[0].value.createReadStream.mock.results[0].value).toBe(stream1)  
+        expect(s3.getObject.mock.results[0].value.createReadStream.mock.results[0].value).toBe(stream1)
       })
 
       it('second stream matches createReadStream result from s3 object', async () => {
@@ -98,7 +98,7 @@ describe('s3', () => {
 
   describe('createS3WriteStream', () => {
     it('creates a writable stream to an object in S3', async () => {
-      s3.upload.mockResolvedValueOnce(({ Location: 'example/key' }))
+      s3.upload.mockResolvedValueOnce({ Location: 'example/key' })
       const passThroughEmitSpy = jest.spyOn(stream.PassThrough.prototype, 'emit')
       const { s3WriteStream, managedUpload } = createS3WriteStream('example/key')
       await expect(managedUpload).resolves.toBeUndefined()

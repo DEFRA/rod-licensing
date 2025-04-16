@@ -23,14 +23,13 @@ export async function createPaymentJournal (id, payload) {
  */
 export async function updatePaymentJournal (id, payload) {
   const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  const result = await docClient
-    .update({
-      TableName: PAYMENTS_TABLE.TableName,
-      Key: { id },
-      ...docClient.createUpdateExpression(updates),
-      ConditionExpression: 'attribute_exists(id)',
-      ReturnValues: 'ALL_NEW'
-    })
+  const result = await docClient.update({
+    TableName: PAYMENTS_TABLE.TableName,
+    Key: { id },
+    ...docClient.createUpdateExpression(updates),
+    ConditionExpression: 'attribute_exists(id)',
+    ReturnValues: 'ALL_NEW'
+  })
   return result.Attributes
 }
 

@@ -1,9 +1,7 @@
-import AwsSdk from 'aws-sdk'
 import { PAYMENTS_TABLE } from '../../../config.js'
 import { createPaymentJournal, updatePaymentJournal, getPaymentJournal, queryJournalsByTimestamp } from '../payment-journals.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
-
-const { mock: { results: [{ value: { docClient } }] } } = AWS
+const { docClient } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   AWS: jest.fn(() => ({
@@ -37,13 +35,13 @@ describe('payment-journals service', () => {
 
   describe('updatePaymentJournal', () => {
     it('calls update on dynamodb', async () => {
-      const updateExpression = { 
+      const updateExpression = {
         UpdateExpression: Symbol('update expression')
       }
       docClient.createUpdateExpression.mockReturnValueOnce(updateExpression)
       await updatePaymentJournal('test-id', { some: 'data' })
       expect(docClient.update).toHaveBeenCalledWith({
-      // expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith({
+        // expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
         ...updateExpression,

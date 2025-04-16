@@ -1,6 +1,6 @@
 import * as db from '../db.js'
 import { AWS } from '@defra-fish/connectors-lib'
-const { mock: { results: [{ value: { docClient } }] } } = AWS
+const { docClient } = AWS.mock.results[0].value
 
 jest.mock('../../config.js', () => ({
   db: {

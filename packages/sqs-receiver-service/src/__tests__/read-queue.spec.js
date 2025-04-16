@@ -1,9 +1,8 @@
 'use strict'
 
 import readQueue from '../read-queue'
-import { mockClient } from 'aws-sdk-client-mock'
-import { SQS, ReceiveMessageCommand } from '@aws-sdk/client-sqs'
 import { AWS } from '@defra-fish/connectors-lib'
+const { sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   AWS: jest.fn(() => ({
@@ -20,8 +19,6 @@ const getSampleError = (httpStatusCode = undefined) => {
   }
   return error
 }
-
-const { mock: { results: [{ value: { sqs } }] } } = AWS
 
 beforeEach(() => {
   sqs.receiveMessage.mockClear()
@@ -40,7 +37,7 @@ test.each`
 `(
   'Specifies message configuration: queue url $queueUrl read with visibility timeout $expectedVTS seconds and a wait time of $expectedWTS seconds',
   async ({ queueUrl, visibilityTimeoutMs, waitTimeMs, expectedVTS, expectedWTS }) => {
-    const messages = await readQueue(queueUrl, visibilityTimeoutMs, waitTimeMs)
+    await readQueue(queueUrl, visibilityTimeoutMs, waitTimeMs)
     expect(sqs.receiveMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         QueueUrl: queueUrl,
@@ -112,14 +109,14 @@ test.each([
 })
 
 test('Handles queue errors gracefully', async () => {
-  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+  jest.spyOn(console, 'error').mockImplementation(() => {})
   sqs.receiveMessage.mockRejectedValueOnce(getSampleError(500))
   const result = await readQueue('http://0.0.0.0:0000/queue')
   expect(result).toEqual([])
 })
 
 test("If error doesn't contain an HTTP status code, it is re-thrown", async () => {
-  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+  jest.spyOn(console, 'error').mockImplementation(() => {})
   sqs.receiveMessage.mockRejectedValueOnce(getSampleError())
   await expect(readQueue('http://0.0.0.0:0000/queue')).rejects.toThrow('Queue error')
 })

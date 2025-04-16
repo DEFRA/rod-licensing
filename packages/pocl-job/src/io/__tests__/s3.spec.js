@@ -3,8 +3,8 @@ import moment from 'moment'
 import { updateFileStagingTable } from '../../io/db.js'
 import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../../staging/constants.js'
 import { salesApi, AWS } from '@defra-fish/connectors-lib'
-import fs, { createReadStream } from 'fs'
-const { mock: { results: [{ value: { s3 } }] } } = AWS
+import fs from 'fs'
+const { s3 } = AWS.mock.results[0].value
 
 jest.mock('md5-file')
 jest.mock('../../io/db.js')
@@ -53,7 +53,7 @@ describe('s3 operations', () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
       const s3Key2 = `${moment().format('YYYY-MM-DD')}/test2.xml`
 
-      beforeEach(async () => {  
+      beforeEach(async () => {
         s3.listObjectsV2.mockReturnValueOnce({
           IsTruncated: false,
           Contents: [
@@ -71,15 +71,15 @@ describe('s3 operations', () => {
             }
           ]
         })
-  
-        await refreshS3Metadata()  
+
+        await refreshS3Metadata()
       })
 
       it('calls listObjectsV2, with bucket name and no continuation token', () => {
         expect(s3.listObjectsV2).toHaveBeenNthCalledWith(1, {
           Bucket: 'testbucket',
           ContinuationToken: undefined
-        })  
+        })
       })
 
       it('calls updateFileStagingTable first with initial test file', () => {
@@ -89,7 +89,7 @@ describe('s3 operations', () => {
           fileSize: '1 KB',
           stage: FILE_STAGE.Pending,
           s3Key: s3Key1
-        })  
+        })
       })
 
       it('calls updateFileStagingTable a second time with second test file', () => {
@@ -99,7 +99,7 @@ describe('s3 operations', () => {
           fileSize: '2 KB',
           stage: FILE_STAGE.Pending,
           s3Key: s3Key2
-        })  
+        })
       })
 
       it('calls upsertTransactionFile for first test file', () => {
@@ -110,7 +110,7 @@ describe('s3 operations', () => {
           receiptTimestamp: expect.any(String),
           salesDate: expect.any(String),
           notes: 'Retrieved from the remote server and awaiting processing'
-        })  
+        })
       })
 
       it('calls upsertTransactionFile for second test file', () => {
@@ -157,12 +157,11 @@ describe('s3 operations', () => {
         await refreshS3Metadata()
       })
 
-
       it('calls listObjectsV2 a first time with bucket name and no continuation token', () => {
         expect(s3.listObjectsV2).toHaveBeenNthCalledWith(1, {
           Bucket: 'testbucket',
           ContinuationToken: undefined
-        })  
+        })
       })
 
       it('calls listObjectsV2 a second time with bucket name and continuation token', () => {
@@ -179,7 +178,7 @@ describe('s3 operations', () => {
           fileSize: '1 KB',
           stage: FILE_STAGE.Pending,
           s3Key: s3Key1
-        })  
+        })
       })
 
       it('updates file staging table with second test file', () => {
@@ -200,7 +199,7 @@ describe('s3 operations', () => {
           receiptTimestamp: expect.any(String),
           salesDate: expect.any(String),
           notes: 'Retrieved from the remote server and awaiting processing'
-        })  
+        })
       })
     })
 

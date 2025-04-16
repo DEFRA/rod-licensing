@@ -12,11 +12,9 @@ import moment from 'moment'
 import { TRANSACTION_STATUS } from '../constants.js'
 import permissionsService from '../../permissions.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
-import { retrieveStagedTransaction } from '../retrieve-transaction.js'
-import { Boom } from '@hapi/boom'
 
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
-const { mock: { results: [{ value: { docClient, sqs } }] } } = AWS
+const { docClient, sqs } = AWS.mock.results[0].value
 
 jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: jest.fn(() => MOCK_PERMISSION_NUMBER),
@@ -33,7 +31,7 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => {
-  const awsMock = ({
+  const awsMock = {
     sqs: {
       sendMessage: jest.fn(() => ({
         MessageId: 'abc-123'
@@ -44,12 +42,12 @@ jest.mock('@defra-fish/connectors-lib', () => {
       update: jest.fn(() => ({ Attributes: { status: {} } })),
       get: jest.fn(() => ({ Item: undefined }))
     }
-  })
-  return ({
+  }
+  return {
     AWS: jest.fn(() => {
       return awsMock
     })
-  })
+  }
 })
 
 const getStagedTransactionRecord = () => {
@@ -90,7 +88,7 @@ describe('transaction service', () => {
           method: 'Debit card'
         }
       }
-      docClient.get.mockResolvedValueOnce({ Item: mockRecord })      
+      docClient.get.mockResolvedValueOnce({ Item: mockRecord })
       docClient.createUpdateExpression.mockReturnValueOnce({
         UpdateExpression: 'SET #payment = :payment,#permissions = :permissions,#status = :status',
         ExpressionAttributeNames: {
@@ -110,7 +108,7 @@ describe('transaction service', () => {
           ':status': {
             id: TRANSACTION_STATUS.FINALISED
           }
-        },
+        }
       })
       docClient.update.mockResolvedValueOnce({
         Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } },
@@ -162,40 +160,47 @@ describe('transaction service', () => {
     it('throws 410 Gone if the transaction has already been finalised (and not yet staged into Dynamics)', async () => {
       const recordData = { status: { id: 'FINALISED' } }
       docClient.get.mockResolvedValueOnce({ Item: recordData })
+      let err
       try {
         await finaliseTransaction({ id: 'already_finalised' })
       } catch (e) {
-        expect(e.message).toEqual('The transaction has already been finalised')
-        expect(e.data).toEqual(recordData)
-        expect(e.output.statusCode).toEqual(410)
+        err = e
       }
+      expect(err.message).toEqual('The transaction has already been finalised')
+      expect(err.data).toEqual(recordData)
+      expect(err.output.statusCode).toEqual(410)
     })
 
     it('throws 410 Gone if the transaction has already been finalised (and staged into Dynamics)', async () => {
       const recordData = { status: { id: 'FINALISED' } }
       docClient.get.mockResolvedValueOnce({ Item: null }).mockResolvedValueOnce({ Item: recordData })
+      let err
 
       try {
         await finaliseTransaction({ id: 'already_finalised' })
       } catch (e) {
-        expect(e.message).toEqual('The transaction has already been finalised')
-        expect(e.data).toEqual(recordData)
-        expect(e.output.statusCode).toEqual(410)
+        err = e
       }
+      expect(err.message).toEqual('The transaction has already been finalised')
+      expect(err.data).toEqual(recordData)
+      expect(err.output.statusCode).toEqual(410)
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
+      let err
       try {
         await finaliseTransaction({ id: 'not_found' })
       } catch (e) {
-        expect(e.message).toEqual('A transaction for the specified identifier was not found')
-        expect(e.output.statusCode).toEqual(404)
+        err = e
       }
+      expect(err.message).toEqual('A transaction for the specified identifier was not found')
+      expect(err.output.statusCode).toEqual(404)
     })
 
     it('throws 402 Payment Required error if the payment amount does not match the cost', async () => {
       const mockRecord = mockStagedTransactionRecord()
       docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      let err
       try {
         const payload = {
           payment: {
@@ -207,14 +212,16 @@ describe('transaction service', () => {
         }
         await finaliseTransaction({ id: mockRecord.id, ...payload })
       } catch (e) {
-        expect(e.message).toEqual('The payment amount did not match the cost of the transaction')
-        expect(e.output.statusCode).toEqual(402)
+        err = e
       }
+      expect(err.message).toEqual('The payment amount did not match the cost of the transaction')
+      expect(err.output.statusCode).toEqual(402)
     })
 
     it('throws 409 Conflict error if a recurring payment instruction was supplied but the transaciton does not support this', async () => {
       const mockRecord = Object.assign(mockStagedTransactionRecord(), { isRecurringPaymentSupported: false })
       docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      let err
       try {
         const payload = {
           payment: {
@@ -247,9 +254,10 @@ describe('transaction service', () => {
         }
         await finaliseTransaction({ id: mockRecord.id, ...payload })
       } catch (e) {
-        expect(e.message).toEqual('The transaction does not support recurring payments but an instruction was supplied')
-        expect(e.output.statusCode).toEqual(409)
+        err = e
       }
+      expect(err.message).toEqual('The transaction does not support recurring payments but an instruction was supplied')
+      expect(err.output.statusCode).toEqual(409)
     })
 
     it('throws exceptions back up the stack', async () => {
@@ -288,10 +296,12 @@ describe('transaction service', () => {
         docClient.get.mockResolvedValueOnce({ Item: mockRecord })
         docClient.createUpdateExpression.mockReturnValueOnce({
           ExpressionAttributeValues: {
-            ':permissions': [{
-              permitId: mockPermission.permitId,
-              startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString()
-            }]
+            ':permissions': [
+              {
+                permitId: mockPermission.permitId,
+                startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString()
+              }
+            ]
           }
         })
 
@@ -329,10 +339,12 @@ describe('transaction service', () => {
       docClient.get.mockResolvedValueOnce({ Item: mockRecord })
       docClient.createUpdateExpression.mockReturnValueOnce({
         ExpressionAttributeValues: {
-          ':permissions': [{
-            permitId: mockPermission.permitId,
-            startDate
-          }]
+          ':permissions': [
+            {
+              permitId: mockPermission.permitId,
+              startDate
+            }
+          ]
         }
       })
 
@@ -372,10 +384,12 @@ describe('transaction service', () => {
       docClient.get.mockResolvedValueOnce({ Item: mockRecord })
       docClient.createUpdateExpression.mockReturnValueOnce({
         ExpressionAttributeValues: {
-          ':permissions': [{
-            permitId: mockPermission.permitId,
-            endDate
-          }]
+          ':permissions': [
+            {
+              permitId: mockPermission.permitId,
+              endDate
+            }
+          ]
         }
       })
 
@@ -413,10 +427,12 @@ describe('transaction service', () => {
       docClient.get.mockResolvedValueOnce({ Item: mockRecord })
       docClient.createUpdateExpression.mockReturnValueOnce({
         ExpressionAttributeValues: {
-          ':permissions': [{
-            permitId: mockPermission.permitId,
-            endDate
-          }]
+          ':permissions': [
+            {
+              permitId: mockPermission.permitId,
+              endDate
+            }
+          ]
         }
       })
 
@@ -458,11 +474,13 @@ describe('transaction service', () => {
         docClient.get.mockResolvedValueOnce({ Item: mockRecord })
         docClient.createUpdateExpression.mockReturnValueOnce({
           ExpressionAttributeValues: {
-            ':permissions': [{
-              permitId: mockPermission.permitId,
-              startDate,
-              endDate
-            }]
+            ':permissions': [
+              {
+                permitId: mockPermission.permitId,
+                startDate,
+                endDate
+              }
+            ]
           }
         })
 

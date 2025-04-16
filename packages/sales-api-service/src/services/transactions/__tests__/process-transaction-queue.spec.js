@@ -23,13 +23,12 @@ import {
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
-import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS.mock.results[0].value
 
-const { mock: { results: [{ value: { docClient } }] } } = AWS
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
   getReferenceDataForEntity: async entityType => {
@@ -77,9 +76,9 @@ jest.mock('@defra-fish/connectors-lib', () => {
       put: jest.fn()
     }
   }
-  return ({
+  return {
     AWS: jest.fn(() => mockAWS)
-  })
+  }
 })
 
 describe('transaction service', () => {
