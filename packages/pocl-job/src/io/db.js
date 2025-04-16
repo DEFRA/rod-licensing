@@ -16,7 +16,6 @@ export const updateFileStagingTable = async ({ filename, ...entries }) => {
       Key: { filename },
       ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
     })
-    .promise()
 }
 
 /**
@@ -42,7 +41,7 @@ export const getFileRecords = async (...stages) => {
  * @returns {DocumentClient.AttributeMap}
  */
 export const getFileRecord = async filename => {
-  const result = await docClient.get({ TableName: config.db.fileStagingTable, Key: { filename }, ConsistentRead: true }).promise()
+  const result = await docClient.get({ TableName: config.db.fileStagingTable, Key: { filename }, ConsistentRead: true })
   return result.Item
 }
 

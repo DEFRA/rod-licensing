@@ -1,86 +1,97 @@
 'use strict'
 
 import deleteMessages from '../delete-messages'
-import AWS from 'aws-sdk'
+import { mockClient } from 'aws-sdk-client-mock'
+import { SQS, DeleteMessageBatchCommand } from '@aws-sdk/client-sqs'
+import { AWS } from '@defra-fish/connectors-lib'
+const { mock: { results: [{ value: { sqs } }] } } = AWS
 
-test('Delete messages successfully', async () => {
-  const results = await deleteMessages('http://0.0.0.0:0000/queue', [
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
-      status: 200
-    },
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277522',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b2',
-      status: 200
-    },
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277523',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b3',
-      status: 4200
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    sqs: {
+      send: jest.fn(() => ({}))
     }
-  ])
+  }))
+}))
 
-  expect(results).toBeUndefined()
+beforeEach(() => {
+  sqs.send.mockClear()
+})
+
+describe('Delete messages successfully', () => {
+  beforeEach(async () => {
+    await deleteMessages('http://0.0.0.0:0000/queue', [
+      {
+        id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
+        handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
+        status: 200
+      },
+      {
+        id: '58f6f3c9-97f8-405a-a3a7-5ac467277522',
+        handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b2',
+        status: 200
+      },
+      {
+        id: '58f6f3c9-97f8-405a-a3a7-5ac467277523',
+        handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b3',
+        status: 4200
+      }
+    ])  
+  })
+
+  it('deletes all messages with one call', () => {
+    expect(sqs.send).toHaveBeenCalledTimes(1)
+  })
+
+  it('sends a DeleteMessagesBatchCommand', () => {
+    expect(sqs.send).toHaveBeenCalledWith(expect.any(DeleteMessageBatchCommand))
+  })
+
+  it('sends queueUrl and all entries', () => {
+    expect(sqs.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: {
+          QueueUrl: 'http://0.0.0.0:0000/queue',
+          Entries: [
+            {
+              Id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
+              ReceiptHandle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1'
+            },
+            {
+              Id: '58f6f3c9-97f8-405a-a3a7-5ac467277522',
+              ReceiptHandle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b2'
+            }
+          ]
+        }
+      })
+    )
+  })
+
+  expect(sqs.send).toHaveBeenCalledwith
 })
 
 test('Delete messages nothing to delete', async () => {
-  const results = await deleteMessages('http://0.0.0.0:0000/queue', [
+  await deleteMessages('http://0.0.0.0:0000/queue', [
     {
       id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
       handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
       status: 400
-    },
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277522',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b2',
-      status: 400
-    },
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277523',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b3',
-      status: 400
     }
   ])
 
-  expect(results).toBeUndefined()
+  expect(sqs.send).not.toHaveBeenCalled()
 })
 
-test('Delete messages with failures', async () => {
-  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
-  AWS.__mockDeleteMessageFailures()
-  const results = await deleteMessages('http://0.0.0.0:0000/queue', [
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
-      status: 200
-    },
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277522',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b2',
-      status: 200
-    },
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277523',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b3',
-      status: 4200
-    }
-  ])
+test('Delete messages handles errors', async () => {
+  sqs.send.mockRejectedValueOnce(new Error('Delete error'))
 
-  expect(results).toBeUndefined()
-  expect(consoleError).toHaveBeenCalled()
-})
-
-test('Delete message does not throw exception', async () => {
-  AWS.__mockNotFound()
-
-  const result = await deleteMessages('http://0.0.0.0:0000/queue', [
-    {
-      id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
-      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
-      status: 200
-    }
-  ])
-  expect(result).toBeUndefined()
+  await expect(
+    deleteMessages('http://0.0.0.0:0000/queue', [
+      {
+        id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
+        handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
+        status: 200
+      }
+    ])
+  ).rejects.toThrow('Delete error')
 })

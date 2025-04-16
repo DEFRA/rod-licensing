@@ -22,10 +22,16 @@ export default {
           return { connection: 'dynamics', status: 'ok', ...(await dynamicsClient.executeUnboundFunction('RetrieveVersion')) }
         },
         async () => {
-          return { connection: 'dynamodb', status: 'ok', ...(await ddb.listTables().promise()) }
+          let tblList
+          try {
+            tblList = await ddb.listTables()
+          } catch (e) {
+            return { connection: 'dynamodb', status: 'error', error: e }
+          }
+          return { connection: 'dynamodb', status: 'ok', ...(await ddb.listTables()) }
         },
         async () => {
-          return { connection: 'sqs', status: 'ok', ...(await sqs.listQueues().promise()) }
+          return { connection: 'sqs', status: 'ok', ...(await sqs.listQueues()) }
         }
       ]
     }

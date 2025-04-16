@@ -39,7 +39,9 @@
     "debug": "^4.3.1",
     "joi": "^17.3.0",
     "node-fetch": "^2.6.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "@aws-sdk/client-sqs": "^3.0.0",
+    "aws-sdk-client-mock": "^3.0.0"
   },
   "devDependencies": {
     "pm2": "^4.5.6"

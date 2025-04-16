@@ -1,6 +1,8 @@
 'use strict'
-import db from 'debug'
 import { AWS } from '@defra-fish/connectors-lib'
+import db from 'debug'
+// import { SQS } from '@aws-sdk/client-sqs'
+
 const { sqs } = AWS()
 const debug = db('sqs:read-queue')
 
@@ -12,8 +14,9 @@ const debug = db('sqs:read-queue')
  * @param {number} waitTimeMs the amount of time to wait for messages to become available
  * @returns {Promise<SQS.Message[]|*[]>}
  */
-const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
+export default async (url, visibilityTimeoutMs, waitTimeMs) => {
   try {
+    // const sqs = new SQS()
     const params = {
       QueueUrl: url,
       AttributeNames: ['MessageGroupId'],
@@ -22,7 +25,7 @@ const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
       VisibilityTimeout: visibilityTimeoutMs / 1000,
       WaitTimeSeconds: waitTimeMs / 1000
     }
-    const data = await sqs.receiveMessage(params).promise()
+    const data = await sqs.receiveMessage(params)
     const messages = data.Messages || []
     debug('Retrieved %d messages from %s', messages.length, url)
     return messages
@@ -33,12 +36,9 @@ const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
      */
     console.error(`Error reading queue: ${url}`, err)
 
-    if (!err.statusCode) {
+    if (!err.$metadata?.httpStatusCode) {
       throw err
-    } else {
-      return []
     }
+    return []
   }
 }
-
-export default readQueue

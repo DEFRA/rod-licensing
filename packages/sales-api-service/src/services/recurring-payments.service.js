@@ -113,7 +113,6 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
       }),
       ReturnValues: 'ALL_NEW'
     })
-    .promise()
 
   await sqs
     .sendMessage({
@@ -122,7 +121,6 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
       MessageDeduplicationId: transactionId,
       MessageBody: JSON.stringify({ id: transactionId })
     })
-    .promise()
 
   return { permission }
 }

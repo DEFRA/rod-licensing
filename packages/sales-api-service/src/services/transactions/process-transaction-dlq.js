@@ -24,7 +24,6 @@ export async function processDlq ({ id }) {
               ':expires': Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_TABLE.StagingErrorsTtl
             }
           })
-          .promise()
       } catch (e) {
         console.error('Unable to update expiry on unprocessable transaction: ', transaction, e)
       }

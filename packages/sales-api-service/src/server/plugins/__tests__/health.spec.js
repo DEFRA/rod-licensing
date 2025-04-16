@@ -1,7 +1,29 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
-import AwsMock from 'aws-sdk'
+import { AWS } from '@defra-fish/connectors-lib'
 let server = null
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    ddb: {
+      listTables: () => ({
+        connection: 'dynamodb',
+        status: 'ok',
+        TableNames: ['TestTable']
+      })
+    },
+    sqs:{
+      listQueues: () => ({
+        connection: 'sqs',
+        status: 'ok',
+        QueueUrls: ['TestQueue']
+      })
+    }
+  })),
+  airbrake: {
+    initialise: () => {}
+  }
+}))
 
 describe('hapi healthcheck', () => {
   beforeAll(async () => {
@@ -21,16 +43,6 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
-    AwsMock.SQS.__init({
-      expectedResponses: {
-        listQueues: { QueueUrls: ['TestQueue'] }
-      }
-    })
-    AwsMock.DynamoDB.__init({
-      expectedResponses: {
-        listTables: { TableNames: ['TestTable'] }
-      }
-    })
     const result = await server.inject({
       method: 'GET',
       url: '/service-status?v&h'

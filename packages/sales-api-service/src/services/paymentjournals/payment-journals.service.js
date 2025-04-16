@@ -11,7 +11,7 @@ const debug = db('sales:paymentjournals')
  */
 export async function createPaymentJournal (id, payload) {
   const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' }).promise()
+  await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
   debug('Payment journal stored with payload %o', record)
   return record
 }
@@ -31,7 +31,6 @@ export async function updatePaymentJournal (id, payload) {
       ConditionExpression: 'attribute_exists(id)',
       ReturnValues: 'ALL_NEW'
     })
-    .promise()
   return result.Attributes
 }
 
@@ -41,7 +40,7 @@ export async function updatePaymentJournal (id, payload) {
  * @returns {Promise<*>}
  */
 export async function getPaymentJournal (id) {
-  const result = await docClient.get({ TableName: PAYMENTS_TABLE.TableName, Key: { id }, ConsistentRead: true }).promise()
+  const result = await docClient.get({ TableName: PAYMENTS_TABLE.TableName, Key: { id }, ConsistentRead: true })
   return result.Item
 }
 

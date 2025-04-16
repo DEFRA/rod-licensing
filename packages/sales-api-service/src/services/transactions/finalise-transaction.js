@@ -59,7 +59,6 @@ export async function finaliseTransaction ({ id, ...payload }) {
       }),
       ReturnValues: 'ALL_NEW'
     })
-    .promise()
   debug('Updated transaction record for identifier %s', id)
 
   const receipt = await sqs
@@ -69,7 +68,6 @@ export async function finaliseTransaction ({ id, ...payload }) {
       MessageDeduplicationId: id,
       MessageBody: JSON.stringify({ id })
     })
-    .promise()
 
   debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
   updatedRecord.status.messageId = receipt.MessageId
