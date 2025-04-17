@@ -2,11 +2,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
 import agreedHandler from '../agreed-handler.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../../processors/payment.js'
-import {
-  sendPayment,
-  sendRecurringPayment,
-  getPaymentStatus
-} from '../../services/payment/govuk-pay-service.js'
+import { sendPayment, sendRecurringPayment, getPaymentStatus } from '../../services/payment/govuk-pay-service.js'
 import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
 import db from 'debug'
