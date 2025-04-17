@@ -8,7 +8,7 @@ import moment from 'moment-timezone'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
- * (1) Redirect back to the identification page where there is an authentication failure
+ * (1) Redirect to an error page where there is an authentication failure
  * (2) Redirect to an error page where the renewal has expired
  * (3) Redirect back to an error page where a licence is already issued
  * (4) Establish the session cache and redirect into the controller where the user is authenticated
