@@ -173,6 +173,7 @@ describe('transaction service', () => {
 
     it('throws 410 Gone if the transaction has already been finalised (and staged into Dynamics)', async () => {
       const recordData = { status: { id: 'FINALISED' } }
+      // See retrieve-transaction.js - 1st response is null on the transaction table, 2nd response is the record from the transaction history table
       docClient.get.mockResolvedValueOnce({ Item: null }).mockResolvedValueOnce({ Item: recordData })
       let err
 

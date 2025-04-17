@@ -41,7 +41,6 @@ describe('payment-journals service', () => {
       docClient.createUpdateExpression.mockReturnValueOnce(updateExpression)
       await updatePaymentJournal('test-id', { some: 'data' })
       expect(docClient.update).toHaveBeenCalledWith({
-        // expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
         ...updateExpression,

@@ -3,8 +3,6 @@ import testEnv from '../../test-env'
 import { AWS } from '@defra-fish/connectors-lib'
 import { v4 as uuidv4 } from 'uuid'
 
-// import receiver from '../receiver'
-
 jest.mock('@defra-fish/connectors-lib', () => {
   const AWS = jest.fn(() => ({
     sqs: {

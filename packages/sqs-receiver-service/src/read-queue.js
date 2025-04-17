@@ -15,7 +15,6 @@ const debug = db('sqs:read-queue')
  */
 export default async (url, visibilityTimeoutMs, waitTimeMs) => {
   try {
-    // const sqs = new SQS()
     const params = {
       QueueUrl: url,
       AttributeNames: ['MessageGroupId'],

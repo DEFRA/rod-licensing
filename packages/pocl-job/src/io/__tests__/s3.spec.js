@@ -206,8 +206,6 @@ describe('s3 operations', () => {
     it('skips file processing if a file has already been marked as processed in Dynamics', async () => {
       jest.spyOn(fs, 'createReadStream').mockReturnValueOnce('teststream')
       jest.spyOn(fs, 'statSync').mockReturnValueOnce({ size: 1024 })
-      // fs.createReadStream.mockReturnValueOnce('teststream')
-      // fs.statSync.mockReturnValueOnce({ size: 1024 })
       salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: 'Processed' } })
       const s3Key = `${moment().format('YYYY-MM-DD')}/test-already-processed.xml`
 
