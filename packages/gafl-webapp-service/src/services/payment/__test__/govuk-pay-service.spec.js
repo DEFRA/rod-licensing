@@ -2,7 +2,7 @@ import mockTransaction from './data/mock-transaction.js'
 import { preparePayment } from '../../../processors/payment.js'
 import { AGREED } from '../../../uri.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-import { sendPayment, sendRecurringPayment, getPaymentStatus, getRecurringPaymentAgreement } from '../govuk-pay-service.js'
+import { sendPayment, sendRecurringPayment, getPaymentStatus } from '../govuk-pay-service.js'
 import { govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:govuk-pay-service')]
@@ -524,108 +524,6 @@ describe('The govuk-pay-service', () => {
 
       try {
         await getPaymentStatus(paymentId)
-      } catch (error) {
-        expect(error.message).toBe('Unexpected response from GOV.UK pay API')
-      }
-    })
-  })
-
-  describe('getRecurringPaymentAgreement', () => {
-    const agreementId = '1234'
-
-    beforeEach(() => {
-      jest.clearAllMocks()
-    })
-
-    it('should send provided payload data to Gov.UK Pay', async () => {
-      const mockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
-      }
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-      await getRecurringPaymentAgreement(agreementId)
-      expect(govUkPayApi.getRecurringPaymentAgreementInformation).toHaveBeenCalledWith(agreementId)
-    })
-
-    it('should return response body when payment creation is successful', async () => {
-      const mockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
-      }
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      const result = await getRecurringPaymentAgreement(agreementId)
-
-      expect(result).toEqual({
-        success: true,
-        payment_instrument: {
-          card_details: {
-            last_digits_card_number: '1234'
-          }
-        }
-      })
-    })
-
-    it('should log debug message when response.ok is true', async () => {
-      const mockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
-      }
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      await getRecurringPaymentAgreement(agreementId)
-
-      expect(debug).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
-        success: true,
-        payment_instrument: {
-          card_details: {
-            last_digits_card_number: '1234'
-          }
-        }
-      })
-    })
-
-    it('should log error message', async () => {
-      const mockResponse = {
-        ok: false,
-        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
-      }
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      try {
-        await getRecurringPaymentAgreement(agreementId)
-      } catch (error) {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failure getting agreement in the GOV.UK API service')
-      }
-    })
-
-    it('should throw error for when rate limit is breached', async () => {
-      const mockResponse = {
-        ok: false,
-        status: 429,
-        json: jest.fn().mockResolvedValue({ message: 'Rate limit exceeded' })
-      }
-      const consoleErrorSpy = jest.spyOn(console, 'info').mockImplementation(jest.fn())
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      try {
-        await getRecurringPaymentAgreement(agreementId)
-      } catch (error) {
-        expect(consoleErrorSpy).toHaveBeenCalledWith(`GOV.UK Pay API rate limit breach - tid: ${agreementId}`)
-      }
-    })
-
-    it('should throw error for unexpected response status', async () => {
-      const mockResponse = {
-        ok: false,
-        status: 500,
-        json: jest.fn().mockResolvedValue({ message: 'Server error' })
-      }
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      try {
-        await getRecurringPaymentAgreement(agreementId)
       } catch (error) {
         expect(error.message).toBe('Unexpected response from GOV.UK pay API')
       }

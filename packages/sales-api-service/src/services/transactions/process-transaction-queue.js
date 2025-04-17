@@ -73,7 +73,7 @@ export async function processQueue ({ id }) {
 
     entities.push(contact, permission)
 
-    const { recurringPayment } = await processRecurringPayment(generateRecurringPaymentRecord(transactionRecord, permission), contact)
+    const { recurringPayment } = await processRecurringPayment(await generateRecurringPaymentRecord(transactionRecord, permission), contact)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       entities.push(recurringPayment)

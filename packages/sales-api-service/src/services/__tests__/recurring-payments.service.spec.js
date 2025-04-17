@@ -3,12 +3,13 @@ import {
   getRecurringPayments,
   processRecurringPayment,
   generateRecurringPaymentRecord,
-  processRPResult
+  processRPResult,
+  getRecurringPaymentAgreement
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
 import { createHash } from 'node:crypto'
-import { AWS } from '@defra-fish/connectors-lib'
+import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
@@ -28,7 +29,11 @@ jest.mock('@defra-fish/connectors-lib', () => {
   return {
     ...realConnectors,
     AWS: jest.fn(() => realConnectors.AWS()),
-    receiver: jest.fn()
+    receiver: jest.fn(),
+    govUkPayApi: {
+      ...realConnectors.govUkPayApi,
+      getRecurringPaymentAgreementInformation: jest.fn()
+    }
   }
 })
 
@@ -191,6 +196,11 @@ describe('recurring payments service', () => {
     AWSMocks.docClient = docClient
     AWSMocks.sqs = sqs
     Object.freeze(AWSMocks)
+    const mockResponse = {
+      ok: true,
+      json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+    }
+    govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
   })
 
   describe('getRecurringPayments', () => {
@@ -625,6 +635,105 @@ describe('recurring payments service', () => {
         MessageDeduplicationId: transactionId,
         MessageBody: JSON.stringify({ id: transactionId })
       })
+    })
+  })
+
+  describe('getRecurringPaymentAgreement', () => {
+    const agreementId = '1234'
+
+    it('should send provided agreement id data to Gov.UK Pay', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+      await getRecurringPaymentAgreement(agreementId)
+      expect(govUkPayApi.getRecurringPaymentAgreementInformation).toHaveBeenCalledWith(agreementId)
+    })
+
+    it('should return response body when payment creation is successful', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      const result = await getRecurringPaymentAgreement(agreementId)
+
+      expect(result).toEqual({
+        success: true,
+        payment_instrument: {
+          card_details: {
+            last_digits_card_number: '1234'
+          }
+        }
+      })
+    })
+
+    it('should log message when response.ok is true', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      await getRecurringPaymentAgreement(agreementId)
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
+        success: true,
+        payment_instrument: {
+          card_details: {
+            last_digits_card_number: '1234'
+          }
+        }
+      })
+    })
+
+    it('should log error message', async () => {
+      const mockResponse = {
+        ok: false,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      try {
+        await getRecurringPaymentAgreement(agreementId)
+      } catch (error) {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failure getting agreement in the GOV.UK API service')
+      }
+    })
+
+    it('should throw error for when rate limit is breached', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 429,
+        json: jest.fn().mockResolvedValue({ message: 'Rate limit exceeded' })
+      }
+      const consoleErrorSpy = jest.spyOn(console, 'info').mockImplementation(jest.fn())
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      try {
+        await getRecurringPaymentAgreement(agreementId)
+      } catch (error) {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`GOV.UK Pay API rate limit breach - tid: ${agreementId}`)
+      }
+    })
+
+    it('should throw error for unexpected response status', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 500,
+        json: jest.fn().mockResolvedValue({ message: 'Server error' })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      try {
+        await getRecurringPaymentAgreement(agreementId)
+      } catch (error) {
+        expect(error.message).toBe('Unexpected response from GOV.UK pay API')
+      }
     })
   })
 })

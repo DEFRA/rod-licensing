@@ -138,20 +138,3 @@ export const sendRecurringPayment = async preparedPayment => {
     throw getErrorType(response, preparedPayment.id)
   }
 }
-
-export const getRecurringPaymentAgreement = async agreementId => {
-  const response = await govUkPayApi.getRecurringPaymentAgreementInformation(agreementId)
-
-  if (response.ok) {
-    const resBody = await response.json()
-    debug('Successfully got recurring payment agreement information: %o', resBody)
-    return resBody
-  } else {
-    console.error('Failure getting agreement in the GOV.UK API service')
-
-    /*
-     * Detect the rate limit error and present the retry content. Otherwise throw the general server error
-     */
-    throw getErrorType(response, agreementId)
-  }
-}

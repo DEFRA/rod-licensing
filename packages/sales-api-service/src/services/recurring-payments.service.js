@@ -8,7 +8,7 @@ import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
 import moment from 'moment'
-import { AWS } from '@defra-fish/connectors-lib'
+import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 const { sqs, docClient } = AWS()
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
@@ -27,8 +27,10 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
   throw new Error('Invalid dates provided for permission')
 }
 
-export const generateRecurringPaymentRecord = (transactionRecord, permission) => {
+export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
   if (transactionRecord.agreementId) {
+    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.agreementId)
+    const lastDigitsCardNumber = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
     return {
       payment: {
@@ -40,7 +42,7 @@ export const generateRecurringPaymentRecord = (transactionRecord, permission) =>
           endDate,
           agreementId: transactionRecord.agreementId,
           status: 1,
-          last_digits_card_number: transactionRecord.lastDigitsCardNumber
+          last_digits_card_number: lastDigitsCardNumber
         }
       },
       permissions: [permission]
@@ -55,7 +57,6 @@ export const generateRecurringPaymentRecord = (transactionRecord, permission) =>
  * @returns {Promise<{recurringPayment: RecurringPayment | null}>}
  */
 export const processRecurringPayment = async (transactionRecord, contact) => {
-  console.log('transactionRecord: ', transactionRecord)
   const hash = createHash('sha256')
   if (transactionRecord.payment?.recurring) {
     const recurringPayment = new RecurringPayment()
@@ -68,13 +69,25 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = hash.digest('base64')
     recurringPayment.status = transactionRecord.payment.recurring.status
-    recurringPayment.last_digits_card_number = transactionRecord.payment.recurring.lastDigitsCardNumber
+    recurringPayment.last_digits_card_number = transactionRecord.payment.recurring.last_digits_card_number
     const [permission] = transactionRecord.permissions
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
     return { recurringPayment }
   }
   return { recurringPayment: null }
+}
+
+export const getRecurringPaymentAgreement = async agreementId => {
+  const response = await govUkPayApi.getRecurringPaymentAgreementInformation(agreementId)
+
+  if (response.ok) {
+    const resBody = await response.json()
+    console.log('Successfully got recurring payment agreement information: %o', resBody)
+    return resBody
+  } else {
+    console.error('Failure getting agreement in the GOV.UK API service')
+  }
 }
 
 export const processRPResult = async (transactionId, paymentId, createdDate) => {
