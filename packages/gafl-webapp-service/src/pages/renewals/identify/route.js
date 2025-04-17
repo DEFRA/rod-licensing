@@ -1,4 +1,4 @@
-import { IDENTIFY, AUTHENTICATE, NEW_TRANSACTION } from '../../../uri.js'
+import { IDENTIFY, NEW_TRANSACTION, AUTHENTICATE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'

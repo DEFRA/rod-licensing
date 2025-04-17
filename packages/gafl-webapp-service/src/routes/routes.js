@@ -30,6 +30,7 @@ import paymentFailed from '../pages/payment/failed/route.js'
 import identify from '../pages/renewals/identify/route.js'
 import invalidLink from '../pages/renewals/renewal-inactive/route.js'
 import renewalStartDate from '../pages/renewals/renewal-start-date/route.js'
+import licenceNotFound from '../pages/renewals/licence-not-found/route.js'
 
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
@@ -71,7 +72,8 @@ const routes = [
   ...invalidLink,
   ...renewalStartDate,
   ...choosePayment,
-  ...setUpRecurring
+  ...setUpRecurring,
+  ...licenceNotFound
 ]
 
 if (process.env.CHANNEL === 'telesales') {

@@ -15,11 +15,7 @@
     set errorMap = {
         'referenceNumber' : {
             'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
-            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' },
-            'string.invalid': {
-                text: mssgs.identify_error_invalid_1 + payload.referenceNumber + mssgs.identify_error_invalid_2,
-                ref: "#ref"
-            }
+            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },
