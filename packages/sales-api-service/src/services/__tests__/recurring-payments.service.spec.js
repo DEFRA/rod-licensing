@@ -14,7 +14,7 @@ import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
-const AWSMocks = {}
+const { docClient, sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -23,14 +23,17 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findDueRecurringPayments: jest.fn()
 }))
 
-jest.mock('@defra-fish/connectors-lib', () => {
-  const realConnectors = jest.requireActual('@defra-fish/connectors-lib')
-  return {
-    ...realConnectors,
-    AWS: jest.fn(() => realConnectors.AWS()),
-    receiver: jest.fn()
-  }
-})
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      update: jest.fn(),
+      createUpdateExpression: jest.fn()
+    },
+    sqs: {
+      sendMessage: jest.fn()
+    }
+  }))
+}))
 
 jest.mock('node:crypto', () => ({
   createHash: jest.fn(() => ({
@@ -183,14 +186,6 @@ describe('recurring payments service', () => {
   beforeAll(() => {
     TRANSACTION_QUEUE.Url = 'TestUrl'
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
-    const [
-      {
-        value: { docClient, sqs }
-      }
-    ] = AWS.mock.results
-    AWSMocks.docClient = docClient
-    AWSMocks.sqs = sqs
-    Object.freeze(AWSMocks)
   })
 
   describe('getRecurringPayments', () => {
@@ -545,8 +540,7 @@ describe('recurring payments service', () => {
       expect(getObfuscatedDob).toHaveBeenCalledWith(permission.licensee)
     })
 
-    it('should call AWSMocks.docClient.createUpdateExpression with payload, permissions, status and payment details', async () => {
-      jest.spyOn(AWSMocks.docClient, 'createUpdateExpression')
+    it('should call use docClient to create update expression with payload, permissions, status and payment details', async () => {
       const fakeNow = '2024-03-19T14:09:00.000Z'
       jest.setSystemTime(new Date(fakeNow))
       const mockTransaction = getMockTransaction(transactionId)
@@ -574,7 +568,7 @@ describe('recurring payments service', () => {
 
       await processRPResult(transactionId, '123abc', '2025-01-01')
 
-      expect(AWSMocks.docClient.createUpdateExpression).toHaveBeenCalledWith({
+      expect(docClient.createUpdateExpression).toHaveBeenCalledWith({
         payload: expect.objectContaining(expectedPermission),
         permissions: expect.arrayContaining([expectedPermission]),
         status: expect.objectContaining({ id: TRANSACTION_STATUS.FINALISED }),
@@ -587,17 +581,16 @@ describe('recurring payments service', () => {
       })
     })
 
-    it('should call AWSMocks.docClient.update with expected params', async () => {
-      jest.spyOn(AWSMocks.docClient, 'createUpdateExpression')
+    it('should update DynamoDB with expected params', async () => {
       const mockTransaction = getMockTransaction(transactionId)
       mockTransaction.cost = 38.72
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
       const updateExpression = { expression: Symbol('update expression') }
-      AWSMocks.docClient.createUpdateExpression.mockReturnValue(updateExpression)
+      docClient.createUpdateExpression.mockReturnValue(updateExpression)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      expect(AWSMocks.docClient.update).toHaveBeenCalledWith({
+      expect(docClient.update).toHaveBeenCalledWith({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
         Key: { id: transactionId },
         ...updateExpression,
@@ -605,13 +598,13 @@ describe('recurring payments service', () => {
       })
     })
 
-    it('should call AWSMocks.sqs.sendMessage with expected params', async () => {
+    it('should send sqs message with expected params', async () => {
       const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      expect(AWSMocks.sqs.sendMessage).toHaveBeenCalledWith({
+      expect(sqs.sendMessage).toHaveBeenCalledWith({
         QueueUrl: TRANSACTION_QUEUE.Url,
         MessageGroupId: transactionId,
         MessageDeduplicationId: transactionId,
