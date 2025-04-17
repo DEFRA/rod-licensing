@@ -414,8 +414,7 @@ export default [
       [CommonResults.OK]: {
         page: LICENCE_SUMMARY
       }
-    },
-    backLink: IDENTIFY.uri
+    }
   },
 
   {

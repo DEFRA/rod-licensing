@@ -328,8 +328,6 @@
   "identify_error_date_real": "Date of birth must be a real date",
   "identify_error_empty_postcode": "You did not enter a postcode",
   "identify_error_empty": "Enter the last six characters of your licence number",
-  "identify_error_invalid_1": "We do not have any record of a licence number ending ",
-  "identify_error_invalid_2": " matching these details.",
   "identify_error_missing_day": "Date of birth must include a day",
   "identify_error_missing_month": "Date of birth must include a month",
   "identify_error_missing_year": "Date of birth must include a year",

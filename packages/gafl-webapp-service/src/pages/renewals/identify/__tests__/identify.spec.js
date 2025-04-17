@@ -57,8 +57,8 @@ describe('The easy renewal identification page', () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
-    const data3 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
-    expect(data3.statusCode).toBe(200)
+    const data2 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('returns successfully when called with a valid reference ', async () => {
@@ -85,7 +85,7 @@ describe('The easy renewal identification page', () => {
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
   })
 
-  it('redirects to licence not found on posting an valid but not authenticated details', async () => {
+  it('redirects to licence not found on posting valid but not authenticated details', async () => {
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(null))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC_URI)
     await injectWithCookies('GET', IDENTIFY.uri)
