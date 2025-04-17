@@ -120,3 +120,9 @@ test("If error doesn't contain an HTTP status code, it is re-thrown", async () =
   sqs.receiveMessage.mockRejectedValueOnce(getSampleError())
   await expect(readQueue('http://0.0.0.0:0000/queue')).rejects.toThrow('Queue error')
 })
+
+test("messages default to an empty array if messages key isn't available on receiveMessage return value", async () => {
+  sqs.receiveMessage.mockResolvedValueOnce({})
+  const result = await readQueue('http://0.0.0.0:0000/queue')
+  expect(result).toEqual([])
+})
