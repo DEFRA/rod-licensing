@@ -1,7 +1,6 @@
 'use strict'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
-// import { SQS } from '@aws-sdk/client-sqs'
 
 const { sqs } = AWS()
 const debug = db('sqs:read-queue')
