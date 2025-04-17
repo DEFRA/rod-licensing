@@ -3,12 +3,13 @@ import {
   getRecurringPayments,
   processRecurringPayment,
   generateRecurringPaymentRecord,
-  processRPResult
+  processRPResult,
+  getRecurringPaymentAgreement
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
 import { createHash } from 'node:crypto'
-import { AWS } from '@defra-fish/connectors-lib'
+import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
@@ -28,7 +29,11 @@ jest.mock('@defra-fish/connectors-lib', () => {
   return {
     ...realConnectors,
     AWS: jest.fn(() => realConnectors.AWS()),
-    receiver: jest.fn()
+    receiver: jest.fn(),
+    govUkPayApi: {
+      ...realConnectors.govUkPayApi,
+      getRecurringPaymentAgreementInformation: jest.fn()
+    }
   }
 })
 
@@ -191,6 +196,11 @@ describe('recurring payments service', () => {
     AWSMocks.docClient = docClient
     AWSMocks.sqs = sqs
     Object.freeze(AWSMocks)
+    const mockResponse = {
+      ok: true,
+      json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+    }
+    govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
   })
 
   describe('getRecurringPayments', () => {
@@ -280,7 +290,7 @@ describe('recurring payments service', () => {
   })
 
   describe('generateRecurringPaymentRecord', () => {
-    const createFinalisedSampleTransaction = (agreementId, permission) => ({
+    const createFinalisedSampleTransaction = (agreementId, permission, lastDigitsCardNumber) => ({
       expires: 1732892402,
       cost: 35.8,
       isRecurringPaymentSupported: true,
@@ -303,7 +313,8 @@ describe('recurring payments service', () => {
       id: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
       dataSource: 'Web Sales',
       transactionId: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
-      status: { id: 'FINALISED' }
+      status: { id: 'FINALISED' },
+      lastDigitsCardNumber
     })
 
     it.each([
@@ -315,7 +326,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-22T15:00:45.922Z',
           endDate: '2025-11-21T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        1234
       ],
       [
         'next day start - next due on end date minus ten days',
@@ -325,7 +337,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-22T15:00:45.922Z',
           endDate: '2025-11-22T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        5678
       ],
       [
         'starts ten days after issue - next due on issue date plus one year',
@@ -335,7 +348,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-12T15:00:45.922Z',
           endDate: '2025-11-21T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        9012
       ],
       [
         'starts twenty days after issue - next due on issue date plus one year',
@@ -345,7 +359,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-11-12T15:00:45.922Z',
           endDate: '2025-01-30T23:59:59.999Z'
         },
-        '2025-11-12T00:00:00.000Z'
+        '2025-11-12T00:00:00.000Z',
+        3456
       ],
       [
         "issued on 29th Feb '24, starts on 30th March '24 - next due on 28th Feb '25",
@@ -355,7 +370,8 @@ describe('recurring payments service', () => {
           issueDate: '2024-02-29T12:38:24.123Z',
           endDate: '2025-03-29T23:59:59.999Z'
         },
-        '2025-02-28T00:00:00.000Z'
+        '2025-02-28T00:00:00.000Z',
+        7890
       ],
       [
         "issued on 30th March '25 at 1am, starts at 1:30am - next due on 20th March '26",
@@ -365,10 +381,11 @@ describe('recurring payments service', () => {
           issueDate: '2025-03-30T01:00:00.000Z',
           endDate: '2026-03-29T23:59:59.999Z'
         },
-        '2026-03-20T00:00:00.000Z'
+        '2026-03-20T00:00:00.000Z',
+        1199
       ]
-    ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate) => {
-      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData)
+    ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumber) => {
+      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData, lastDigitsCardNumber)
       const permission = createSamplePermission(permissionData)
 
       const rpRecord = generateRecurringPaymentRecord(sampleTransaction, permission)
@@ -383,7 +400,8 @@ describe('recurring payments service', () => {
               cancelledReason: null,
               endDate: permissionData.endDate,
               agreementId,
-              status: 1
+              status: 1,
+              last_digits_card_number: lastDigitsCardNumber
             })
           }),
           permissions: expect.arrayContaining([permission])
@@ -617,6 +635,105 @@ describe('recurring payments service', () => {
         MessageDeduplicationId: transactionId,
         MessageBody: JSON.stringify({ id: transactionId })
       })
+    })
+  })
+
+  describe('getRecurringPaymentAgreement', () => {
+    const agreementId = '1234'
+
+    it('should send provided agreement id data to Gov.UK Pay', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+      await getRecurringPaymentAgreement(agreementId)
+      expect(govUkPayApi.getRecurringPaymentAgreementInformation).toHaveBeenCalledWith(agreementId)
+    })
+
+    it('should return response body when payment creation is successful', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      const result = await getRecurringPaymentAgreement(agreementId)
+
+      expect(result).toEqual({
+        success: true,
+        payment_instrument: {
+          card_details: {
+            last_digits_card_number: '1234'
+          }
+        }
+      })
+    })
+
+    it('should log message when response.ok is true', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      await getRecurringPaymentAgreement(agreementId)
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
+        success: true,
+        payment_instrument: {
+          card_details: {
+            last_digits_card_number: '1234'
+          }
+        }
+      })
+    })
+
+    it('should log error message', async () => {
+      const mockResponse = {
+        ok: false,
+        json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
+      }
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      try {
+        await getRecurringPaymentAgreement(agreementId)
+      } catch (error) {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failure getting agreement in the GOV.UK API service')
+      }
+    })
+
+    it('should throw error for when rate limit is breached', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 429,
+        json: jest.fn().mockResolvedValue({ message: 'Rate limit exceeded' })
+      }
+      const consoleErrorSpy = jest.spyOn(console, 'info').mockImplementation(jest.fn())
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      try {
+        await getRecurringPaymentAgreement(agreementId)
+      } catch (error) {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`GOV.UK Pay API rate limit breach - tid: ${agreementId}`)
+      }
+    })
+
+    it('should throw error for unexpected response status', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 500,
+        json: jest.fn().mockResolvedValue({ message: 'Server error' })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
+
+      try {
+        await getRecurringPaymentAgreement(agreementId)
+      } catch (error) {
+        expect(error.message).toBe('Unexpected response from GOV.UK pay API')
+      }
     })
   })
 })
