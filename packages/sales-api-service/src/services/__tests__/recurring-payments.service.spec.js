@@ -327,7 +327,7 @@ describe('recurring payments service', () => {
           endDate: '2025-11-21T23:59:59.999Z'
         },
         '2025-11-12T00:00:00.000Z',
-        1234
+        '1234'
       ],
       [
         'next day start - next due on end date minus ten days',
@@ -338,7 +338,7 @@ describe('recurring payments service', () => {
           endDate: '2025-11-22T23:59:59.999Z'
         },
         '2025-11-12T00:00:00.000Z',
-        5678
+        '5678'
       ],
       [
         'starts ten days after issue - next due on issue date plus one year',
@@ -349,7 +349,7 @@ describe('recurring payments service', () => {
           endDate: '2025-11-21T23:59:59.999Z'
         },
         '2025-11-12T00:00:00.000Z',
-        9012
+        '9012'
       ],
       [
         'starts twenty days after issue - next due on issue date plus one year',
@@ -360,7 +360,7 @@ describe('recurring payments service', () => {
           endDate: '2025-01-30T23:59:59.999Z'
         },
         '2025-11-12T00:00:00.000Z',
-        3456
+        '3456'
       ],
       [
         "issued on 29th Feb '24, starts on 30th March '24 - next due on 28th Feb '25",
@@ -371,7 +371,7 @@ describe('recurring payments service', () => {
           endDate: '2025-03-29T23:59:59.999Z'
         },
         '2025-02-28T00:00:00.000Z',
-        7890
+        '7890'
       ],
       [
         "issued on 30th March '25 at 1am, starts at 1:30am - next due on 20th March '26",
@@ -382,7 +382,7 @@ describe('recurring payments service', () => {
           endDate: '2026-03-29T23:59:59.999Z'
         },
         '2026-03-20T00:00:00.000Z',
-        1199
+        '1199'
       ]
     ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumber) => {
       const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData, lastDigitsCardNumber)
