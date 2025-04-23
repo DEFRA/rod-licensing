@@ -384,11 +384,18 @@ describe('recurring payments service', () => {
         '2026-03-20T00:00:00.000Z',
         '1199'
       ]
-    ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumber) => {
+    ])('creates record from transaction with %s', async (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumber) => {
+      const mockResponse = {
+        ok: true,
+        json: jest
+          .fn()
+          .mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: lastDigitsCardNumber } } })
+      }
+      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
       const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData, lastDigitsCardNumber)
       const permission = createSamplePermission(permissionData)
 
-      const rpRecord = generateRecurringPaymentRecord(sampleTransaction, permission)
+      const rpRecord = await generateRecurringPaymentRecord(sampleTransaction, permission)
 
       expect(rpRecord).toEqual(
         expect.objectContaining({
@@ -426,22 +433,26 @@ describe('recurring payments service', () => {
           endDate: '2025-11-10T23:59:59.999Z'
         }
       ]
-    ])('throws an error for invalid dates when %s', (_d, permission) => {
+    ])('throws an error for invalid dates when %s', async (_d, permission) => {
       const sampleTransaction = createFinalisedSampleTransaction('hyu78ijhyu78ijuhyu78ij9iu6', permission)
 
-      expect(() => generateRecurringPaymentRecord(sampleTransaction)).toThrow('Invalid dates provided for permission')
+      await expect(generateRecurringPaymentRecord(sampleTransaction)).rejects.toThrow('Invalid dates provided for permission')
     })
 
-    it('returns a false flag when agreementId is not present', () => {
-      const sampleTransaction = createFinalisedSampleTransaction(null, {
-        startDate: '2024-11-22T15:30:45.922Z',
-        issueDate: '2024-11-22T15:00:45.922Z',
-        endDate: '2025-11-21T23:59:59.999Z'
-      })
+    it('returns a false flag when agreementId is not present', async () => {
+      const sampleTransaction = createFinalisedSampleTransaction(
+        null,
+        {
+          startDate: '2024-11-22T15:30:45.922Z',
+          issueDate: '2024-11-22T15:00:45.922Z',
+          endDate: '2025-11-21T23:59:59.999Z'
+        },
+        '0123'
+      )
 
-      const rpRecord = generateRecurringPaymentRecord(sampleTransaction)
+      const rpRecord = await generateRecurringPaymentRecord(sampleTransaction)
 
-      expect(rpRecord.payment.recurring).toBeFalsy()
+      expect(rpRecord.payment?.recurring).toBeFalsy()
     })
   })
 
