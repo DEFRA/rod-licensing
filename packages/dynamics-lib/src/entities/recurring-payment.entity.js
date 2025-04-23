@@ -25,7 +25,7 @@ export class RecurringPayment extends BaseEntity {
       contactId: { field: '_defra_contact_value', type: 'string' },
       publicId: { field: 'defra_publicid', type: 'string' },
       nextRecurringPayment: { field: '_defra_nextrecurringpayment_value', type: 'string' },
-      lastDigitsCardNumber: { field: 'defra_last_digits_card_number', type: 'integer' }
+      lastDigitsCardNumber: { field: 'defra_lastdigitscardnumbers', type: 'string' }
     },
     relationships: {
       contact: { property: 'defra_Contact', entity: Contact, parent: true },
@@ -140,7 +140,7 @@ export class RecurringPayment extends BaseEntity {
 
   /**
    * Last four digits of card number
-   * @type {integer}
+   * @type {string}
    */
   get lastDigitsCardNumber () {
     return super._getState('lastDigitsCardNumber')

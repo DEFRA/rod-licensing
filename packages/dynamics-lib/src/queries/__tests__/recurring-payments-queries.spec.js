@@ -23,7 +23,7 @@ describe('Recurring Payment Queries', () => {
           '_defra_contact_value',
           'defra_publicid',
           '_defra_nextrecurringpayment_value',
-          'defra_last_digits_card_number'
+          'defra_lastdigitscardnumbers'
         ],
         expand: [{ property: 'defra_Contact' }, { property: 'defra_ActivePermission' }]
       })

@@ -16,7 +16,7 @@ describe('recurring payment entity', () => {
     recurringPayment.endDate = '2019-12-15T00:00:00Z'
     recurringPayment.agreementId = 'c9267c6e-573d-488b-99ab-ea18431fc472'
     recurringPayment.publicId = '649-213'
-    recurringPayment.lastDigitsCardNumber = 1234
+    recurringPayment.lastDigitsCardNumber = '1234'
     recurringPayment.status = 1
 
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
@@ -39,7 +39,7 @@ describe('recurring payment entity', () => {
       defra_enddate: '2019-12-15T00:00:00Z',
       defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
       defra_publicid: '649-213',
-      defra_last_digits_card_number: 1234,
+      defra_lastdigitscardnumbers: '1234',
       statecode: 1,
       _defra_contact_value: 'b3d33cln-2e83-ea11-a811-000d3a649213',
       _defra_activepermission_value: 'a5b24adf-2e83-ea11-a811-000d3a649213',
@@ -70,7 +70,7 @@ describe('recurring payment entity', () => {
           endDate: '2019-12-15T00:00:00Z',
           agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           publicId: '649-213',
-          lastDigitsCardNumber: 1234,
+          lastDigitsCardNumber: '1234',
           status: 1
         })
       )
@@ -95,7 +95,7 @@ describe('recurring payment entity', () => {
           defra_enddate: '2019-12-15T00:00:00Z',
           defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           defra_publicid: '649-213',
-          defra_last_digits_card_number: 1234,
+          defra_lastdigitscardnumbers: '1234',
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
@@ -123,7 +123,7 @@ describe('recurring payment entity', () => {
           endDate: '2019-12-15T00:00:00Z',
           agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           publicId: '649-213',
-          lastDigitsCardNumber: 1234,
+          lastDigitsCardNumber: '1234',
           status: 1
         })
       )
@@ -143,7 +143,7 @@ describe('recurring payment entity', () => {
           defra_enddate: '2019-12-15T00:00:00Z',
           defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           defra_publicid: '649-213',
-          defra_last_digits_card_number: 1234,
+          defra_lastdigitscardnumbers: '1234',
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
@@ -168,7 +168,7 @@ describe('recurring payment entity', () => {
           defra_enddate: '2019-12-15T00:00:00Z',
           defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           defra_publicid: '649-213',
-          defra_last_digits_card_number: 1234,
+          defra_lastdigitscardnumbers: '1234',
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`,
