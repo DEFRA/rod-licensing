@@ -69,7 +69,7 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = hash.digest('base64')
     recurringPayment.status = transactionRecord.payment.recurring.status
-    recurringPayment.last_digits_card_number = transactionRecord.payment.recurring.last_digits_card_number
+    recurringPayment.lastDigitsCardNumber = transactionRecord.payment.recurring.last_digits_card_number
     const [permission] = transactionRecord.permissions
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)

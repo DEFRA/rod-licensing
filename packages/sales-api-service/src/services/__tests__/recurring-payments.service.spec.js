@@ -244,7 +244,8 @@ describe('recurring payments service', () => {
             cancelledReason: null,
             endDate: new Date('2023-11-12'),
             agreementId: '435678',
-            status: 0
+            status: 0,
+            last_digits_card_number: '0128'
           }
         },
         permissions: [getMockPermission()]
