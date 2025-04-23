@@ -86,7 +86,7 @@ export const getRecurringPaymentAgreement = async agreementId => {
     console.log('Successfully got recurring payment agreement information: %o', resBody)
     return resBody
   } else {
-    console.error('Failure getting agreement in the GOV.UK API service')
+    throw new Error('Failure getting agreement in the GOV.UK API service')
   }
 }
 

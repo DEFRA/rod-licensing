@@ -702,50 +702,14 @@ describe('recurring payments service', () => {
       })
     })
 
-    it('should log error message', async () => {
+    it('should throw an error when the response is not ok', async () => {
       const mockResponse = {
         ok: false,
         json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
       }
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
       govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
 
-      try {
-        await getRecurringPaymentAgreement(agreementId)
-      } catch (error) {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failure getting agreement in the GOV.UK API service')
-      }
-    })
-
-    it('should throw error for when rate limit is breached', async () => {
-      const mockResponse = {
-        ok: false,
-        status: 429,
-        json: jest.fn().mockResolvedValue({ message: 'Rate limit exceeded' })
-      }
-      const consoleErrorSpy = jest.spyOn(console, 'info').mockImplementation(jest.fn())
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      try {
-        await getRecurringPaymentAgreement(agreementId)
-      } catch (error) {
-        expect(consoleErrorSpy).toHaveBeenCalledWith(`GOV.UK Pay API rate limit breach - tid: ${agreementId}`)
-      }
-    })
-
-    it('should throw error for unexpected response status', async () => {
-      const mockResponse = {
-        ok: false,
-        status: 500,
-        json: jest.fn().mockResolvedValue({ message: 'Server error' })
-      }
-      govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-
-      try {
-        await getRecurringPaymentAgreement(agreementId)
-      } catch (error) {
-        expect(error.message).toBe('Unexpected response from GOV.UK pay API')
-      }
+      await expect(getRecurringPaymentAgreement(agreementId)).rejects.toThrow('Failure getting agreement in the GOV.UK API service')
     })
   })
 })
