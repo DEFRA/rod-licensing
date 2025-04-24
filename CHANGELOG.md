@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.0 (2025-04-24)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2144](https://github.com/DEFRA/rod-licensing/pull/2144) Add validation schemas to recurring payment routes ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.60.0-rc.4 (2025-04-01)
 
