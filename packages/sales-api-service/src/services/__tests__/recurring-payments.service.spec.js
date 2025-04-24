@@ -646,10 +646,10 @@ describe('recurring payments service', () => {
       expect(returnedRecord).toBe(newestRecord)
     })
 
-    it('should return undefined when there are no matches', async () => {
+    it('should return false when there are no matches', async () => {
       dynamicsLib.executeQuery.mockReturnValueOnce([])
       const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
-      expect(returnedRecord).toBe(undefined)
+      expect(returnedRecord).toBe(false)
     })
   })
 })

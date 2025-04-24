@@ -447,6 +447,28 @@ describe('transaction service', () => {
           mockRecurringPayment
         )
       })
+
+      it('does not attempt to update multiple recurring payment entities if no pre-existing recurring payment is found', async () => {
+        const agreementId = Symbol('agreementId')
+        const mockRecurringPayment = { agreementId }
+        const finalisedTransaction = mockFinalisedTransactionRecord()
+        processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(false)
+
+        await processQueue({ id: finalisedTransaction.id })
+
+        expect(persist.mock.calls[0][0]).toEqual([
+          expect.objectContaining({ referenceNumber: finalisedTransaction.id }),
+          expect.objectContaining({ referenceNumber: finalisedTransaction.id }),
+          expect.objectContaining({ referenceNumber: finalisedTransaction.id }),
+          expect.objectContaining({ firstName: finalisedTransaction.permissions[0].licensee.firstName }),
+          expect.objectContaining({ referenceNumber: finalisedTransaction.permissions[0].referenceNumber }),
+          expect.objectContaining({ agreementId }),
+          expect.objectContaining({}),
+          expect.objectContaining({ referenceNumber: finalisedTransaction.permissions[0].concessions[0].proof.referenceNumber })
+        ])
+      })
     })
   })
 
