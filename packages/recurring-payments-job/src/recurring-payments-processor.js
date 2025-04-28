@@ -11,12 +11,17 @@ export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
-    const response = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found: ', response)
-    await Promise.all(response.map(record => processRecurringPayment(record)))
-    if (response.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
-      await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+    try {
+      const response = await salesApi.getDueRecurringPayments(date)
+      console.log('Recurring Payments found: ', response)
+      await Promise.all(response.map(record => processRecurringPayment(record)))
+      if (response.length > 0) {
+        await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+        await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+      }
+    } catch (error) {
+      console.error('Run aborted. Error fetching due recurring payments:', error)
+      throw error
     }
   } else {
     console.log('Recurring Payments job disabled')
@@ -46,13 +51,17 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  const payment = await sendPayment(preparedPayment)
-  payments.push({
-    agreementId,
-    paymentId: payment.payment_id,
-    created_date: payment.created_date,
-    transaction
-  })
+  try {
+    const payment = await sendPayment(preparedPayment)
+    payments.push({
+      agreementId,
+      paymentId: payment.payment_id,
+      created_date: payment.created_date,
+      transaction
+    })
+  } catch (error) {
+    console.error('Error sending payment for agreement:', agreementId, 'Error:', error)
+  }
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
