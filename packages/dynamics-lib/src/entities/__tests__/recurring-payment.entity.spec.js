@@ -16,7 +16,7 @@ describe('recurring payment entity', () => {
     recurringPayment.endDate = '2019-12-15T00:00:00Z'
     recurringPayment.agreementId = 'c9267c6e-573d-488b-99ab-ea18431fc472'
     recurringPayment.publicId = '649-213'
-    recurringPayment.lastDigitsCardNumber = '1234'
+    recurringPayment.lastDigitsCardNumbers = '1234'
     recurringPayment.status = 1
 
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
@@ -70,7 +70,7 @@ describe('recurring payment entity', () => {
           endDate: '2019-12-15T00:00:00Z',
           agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           publicId: '649-213',
-          lastDigitsCardNumber: '1234',
+          lastDigitsCardNumbers: '1234',
           status: 1
         })
       )
@@ -123,7 +123,7 @@ describe('recurring payment entity', () => {
           endDate: '2019-12-15T00:00:00Z',
           agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           publicId: '649-213',
-          lastDigitsCardNumber: '1234',
+          lastDigitsCardNumbers: '1234',
           status: 1
         })
       )
