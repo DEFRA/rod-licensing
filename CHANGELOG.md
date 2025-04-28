@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.1 (2025-04-28)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2139](https://github.com/DEFRA/rod-licensing/pull/2139) Card digits dynamics lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.61.0-rc.0 (2025-04-24)
 
 #### :rocket: Enhancement
