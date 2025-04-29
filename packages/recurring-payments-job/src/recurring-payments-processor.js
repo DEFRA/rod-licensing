@@ -108,11 +108,9 @@ const processRecurringPaymentStatus = async record => {
   const payment = payments.find(p => p.paymentId === paymentId)
   if (status === PAYMENT_STATUS.Success) {
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
-  } else {
-    if ((status === PAYMENT_STATUS.Failure && canRetry === false) || (status === PAYMENT_STATUS.Failure && rpJobRun === '2')) {
-      await salesApi.updatePaymentJournal(payment.transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-      console.log(`Payment failed. Recurring payment for: ${paymentId} set to be cancelled`)
-    }
+  } else if ((status === PAYMENT_STATUS.Failure && canRetry === false) || (status === PAYMENT_STATUS.Failure && rpJobRun === '2')) {
+    await salesApi.updatePaymentJournal(payment.transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
+    console.log(`Payment failed. Recurring payment for: ${paymentId} set to be cancelled`)
   }
 }
 
