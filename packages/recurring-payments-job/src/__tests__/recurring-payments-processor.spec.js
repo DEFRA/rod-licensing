@@ -77,6 +77,18 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', [])
   })
 
+  it('console log displays "Run aborted. Error fetching due recurring payments:" when an error occurs', async () => {
+    const error = new Error('Test error')
+    salesApi.getDueRecurringPayments.mockImplementationOnce(() => {
+      throw error
+    })
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    await expect(processRecurringPayments()).rejects.toThrowError(error)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Run aborted. Error fetching due recurring payments:', error)
+  })
+
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
