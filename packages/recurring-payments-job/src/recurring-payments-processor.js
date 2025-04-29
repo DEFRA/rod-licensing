@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
-import { isClientError } from 'http-status-codes'
+import { isClientError, isServerError } from 'http-status-codes'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
@@ -63,13 +63,15 @@ const takeRecurringPayment = async (agreementId, transaction) => {
     })
   } catch (error) {
     const status = error.response?.status
-    const body = error.response?.data || error.message
+    // const body = error.response?.data || error.message
 
     if (isClientError(status)) {
-      console.error(`Payment failed for agreement: ${agreementId} (client error ${status}):`, body)
+      console.error(`Payment failed for agreement: ${agreementId}, error ${status}`)
       return
-    } else {
-      console.error(`Payment API error for agreement ${agreementId}` + (status ? ` (status ${status})` : ' (network error)') + ':', body)
+    }
+
+    if (isServerError(status)) {
+      console.error(`Payment API error for agreement ${agreementId}, error ${status}`)
     }
     throw error
   }
@@ -135,14 +137,16 @@ const processRecurringPaymentStatus = async record => {
     }
   } catch (error) {
     const status = error.response?.status
-    const body = error.response?.data || error.message
+    // const body = error.response?.data || error.message
 
     if (isClientError(status)) {
-      console.error(`Failed to fetch status for payment ${paymentId} (client error ${status}):`, body)
-    } else {
-      console.error(`Payment status API error for ${paymentId}` + (status ? ` (status ${status})` : ' (network error)') + ':', body)
-      throw error
+      console.error(`Failed to fetch status for payment ${paymentId}, error ${status}`)
     }
+
+    if (isServerError(status)) {
+      console.error(`Payment status API error for ${paymentId}, error ${status}`)
+    }
+    throw error
   }
 }
 
