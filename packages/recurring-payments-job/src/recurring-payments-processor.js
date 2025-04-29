@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
-import { isClientError, isServerError } from 'http-status-codes'
+import { isClientError } from 'http-status-codes'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
@@ -68,7 +68,7 @@ const takeRecurringPayment = async (agreementId, transaction) => {
     if (isClientError(status)) {
       console.error(`Payment failed for agreement: ${agreementId} (client error ${status}):`, body)
       return
-    } else if (isServerError(status)) {
+    } else {
       console.error(`Payment API error for agreement ${agreementId}` + (status ? ` (status ${status})` : ' (network error)') + ':', body)
     }
     throw error
@@ -139,7 +139,7 @@ const processRecurringPaymentStatus = async record => {
 
     if (isClientError(status)) {
       console.error(`Failed to fetch status for payment ${paymentId} (client error ${status}):`, body)
-    } else if (isServerError(status)) {
+    } else {
       console.error(`Payment status API error for ${paymentId}` + (status ? ` (status ${status})` : ' (network error)') + ':', body)
       throw error
     }
