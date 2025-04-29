@@ -22,6 +22,14 @@ export const PAYMENT_JOURNAL_STATUS_CODES = {
 }
 
 /**
+ * Payment status returned by the GOV.UK pay API
+ */
+export const PAYMENT_STATUS = {
+  Success: 'success',
+  Failure: 'failure'
+}
+
+/**
  * Failure states returned by the GOV.UK pay API
  * https://docs.payments.service.gov.uk/api_reference/#errors-caused-by-payment-statuses
  */
