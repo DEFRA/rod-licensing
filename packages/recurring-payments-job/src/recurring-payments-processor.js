@@ -2,6 +2,7 @@ import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
+import { isClientError, isServerError } from 'http-status-codes'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
@@ -48,6 +49,7 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
   }
 }
 
+// API ERRORS
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
@@ -60,7 +62,16 @@ const takeRecurringPayment = async (agreementId, transaction) => {
       transaction
     })
   } catch (error) {
-    console.error('Error sending payment for agreement:', agreementId, 'Error:', error)
+    const status = error.response?.status
+    const body = error.response?.data || error.message
+
+    if (isClientError(status)) {
+      console.error(`Payment failed for agreement: ${agreementId} (client error ${status}):`, body)
+      return
+    } else if (isServerError(status)) {
+      console.error(`Payment API error for agreement ${agreementId}` + (status ? ` (status ${status})` : ' (network error)') + ':', body)
+    }
+    throw error
   }
 }
 
@@ -107,16 +118,31 @@ const preparePayment = (agreementId, transaction) => {
   return result
 }
 
+// API ERRORS
 const processRecurringPaymentStatus = async record => {
   const agreementId = record.entity.agreementId
   const paymentId = getPaymentId(agreementId)
-  const {
-    state: { status }
-  } = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${status}`)
-  if (status === PAYMENT_STATUS_SUCCESS) {
-    const payment = payments.find(p => p.paymentId === paymentId)
-    await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
+
+  try {
+    const {
+      state: { status }
+    } = await getPaymentStatus(paymentId)
+
+    console.log(`Payment status for ${paymentId}: ${status}`)
+    if (status === PAYMENT_STATUS_SUCCESS) {
+      const payment = payments.find(p => p.paymentId === paymentId)
+      await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
+    }
+  } catch (error) {
+    const status = error.response?.status
+    const body = error.response?.data || error.message
+
+    if (isClientError(status)) {
+      console.error(`Failed to fetch status for payment ${paymentId} (client error ${status}):`, body)
+    } else if (isServerError(status)) {
+      console.error(`Payment status API error for ${paymentId}` + (status ? ` (status ${status})` : ' (network error)') + ':', body)
+      throw error
+    }
   }
 }
 
