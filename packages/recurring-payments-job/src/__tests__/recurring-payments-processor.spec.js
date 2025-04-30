@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { processRecurringPayments } from '../recurring-payments-processor.js'
+import { processRecurringPayments, processRecurringPaymentStatus } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
 
 jest.mock('@defra-fish/business-rules-lib')
@@ -327,6 +327,73 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: success`)
+  })
+
+  it('should log a client error', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+    const mockPaymentId = 'test-payment-id'
+    const mockResponse = [
+      {
+        entity: { agreementId: 'agreement-1' },
+        expanded: {
+          activePermission: {
+            entity: {
+              referenceNumber: 'ref-1'
+            }
+          }
+        }
+      }
+    ]
+
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
+    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
+    sendPayment.mockResolvedValueOnce({
+      payment_id: mockPaymentId,
+      agreementId: 'agreement-1',
+      created_date: '2025-04-30T12:00:00Z'
+    })
+
+    const clientError = { response: { status: 400, data: 'Bad Request' } }
+    getPaymentStatus.mockRejectedValueOnce(clientError)
+  
+    await expect(processRecurringPayments()).rejects.toBe(clientError)
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      `Failed to fetch status for payment ${mockPaymentId}, error 400`
+    )
+  })
+  
+  it('should log a server error', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+    const mockPaymentId = 'test-payment-id'
+    const mockResponse = [
+      {
+        entity: { agreementId: 'agreement-1' },
+        expanded: {
+          activePermission: {
+            entity: {
+              referenceNumber: 'ref-1'
+            }
+          }
+        }
+      }
+    ]
+
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
+    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
+    sendPayment.mockResolvedValueOnce({
+      payment_id: mockPaymentId,
+      agreementId: 'agreement-1',
+      created_date: '2025-04-30T12:00:00Z'
+    })
+
+    const serverError = { response: { status: 500, data: 'Internal Server Error' } }
+    getPaymentStatus.mockRejectedValueOnce(serverError)
+  
+
+    await expect(processRecurringPayments()).rejects.toBe(serverError)
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      `Payment status API error for ${mockPaymentId}, error 500`
+    )
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {

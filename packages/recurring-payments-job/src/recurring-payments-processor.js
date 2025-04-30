@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
-import { isClientError, isServerError } from 'http-status-codes'
+import { isClientError, isServerError } from 'http-response-status-code'
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
@@ -120,7 +120,6 @@ const processRecurringPaymentStatus = async record => {
     }
   } catch (error) {
     const status = error.response?.status
-    // const body = error.response?.data || error.message
 
     if (isClientError(status)) {
       console.error(`Failed to fetch status for payment ${paymentId}, error ${status}`)
