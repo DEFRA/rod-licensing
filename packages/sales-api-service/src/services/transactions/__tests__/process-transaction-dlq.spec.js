@@ -2,7 +2,7 @@ import { processDlq } from '../process-transaction-dlq.js'
 import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../../exceptions/exceptions.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
-import AwsMock from 'aws-sdk'
+import { AWS } from '@defra-fish/connectors-lib'
 
 let mockProcessingException
 jest.mock('../process-transaction-queue.js', () => ({
@@ -17,25 +17,30 @@ jest.mock('../retrieve-transaction.js', () => ({
   retrieveStagedTransaction: jest.fn(async () => ({ testTransaction: true }))
 }))
 
-jest.mock('@defra-fish/dynamics-lib', () => ({
-  ...jest.requireActual('@defra-fish/dynamics-lib'),
-  persist: jest.fn()
-}))
-
 jest.mock('../../exceptions/exceptions.service.js')
 
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      send: jest.fn()
+    }
+  }))
+}))
+
+const { docClient } = AWS.mock.results[0].value
+
+// helper function
 const expectDynamoDbTtlUpdate = () => {
-  expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
-    expect.objectContaining({
-      TableName: TRANSACTION_STAGING_TABLE.TableName,
-      Key: { id: 'test' },
-      ConditionExpression: 'attribute_exists(id)',
-      UpdateExpression: 'SET expires = :expires',
-      ExpressionAttributeValues: {
-        ':expires': expect.any(Number)
-      }
-    })
-  )
+  const updateCommandInstance = docClient.send.mock.calls[0][0]
+  expect(updateCommandInstance.input).toEqual({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id: 'test' },
+    ConditionExpression: 'attribute_exists(id)',
+    UpdateExpression: 'SET expires = :expires',
+    ExpressionAttributeValues: {
+      ':expires': expect.any(Number)
+    }
+  })
 }
 
 describe('transaction service', () => {
@@ -45,7 +50,6 @@ describe('transaction service', () => {
   beforeEach(() => {
     mockProcessingException = new Error('Test error')
     jest.clearAllMocks()
-    AwsMock.__resetAll()
   })
 
   describe('processDlq', () => {
@@ -53,7 +57,7 @@ describe('transaction service', () => {
       mockProcessingException = null
       await processDlq({ id: 'test' })
       expect(createStagingExceptionFromError).not.toBeCalled()
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).not.toBeCalled()
+      expect(docClient.send).not.toBeCalled()
     })
 
     it('creates a staging exception if the retry attempt is not successful', async () => {
@@ -67,12 +71,12 @@ describe('transaction service', () => {
       retrieveStagedTransaction.mockRejectedValueOnce(testDynamoDbException)
       await processDlq({ id: 'test' })
       expect(createStagingExceptionFromError).toBeCalledWith('test', testDynamoDbException, null)
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).not.toHaveBeenCalled()
+      expect(docClient.send).not.toHaveBeenCalled()
     })
 
     it('logs an exception if unable to update the TTL on the transaction in DynamoDB', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('update')
+      docClient.send.mockRejectedValueOnce(new Error('DynamoDB error'))
       await processDlq({ id: 'test' })
       expect(createStagingExceptionFromError).toBeCalledWith('test', mockProcessingException, { testTransaction: true })
       expectDynamoDbTtlUpdate()
