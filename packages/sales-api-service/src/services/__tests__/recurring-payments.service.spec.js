@@ -291,7 +291,7 @@ describe('recurring payments service', () => {
   })
 
   describe('generateRecurringPaymentRecord', () => {
-    const createFinalisedSampleTransaction = (agreementId, permission, lastDigitsCardNumber) => ({
+    const createFinalisedSampleTransaction = (agreementId, permission, lastDigitsCardNumbers) => ({
       expires: 1732892402,
       cost: 35.8,
       isRecurringPaymentSupported: true,
@@ -315,7 +315,7 @@ describe('recurring payments service', () => {
       dataSource: 'Web Sales',
       transactionId: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
       status: { id: 'FINALISED' },
-      lastDigitsCardNumber
+      lastDigitsCardNumbers
     })
 
     it.each([
@@ -385,15 +385,15 @@ describe('recurring payments service', () => {
         '2026-03-20T00:00:00.000Z',
         '1199'
       ]
-    ])('creates record from transaction with %s', async (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumber) => {
+    ])('creates record from transaction with %s', async (_d, agreementId, permissionData, expectedNextDueDate, lastDigitsCardNumbers) => {
       const mockResponse = {
         ok: true,
         json: jest
           .fn()
-          .mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: lastDigitsCardNumber } } })
+          .mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: lastDigitsCardNumbers } } })
       }
       govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
-      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData, lastDigitsCardNumber)
+      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData, lastDigitsCardNumbers)
       const permission = createSamplePermission(permissionData)
 
       const rpRecord = await generateRecurringPaymentRecord(sampleTransaction, permission)
@@ -409,7 +409,7 @@ describe('recurring payments service', () => {
               endDate: permissionData.endDate,
               agreementId,
               status: 1,
-              last_digits_card_number: lastDigitsCardNumber
+              last_digits_card_number: lastDigitsCardNumbers
             })
           }),
           permissions: expect.arrayContaining([permission])

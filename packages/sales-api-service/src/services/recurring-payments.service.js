@@ -30,7 +30,7 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
 export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
   if (transactionRecord.agreementId) {
     const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.agreementId)
-    const lastDigitsCardNumber = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
+    const lastDigitsCardNumbers = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
     return {
       payment: {
@@ -42,7 +42,7 @@ export const generateRecurringPaymentRecord = async (transactionRecord, permissi
           endDate,
           agreementId: transactionRecord.agreementId,
           status: 1,
-          last_digits_card_number: lastDigitsCardNumber
+          last_digits_card_number: lastDigitsCardNumbers
         }
       },
       permissions: [permission]
@@ -69,7 +69,7 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = hash.digest('base64')
     recurringPayment.status = transactionRecord.payment.recurring.status
-    recurringPayment.lastDigitsCardNumber = transactionRecord.payment.recurring.last_digits_card_number
+    recurringPayment.lastDigitsCardNumbers = transactionRecord.payment.recurring.last_digits_card_number
     const [permission] = transactionRecord.permissions
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
