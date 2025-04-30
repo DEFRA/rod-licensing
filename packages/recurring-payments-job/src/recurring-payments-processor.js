@@ -49,32 +49,16 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
   }
 }
 
-// API ERRORS
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   console.log('Requesting payment:', preparedPayment)
-  try {
-    const payment = await sendPayment(preparedPayment)
-    payments.push({
-      agreementId,
-      paymentId: payment.payment_id,
-      created_date: payment.created_date,
-      transaction
-    })
-  } catch (error) {
-    const status = error.response?.status
-    // const body = error.response?.data || error.message
-
-    if (isClientError(status)) {
-      console.error(`Payment failed for agreement: ${agreementId}, error ${status}`)
-      return
-    }
-
-    if (isServerError(status)) {
-      console.error(`Payment API error for agreement ${agreementId}, error ${status}`)
-    }
-    throw error
-  }
+  const payment = await sendPayment(preparedPayment)
+  payments.push({
+    agreementId,
+    paymentId: payment.payment_id,
+    created_date: payment.created_date,
+    transaction
+  })
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
@@ -120,7 +104,6 @@ const preparePayment = (agreementId, transaction) => {
   return result
 }
 
-// API ERRORS
 const processRecurringPaymentStatus = async record => {
   const agreementId = record.entity.agreementId
   const paymentId = getPaymentId(agreementId)
