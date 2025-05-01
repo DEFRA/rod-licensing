@@ -93,18 +93,20 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments due to be cancelled found: ', [])
   })
 
-  it('console log displays "Recurring payment: referenceNumber will be cancelled" when env is true', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    const referenceNumber = 'reference'
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
-    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+  it.each([['reference'], ['another reference'], ['test reference']])(
+    'console log displays "Recurring payment: %s will be cancelled" when env is true',
+    async referenceNumber => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
+      const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
+      sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+      getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
-    await processRecurringPayments()
+      await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Recurring payment: ${referenceNumber} will be cancelled`)
-  })
+      expect(consoleLogSpy).toHaveBeenCalledWith(`Recurring payment: ${referenceNumber} will be cancelled`)
+    }
+  )
 
   it('console log displays "Recurring Payments found: " when env is true', async () => {
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
