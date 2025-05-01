@@ -106,8 +106,6 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith(`Recurring payment: ${referenceNumber} will be cancelled`)
   })
 
-  // `Recurring payment: ${record.expanded.activePermission.entity.referenceNumber} will be cancelled`
-
   it('console log displays "Recurring Payments found: " when env is true', async () => {
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
 
