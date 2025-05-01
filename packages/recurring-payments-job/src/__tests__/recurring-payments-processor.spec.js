@@ -1,12 +1,8 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
-import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
-  PAYMENT_JOURNAL_STATUS_CODES: {
-    Failed: 'test-fail'
-  },
   PAYMENT_STATUS: {
     Success: 'success',
     Failure: 'failure'
@@ -22,8 +18,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       id: 'test-transaction-id',
       cost: 30
     })),
-    processRPResult: jest.fn(),
-    updatePaymentJournal: jest.fn()
+    processRPResult: jest.fn()
   }
 }))
 
@@ -34,7 +29,6 @@ jest.mock('../services/govuk-pay-service.js', () => ({
 
 const PAYMENT_STATUS_DELAY = 60000
 const getPaymentStatusSuccess = () => ({ state: { status: 'success' } })
-const getPaymentStatusFailureNoRetry = () => ({ state: { status: 'failure', can_retry: false } })
 const getPaymentStatusFailure = () => ({ state: { status: 'failure' } })
 const getMockPaymentRequestResponse = () => [
   {
@@ -73,13 +67,46 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
   })
 
-  it('get recurring payments is called when env is true', async () => {
+  it('get recurring payments is called with today date when env is true', async () => {
+    const yesterdayDate = new Date()
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1)
+    const yesterday = yesterdayDate.toISOString().split('T')[0]
+
+    await processRecurringPayments()
+
+    expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(yesterday)
+  })
+
+  it('get recurring payments is called with yesterday date when env is true', async () => {
     const date = new Date().toISOString().split('T')[0]
 
     await processRecurringPayments()
 
     expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
+
+  it('console log displays "Recurring Payments due to be cancelled found: " when env is true', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments due to be cancelled found: ', [])
+  })
+
+  it('console log displays "Recurring payment: referenceNumber will be cancelled" when env is true', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    const referenceNumber = 'reference'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
+    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith(`Recurring payment: ${referenceNumber} will be cancelled`)
+  })
+
+  // `Recurring payment: ${record.expanded.activePermission.entity.referenceNumber} will be cancelled`
 
   it('console log displays "Recurring Payments found: " when env is true', async () => {
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
@@ -91,6 +118,7 @@ describe('recurring-payments-processor', () => {
 
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
     const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
@@ -102,6 +130,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a transaction with the correct data', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     const isLicenceForYou = Symbol('isLicenceForYou')
@@ -154,6 +183,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('strips the concession name returned by preparePermissionDataForRenewal before passing to createTransaction', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
@@ -191,6 +221,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('assigns the correct startDate when licenceStartTime is present', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
@@ -213,6 +244,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('assigns the correct startDate when licenceStartTime is not present', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
@@ -234,6 +266,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('raises an error if createTransaction fails', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const error = 'Wuh-oh!'
     salesApi.createTransaction.mockImplementationOnce(() => {
@@ -247,6 +280,7 @@ describe('recurring-payments-processor', () => {
     const agreementId = Symbol('agreementId')
     const transactionId = 'transactionId'
 
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
@@ -288,6 +322,7 @@ describe('recurring-payments-processor', () => {
         }
       }
     ]
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
     salesApi.createTransaction.mockResolvedValueOnce({
       id: 'payment-id-1'
@@ -316,6 +351,7 @@ describe('recurring-payments-processor', () => {
         }
       }
     ]
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
     salesApi.createTransaction.mockResolvedValueOnce({
       id: mockPaymentId
@@ -331,6 +367,7 @@ describe('recurring-payments-processor', () => {
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
     const referenceNumber = Symbol('reference')
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(referenceNumber)])
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
@@ -344,6 +381,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('should not call setTimeout when there are no recurring payments', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([])
 
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
@@ -357,6 +395,7 @@ describe('recurring-payments-processor', () => {
     const mockTransactionId = 'test-transaction-id'
     const mockPaymentId = 'test-payment-id'
     const mockPaymentCreatedDate = '2025-01-01T00:00:00.000Z'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockTransactionId, cost: 30 })
     sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1', created_date: mockPaymentCreatedDate })
@@ -369,68 +408,15 @@ describe('recurring-payments-processor', () => {
 
   it("doesn't call processRPResult if payment status is not successful", async () => {
     const mockPaymentId = 'test-payment-id'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId, cost: 30 })
     sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce({ state: { status: 'Failure' } })
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
 
     await processRecurringPayments()
 
     expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
-  })
-
-  it('console logs cancellation message when status is a failure and can retry is false', async () => {
-    process.env.RECURRING_PAYMENTS_RUN = '1'
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    const mockPaymentId = 'test-payment-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
-    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailureNoRetry())
-
-    await processRecurringPayments()
-
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment failed. Recurring payment for: ${mockPaymentId} set to be cancelled`)
-  })
-
-  it('calls updatePaymentJournal when status is a failure and can retry is false', async () => {
-    process.env.RECURRING_PAYMENTS_RUN = '1'
-    const transactionId = 'test-transaction-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
-    salesApi.createTransaction.mockResolvedValueOnce({ id: transactionId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: transactionId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailureNoRetry())
-
-    await processRecurringPayments()
-
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(transactionId, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-  })
-
-  it('console logs cancellation message when status is a failure and is second run of day', async () => {
-    process.env.RECURRING_PAYMENTS_RUN = '2'
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    const mockPaymentId = 'test-payment-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
-    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
-
-    await processRecurringPayments()
-
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment failed. Recurring payment for: ${mockPaymentId} set to be cancelled`)
-  })
-
-  it('calls updatePaymentJournal when status is a failure and is second run of day', async () => {
-    process.env.RECURRING_PAYMENTS_RUN = '2'
-    const transactionId = 'test-transaction-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
-    salesApi.createTransaction.mockResolvedValueOnce({ id: transactionId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: transactionId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
-
-    await processRecurringPayments()
-
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(transactionId, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
@@ -439,7 +425,7 @@ describe('recurring-payments-processor', () => {
       for (let i = 0; i < count; i++) {
         references.push(Symbol('reference' + i))
       }
-
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([])
       const mockGetDueRecurringPayments = []
       references.forEach(reference => {
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment(reference))
@@ -461,6 +447,7 @@ describe('recurring-payments-processor', () => {
     })
 
     it('creates a transaction for each one', async () => {
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([])
       const mockGetDueRecurringPayments = []
       for (let i = 0; i < count; i++) {
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i))
@@ -496,6 +483,7 @@ describe('recurring-payments-processor', () => {
     })
 
     it('sends a payment for each one', async () => {
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([])
       const mockGetDueRecurringPayments = []
       const agreementIds = []
       for (let i = 0; i < count; i++) {
@@ -539,6 +527,7 @@ describe('recurring-payments-processor', () => {
     })
 
     it('gets the payment status for each one', async () => {
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([])
       const mockGetDueRecurringPayments = []
       const agreementIds = []
       for (let i = 0; i < count; i++) {
