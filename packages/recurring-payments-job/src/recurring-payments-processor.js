@@ -32,11 +32,6 @@ const cancelRecurringPayments = async () => {
   for (const record of response) {
     console.log(`Recurring payment: ${record.expanded.activePermission.entity.referenceNumber} will be cancelled`)
   }
-  // await Promise.all(
-  //   response.map(record =>
-  //     salesApi.cancelRecurringPayment(record.cancelledDate, record.cancelledReason, record)
-  //   )
-  // )
 }
 
 const processRecurringPayment = async record => {
