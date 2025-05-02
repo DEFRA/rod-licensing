@@ -1,4 +1,4 @@
-import { findDueRecurringPayments } from '../recurring-payments.queries.js'
+import { findDueRecurringPayments, findRecurringPaymentsByAgreementId } from '../recurring-payments.queries.js'
 
 describe('Recurring Payment Queries', () => {
   describe('findDueRecurringPayments', () => {
@@ -26,6 +26,34 @@ describe('Recurring Payment Queries', () => {
           'defra_lastdigitscardnumbers'
         ],
         expand: [{ property: 'defra_Contact' }, { property: 'defra_ActivePermission' }]
+      })
+    })
+  })
+
+  describe('findRecurringPaymentsByAgreementId', () => {
+    it('builds a query to retrieve active recurring payments', () => {
+      const agreementId = 'abc123'
+
+      const query = findRecurringPaymentsByAgreementId(agreementId)
+
+      expect(query.toRetrieveRequest()).toEqual({
+        collection: 'defra_recurringpayments',
+        filter: `defra_agreementId eq '${agreementId}'`,
+        select: [
+          'defra_recurringpaymentid',
+          'defra_name',
+          'statecode',
+          'defra_nextduedate',
+          'defra_cancelleddate',
+          'defra_cancelledreason',
+          'defra_enddate',
+          'defra_agreementid',
+          '_defra_activepermission_value',
+          '_defra_contact_value',
+          'defra_publicid',
+          '_defra_nextrecurringpayment_value',
+          'defra_lastdigitscardnumbers'
+        ]
       })
     })
   })

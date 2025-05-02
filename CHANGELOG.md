@@ -1,4 +1,32 @@
 
+## v1.61.0-rc.2 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2149](https://github.com/DEFRA/rod-licensing/pull/2149) Fix field names in test ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.1 (2025-04-28)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2139](https://github.com/DEFRA/rod-licensing/pull/2139) Card digits dynamics lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.0 (2025-04-24)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2144](https://github.com/DEFRA/rod-licensing/pull/2144) Add validation schemas to recurring payment routes ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
 ## v1.60.0-rc.4 (2025-04-01)
 
 #### :rocket: Enhancement

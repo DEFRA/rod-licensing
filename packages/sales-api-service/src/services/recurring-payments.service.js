@@ -1,4 +1,4 @@
-import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, RecurringPayment } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
@@ -141,4 +141,13 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
     .promise()
 
   return { permission }
+}
+
+export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
+  const matchingRecords = await executeQuery(findRecurringPaymentsByAgreementId(agreementId))
+  if (matchingRecords?.length) {
+    return [...matchingRecords].sort((a, b) => a.endDate.localeCompare(b.endDate)).pop()
+  } else {
+    return false
+  }
 }
