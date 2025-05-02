@@ -1,9 +1,10 @@
-import { findDueRecurringPayments, Permission } from '@defra-fish/dynamics-lib'
+import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, Permission } from '@defra-fish/dynamics-lib'
 import {
   getRecurringPayments,
   processRecurringPayment,
   generateRecurringPaymentRecord,
-  processRPResult
+  processRPResult,
+  findNewestExistingRecurringPaymentInCrm
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
@@ -20,7 +21,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   executeQuery: jest.fn(),
   findById: jest.fn(),
-  findDueRecurringPayments: jest.fn()
+  findDueRecurringPayments: jest.fn(),
+  findRecurringPaymentsByAgreementId: jest.fn(() => ['foo'])
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => {
@@ -77,7 +79,7 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
 
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
-const getMockRecurringPayment = () => ({
+const getMockRecurringPayment = (overrides = {}) => ({
   name: 'Test Name',
   nextDueDate: '2019-12-14T00:00:00Z',
   cancelledDate: null,
@@ -93,7 +95,8 @@ const getMockRecurringPayment = () => ({
     activePermission: {
       entity: getMockPermission()
     }
-  }
+  },
+  ...overrides
 })
 
 const getMockRPContactPermission = (contact, permission) => ({
@@ -617,6 +620,36 @@ describe('recurring payments service', () => {
         MessageDeduplicationId: transactionId,
         MessageBody: JSON.stringify({ id: transactionId })
       })
+    })
+  })
+
+  describe('findNewestExistingRecurringPaymentInCrm', () => {
+    it('should call executeQuery with findRecurringPaymentsByAgreementId and the provided agreementId', async () => {
+      const agreementId = 'abc123'
+      await findNewestExistingRecurringPaymentInCrm(agreementId)
+      expect(executeQuery).toHaveBeenCalledWith(findRecurringPaymentsByAgreementId(agreementId))
+    })
+
+    it('should return a RecurringPayment record when there is one match', async () => {
+      const onlyRecord = getMockRecurringPayment()
+      dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
+      const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
+      expect(returnedRecord).toBe(onlyRecord)
+    })
+
+    it('should return the RecurringPayment record with the latest endDate when there are multiple matches', async () => {
+      const oldestRecord = getMockRecurringPayment({ endDate: '2021-12-15T00:00:00Z' })
+      const newestRecord = getMockRecurringPayment({ endDate: '2023-12-15T00:00:00Z' })
+      const middlestRecord = getMockRecurringPayment({ endDate: '2022-12-15T00:00:00Z' })
+      dynamicsLib.executeQuery.mockReturnValueOnce([oldestRecord, newestRecord, middlestRecord])
+      const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
+      expect(returnedRecord).toBe(newestRecord)
+    })
+
+    it('should return false when there are no matches', async () => {
+      dynamicsLib.executeQuery.mockReturnValueOnce([])
+      const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
+      expect(returnedRecord).toBe(false)
     })
   })
 })
