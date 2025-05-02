@@ -104,10 +104,6 @@
     ],
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
-    "silent": false,
-    "verbose": true
-  },
-  "dependencies": {
-    "http-response-status-code": "^1.7.5"
+    "silent": true
   }
 }
