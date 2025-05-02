@@ -25,7 +25,7 @@ export const findDueRecurringPayments = date => {
  * @returns {PredefinedQuery}
  */
 export const findRecurringPaymentsByAgreementId = agreementId => {
-  const filter = `defra_agreementId eq '${agreementId}'`
+  const filter = `defra_agreementid eq '${agreementId}'`
 
   return new PredefinedQuery({
     root: RecurringPayment,
