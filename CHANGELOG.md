@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.2 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2149](https://github.com/DEFRA/rod-licensing/pull/2149) Fix field names in test ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.61.0-rc.1 (2025-04-28)
 
 #### :rocket: Enhancement
