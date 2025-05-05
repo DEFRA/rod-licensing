@@ -123,12 +123,11 @@ const processRecurringPaymentStatus = async record => {
 
     if (isClientError(status)) {
       console.error(`Failed to fetch status for payment ${paymentId}, error ${status}`)
-    }
-
-    if (isServerError(status)) {
+    } else if (isServerError(status)) {
       console.error(`Payment status API error for ${paymentId}, error ${status}`)
+    } else {
+      console.error(`Unexpected error fetching payment status for ${paymentId}`, error)
     }
-    throw error
   }
 }
 
