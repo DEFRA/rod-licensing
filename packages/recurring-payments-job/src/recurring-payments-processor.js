@@ -128,6 +128,7 @@ const processRecurringPaymentStatus = async record => {
     } else {
       console.error(`Unexpected error fetching payment status for ${paymentId}`, error)
     }
+    throw error
   }
 }
 
