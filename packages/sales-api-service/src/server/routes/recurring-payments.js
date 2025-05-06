@@ -1,4 +1,8 @@
-import { dueRecurringPaymentsResponseSchema } from '../../schema/recurring-payments.schema.js'
+import {
+  dueRecurringPaymentsRequestParamsSchema,
+  dueRecurringPaymentsResponseSchema,
+  processRPResultRequestParamsSchema
+} from '../../schema/recurring-payments.schema.js'
 import { getRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
 
 export default [
@@ -13,6 +17,9 @@ export default [
       },
       description: 'Retrieve recurring payments due for the specified date',
       tags: ['api', 'recurring-payments'],
+      validate: {
+        params: dueRecurringPaymentsRequestParamsSchema
+      },
       plugins: {
         'hapi-swagger': {
           responses: {
@@ -34,6 +41,9 @@ export default [
       },
       description: 'Generate a permission from a recurring payment record',
       tags: ['api', 'recurring-payments'],
+      validate: {
+        params: processRPResultRequestParamsSchema
+      },
       plugins: {
         'hapi-swagger': {
           responses: {
