@@ -10,11 +10,25 @@ import { PredefinedQuery } from './predefined-query.js'
 export const findDueRecurringPayments = date => {
   const { contact, activePermission } = RecurringPayment.definition.relationships
 
-  const filter = `Microsoft.Dynamics.CRM.On(PropertyName='defra_nextduedate', PropertyValue='${date}')`
+  const filter = `defra_nextduedate eq '${date}' and defra_cancelleddate eq null`
 
   return new PredefinedQuery({
     root: RecurringPayment,
     filter: filter,
     expand: [contact, activePermission]
+  })
+}
+/**
+ * Builds a query to retrieve recurring payments by agreementId
+ *
+ * @param agreementId the agreementId assigned by GOV.UK Pay
+ * @returns {PredefinedQuery}
+ */
+export const findRecurringPaymentsByAgreementId = agreementId => {
+  const filter = `defra_agreementid eq '${agreementId}'`
+
+  return new PredefinedQuery({
+    root: RecurringPayment,
+    filter: filter
   })
 }

@@ -1,4 +1,87 @@
 
+## v1.61.0-rc.3 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2150](https://github.com/DEFRA/rod-licensing/pull/2150) Fix capitalisation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.2 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2149](https://github.com/DEFRA/rod-licensing/pull/2149) Fix field names in test ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.1 (2025-04-28)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2139](https://github.com/DEFRA/rod-licensing/pull/2139) Card digits dynamics lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.0 (2025-04-24)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2144](https://github.com/DEFRA/rod-licensing/pull/2144) Add validation schemas to recurring payment routes ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.60.0-rc.4 (2025-04-01)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`, `sales-api-service`
+  * [#2119](https://github.com/DEFRA/rod-licensing/pull/2119) RP Job save permission ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.60.0-rc.3 (2025-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2137](https://github.com/DEFRA/rod-licensing/pull/2137) Auto amend newsletter ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.60.0-rc.2 (2025-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2136](https://github.com/DEFRA/rod-licensing/pull/2136) Ability to turn off rcp ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.60.0-rc.1 (2025-03-20)
+
+#### :rocket: Enhancement
+* `connectors-lib`
+  * [#2121](https://github.com/DEFRA/rod-licensing/pull/2121) HTTP Request Batcher ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.60.0-rc.0 (2025-03-20)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2132](https://github.com/DEFRA/rod-licensing/pull/2132) RCP cancellation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 ## v1.59.0-rc.9 (2025-02-18)
 
 #### :bug: Bug Fix
