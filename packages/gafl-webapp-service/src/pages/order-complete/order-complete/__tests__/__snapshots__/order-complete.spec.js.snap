@@ -2,8 +2,7 @@
 
 exports[`The order completion handler 8 day licence sets as non_postal 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": "fishing self digital confirmation licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -16,8 +15,7 @@ Object {
 
 exports[`The order completion handler 12 month digital licence for someone else 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": "fishing bobo digital licence details",
   "licenceDetailsParagraphTwo": "paragraph bobo licence details",
   "licenceTitle": "title bobo licence details",
@@ -30,8 +28,7 @@ Object {
 
 exports[`The order completion handler 12 month digital licence for you 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": "fishing self digital licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -44,8 +41,7 @@ Object {
 
 exports[`The order completion handler 12 month postal licence for someone else with digital confirmation 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": "fishing bobo digital confirmation licence details",
   "licenceDetailsParagraphTwo": "paragraph bobo licence details",
   "licenceTitle": "title bobo licence details",
@@ -58,8 +54,7 @@ Object {
 
 exports[`The order completion handler 12 month postal licence for someone else with none digital confirmation 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": undefined,
   "licenceDetailsParagraphTwo": "paragraph bobo licence details",
   "licenceTitle": "title bobo licence details",
@@ -72,8 +67,7 @@ Object {
 
 exports[`The order completion handler 12 month postal licence for you with digital confirmation 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": "fishing self digital confirmation licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -86,8 +80,7 @@ Object {
 
 exports[`The order completion handler 12 month postal licence for you with none digital confirmation 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": undefined,
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -100,8 +93,7 @@ Object {
 
 exports[`The order completion handler 12 month recurring payment with digital reminder 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments digital one",
-  "futurePaymentsParagraphTwo": "future payments digital two",
+  "futurePaymentsParagraph": "future payments digital",
   "licenceDetailsDigitalParagraph": "fishing self digital licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -114,8 +106,7 @@ Object {
 
 exports[`The order completion handler 12 month recurring payment with postal reminder 1`] = `
 Object {
-  "futurePaymentsParagraphOne": "future payments postal one",
-  "futurePaymentsParagraphTwo": "future payments postal two",
+  "futurePaymentsParagraph": "future payments postal",
   "licenceDetailsDigitalParagraph": "fishing self digital licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",

@@ -99,10 +99,8 @@ const getMessages = () => ({
   order_complete_when_fishing_bobo_postal_digital: 'fishing bobo postal digital when fishing',
   order_complete_when_fishing_self_non_postal_digital: 'fishing self non postal digital when fishing',
   order_complete_when_fishing_bobo_non_postal_digital: 'fishing bobo non postal digital when fishing',
-  order_complete_future_payments_digital_paragraph_1: 'future payments digital one',
-  order_complete_future_payments_digital_paragraph_2: 'future payments digital two',
-  order_complete_future_payments_postal_paragraph_1: 'future payments postal one',
-  order_complete_future_payments_postal_paragraph_2: 'future payments postal two'
+  order_complete_future_payments_digital_paragraph: 'future payments digital',
+  order_complete_future_payments_postal_paragraph: 'future payments postal'
 })
 
 const getSampleRequest = ({
