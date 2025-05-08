@@ -8,7 +8,7 @@ const { s3 } = AWS()
 
 const listObjectsV2 = async function (params) {
   try {
-    return s3.listObjectsV2(params).promise()
+    return await s3.listObjectsV2(params)
   } catch (e) {
     console.error(e)
     throw e

@@ -1,7 +1,14 @@
-import AwsMock from 'aws-sdk'
 import config from '../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
-const { secretsManager } = AWS()
+const { secretsManager } = AWS.mock.results[0].value
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    secretsManager: {
+      getSecretValue: jest.fn(() => ({ SecretString: 'test-ssh-key' }))
+    }
+  }))
+}))
 
 const setEnvVars = () => {
   for (const envVar in envVars) {
@@ -24,9 +31,6 @@ const envVars = Object.freeze({
 
 describe('config', () => {
   beforeAll(async () => {
-    AwsMock.SecretsManager.__setResponse('getSecretValue', {
-      SecretString: 'test-ssh-key'
-    })
     setEnvVars()
     await config.initialise()
   })
@@ -48,7 +52,7 @@ describe('config', () => {
 
 describe('pgp config', () => {
   const init = async (samplePublicKey = 'sample-pgp-key') => {
-    AwsMock.SecretsManager.__setNextResponses('getSecretValue', { SecretString: samplePublicKey })
+    secretsManager.getSecretValue.mockResolvedValueOnce({ SecretString: samplePublicKey })
     await config.initialise()
   }
   beforeAll(setEnvVars)
