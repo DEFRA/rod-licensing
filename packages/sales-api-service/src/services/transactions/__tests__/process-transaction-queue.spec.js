@@ -438,7 +438,7 @@ describe('transaction service', () => {
         const mockRecurringPayment = { agreementId }
         const finalisedTransaction = mockFinalisedTransactionRecord()
         processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
 
         await processQueue({ id: finalisedTransaction.id })
 
@@ -451,7 +451,7 @@ describe('transaction service', () => {
         const mockExistingRecurringPayment = { bindToEntity: jest.fn() }
         const finalisedTransaction = mockFinalisedTransactionRecord()
         processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
         findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(mockExistingRecurringPayment)
 
         await processQueue({ id: finalisedTransaction.id })
@@ -467,7 +467,7 @@ describe('transaction service', () => {
         const mockRecurringPayment = { agreementId }
         const finalisedTransaction = mockFinalisedTransactionRecord()
         processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
         findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(false)
 
         await processQueue({ id: finalisedTransaction.id })
