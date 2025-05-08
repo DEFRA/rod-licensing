@@ -34,7 +34,7 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
   const transactionData = await processPermissionData(referenceNumber, agreementId)
-  debug('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Creating new transaction based on: ', referenceNumber, 'with agreementId: ', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
     debug('New transaction created:', response)
@@ -110,6 +110,7 @@ const processRecurringPaymentStatus = async record => {
   if (status === PAYMENT_STATUS_SUCCESS) {
     const payment = payments.find(p => p.paymentId === paymentId)
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
+    debug(`Processed Recurring Payment for ${payment.transaction.id}`)
   }
 }
 

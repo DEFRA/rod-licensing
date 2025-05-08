@@ -314,6 +314,36 @@ describe('recurring-payments-processor', () => {
     expect(debugMock).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus.state.status}`)
   })
 
+  it('debug should inform that the recurring payment has been processed', async () => {
+    const mockTransactionId = 'test-transaction-id'
+    salesApi.createTransaction.mockReturnValueOnce({
+      cost: 50
+    })
+    const mockResponse = [
+      {
+        entity: { agreementId: 'agreement-1' },
+        expanded: {
+          activePermission: {
+            entity: {
+              referenceNumber: 'ref-1'
+            }
+          }
+        }
+      }
+    ]
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
+    salesApi.createTransaction.mockResolvedValueOnce({
+      id: mockTransactionId
+    })
+    const mockPaymentResponse = { payment_id: 'payment-id', agreementId: 'agreement-1' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+
+    await processRecurringPayments()
+
+    expect(debugMock).toHaveBeenCalledWith(`Processed Recurring Payment for ${mockTransactionId}`)
+  })
+
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
     const referenceNumber = Symbol('reference')
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(referenceNumber)])
@@ -481,7 +511,7 @@ describe('recurring-payments-processor', () => {
 
       const permits = []
       for (let i = 0; i < count; i++) {
-        permits.push(Symbol(`permit${i}`))
+        permits.push(`permit${i}`)
       }
 
       permits.forEach((permit, i) => {
