@@ -404,7 +404,9 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Payment failed. Recurring payment agreement for: test-payment-id set to be cancelled')
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      'Payment failed. Recurring payment agreement for: test-payment-id set to be cancelled. Updating payment journal.'
+    )
   })
 
   it('updatePaymentJournal is called with transaction id and failed status code when when canRetry is false and payment is a failure', async () => {
