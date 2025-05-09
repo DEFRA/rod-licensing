@@ -22,6 +22,15 @@ jest.mock('../services/govuk-pay-service.js', () => ({
   getPaymentStatus: jest.fn()
 }))
 
+jest.mock('http-response-status-code', () => {
+  const actual = jest.requireActual('http-response-status-code')
+  return {
+    ...actual,
+    isClientError: jest.fn(actual.isClientError),
+    isServerError: jest.fn(actual.isServerError)
+  }
+})
+
 const PAYMENT_STATUS_DELAY = 60000
 const getPaymentStatusSuccess = () => ({ state: { status: 'success' } })
 const getMockPaymentRequestResponse = () => [
@@ -389,6 +398,30 @@ describe('recurring-payments-processor', () => {
 
     await expect(processRecurringPayments()).rejects.toBe(serverError)
     expect(consoleErrorSpy).toHaveBeenCalledWith(`Payment status API error for ${mockPaymentId}, error 500`)
+  })
+
+  it('logs the generic unexpected-error message and still rejects', async () => {
+    const { isClientError, isServerError } = require('http-response-status-code')
+    isClientError.mockReturnValue(false)
+    isServerError.mockReturnValue(false)
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    const mockPaymentId = 'test-payment-id'
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
+    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
+    sendPayment.mockResolvedValueOnce({
+      payment_id: mockPaymentId,
+      agreementId: 'agreement-1',
+      created_date: '2025-04-30T12:00:00.000Z'
+    })
+
+    const networkError = new Error('network meltdown')
+    getPaymentStatus.mockRejectedValueOnce(networkError)
+
+    await expect(processRecurringPayments()).rejects.toBe(networkError)
+
+    expect(consoleErrorSpy.mock.calls.some(call => call[0] === `Unexpected error fetching payment status for ${mockPaymentId}.`)).toBe(true)
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
