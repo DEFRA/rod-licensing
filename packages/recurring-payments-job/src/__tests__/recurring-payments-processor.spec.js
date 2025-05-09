@@ -338,22 +338,16 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: success`)
   })
 
-  it('should log a client error', async () => {
+  it.each([
+    [400, 'Failed to fetch status for payment test-payment-id, error 400'],
+    [500, 'Payment status API error for test-payment-id, error 500']
+  ])('logs the correct message when getPaymentStatus rejects with HTTP %i', async (statusCode, expectedMessage) => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
     const mockPaymentId = 'test-payment-id'
     const mockResponse = [
-      {
-        entity: { agreementId: 'agreement-1' },
-        expanded: {
-          activePermission: {
-            entity: {
-              referenceNumber: 'ref-1'
-            }
-          }
-        }
-      }
+      { entity: { agreementId: 'agreement-1' }, expanded: { activePermission: { entity: { referenceNumber: 'ref-1' } } } }
     ]
-
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
     sendPayment.mockResolvedValueOnce({
@@ -362,42 +356,12 @@ describe('recurring-payments-processor', () => {
       created_date: '2025-04-30T12:00:00Z'
     })
 
-    const clientError = { response: { status: 400, data: 'Bad Request' } }
-    getPaymentStatus.mockRejectedValueOnce(clientError)
+    const apiError = { response: { status: statusCode, data: 'boom' } }
+    getPaymentStatus.mockRejectedValueOnce(apiError)
 
-    await expect(processRecurringPayments()).rejects.toBe(clientError)
-    expect(consoleErrorSpy).toHaveBeenCalledWith(`Failed to fetch status for payment ${mockPaymentId}, error 400`)
-  })
+    await expect(processRecurringPayments()).rejects.toBe(apiError)
 
-  it('should log a server error', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-    const mockPaymentId = 'test-payment-id'
-    const mockResponse = [
-      {
-        entity: { agreementId: 'agreement-1' },
-        expanded: {
-          activePermission: {
-            entity: {
-              referenceNumber: 'ref-1'
-            }
-          }
-        }
-      }
-    ]
-
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
-    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
-    sendPayment.mockResolvedValueOnce({
-      payment_id: mockPaymentId,
-      agreementId: 'agreement-1',
-      created_date: '2025-04-30T12:00:00Z'
-    })
-
-    const serverError = { response: { status: 500, data: 'Internal Server Error' } }
-    getPaymentStatus.mockRejectedValueOnce(serverError)
-
-    await expect(processRecurringPayments()).rejects.toBe(serverError)
-    expect(consoleErrorSpy).toHaveBeenCalledWith(`Payment status API error for ${mockPaymentId}, error 500`)
+    expect(consoleErrorSpy.mock.calls.some(call => call[0] === expectedMessage)).toBe(true)
   })
 
   it('logs the generic unexpected-error message and still rejects', async () => {
