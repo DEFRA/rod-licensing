@@ -77,7 +77,7 @@ describe('recurring-payments-processor', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
   })
 
-  it('get recurring payments is called with today date when env is true', async () => {
+  it('get recurring payments is called when env is true', async () => {
     const date = new Date().toISOString().split('T')[0]
 
     await processRecurringPayments()
