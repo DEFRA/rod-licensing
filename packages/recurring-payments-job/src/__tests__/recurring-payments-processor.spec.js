@@ -22,6 +22,15 @@ jest.mock('../services/govuk-pay-service.js', () => ({
   getPaymentStatus: jest.fn()
 }))
 
+jest.mock('http-response-status-code', () => {
+  const actual = jest.requireActual('http-response-status-code')
+  return {
+    ...actual,
+    isClientError: jest.fn(actual.isClientError),
+    isServerError: jest.fn(actual.isServerError)
+  }
+})
+
 const PAYMENT_STATUS_DELAY = 60000
 const getPaymentStatusSuccess = () => ({ state: { status: 'success' } })
 const getMockPaymentRequestResponse = () => [
@@ -75,6 +84,18 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', [])
+  })
+
+  it('console log displays "Run aborted. Error fetching due recurring payments:" when an error occurs', async () => {
+    const error = new Error('Test error')
+    salesApi.getDueRecurringPayments.mockImplementationOnce(() => {
+      throw error
+    })
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    await expect(processRecurringPayments()).rejects.toThrowError(error)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Run aborted. Error fetching due recurring payments:', error)
   })
 
   it('prepares the data for found recurring payments', async () => {
@@ -315,6 +336,56 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: success`)
+  })
+
+  it.each([
+    [400, 'Failed to fetch status for payment test-payment-id, error 400'],
+    [500, 'Payment status API error for test-payment-id, error 500']
+  ])('logs the correct message when getPaymentStatus rejects with HTTP %i', async (statusCode, expectedMessage) => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    const mockPaymentId = 'test-payment-id'
+    const mockResponse = [
+      { entity: { agreementId: 'agreement-1' }, expanded: { activePermission: { entity: { referenceNumber: 'ref-1' } } } }
+    ]
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
+    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
+    sendPayment.mockResolvedValueOnce({
+      payment_id: mockPaymentId,
+      agreementId: 'agreement-1',
+      created_date: '2025-04-30T12:00:00Z'
+    })
+
+    const apiError = { response: { status: statusCode, data: 'boom' } }
+    getPaymentStatus.mockRejectedValueOnce(apiError)
+
+    await expect(processRecurringPayments()).rejects.toBe(apiError)
+
+    expect(consoleErrorSpy.mock.calls.some(call => call[0] === expectedMessage)).toBe(true)
+  })
+
+  it('logs the generic unexpected-error message and still rejects', async () => {
+    const { isClientError, isServerError } = require('http-response-status-code')
+    isClientError.mockReturnValue(false)
+    isServerError.mockReturnValue(false)
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    const mockPaymentId = 'test-payment-id'
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
+    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
+    sendPayment.mockResolvedValueOnce({
+      payment_id: mockPaymentId,
+      agreementId: 'agreement-1',
+      created_date: '2025-04-30T12:00:00.000Z'
+    })
+
+    const networkError = new Error('network meltdown')
+    getPaymentStatus.mockRejectedValueOnce(networkError)
+
+    await expect(processRecurringPayments()).rejects.toBe(networkError)
+
+    expect(consoleErrorSpy.mock.calls.some(call => call[0] === `Unexpected error fetching payment status for ${mockPaymentId}.`)).toBe(true)
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
