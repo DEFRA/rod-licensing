@@ -338,7 +338,6 @@ describe('recurring-payments-processor', () => {
   })
 
   it('should not call setTimeout when there are no recurring payments', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([])
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([])
 
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
