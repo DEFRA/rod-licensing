@@ -395,19 +395,22 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
   })
 
-  it('console log displays "Payment failed. Recurring payment agreement for: payment id set to be cancelled" when canRetry is false and payment is a failure', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
-    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailureNoRetry())
+  it.each([['agreement-id'], ['test-agreement-id'], ['another-agreement-id']])(
+    'console log displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when canRetry is false and payment is a failure',
+    async agreementId => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('reference', agreementId)])
+      const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
+      sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+      getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailureNoRetry())
 
-    await processRecurringPayments()
+      await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      'Payment failed. Recurring payment agreement for: test-payment-id set to be cancelled. Updating payment journal.'
-    )
-  })
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
+      )
+    }
+  )
 
   it('updatePaymentJournal is called with transaction id and failed status code when when canRetry is false and payment is a failure', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
