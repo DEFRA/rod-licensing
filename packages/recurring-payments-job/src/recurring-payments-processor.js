@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { PAYMENT_STATUS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 
@@ -110,7 +110,7 @@ const processRecurringPaymentStatus = async record => {
   }
   if (status === PAYMENT_STATUS.Failure && canRetry === false) {
     console.log(`Payment failed. Recurring payment agreement for: ${paymentId} set to be cancelled`)
-    // payment failure handling
+    await salesApi.updatePaymentJournal(payment.transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
   }
 }
 

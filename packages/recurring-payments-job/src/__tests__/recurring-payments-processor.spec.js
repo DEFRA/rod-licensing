@@ -1,4 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
 
@@ -6,6 +7,13 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   PAYMENT_STATUS: {
     Success: 'success',
     Failure: 'failed'
+  },
+  PAYMENT_JOURNAL_STATUS_CODES: {
+    InProgress: 'In Progress',
+    Cancelled: 'Cancelled',
+    Failed: 'Failed',
+    Expired: 'Expired',
+    Completed: 'Completed'
   }
 }))
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -18,7 +26,8 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       id: 'test-transaction-id',
       cost: 30
     })),
-    processRPResult: jest.fn()
+    processRPResult: jest.fn(),
+    updatePaymentJournal: jest.fn()
   }
 }))
 
@@ -396,6 +405,22 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Payment failed. Recurring payment agreement for: test-payment-id set to be cancelled')
+  })
+
+  it('updatePaymentJournal is called with transaction id and failed status code when when canRetry is false and payment is a failure', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const transactionId = 'test-transaction-id'
+    salesApi.createTransaction.mockReturnValueOnce({
+      cost: 50,
+      id: transactionId
+    })
+    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailureNoRetry())
+
+    await processRecurringPayments()
+
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(transactionId, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
   })
 
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
