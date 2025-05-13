@@ -17,8 +17,7 @@ const concat = require('gulp-concat')
 const paths = {
   assets: path.join('..', 'assets/'),
   public: path.join('..', 'public/'),
-  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'dist', 'govuk/'),
-  flatpickr: path.join('..', 'node_modules/flatpickr/dist/')
+  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'dist', 'govuk/')
 }
 
 Object.assign(paths, {
