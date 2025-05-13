@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.4 (2025-05-13)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2135](https://github.com/DEFRA/rod-licensing/pull/2135) Recurring payments logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.61.0-rc.3 (2025-05-02)
 
 #### :bug: Bug Fix
