@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.5 (2025-05-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2151](https://github.com/DEFRA/rod-licensing/pull/2151) RCP confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.61.0-rc.4 (2025-05-13)
 
 #### :rocket: Enhancement
