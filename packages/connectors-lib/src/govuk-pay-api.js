@@ -19,14 +19,14 @@ export const createRecurringPaymentAgreement = async preparedPayment => {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-    
+
     const response = await fetch(process.env.GOV_PAY_RCP_API_URL, {
       headers: headers(true),
       method: 'post',
       body: JSON.stringify(preparedPayment),
       signal: controller.signal
     })
-    
+
     clearTimeout(timeoutId)
     return response
   } catch (err) {
@@ -47,14 +47,14 @@ export const createPayment = async (preparedPayment, recurring = false) => {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-    
+
     const response = await fetch(process.env.GOV_PAY_API_URL, {
       headers: headers(recurring),
       method: 'post',
       body: JSON.stringify(preparedPayment),
       signal: controller.signal
     })
-    
+
     clearTimeout(timeoutId)
     return response
   } catch (err) {
@@ -72,13 +72,13 @@ export const fetchPaymentStatus = async (paymentId, recurring = false) => {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-    
+
     const response = await fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
       headers: headers(recurring),
       method: 'get',
       signal: controller.signal
     })
-    
+
     clearTimeout(timeoutId)
     return response
   } catch (err) {
@@ -96,13 +96,13 @@ export const fetchPaymentEvents = async (paymentId, recurring = false) => {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-    
+
     const response = await fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
       headers: headers(recurring),
       method: 'get',
       signal: controller.signal
     })
-    
+
     clearTimeout(timeoutId)
     return response
   } catch (err) {
