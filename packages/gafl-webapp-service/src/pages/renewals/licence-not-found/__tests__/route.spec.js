@@ -1,9 +1,4 @@
-import {
-  IDENTIFY,
-  AUTHENTICATE,
-  RENEWAL_PUBLIC,
-  LICENCE_NOT_FOUND
-} from '../../../../uri.js'
+import { IDENTIFY, AUTHENTICATE, RENEWAL_PUBLIC, LICENCE_NOT_FOUND } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
 import { salesApi } from '@defra-fish/connectors-lib'
