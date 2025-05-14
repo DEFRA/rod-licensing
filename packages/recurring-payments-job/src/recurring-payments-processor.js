@@ -11,17 +11,17 @@ const PAYMENT_STATUS_SUCCESS = 'success'
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
-    debug('Recurring Payments job enabled')
+    console.log('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
     const response = await salesApi.getDueRecurringPayments(date)
-    debug('Recurring Payments found: ', response)
+    console.log('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
     if (response.length > 0) {
       await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
     }
   } else {
-    debug('Recurring Payments job disabled')
+    console.log('Recurring Payments job disabled')
   }
 }
 
@@ -110,7 +110,7 @@ const processRecurringPaymentStatus = async record => {
   if (status === PAYMENT_STATUS_SUCCESS) {
     const payment = payments.find(p => p.paymentId === paymentId)
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
-    debug(`Processed Recurring Payment for ${payment.transaction.id}`)
+    console.log(`Processed Recurring Payment for ${payment.transaction.id}`)
   }
 }
 
