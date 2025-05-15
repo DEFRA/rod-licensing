@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.6 (2025-05-15)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2152](https://github.com/DEFRA/rod-licensing/pull/2152) Remove date picker from start kind screen ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.61.0-rc.5 (2025-05-14)
 
 #### :rocket: Enhancement
