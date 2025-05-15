@@ -308,3 +308,15 @@ export const preparePermissionDataForRenewal = async referenceNumber =>
 export const processRPResult = async (transactionId, paymentId, createdDate) => {
   return exec2xxOrThrow(call(new URL(`/processRPResult/${transactionId}/${paymentId}/${createdDate}`, urlBase), 'get'))
 }
+
+/**
+ * Link an old RecurringPayment to its replacement
+ *
+ * @param existingRecurringPaymentId
+ * @param agreementId
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
+  return exec2xxOrThrow(call(new URL(`/linkRecurringPayments/${existingRecurringPaymentId}/${agreementId}`, urlBase), 'get'))
+}
