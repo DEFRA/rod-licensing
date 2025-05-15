@@ -6,6 +6,8 @@ import {
 } from '../../schema/recurring-payments.schema.js'
 import { getRecurringPayments, linkRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
 
+const SWAGGER_TAGS = ['api', 'recurring-payments']
+
 export default [
   {
     method: 'GET',
@@ -17,7 +19,7 @@ export default [
         return h.response(result)
       },
       description: 'Retrieve recurring payments due for the specified date',
-      tags: ['api', 'recurring-payments'],
+      tags: SWAGGER_TAGS,
       validate: {
         params: dueRecurringPaymentsRequestParamsSchema
       },
@@ -41,7 +43,7 @@ export default [
         return h.response(result)
       },
       description: 'Generate a permission from a recurring payment record',
-      tags: ['api', 'recurring-payments'],
+      tags: SWAGGER_TAGS,
       validate: {
         params: processRPResultRequestParamsSchema
       },
@@ -65,7 +67,7 @@ export default [
         return h.response(result)
       },
       description: 'Link an old RecurringPayment to its replacement',
-      tags: ['api', 'recurring-payments'],
+      tags: SWAGGER_TAGS,
       validate: {
         params: linkRecurringPaymentsRequestParamsSchema
       },
