@@ -26,11 +26,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import {
-  findNewestExistingRecurringPaymentInCrm,
-  processRecurringPayment,
-  generateRecurringPaymentRecord
-} from '../../recurring-payments.service.js'
+import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -417,57 +413,6 @@ describe('transaction service', () => {
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
         await processQueue({ id: finalisedTransaction.id })
         expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
-      })
-
-      it('checks for existing recurring payments with the same agreementId', async () => {
-        const agreementId = Symbol('agreementId')
-        const mockRecurringPayment = { agreementId }
-        const finalisedTransaction = mockFinalisedTransactionRecord()
-        processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
-
-        await processQueue({ id: finalisedTransaction.id })
-
-        expect(findNewestExistingRecurringPaymentInCrm).toHaveBeenCalledWith(agreementId)
-      })
-
-      it("assigns the new RecurringPayment as the existing RecurringPayment's nextRecurringPayment", async () => {
-        const agreementId = Symbol('agreementId')
-        const mockRecurringPayment = { agreementId }
-        const mockExistingRecurringPayment = { bindToEntity: jest.fn() }
-        const finalisedTransaction = mockFinalisedTransactionRecord()
-        processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
-        findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(mockExistingRecurringPayment)
-
-        await processQueue({ id: finalisedTransaction.id })
-
-        expect(mockExistingRecurringPayment.bindToEntity).toHaveBeenCalledWith(
-          RecurringPayment.definition.relationships.nextRecurringPayment,
-          mockRecurringPayment
-        )
-      })
-
-      it('does not attempt to update multiple recurring payment entities if no pre-existing recurring payment is found', async () => {
-        const agreementId = Symbol('agreementId')
-        const mockRecurringPayment = { agreementId }
-        const finalisedTransaction = mockFinalisedTransactionRecord()
-        processRecurringPayment.mockResolvedValueOnce({ recurringPayment: mockRecurringPayment })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
-        findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(false)
-
-        await processQueue({ id: finalisedTransaction.id })
-
-        expect(persist.mock.calls[0][0]).toEqual([
-          expect.objectContaining({ referenceNumber: finalisedTransaction.id }),
-          expect.objectContaining({ referenceNumber: finalisedTransaction.id }),
-          expect.objectContaining({ referenceNumber: finalisedTransaction.id }),
-          expect.objectContaining({ firstName: finalisedTransaction.permissions[0].licensee.firstName }),
-          expect.objectContaining({ referenceNumber: finalisedTransaction.permissions[0].referenceNumber }),
-          expect.objectContaining({ agreementId }),
-          expect.objectContaining({}),
-          expect.objectContaining({ referenceNumber: finalisedTransaction.permissions[0].concessions[0].proof.referenceNumber })
-        ])
       })
     })
   })
