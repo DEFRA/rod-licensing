@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.7 (2025-05-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2155](https://github.com/DEFRA/rod-licensing/pull/2155) Add link-recurring-payments endpoint ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.61.0-rc.6 (2025-05-15)
 
 #### :bug: Bug Fix
