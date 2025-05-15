@@ -36,15 +36,17 @@ const getContent = (permission, mssgs) => {
 }
 
 const getBulletpointContent = (isLicenceForYou, mssgs) => ({
-  bulletpointOne: mssgs[`terms_conds_bulletpoint_1_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointOnePartOne: mssgs.terms_conds_bulletpoint_1_1_notify,
+  bulletpointOnePartTwo: mssgs.terms_conds_bulletpoint_1_2_notify,
   bulletpointTwo: mssgs[`terms_conds_bulletpoint_2_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
   bulletpointThree: mssgs[`terms_conds_bulletpoint_3_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFourPartOne: mssgs[`terms_conds_bulletpoint_4_1_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFourLink: mssgs[`terms_conds_bulletpoint_4_link_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFourPartTwo: mssgs[`terms_conds_bulletpoint_4_2_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFive: mssgs[`terms_conds_bulletpoint_5_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFour: mssgs[`terms_conds_bulletpoint_4_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFivePartOne: mssgs[`terms_conds_bulletpoint_5_1_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFiveLink: mssgs[`terms_conds_bulletpoint_5_link_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFivePartTwo: mssgs[`terms_conds_bulletpoint_5_2_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
   bulletpointSix: mssgs[`terms_conds_bulletpoint_6_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointSixLink: mssgs[`terms_conds_bulletpoint_6_link_notify_${isLicenceForYou ? 'self' : 'bobo'}`]
+  bulletpointSeven: mssgs[`terms_conds_bulletpoint_7_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointSevenLink: mssgs[`terms_conds_bulletpoint_7_link_notify_${isLicenceForYou ? 'self' : 'bobo'}`]
 })
 
 export const validator = Joi.object({
