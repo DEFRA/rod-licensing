@@ -4,7 +4,7 @@
   "description": "Rod Licensing Sales Fulfilment Job",
   "type": "module",
   "engines": {
-    "node": ">=18.17"
+    "node": ">=20"
   },
   "keywords": [
     "rod",
