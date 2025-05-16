@@ -4,7 +4,7 @@
   "description": "Rod Licensing Recurring Payments Job",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20"
   },
   "keywords": [
     "rod",
