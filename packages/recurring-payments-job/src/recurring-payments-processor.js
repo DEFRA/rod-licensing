@@ -101,16 +101,20 @@ const processRecurringPaymentStatus = async record => {
   const agreementId = record.entity.agreementId
   const paymentId = getPaymentId(agreementId)
   const {
-    state: { status, can_retry: canRetry }
+    state: { status }
   } = await getPaymentStatus(paymentId)
   console.log(`Payment status for ${paymentId}: ${status}`)
   const payment = payments.find(p => p.paymentId === paymentId)
   if (status === PAYMENT_STATUS.Success) {
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
   }
-  if (status === PAYMENT_STATUS.Failure && canRetry === false) {
+  if (status === PAYMENT_STATUS.Failure) {
     console.log(`Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`)
-    await salesApi.updatePaymentJournal(payment.transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
+    if (await salesApi.getPaymentJournal(payment.transaction.id)) {
+      await salesApi.updatePaymentJournal(payment.transaction.id, {
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
+      })
+    }
   }
 }
 
