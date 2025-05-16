@@ -5,12 +5,12 @@ import { stage } from '../pocl-data-staging.js'
 import { createTransactions } from '../create-transactions.js'
 import { finaliseTransactions } from '../finalise-transactions.js'
 import { getFileRecord, updateFileStagingTable } from '../../io/db.js'
+
 import fs from 'fs'
 
 jest.mock('../create-transactions.js')
 jest.mock('../finalise-transactions.js')
 jest.mock('../../io/db.js')
-jest.mock('fs')
 jest.mock('md5-file', () => () => 'test-md5')
 
 jest.mock('@defra-fish/connectors-lib', () => {
@@ -37,6 +37,7 @@ describe('pocl data staging', () => {
       ['the file has not previously been processed', undefined],
       ['the file has pending state', { stage: FILE_STAGE.Pending }]
     ])('%s', async (desc, val) => {
+      jest.spyOn(fs, 'statSync')
       getFileRecord.mockResolvedValueOnce(val)
       getFileRecord.mockResolvedValueOnce({
         stagingSucceeded: 5,
@@ -87,6 +88,7 @@ describe('pocl data staging', () => {
   })
 
   it('only runs finalisation if the creation phase has previously been completed', async () => {
+    jest.spyOn(fs, 'statSync')
     getFileRecord.mockResolvedValue({ stage: FILE_STAGE.Finalising })
     fs.statSync.mockReturnValueOnce({ size: 1024 })
     salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: DYNAMICS_IMPORT_STAGE.InProgress } })
@@ -104,6 +106,7 @@ describe('pocl data staging', () => {
   })
 
   it('updates the status in Dynamics if the Dynamics returns InProgress but now marked completed in DynamoDB', async () => {
+    jest.spyOn(fs, 'statSync')
     salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: DYNAMICS_IMPORT_STAGE.InProgress } })
     getFileRecord.mockResolvedValue({ stage: FILE_STAGE.Completed })
     fs.statSync.mockReturnValueOnce({ size: 1024 })
@@ -116,6 +119,7 @@ describe('pocl data staging', () => {
   })
 
   it('is a no-op if the file is marked as processed in Dynamics', async () => {
+    jest.spyOn(fs, 'statSync')
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: DYNAMICS_IMPORT_STAGE.ProcessedWithWarnings } })
     getFileRecord.mockResolvedValue({ stage: FILE_STAGE.Completed })

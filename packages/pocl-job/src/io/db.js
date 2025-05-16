@@ -10,13 +10,11 @@ const { docClient } = AWS()
  * @returns {Promise<void>}
  */
 export const updateFileStagingTable = async ({ filename, ...entries }) => {
-  await docClient
-    .update({
-      TableName: config.db.fileStagingTable,
-      Key: { filename },
-      ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
-    })
-    .promise()
+  await docClient.update({
+    TableName: config.db.fileStagingTable,
+    Key: { filename },
+    ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
+  })
 }
 
 /**
@@ -42,7 +40,7 @@ export const getFileRecords = async (...stages) => {
  * @returns {DocumentClient.AttributeMap}
  */
 export const getFileRecord = async filename => {
-  const result = await docClient.get({ TableName: config.db.fileStagingTable, Key: { filename }, ConsistentRead: true }).promise()
+  const result = await docClient.get({ TableName: config.db.fileStagingTable, Key: { filename }, ConsistentRead: true })
   return result.Item
 }
 

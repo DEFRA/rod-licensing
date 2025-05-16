@@ -22,7 +22,7 @@ const showQueueStatistics = async url => {
         AttributeNames: ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible', 'ApproximateNumberOfMessagesDelayed']
       }
 
-      const { Attributes } = await sqs.getQueueAttributes(params).promise()
+      const { Attributes } = await sqs.getQueueAttributes(params)
       const prt = attr => {
         const change = Number.parseInt(Attributes[attr]) - Number.parseInt(last[attr])
         if (change > 0) {
