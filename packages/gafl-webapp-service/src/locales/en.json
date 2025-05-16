@@ -792,7 +792,7 @@
   "terms_conds_warning": "Do not close the browser or use the back button during payment",
   "terms_conds_agree_notify_self": "I agree to the licence conditions",
   "terms_conds_body_notify_self": "When you buy this licence you must:",
-  "terms_conds_bulletpoint_1_1_notify": "confirm all the information submitted is accurate.",
+  "terms_conds_bulletpoint_1_1_notify": "confirm all the information submitted is accurate",
   "terms_conds_bulletpoint_1_2_notify": "Incorrect information will result in issuing of an invalid licence. Anyone fishing with an invalid fishing licence may be prosecuted.",
   "terms_conds_bulletpoint_2_notify_self": "not share your licence - it is only valid for the named licence holder",
   "terms_conds_bulletpoint_3_notify_self": "carry proof of your licence when you go fishing and show it to our enforcement officers if asked",
