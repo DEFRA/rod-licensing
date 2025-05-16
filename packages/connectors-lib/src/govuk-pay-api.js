@@ -1,7 +1,7 @@
 /**
  * Make a requests to the GOV.UK Pay API
  */
-// Using native fetch in Node.js 20 instead of node-fetch
+import fetch from 'node-fetch'
 const GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT = 10000
 
 const headers = recurring => ({
@@ -17,18 +17,12 @@ const headers = recurring => ({
  */
 export const createRecurringPaymentAgreement = async preparedPayment => {
   try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-
-    const response = await fetch(process.env.GOV_PAY_RCP_API_URL, {
+    return fetch(process.env.GOV_PAY_RCP_API_URL, {
       headers: headers(true),
       method: 'post',
       body: JSON.stringify(preparedPayment),
-      signal: controller.signal
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
-
-    clearTimeout(timeoutId)
-    return response
   } catch (err) {
     console.error(
       `Error creating recurring payment agreement in the GOV.UK API service - agreement: ${JSON.stringify(preparedPayment, null, 4)}`,
@@ -45,18 +39,12 @@ export const createRecurringPaymentAgreement = async preparedPayment => {
  */
 export const createPayment = async (preparedPayment, recurring = false) => {
   try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-
-    const response = await fetch(process.env.GOV_PAY_API_URL, {
+    return fetch(process.env.GOV_PAY_API_URL, {
       headers: headers(recurring),
       method: 'post',
       body: JSON.stringify(preparedPayment),
-      signal: controller.signal
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
-
-    clearTimeout(timeoutId)
-    return response
   } catch (err) {
     console.error(`Error creating payment in the GOV.UK API service - payment: ${JSON.stringify(preparedPayment, null, 4)}`, err)
     throw err
@@ -70,17 +58,11 @@ export const createPayment = async (preparedPayment, recurring = false) => {
  */
 export const fetchPaymentStatus = async (paymentId, recurring = false) => {
   try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-
-    const response = await fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
+    return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
       headers: headers(recurring),
       method: 'get',
-      signal: controller.signal
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
-
-    clearTimeout(timeoutId)
-    return response
   } catch (err) {
     console.error(`Error retrieving the payment status from the GOV.UK API service - paymentId: ${paymentId}`, err)
     throw err
@@ -94,17 +76,11 @@ export const fetchPaymentStatus = async (paymentId, recurring = false) => {
  */
 export const fetchPaymentEvents = async (paymentId, recurring = false) => {
   try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT)
-
-    const response = await fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
+    return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
       headers: headers(recurring),
       method: 'get',
-      signal: controller.signal
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
-
-    clearTimeout(timeoutId)
-    return response
   } catch (err) {
     console.error(`Error retrieving the payment events from the GOV.UK API service - paymentId: ${paymentId}`, err)
     throw err
