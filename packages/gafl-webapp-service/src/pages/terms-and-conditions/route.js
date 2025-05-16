@@ -36,8 +36,6 @@ const getContent = (permission, mssgs) => {
 }
 
 const getBulletpointContent = (isLicenceForYou, mssgs) => ({
-  bulletpointOnePartOne: mssgs.terms_conds_bulletpoint_1_1_notify,
-  bulletpointOnePartTwo: mssgs.terms_conds_bulletpoint_1_2_notify,
   bulletpointTwo: mssgs[`terms_conds_bulletpoint_2_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
   bulletpointThree: mssgs[`terms_conds_bulletpoint_3_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
   bulletpointFour: mssgs[`terms_conds_bulletpoint_4_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
