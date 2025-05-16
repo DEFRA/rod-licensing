@@ -1,4 +1,40 @@
 
+## v1.61.0-rc.7 (2025-05-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2155](https://github.com/DEFRA/rod-licensing/pull/2155) Add link-recurring-payments endpoint ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.6 (2025-05-15)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2152](https://github.com/DEFRA/rod-licensing/pull/2152) Remove date picker from start kind screen ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.5 (2025-05-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2151](https://github.com/DEFRA/rod-licensing/pull/2151) RCP confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.4 (2025-05-13)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2135](https://github.com/DEFRA/rod-licensing/pull/2135) Recurring payments logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.61.0-rc.3 (2025-05-02)
 
 #### :bug: Bug Fix

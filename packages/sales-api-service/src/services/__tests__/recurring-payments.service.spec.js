@@ -4,7 +4,7 @@ import {
   processRecurringPayment,
   generateRecurringPaymentRecord,
   processRPResult,
-  findNewestExistingRecurringPaymentInCrm
+  linkRecurringPayments
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
@@ -616,33 +616,42 @@ describe('recurring payments service', () => {
     })
   })
 
-  describe('findNewestExistingRecurringPaymentInCrm', () => {
+  describe('linkRecurringPayments', () => {
     it('should call executeQuery with findRecurringPaymentsByAgreementId and the provided agreementId', async () => {
       const agreementId = 'abc123'
-      await findNewestExistingRecurringPaymentInCrm(agreementId)
+      await linkRecurringPayments('existing-recurring-payment-id', agreementId)
       expect(executeQuery).toHaveBeenCalledWith(findRecurringPaymentsByAgreementId(agreementId))
     })
 
-    it('should return a RecurringPayment record when there is one match', async () => {
-      const onlyRecord = getMockRecurringPayment()
+    it('should log a RecurringPayment record when there is one match', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const onlyRecord = { entity: getMockRecurringPayment() }
       dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
-      const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
-      expect(returnedRecord).toBe(onlyRecord)
+
+      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('newRecurringPaymentId: ', onlyRecord.id)
     })
 
-    it('should return the RecurringPayment record with the latest endDate when there are multiple matches', async () => {
-      const oldestRecord = getMockRecurringPayment({ endDate: '2021-12-15T00:00:00Z' })
-      const newestRecord = getMockRecurringPayment({ endDate: '2023-12-15T00:00:00Z' })
-      const middlestRecord = getMockRecurringPayment({ endDate: '2022-12-15T00:00:00Z' })
+    it('should log the RecurringPayment record with the latest endDate when there are multiple matches', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const oldestRecord = { entity: getMockRecurringPayment({ id: Symbol('oldest'), endDate: new Date('2021-12-15T00:00:00Z') }) }
+      const newestRecord = { entity: getMockRecurringPayment({ id: Symbol('newest'), endDate: new Date('2023-12-15T00:00:00Z') }) }
+      const middlestRecord = { entity: getMockRecurringPayment({ id: Symbol('middlest'), endDate: new Date('2022-12-15T00:00:00Z') }) }
       dynamicsLib.executeQuery.mockReturnValueOnce([oldestRecord, newestRecord, middlestRecord])
-      const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
-      expect(returnedRecord).toBe(newestRecord)
+
+      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('newRecurringPaymentId: ', newestRecord.id)
     })
 
-    it('should return false when there are no matches', async () => {
+    it('should log no matches when there are no matches', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
       dynamicsLib.executeQuery.mockReturnValueOnce([])
-      const returnedRecord = await findNewestExistingRecurringPaymentInCrm('agreementId')
-      expect(returnedRecord).toBe(false)
+
+      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found')
     })
   })
 })

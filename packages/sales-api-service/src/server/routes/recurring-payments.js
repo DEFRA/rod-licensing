@@ -1,9 +1,12 @@
 import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
+  linkRecurringPaymentsRequestParamsSchema,
   processRPResultRequestParamsSchema
 } from '../../schema/recurring-payments.schema.js'
-import { getRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
+import { getRecurringPayments, linkRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
+
+const SWAGGER_TAGS = ['api', 'recurring-payments']
 
 export default [
   {
@@ -16,7 +19,7 @@ export default [
         return h.response(result)
       },
       description: 'Retrieve recurring payments due for the specified date',
-      tags: ['api', 'recurring-payments'],
+      tags: SWAGGER_TAGS,
       validate: {
         params: dueRecurringPaymentsRequestParamsSchema
       },
@@ -40,7 +43,7 @@ export default [
         return h.response(result)
       },
       description: 'Generate a permission from a recurring payment record',
-      tags: ['api', 'recurring-payments'],
+      tags: SWAGGER_TAGS,
       validate: {
         params: processRPResultRequestParamsSchema
       },
@@ -50,6 +53,30 @@ export default [
             200: { description: 'New permission from recurring payment record generated successfully' }
           },
           order: 2
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/linkRecurringPayments/{existingRecurringPaymentId}/{agreementId}',
+    options: {
+      handler: async (request, h) => {
+        const { existingRecurringPaymentId, agreementId } = request.params
+        const result = await linkRecurringPayments(existingRecurringPaymentId, agreementId)
+        return h.response(result)
+      },
+      description: 'Link an old RecurringPayment to its replacement',
+      tags: SWAGGER_TAGS,
+      validate: {
+        params: linkRecurringPaymentsRequestParamsSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Old RecurringPayment linked to new RecurringPayment successfully' }
+          },
+          order: 3
         }
       }
     }

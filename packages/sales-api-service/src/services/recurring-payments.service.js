@@ -123,10 +123,21 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   return { permission }
 }
 
-export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
+export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
+  console.log('existingRecurringPaymentId: ', existingRecurringPaymentId)
+  console.log('agreementId: ', agreementId)
+  const newRecurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
+  if (newRecurringPayment) {
+    console.log('newRecurringPaymentId: ', newRecurringPayment.id)
+  } else {
+    console.log('No matches found')
+  }
+}
+
+const findNewestExistingRecurringPaymentInCrm = async agreementId => {
   const matchingRecords = await executeQuery(findRecurringPaymentsByAgreementId(agreementId))
   if (matchingRecords?.length) {
-    return [...matchingRecords].sort((a, b) => a.endDate.localeCompare(b.endDate)).pop()
+    return [...matchingRecords].sort((a, b) => a.entity.endDate - b.entity.endDate).pop()
   } else {
     return false
   }
