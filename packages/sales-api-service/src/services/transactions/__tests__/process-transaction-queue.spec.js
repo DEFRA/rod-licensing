@@ -7,10 +7,10 @@ import {
   FulfilmentRequest,
   Permission,
   PoclFile,
+  RecurringPayment,
   RecurringPaymentInstruction,
   Transaction,
-  TransactionJournal,
-  RecurringPayment
+  TransactionJournal
 } from '@defra-fish/dynamics-lib'
 import {
   mockFinalisedTransactionRecord,
@@ -65,7 +65,11 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
-jest.mock('../../recurring-payments.service.js')
+jest.mock('../../recurring-payments.service.js', () => ({
+  findNewestExistingRecurringPaymentInCrm: jest.fn(),
+  generateRecurringPaymentRecord: jest.fn(),
+  processRecurringPayment: jest.fn()
+}))
 
 describe('transaction service', () => {
   beforeAll(() => {

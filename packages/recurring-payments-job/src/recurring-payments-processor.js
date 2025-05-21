@@ -2,23 +2,25 @@ import moment from 'moment-timezone'
 import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
+import db from 'debug'
+const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
-    console.log('Recurring Payments job enabled')
+    debug('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
     const response = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found: ', response)
+    debug('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
     if (response.length > 0) {
       await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
     }
   } else {
-    console.log('Recurring Payments job disabled')
+    debug('Recurring Payments job disabled')
   }
 }
 
@@ -31,20 +33,20 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
   const transactionData = await processPermissionData(referenceNumber, agreementId)
-  console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Creating new transaction based on: ', referenceNumber, 'with agreementId: ', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    console.log('New transaction created:', response)
+    debug('New transaction created:', response)
     return response
   } catch (e) {
-    console.log('Error creating transaction', JSON.stringify(transactionData))
+    console.error('Error creating transaction', JSON.stringify(transactionData))
     throw e
   }
 }
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  console.log('Requesting payment:', preparedPayment)
+  debug('Requesting payment:', preparedPayment)
   const payment = await sendPayment(preparedPayment)
   payments.push({
     agreementId,
@@ -55,7 +57,7 @@ const takeRecurringPayment = async (agreementId, transaction) => {
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
-  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
@@ -103,13 +105,15 @@ const processRecurringPaymentStatus = async record => {
   const {
     state: { status }
   } = await getPaymentStatus(paymentId)
-  console.log(`Payment status for ${paymentId}: ${status}`)
+  debug(`Payment status for ${paymentId}: ${status}`)
   const payment = payments.find(p => p.paymentId === paymentId)
   if (status === PAYMENT_STATUS.Success) {
+    const payment = payments.find(p => p.paymentId === paymentId)
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
+    debug(`Processed Recurring Payment for ${payment.transaction.id}`)
   }
   if (status === PAYMENT_STATUS.Failure) {
-    console.log(`Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`)
+    debug(`Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`)
     if (await salesApi.getPaymentJournal(payment.transaction.id)) {
       await salesApi.updatePaymentJournal(payment.transaction.id, {
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
