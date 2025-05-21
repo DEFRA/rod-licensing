@@ -108,7 +108,6 @@ const processRecurringPaymentStatus = async record => {
   debug(`Payment status for ${paymentId}: ${status}`)
   const payment = payments.find(p => p.paymentId === paymentId)
   if (status === PAYMENT_STATUS.Success) {
-    const payment = payments.find(p => p.paymentId === paymentId)
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
     debug(`Processed Recurring Payment for ${payment.transaction.id}`)
   }
@@ -120,7 +119,6 @@ const processRecurringPaymentStatus = async record => {
       })
     }
   }
-  // trigger test
 }
 
 const getPaymentId = agreementId => {
