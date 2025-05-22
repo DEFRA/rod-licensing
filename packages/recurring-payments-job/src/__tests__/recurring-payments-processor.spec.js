@@ -7,7 +7,8 @@ import db from 'debug'
 jest.mock('@defra-fish/business-rules-lib', () => ({
   PAYMENT_STATUS: {
     Success: 'success',
-    Failure: 'failed'
+    Failure: 'failed',
+    Error: 'error'
   },
   PAYMENT_JOURNAL_STATUS_CODES: {
     InProgress: 'In Progress',
@@ -42,6 +43,7 @@ const debugMock = db.mock.results[0].value
 const PAYMENT_STATUS_DELAY = 60000
 const getPaymentStatusSuccess = () => ({ state: { status: 'success' } })
 const getPaymentStatusFailure = () => ({ state: { status: 'failed' } })
+const getPaymentStatusError = () => ({ state: { status: 'error' } })
 const getMockPaymentRequestResponse = () => [
   {
     entity: { agreementId: 'agreement-1' },
@@ -410,25 +412,20 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
   })
 
-  it("doesn't call processRPResult if payment status is not successful", async () => {
-    const mockPaymentId = 'test-payment-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
-    salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
-
-    await processRecurringPayments()
-
-    expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
-  })
-
-  it.each([['agreement-id'], ['test-agreement-id'], ['another-agreement-id']])(
-    'debug displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a failure',
-    async agreementId => {
+  it.each([
+    ['agreement-id', getPaymentStatusFailure(), 'failure'],
+    ['test-agreement-id', getPaymentStatusFailure(), 'failure'],
+    ['another-agreement-id', getPaymentStatusFailure(), 'failure'],
+    ['agreement-id', getPaymentStatusError(), 'error'],
+    ['test-agreement-id', getPaymentStatusError(), 'error'],
+    ['another-agreement-id', getPaymentStatusError(), 'error']
+  ])(
+    'debug displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
+    async (agreementId, mockStatus, status) => {
       salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('reference', agreementId)])
       const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
       sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-      getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
+      getPaymentStatus.mockResolvedValueOnce(mockStatus)
 
       await processRecurringPayments()
 
@@ -438,7 +435,7 @@ describe('recurring-payments-processor', () => {
     }
   )
 
-  it('updatePaymentJournal is called with transaction id and failed status code payment is a failure and payment journal exists', async () => {
+  it('updatePaymentJournal is called with transaction id and failed status code payment is not succesful and payment journal exists', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const transactionId = 'test-transaction-id'
     salesApi.createTransaction.mockReturnValueOnce({
@@ -455,7 +452,7 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(transactionId, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
   })
 
-  it('updatePaymentJournal is not called when failed status code payment is a failure but payment journal does not exist', async () => {
+  it('updatePaymentJournal is not called when failed status code payment is not succesful but payment journal does not exist', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const transactionId = 'test-transaction-id'
     salesApi.createTransaction.mockReturnValueOnce({

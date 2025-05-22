@@ -111,7 +111,7 @@ const processRecurringPaymentStatus = async record => {
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
     debug(`Processed Recurring Payment for ${payment.transaction.id}`)
   }
-  if (status === PAYMENT_STATUS.Failure) {
+  if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
     debug(`Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`)
     if (await salesApi.getPaymentJournal(payment.transaction.id)) {
       await salesApi.updatePaymentJournal(payment.transaction.id, {

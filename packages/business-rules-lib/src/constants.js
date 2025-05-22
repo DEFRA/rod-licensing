@@ -26,7 +26,8 @@ export const PAYMENT_JOURNAL_STATUS_CODES = {
  */
 export const PAYMENT_STATUS = {
   Success: 'success',
-  Failure: 'failed'
+  Failure: 'failed',
+  Error: 'error'
 }
 
 /**
