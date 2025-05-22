@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.8 (2025-05-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2157](https://github.com/DEFRA/rod-licensing/pull/2157) Remove logging code for new prices bug ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.61.0-rc.7 (2025-05-15)
 
 #### :rocket: Enhancement
