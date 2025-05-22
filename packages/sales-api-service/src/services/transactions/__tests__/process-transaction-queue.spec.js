@@ -26,6 +26,8 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
+import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS.mock.results[0].value
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
