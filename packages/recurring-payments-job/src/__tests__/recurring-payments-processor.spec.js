@@ -420,8 +420,9 @@ describe('recurring-payments-processor', () => {
     ['test-agreement-id', getPaymentStatusError(), 'error'],
     ['another-agreement-id', getPaymentStatusError(), 'error']
   ])(
-    'debug displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
+    'console log displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
     async (agreementId, mockStatus, status) => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
       salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('reference', agreementId)])
       const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
       sendPayment.mockResolvedValueOnce(mockPaymentResponse)
@@ -429,7 +430,7 @@ describe('recurring-payments-processor', () => {
 
       await processRecurringPayments()
 
-      expect(debugMock).toHaveBeenCalledWith(
+      expect(consoleLogSpy).toHaveBeenCalledWith(
         `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
       )
     }
