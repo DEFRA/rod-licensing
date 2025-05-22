@@ -1,6 +1,21 @@
-import AwsSdk from 'aws-sdk'
 import { PAYMENTS_TABLE } from '../../../config.js'
 import { createPaymentJournal, updatePaymentJournal, getPaymentJournal, queryJournalsByTimestamp } from '../payment-journals.service.js'
+import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS.mock.results[0].value
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      put: jest.fn(),
+      update: jest.fn(() => ({
+        Attributes: []
+      })),
+      get: jest.fn(() => ({ Item: {} })),
+      queryAllPromise: jest.fn(),
+      createUpdateExpression: jest.fn(() => ({}))
+    }
+  }))
+}))
 
 describe('payment-journals service', () => {
   beforeAll(async () => {
@@ -10,7 +25,7 @@ describe('payment-journals service', () => {
   describe('createPaymentJournal', () => {
     it('calls put on dynamodb', async () => {
       await createPaymentJournal('test-id', { some: 'data' })
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.put).toHaveBeenCalledWith({
+      expect(docClient.put).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Item: { id: 'test-id', some: 'data', expires: expect.any(Number) },
         ConditionExpression: 'attribute_not_exists(id)'
@@ -20,19 +35,15 @@ describe('payment-journals service', () => {
 
   describe('updatePaymentJournal', () => {
     it('calls update on dynamodb', async () => {
+      const updateExpression = {
+        UpdateExpression: Symbol('update expression')
+      }
+      docClient.createUpdateExpression.mockReturnValueOnce(updateExpression)
       await updatePaymentJournal('test-id', { some: 'data' })
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith({
+      expect(docClient.update).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
-        UpdateExpression: 'SET #expires = :expires,#some = :some',
-        ExpressionAttributeNames: {
-          '#expires': 'expires',
-          '#some': 'some'
-        },
-        ExpressionAttributeValues: {
-          ':expires': expect.any(Number),
-          ':some': 'data'
-        },
+        ...updateExpression,
         ConditionExpression: 'attribute_exists(id)',
         ReturnValues: 'ALL_NEW'
       })
@@ -42,7 +53,7 @@ describe('payment-journals service', () => {
   describe('getPaymentJournal', () => {
     it('calls get on dynamodb', async () => {
       await getPaymentJournal('test-id')
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.get).toHaveBeenCalledWith({
+      expect(docClient.get).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
         ConsistentRead: true
@@ -53,7 +64,7 @@ describe('payment-journals service', () => {
   describe('queryJournalsByTimestamp', () => {
     it('calls query on dynamodb', async () => {
       await queryJournalsByTimestamp({ paymentStatus: 'In Progress', from: '2020-05-29T11:44:45.875Z', to: '2020-05-29T11:44:45.875Z' })
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith({
+      expect(docClient.queryAllPromise).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         IndexName: 'PaymentJournalsByStatusAndTimestamp',
         KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',

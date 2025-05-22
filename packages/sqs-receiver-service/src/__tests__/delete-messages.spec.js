@@ -1,9 +1,33 @@
 'use strict'
 
 import deleteMessages from '../delete-messages'
-import AWS from 'aws-sdk'
+import { AWS } from '@defra-fish/connectors-lib'
+const { sqs } = AWS.mock.results[0].value
+
+const getSampleDeleteMessageBatchResponse = (successfulIds, failedIds = []) => ({
+  ResponseMetadata: {
+    RequestId: '00000000-0000-0000-0000-000000000000'
+  },
+  Successful: successfulIds.map(Id => ({ Id })),
+  Failed: failedIds.map(Id => ({ Id }))
+})
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    sqs: {
+      deleteMessageBatch: jest.fn(() => {})
+    }
+  }))
+}))
+
+beforeEach(() => {
+  sqs.deleteMessageBatch.mockClear()
+})
 
 test('Delete messages successfully', async () => {
+  sqs.deleteMessageBatch.mockResolvedValueOnce(
+    getSampleDeleteMessageBatchResponse(['58f6f3c9-97f8-405a-a3a7-5ac467277521', '58f6f3c9-97f8-405a-a3a7-5ac467277522'])
+  )
   const results = await deleteMessages('http://0.0.0.0:0000/queue', [
     {
       id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
@@ -26,6 +50,7 @@ test('Delete messages successfully', async () => {
 })
 
 test('Delete messages nothing to delete', async () => {
+  sqs.deleteMessageBatch.mockResolvedValueOnce(getSampleDeleteMessageBatchResponse([]))
   const results = await deleteMessages('http://0.0.0.0:0000/queue', [
     {
       id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
@@ -45,11 +70,14 @@ test('Delete messages nothing to delete', async () => {
   ])
 
   expect(results).toBeUndefined()
+  sqs.deleteMessageBatch.mockReset()
 })
 
 test('Delete messages with failures', async () => {
   const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
-  AWS.__mockDeleteMessageFailures()
+  sqs.deleteMessageBatch.mockResolvedValueOnce(
+    getSampleDeleteMessageBatchResponse([], ['58f6f3c9-97f8-405a-a3a7-5ac467277521', '58f6f3c9-97f8-405a-a3a7-5ac467277522'])
+  )
   const results = await deleteMessages('http://0.0.0.0:0000/queue', [
     {
       id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
@@ -73,7 +101,9 @@ test('Delete messages with failures', async () => {
 })
 
 test('Delete message does not throw exception', async () => {
-  AWS.__mockNotFound()
+  const exception = new Error('Not Found')
+  exception.code = 404
+  sqs.deleteMessageBatch.mockRejectedValueOnce(exception)
 
   const result = await deleteMessages('http://0.0.0.0:0000/queue', [
     {
@@ -83,4 +113,21 @@ test('Delete message does not throw exception', async () => {
     }
   ])
   expect(result).toBeUndefined()
+})
+
+test('Delete message batch logs exception with console.error', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+  const exception = new Error('Not Found')
+  exception.code = 404
+  const url = 'http://0.0.0.0:0000/queue'
+  sqs.deleteMessageBatch.mockRejectedValueOnce(exception)
+
+  await deleteMessages(url, [
+    {
+      id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
+      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
+      status: 200
+    }
+  ])
+  expect(consoleError).toHaveBeenCalledWith('Error deleting messages for %s: %o', url, exception)
 })

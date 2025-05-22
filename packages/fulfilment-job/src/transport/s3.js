@@ -30,7 +30,7 @@ export const writeS3PartFile = async (fulfilmentRequestFile, partNumber, data) =
  * @returns {Array<stream.Readable>} Readable streams for each of the part files
  */
 export async function readS3PartFiles (fulfilmentRequestFile) {
-  const { Contents: files } = await s3.listObjectsV2({ Bucket: config.s3.bucket, Prefix: `${fulfilmentRequestFile.fileName}/` }).promise()
+  const { Contents: files } = await s3.listObjectsV2({ Bucket: config.s3.bucket, Prefix: `${fulfilmentRequestFile.fileName}/` })
   return files
     .filter(f => /part\d+$/.test(f.Key))
     .map(f => {
@@ -51,7 +51,6 @@ export const createS3WriteStream = key => {
     s3WriteStream: passThrough,
     managedUpload: s3
       .upload({ Bucket: config.s3.bucket, Key: key, Body: passThrough })
-      .promise()
       .then(data => debug(`File successfully uploaded to S3 at ${data.Location}`))
   }
 }
