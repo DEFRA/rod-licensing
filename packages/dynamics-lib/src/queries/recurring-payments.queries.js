@@ -10,7 +10,7 @@ import { PredefinedQuery } from './predefined-query.js'
 export const findDueRecurringPayments = date => {
   const { contact, activePermission } = RecurringPayment.definition.relationships
 
-  const filter = `defra_nextduedate eq '${date}' and defra_cancelleddate eq null`
+  const filter = `defra_nextduedate eq '${date}' and defra_cancelleddate eq null and _defra_nextrecurringpayment_value eq null`
 
   return new PredefinedQuery({
     root: RecurringPayment,
