@@ -2,8 +2,9 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 
-{% set title = mssgs.disability_concession_title_you if data.isLicenceForYou else mssgs.disability_concession_title_other %}
+{% set title = mssgs.disability_concession_title_self if data.isLicenceForYou else mssgs.disability_concession_title_bobo %}
 {% set describedByTag = "ni-number-hint" %}
+{% set suffix = 'self' if data.isLicenceForYou else 'bobo' %}
 
 {%
     set errorMap = {
@@ -54,7 +55,7 @@
 
 {% block pageContent %}
     {% if not data.hasJunior and not data.hasSenior %}
-        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month }}</p>
+        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month }}<a href="https://www.gov.uk/government/publications/blue-badge-can-i-get-one/can-i-get-a-blue-badge" class="govuk-link" target="_blank">{{ mssgs.disability_concession_12_month_link }}</a></p>
     {% endif %}
 
     {{ govukRadios({
@@ -62,19 +63,19 @@
            name: "disability-concession",
            items: [
                {
-                   html: mssgs.disability_concession_radio_pip + '</br> ' + mssgs.disability_concession_radio_dla,
-                   value: data.pipDla,
-                   checked: payload['disability-concession'] === data.pipDla,
-                   conditional: { html: pipDla }
+                  html: mssgs['disability_concession_radio_pip_' ~ suffix] ~ '<br>' ~ mssgs.disability_concession_radio_dla,
+                  value: data.pipDla,
+                  checked: payload['disability-concession'] === data.pipDla,
+                  conditional: { html: pipDla }
                },
                {
-                  text: mssgs.disability_concession_radio_badge,
+                  text: mssgs['disability_concession_radio_badge_' ~ suffix],
                   value: data.blueBadge,
                   checked: payload['disability-concession'] === data.blueBadge,
                   conditional: { html: blueBadge }
                },
                {
-                   text: mssgs.disability_concession_radio_no,
+                   text: mssgs['disability_concession_radio_no_' ~ suffix],
                    value: data.no,
                    checked: payload['disability-concession'] === data.no
                }

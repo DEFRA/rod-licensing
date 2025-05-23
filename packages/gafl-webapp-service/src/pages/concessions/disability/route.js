@@ -33,4 +33,10 @@ export const getData = async request => {
   }
 }
 
+// const getRadioContent = (isLicenceForYou, mssgs) => ({
+//   yesRadioPIP: mssgs[`disability_concession_radio_pip_${isLicenceForYou ? 'self' : 'bobo'}`],
+//   yesRadiotBB: mssgs[`disability_concession_radio_badge_${isLicenceForYou ? 'self' : 'bobo'}`],
+//   noRadio: mssgs[`disability_concession_radio_no_${isLicenceForYou ? 'self' : 'bobo'}`],
+// })
+
 export default pageRoute(DISABILITY_CONCESSION.page, DISABILITY_CONCESSION.uri, validator, nextPage, getData)
