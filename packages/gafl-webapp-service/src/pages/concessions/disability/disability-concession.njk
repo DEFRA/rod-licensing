@@ -55,7 +55,7 @@
 
 {% block pageContent %}
     {% if not data.hasJunior and not data.hasSenior %}
-        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month }}<a href="https://www.gov.uk/government/publications/blue-badge-can-i-get-one/can-i-get-a-blue-badge" class="govuk-link" target="_blank">{{ mssgs.disability_concession_12_month_link }}</a></p>
+        <p class="govuk-hint">{{ mssgs.disability_concession_12_month }}<a href="https://www.gov.uk/government/publications/blue-badge-can-i-get-one/can-i-get-a-blue-badge" class="govuk-link" target="_blank">{{ mssgs.disability_concession_12_month_link }}</a></p>
     {% endif %}
 
     {{ govukRadios({
