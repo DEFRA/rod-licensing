@@ -6,16 +6,16 @@ import db from 'debug'
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
   PAYMENT_STATUS: {
-    Success: 'success',
-    Failure: 'failed',
-    Error: 'error'
+    Success: 'payment status success',
+    Failure: 'payment status failure',
+    Error: 'payment status error'
   },
   PAYMENT_JOURNAL_STATUS_CODES: {
-    InProgress: 'In Progress',
-    Cancelled: 'Cancelled',
-    Failed: 'Failed',
-    Expired: 'Expired',
-    Completed: 'Completed'
+    InProgress: 'in progress payment',
+    Cancelled: 'cancelled payment',
+    Failed: 'failed payment',
+    Expired: 'expired payment',
+    Completed: 'completed payment'
   }
 }))
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -41,9 +41,9 @@ jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 const debugMock = db.mock.results[0].value
 const PAYMENT_STATUS_DELAY = 60000
-const getPaymentStatusSuccess = () => ({ state: { status: 'success' } })
-const getPaymentStatusFailure = () => ({ state: { status: 'failed' } })
-const getPaymentStatusError = () => ({ state: { status: 'error' } })
+const getPaymentStatusSuccess = () => ({ state: { status: 'payment status success' } })
+const getPaymentStatusFailure = () => ({ state: { status: 'payment status failure' } })
+const getPaymentStatusError = () => ({ state: { status: 'payment status error' } })
 const getMockPaymentRequestResponse = () => [
   {
     entity: { agreementId: 'agreement-1' },
@@ -420,9 +420,9 @@ describe('recurring-payments-processor', () => {
     ['test-agreement-id', getPaymentStatusError(), 'error'],
     ['another-agreement-id', getPaymentStatusError(), 'error']
   ])(
-    'console log displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
+    'console error displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
     async (agreementId, mockStatus, status) => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('reference', agreementId)])
       const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
       sendPayment.mockResolvedValueOnce(mockPaymentResponse)
@@ -430,7 +430,7 @@ describe('recurring-payments-processor', () => {
 
       await processRecurringPayments()
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
       )
     }
