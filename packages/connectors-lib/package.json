@@ -39,7 +39,7 @@
     "debug": "^4.3.3",
     "http-status-codes": "^2.3.0",
     "ioredis": "^4.28.5",
-    "node-fetch": "^3.3.2",
+    "node-fetch": "^2.7.0",
     "redlock": "^4.2.0"
   }
 }

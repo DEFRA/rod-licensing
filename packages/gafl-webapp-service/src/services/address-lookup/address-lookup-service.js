@@ -1,7 +1,7 @@
-import fetch from 'node-fetch'
-
+// import fetch from 'node-fetch'
 import { ADDRESS_LOOKUP_SERVICE, ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT } from '../../constants.js'
 import db from 'debug'
+const fetch = require('node-fetch')
 const debug = db('webapp:address-lookup-service')
 export default async (premises, postcode) => {
   const url = new URL(process.env.ADDRESS_LOOKUP_URL)
