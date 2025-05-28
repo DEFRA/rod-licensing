@@ -1,5 +1,4 @@
 import moment from 'moment-timezone'
-import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 import db from 'debug'
@@ -7,6 +6,28 @@ const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
+
+/**
+ * Timezone of the service
+ */
+const SERVICE_LOCAL_TIME = 'Europe/London'
+
+const PAYMENT_JOURNAL_STATUS_CODES = {
+  InProgress: 'In Progress',
+  Cancelled: 'Cancelled',
+  Failed: 'Failed',
+  Expired: 'Expired',
+  Completed: 'Completed'
+}
+
+/**
+ * Payment status returned by the GOV.UK pay API
+ */
+const PAYMENT_STATUS = {
+  Success: 'success',
+  Failure: 'failed',
+  Error: 'error'
+}
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
