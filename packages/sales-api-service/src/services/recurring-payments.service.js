@@ -1,4 +1,4 @@
-import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { executeQuery, findById, findDueRecurringPayments, findRecurringPaymentsByAgreementId, persist, RecurringPayment } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
@@ -7,6 +7,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
+import { getReferenceDataForEntityAndId } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 const { sqs, docClient } = AWS()
@@ -132,7 +133,35 @@ export const linkRecurringPayments = async (existingRecurringPaymentId, agreemen
   console.log('agreementId: ', agreementId)
   const newRecurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
   if (newRecurringPayment) {
-    console.log('newRecurringPaymentId: ', newRecurringPayment.id)
+    const newRecurringPaymentId = newRecurringPayment.entity.id
+    console.log('newRecurringPaymentId: ', newRecurringPaymentId)
+
+    const data = await findById(RecurringPayment, existingRecurringPaymentId)
+    console.log(data)
+
+    // Updating the data directly before assigning it all to a new object doesn't work
+    // Have tried a bunch of variations on this – setting it to the object, to a copy of the object, to the ID, etc etc
+    // data.nextRecurringPayment = newRecurringPayment
+
+    // So I try bindToEntity again instead...
+    // const existingRecurringPayment = Object.assign(new RecurringPayment(), data)
+    // console.log('BEFORE bindToEntity:')
+    // console.log(existingRecurringPayment)
+
+    // existingRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, newRecurringPayment)
+    // console.log('AFTER bindToEntity:')
+    // console.log(existingRecurringPayment)
+
+    // But bindToEntity does nothing either :(
+
+    // Also tried this in a fit of desperation but it did not work:
+    // const newRecurringPaymentData = await getReferenceDataForEntityAndId(RecurringPayment, newRecurringPaymentId)
+    // console.log(newRecurringPaymentData)
+    // existingRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, newRecurringPaymentData)
+
+    // Haven't even gotten this far because none of the above work!!
+    // const result = await persist([updatedExistingRecurringPayment])
+    // console.log(result)
   } else {
     console.log('No matches found')
   }

@@ -6,6 +6,7 @@ import db from 'debug'
 const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
+const PAYMENT_LINK_DELAY = 20000
 const payments = []
 const PAYMENT_STATUS_SUCCESS = 'success'
 
@@ -13,12 +14,18 @@ export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     debug('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
+    // const date = '2025-05-27' // I've been toggling this on temporarily for easier testing
     const response = await salesApi.getDueRecurringPayments(date)
     debug('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
     if (response.length > 0) {
       await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
       await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
+      // TODO: Make this conditional on the previous one being successful?
+      // Although the linking should only happen if a new RP exists to be linked
+      // So shouldn't break anything but would just be a redundant call
+      await new Promise(resolve => setTimeout(resolve, PAYMENT_LINK_DELAY))
+      await Promise.all(response.map(record => linkRecurringPayments(record)))
     }
   } else {
     debug('Recurring Payments job disabled')
@@ -116,4 +123,8 @@ const processRecurringPaymentStatus = async record => {
 
 const getPaymentId = agreementId => {
   return payments.find(p => p.agreementId === agreementId).paymentId
+}
+
+const linkRecurringPayments = async record => {
+  await salesApi.linkRecurringPayments(record.entity.id, record.entity.agreementId)
 }
