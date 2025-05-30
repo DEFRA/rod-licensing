@@ -80,5 +80,29 @@ export default [
         }
       }
     }
+  },
+  {
+    method: 'GET',
+    path: '/cancelRecurringPayment/{id}',
+    options: {
+      handler: async (request, h) => {
+        const { id } = request.params
+        const result = await cancelRecurringPayment(id)
+        return h.response(result)
+      },
+      description: 'Cancel a recurring payment',
+      tags: SWAGGER_TAGS,
+      validate: {
+        params: cancelRecurringPaymentRequestParamsSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Recurring payment cancelled' }
+          },
+          order: 4
+        }
+      }
+    }
   }
 ]
