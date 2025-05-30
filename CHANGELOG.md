@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.12 (2025-05-30)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2140](https://github.com/DEFRA/rod-licensing/pull/2140) Upgrade AWS SDK to v3 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.61.0-rc.11 (2025-05-30)
 
 #### :rocket: Enhancement
