@@ -1,4 +1,10 @@
-import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, RecurringPayment } from '@defra-fish/dynamics-lib'
+import {
+  executeQuery,
+  findById,
+  findDueRecurringPayments,
+  findRecurringPaymentsByAgreementId,
+  RecurringPayment
+} from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
@@ -140,5 +146,14 @@ const findNewestExistingRecurringPaymentInCrm = async agreementId => {
     return [...matchingRecords].sort((a, b) => a.entity.endDate - b.entity.endDate).pop()
   } else {
     return false
+  }
+}
+
+export const cancelRecurringPayment = async id => {
+  const recurringPayment = await findById(RecurringPayment, id)
+  if (recurringPayment) {
+    console.log('RecurringPayment for cancellation: ', recurringPayment)
+  } else {
+    console.log('No matches found for cancellation')
   }
 }
