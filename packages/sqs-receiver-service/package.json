@@ -4,7 +4,7 @@
   "description": "SQS Receiver service",
   "type": "module",
   "engines": {
-    "node": ">=18.17"
+    "node": ">=20"
   },
   "keywords": [
     "rod",

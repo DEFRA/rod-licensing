@@ -4,7 +4,7 @@
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
-    "node": ">=18.17"
+    "node": ">=20"
   },
   "keywords": [
     "rod",
@@ -57,7 +57,7 @@
     "joi": "^17.6.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^2.7.0",
     "nunjucks": "^3.2.3",
     "openid-client": "^4.9.1",
     "semver": "^7.3.5",
