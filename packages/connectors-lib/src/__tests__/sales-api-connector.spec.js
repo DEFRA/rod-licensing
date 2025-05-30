@@ -746,4 +746,49 @@ describe('sales-api-connector', () => {
       await expect(salesApi.cancelRecurringPayment('id')).rejects.toThrow('Internal Server Error')
     })
   })
+
+  describe('cancelRecurringPayment', () => {
+    describe.each([['id'], ['abc-123']])("Cancelling recurring payment id '%s'", id => {
+      beforeEach(() => {
+        fetch.mockReturnValue({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ id })
+        })
+      })
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.cancelRecurringPayment(id)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.cancelRecurringPayment(id)
+
+        expect(processedResult).toEqual({ id })
+      })
+    })
+
+    it('throws an error on non-2xx response', async () => {
+      fetch.mockReturnValue({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: async () => 'Server Error'
+      })
+
+      await expect(salesApi.cancelRecurringPayment('id')).rejects.toThrow('Internal Server Error')
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/cancelRecurringPayment/id', {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      })
+    })
+  })
 })
