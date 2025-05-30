@@ -1,9 +1,16 @@
 import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
-  processRPResultRequestParamsSchema
+  linkRecurringPaymentsRequestParamsSchema,
+  processRPResultRequestParamsSchema,
+  cancelRecurringPaymentRequestParamsSchema
 } from '../../schema/recurring-payments.schema.js'
-import { getRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
+import {
+  getRecurringPayments,
+  linkRecurringPayments,
+  processRPResult,
+  cancelRecurringPayment
+} from '../../services/recurring-payments.service.js'
 
 const SWAGGER_TAGS = ['api', 'recurring-payments']
 
@@ -52,6 +59,54 @@ export default [
             200: { description: 'New permission from recurring payment record generated successfully' }
           },
           order: 2
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/linkRecurringPayments/{existingRecurringPaymentId}/{agreementId}',
+    options: {
+      handler: async (request, h) => {
+        const { existingRecurringPaymentId, agreementId } = request.params
+        const result = await linkRecurringPayments(existingRecurringPaymentId, agreementId)
+        return h.response(result)
+      },
+      description: 'Link an old RecurringPayment to its replacement',
+      tags: SWAGGER_TAGS,
+      validate: {
+        params: linkRecurringPaymentsRequestParamsSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Old RecurringPayment linked to new RecurringPayment successfully' }
+          },
+          order: 3
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/cancelRecurringPayment/{id}',
+    options: {
+      handler: async (request, h) => {
+        const { id } = request.params
+        const result = await cancelRecurringPayment(id)
+        return h.response(result)
+      },
+      description: 'Cancel a recurring payment',
+      tags: SWAGGER_TAGS,
+      validate: {
+        params: cancelRecurringPaymentRequestParamsSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Recurring payment cancelled' }
+          },
+          order: 4
         }
       }
     }

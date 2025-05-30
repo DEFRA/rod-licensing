@@ -1,7 +1,9 @@
 import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
-  processRPResultRequestParamsSchema
+  processRPResultRequestParamsSchema,
+  linkRecurringPaymentsRequestParamsSchema,
+  cancelRecurringPaymentRequestParamsSchema
 } from '../recurring-payments.schema.js'
 
 jest.mock('../validators/validators.js', () => ({
@@ -147,5 +149,42 @@ describe('processRPResultRequestParamsSchema', () => {
     const sampleData = getProcessRPResultSampleData()
     sampleData[property] = value
     expect(() => processRPResultRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('linkRecurringPaymentsRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(getLinkRecurringPaymentsSampleData())).not.toThrow()
+  })
+
+  it.each([['existingRecurringPaymentId'], ['agreementId']])('throws an error if %s is missing', async property => {
+    const sampleData = getLinkRecurringPaymentsSampleData()
+    delete sampleData[property]
+    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+
+  it.each([
+    ['existingRecurringPaymentId', 99],
+    ['agreementId', 99]
+  ])('throws an error if %s is not the correct type', async (property, value) => {
+    const sampleData = getLinkRecurringPaymentsSampleData()
+    sampleData[property] = value
+    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('cancelRecurringPaymentRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    const sampleData = { id: 'abc123' }
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if id missing', async () => {
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync({}).rejects.toThrow())
+  })
+
+  it('throws an error if id is not the correct type', async () => {
+    const sampleData = { id: 99 }
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
   })
 })
