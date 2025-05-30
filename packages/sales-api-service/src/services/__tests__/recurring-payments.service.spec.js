@@ -894,4 +894,31 @@ describe('recurring payments service', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
     })
   })
+
+  describe('cancelRecurringPayment', () => {
+    it('should call findById with RecurringPayment and the provided id', async () => {
+      const id = 'abc123'
+      await cancelRecurringPayment(id)
+      expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
+    })
+
+    it('should log a RecurringPayment record when there is one match', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+    })
+
+    it('should log no matches when there are no matches', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      findById.mockReturnValueOnce(undefined)
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
+    })
+  })
 })

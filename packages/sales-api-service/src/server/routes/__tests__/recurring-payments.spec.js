@@ -118,4 +118,26 @@ describe('recurring payments', () => {
       expect(recurringPayments[2].options.validate.params).toBe(cancelRecurringPaymentRequestParamsSchema)
     })
   })
+
+  describe('cancelRecurringPayment', () => {
+    it('handler should return continue response', async () => {
+      const request = getMockRequest({})
+      const responseToolkit = getMockResponseToolkit()
+      expect(await crpHandler(request, responseToolkit)).toEqual(responseToolkit.continue)
+    })
+
+    it('should call cancelRecurringPayment with id', async () => {
+      const id = Symbol('recurring-payment-id')
+      const request = getMockRequest({ id })
+      await crpHandler(request, getMockResponseToolkit())
+      expect(cancelRecurringPayment).toHaveBeenCalledWith(id)
+    })
+
+    it('should validate with cancelRecurringPaymentRequestParamsSchema', async () => {
+      const id = Symbol('recurring-payment-id')
+      const request = getMockRequest({ id })
+      await crpHandler(request, getMockResponseToolkit())
+      expect(recurringPayments[3].options.validate.params).toBe(cancelRecurringPaymentRequestParamsSchema)
+    })
+  })
 })
