@@ -896,6 +896,13 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2025-06-02T14:36:42.648Z'))
+    })
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
     it('should call findById with RecurringPayment and the provided id', async () => {
       const id = 'abc123'
       await cancelRecurringPayment(id)
@@ -910,6 +917,20 @@ describe('recurring payments service', () => {
       await cancelRecurringPayment('id')
 
       expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+    })
+
+    it('should create an object with the existing and updated data', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      const cancelledDate = '2025-06-02T14:36:42.648Z'
+      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
+      const expectedUpdatedRecurringPaymentEntity = { ...recurringPayment.entity, cancelledDate, cancelledReason }
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith(expectedUpdatedRecurringPaymentEntity)
     })
 
     it('should log no matches when there are no matches', async () => {
