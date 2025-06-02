@@ -1,4 +1,12 @@
 
+## v1.61.0-rc.13 (2025-06-02)
+
+#### :rocket: Enhancement
+* [#2163](https://github.com/DEFRA/rod-licensing/pull/2163) Amend test:watch to automatically enable verbose and non-silent running ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.61.0-rc.12 (2025-05-30)
 
 #### :rocket: Enhancement
