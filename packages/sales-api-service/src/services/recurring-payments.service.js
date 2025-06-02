@@ -14,6 +14,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
+import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -166,6 +167,11 @@ export const cancelRecurringPayment = async id => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
     console.log('RecurringPayment for cancellation: ', recurringPayment)
+    const data = recurringPayment
+    data.entity.cancelledDate = new Date().toISOString()
+    data.entity.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment failure')
+    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+    console.log(updatedRecurringPayment.entity)
   } else {
     console.log('No matches found for cancellation')
   }
