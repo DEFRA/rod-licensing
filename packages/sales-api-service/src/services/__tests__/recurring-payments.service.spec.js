@@ -5,6 +5,7 @@ import {
   findRecurringPaymentsByAgreementId,
   findById,
   Permission,
+  persist,
   RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import {
@@ -48,7 +49,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
     retrieveMultipleRequest: jest.fn(() => ({ value: [] }))
-  }
+  },
+  persist: jest.fn()
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -919,8 +921,7 @@ describe('recurring payments service', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
     })
 
-    it('should create an object with the existing and updated data', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    it('should call persist with the updated RecurringPayment', async () => {
       const recurringPayment = { entity: getMockRecurringPayment() }
       findById.mockReturnValueOnce(recurringPayment)
 
@@ -930,7 +931,7 @@ describe('recurring payments service', () => {
 
       await cancelRecurringPayment('id')
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(expectedUpdatedRecurringPaymentEntity)
+      expect(persist).toHaveBeenCalledWith([expectedUpdatedRecurringPaymentEntity])
     })
 
     it('should log no matches when there are no matches', async () => {
