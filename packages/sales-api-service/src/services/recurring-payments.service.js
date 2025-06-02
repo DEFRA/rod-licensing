@@ -1,10 +1,11 @@
 import {
+  dynamicsClient,
   executeQuery,
   findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
-  RecurringPayment,
-  dynamicsClient
+  persist,
+  RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
@@ -172,6 +173,8 @@ export const cancelRecurringPayment = async id => {
     data.entity.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment failure')
     const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
     console.log(updatedRecurringPayment.entity)
+    const result = persist([updatedRecurringPayment.entity])
+    console.log(result)
   } else {
     console.log('No matches found for cancellation')
   }
