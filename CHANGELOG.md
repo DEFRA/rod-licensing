@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.14 (2025-06-03)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2138](https://github.com/DEFRA/rod-licensing/pull/2138) Implement fail screen for easy renewals journey Part 1 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.61.0-rc.13 (2025-06-02)
 
 #### :rocket: Enhancement
