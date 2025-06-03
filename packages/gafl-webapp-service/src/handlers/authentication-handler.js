@@ -1,5 +1,5 @@
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
-import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../uri.js'
+import { IDENTIFY, RENEWAL_INACTIVE, LICENCE_NOT_FOUND, CONTROLLER } from '../uri.js'
 import { RENEWAL_ERROR_REASON } from '../constants.js'
 import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import Joi from 'joi'
@@ -8,7 +8,7 @@ import moment from 'moment-timezone'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
- * (1) Redirect back to the identification page where there is an authentication failure
+ * (1) Redirect to an error page where there is an authentication failure
  * (2) Redirect to an error page where the renewal has expired
  * (3) Redirect back to an error page where a licence is already issued
  * (4) Establish the session cache and redirect into the controller where the user is authenticated
@@ -45,7 +45,7 @@ export default async (request, h) => {
     payload.referenceNumber = referenceNumber
     await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
     await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
-    return h.redirectWithLanguageCode(IDENTIFY.uri)
+    return h.redirectWithLanguageCode(LICENCE_NOT_FOUND.uri)
   } else {
     // Test for 12 month licence
     const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().tz(SERVICE_LOCAL_TIME).startOf('day'), 'days')
