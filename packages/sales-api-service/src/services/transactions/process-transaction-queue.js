@@ -8,16 +8,11 @@ import {
   Transaction,
   TransactionCurrency,
   TransactionJournal,
-  RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, FULFILMENT_SWITCHOVER_DATE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
-import {
-  findNewestExistingRecurringPaymentInCrm,
-  generateRecurringPaymentRecord,
-  processRecurringPayment
-} from '../recurring-payments.service.js'
+import { generateRecurringPaymentRecord, processRecurringPayment } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
@@ -87,12 +82,6 @@ export async function processQueue ({ id }) {
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.recurringPayment, recurringPayment)
       entities.push(paymentInstruction)
-
-      const existingRecurringPayment = await findNewestExistingRecurringPaymentInCrm(recurringPayment.agreementId)
-      if (existingRecurringPayment) {
-        existingRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, recurringPayment)
-        entities.push(existingRecurringPayment)
-      }
     }
 
     for (const concession of concessions || []) {
@@ -111,14 +100,12 @@ export async function processQueue ({ id }) {
   debug('Persisting %d entities for staging id %s', entities.length, id)
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
-  await docClient
-    .put({
-      TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
-      Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
-      ConditionExpression: 'attribute_not_exists(id)'
-    })
-    .promise()
+  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } })
+  await docClient.put({
+    TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+    Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
+    ConditionExpression: 'attribute_not_exists(id)'
+  })
 }
 
 const shouldCreateFulfilmentRequest = (permission, permit, contact) => {

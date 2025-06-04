@@ -96,41 +96,48 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
   permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
-  await docClient
-    .update({
-      TableName: TRANSACTION_STAGING_TABLE.TableName,
-      Key: { id: transactionId },
-      ...docClient.createUpdateExpression({
-        payload: permission,
-        permissions: transactionRecord.permissions,
-        status: { id: TRANSACTION_STATUS.FINALISED },
-        payment: {
-          amount: transactionRecord.cost,
-          method: TRANSACTION_SOURCE.govPay,
-          source: PAYMENT_TYPE.debit,
-          timestamp: new Date().toISOString()
-        }
-      }),
-      ReturnValues: 'ALL_NEW'
-    })
-    .promise()
+  await docClient.update({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id: transactionId },
+    ...docClient.createUpdateExpression({
+      payload: permission,
+      permissions: transactionRecord.permissions,
+      status: { id: TRANSACTION_STATUS.FINALISED },
+      payment: {
+        amount: transactionRecord.cost,
+        method: TRANSACTION_SOURCE.govPay,
+        source: PAYMENT_TYPE.debit,
+        timestamp: new Date().toISOString()
+      }
+    }),
+    ReturnValues: 'ALL_NEW'
+  })
 
-  await sqs
-    .sendMessage({
-      QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: transactionId,
-      MessageDeduplicationId: transactionId,
-      MessageBody: JSON.stringify({ id: transactionId })
-    })
-    .promise()
+  await sqs.sendMessage({
+    QueueUrl: TRANSACTION_QUEUE.Url,
+    MessageGroupId: transactionId,
+    MessageDeduplicationId: transactionId,
+    MessageBody: JSON.stringify({ id: transactionId })
+  })
 
   return { permission }
 }
 
-export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
+export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
+  console.log('existingRecurringPaymentId: ', existingRecurringPaymentId)
+  console.log('agreementId: ', agreementId)
+  const newRecurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
+  if (newRecurringPayment) {
+    console.log('newRecurringPaymentId: ', newRecurringPayment.id)
+  } else {
+    console.log('No matches found')
+  }
+}
+
+const findNewestExistingRecurringPaymentInCrm = async agreementId => {
   const matchingRecords = await executeQuery(findRecurringPaymentsByAgreementId(agreementId))
   if (matchingRecords?.length) {
-    return [...matchingRecords].sort((a, b) => a.endDate.localeCompare(b.endDate)).pop()
+    return [...matchingRecords].sort((a, b) => a.entity.endDate - b.entity.endDate).pop()
   } else {
     return false
   }
