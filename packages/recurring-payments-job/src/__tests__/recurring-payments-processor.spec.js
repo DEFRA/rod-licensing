@@ -78,16 +78,15 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
 
-it('console log displays "Recurring Payments found:" when env is true', async () => {
-  const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+  it('console log displays "Recurring Payments found:" when env is true', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
 
-  await processRecurringPayments()
+    await processRecurringPayments()
 
-  // 1st call = "Recurring Payments job enabled"
-  // 2nd call = "Recurring Payments found:", []
-  expect(consoleLogSpy).toHaveBeenNthCalledWith(2, 'Recurring Payments found:', [])
-})
-
+    // 1st call = "Recurring Payments job enabled"
+    // 2nd call = "Recurring Payments found:", []
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, 'Recurring Payments found:', [])
+  })
 
   it('console log displays "Run aborted. Error fetching due recurring payments:" when an error occurs', async () => {
     const error = new Error('Test error')
