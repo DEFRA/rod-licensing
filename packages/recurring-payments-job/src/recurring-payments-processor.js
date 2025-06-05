@@ -9,23 +9,45 @@ const payments = []
 const PAYMENT_STATUS_SUCCESS = 'success'
 
 export const processRecurringPayments = async () => {
-  if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
-    console.log('Recurring Payments job enabled')
-    const date = new Date().toISOString().split('T')[0]
-    try {
-      const response = await salesApi.getDueRecurringPayments(date)
-      console.log('Recurring Payments found: ', response)
-      await Promise.all(response.map(record => processRecurringPayment(record)))
-      if (response.length > 0) {
-        await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
-        await Promise.all(response.map(record => processRecurringPaymentStatus(record)))
-      }
-    } catch (error) {
-      console.error('Run aborted. Error fetching due recurring payments:', error)
-      throw error
-    }
-  } else {
+  if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() !== 'true') {
     console.log('Recurring Payments job disabled')
+    return
+  }
+
+  console.log('Recurring Payments job enabled')
+  const date = new Date().toISOString().split('T')[0]
+
+  // FETCH DUE PAYMENTS
+  let dueRCPayments
+  try {
+    dueRCPayments = await salesApi.getDueRecurringPayments(date)
+    console.log('Recurring Payments found:', dueRCPayments)
+  } catch (error) {
+    console.error('Run aborted. Error fetching due recurring payments:', error)
+    throw error
+  }
+
+  // NOTHING TO DO
+  if (dueRCPayments.length === 0) {
+    return
+  }
+
+  // REQUEST THE PAYMENTS
+  try {
+    await Promise.all(dueRCPayments.map(processRecurringPayment))
+  } catch (error) {
+    console.error('Run aborted. Error requesting payments:', error)
+    throw error
+  }
+
+  // WAIT, THEN POLL STATUS
+  await new Promise(r => setTimeout(r, PAYMENT_STATUS_DELAY))
+
+  try {
+    await Promise.all(dueRCPayments.map(processRecurringPaymentStatus))
+  } catch (error) {
+    console.error('Run aborted. Error retrieving payment statuses:', error)
+    throw error
   }
 }
 
