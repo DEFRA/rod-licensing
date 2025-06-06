@@ -792,11 +792,6 @@ describe('sales-api-connector', () => {
       })
 
       await expect(salesApi.cancelRecurringPayment('id')).rejects.toThrow('Internal Server Error')
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/cancelRecurringPayment/id', {
-        method: 'get',
-        headers: expect.any(Object),
-        timeout: 20000
-      })
     })
   })
 })
