@@ -1,12 +1,12 @@
 {% extends "layout.njk" %}
 {% extends "standard-form.njk" %}
 
-{% set title = mssgs.licence_not_found_header %}
+{% set title = mssgs.licence_not_found_title %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ mssgs.licence_not_found_header }}</h1>
+    <h1 class="govuk-heading-l">{{ mssgs.licence_not_found_title }}</h1>
     <p class="govuk-body">
       {{ mssgs.licence_not_found_body_1 }}
       <a class="govuk-link" href="/buy/renew/identify">{{ mssgs.licence_not_found_body_previous_page }}</a>{{ mssgs.full_stop }}
