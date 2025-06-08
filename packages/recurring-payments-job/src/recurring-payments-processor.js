@@ -41,7 +41,7 @@ export const processRecurringPayments = async () => {
   }
 
   // WAIT, THEN POLL STATUS
-  await new Promise(r => setTimeout(r, PAYMENT_STATUS_DELAY))
+  await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
   try {
     await Promise.all(dueRCPayments.map(processRecurringPaymentStatus))
