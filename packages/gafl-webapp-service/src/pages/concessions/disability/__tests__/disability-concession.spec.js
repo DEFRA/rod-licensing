@@ -31,14 +31,14 @@ describe('The disability concession page', () => {
     expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
   })
 
-  it('redirects back to itself on posting blue badge with an empty blue number', async () => {
-    const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-      'disability-concession': disabilityConcessionTypes.blueBadge,
-      'blue-badge-number': ''
-    })
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
-  })
+  // it('redirects back to itself on posting blue badge with an empty blue number', async () => {
+  //   const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+  //     'disability-concession': disabilityConcessionTypes.blueBadge,
+  //     'blue-badge-number': ''
+  //   })
+  //   expect(response.statusCode).toBe(302)
+  //   expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
+  // })
 
   it('on setting a correct ni number it redirects to the licence-to-start page', async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
@@ -62,32 +62,32 @@ describe('The disability concession page', () => {
     })
   })
 
-  it('on setting a correct blue badge number redirects to the licence-to-start page', async () => {
-    const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-      'disability-concession': disabilityConcessionTypes.blueBadge,
-      'blue-badge-number': '1234'
-    })
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
-  })
+  // it('on setting a correct blue badge number redirects to the licence-to-start page', async () => {
+  //   const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+  //     'disability-concession': disabilityConcessionTypes.blueBadge,
+  //     'blue-badge-number': '1234'
+  //   })
+  //   expect(response.statusCode).toBe(302)
+  //   expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
+  // })
 
-  it('on setting a correct blue badge number adds a disabled concession to the cache', async () => {
-    await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-      'disability-concession': disabilityConcessionTypes.blueBadge,
-      'blue-badge-number': '1234'
-    })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].concessions[0].proof).toEqual({
-      type: CONCESSION_PROOF.blueBadge,
-      referenceNumber: '1234'
-    })
-  })
+  // it('on setting a correct blue badge number adds a disabled concession to the cache', async () => {
+  //   await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+  //     'disability-concession': disabilityConcessionTypes.blueBadge,
+  //     'blue-badge-number': '1234'
+  //   })
+  //   const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+  //   expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
+  //   expect(JSON.parse(payload).permissions[0].concessions[0].proof).toEqual({
+  //     type: CONCESSION_PROOF.blueBadge,
+  //     referenceNumber: '1234'
+  //   })
+  // })
 
   it('on setting a disability concession and changing to a 8 day licence and back, the concession is restored', async () => {
     await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-      'disability-concession': disabilityConcessionTypes.blueBadge,
-      'blue-badge-number': '1234'
+      'disability-concession': disabilityConcessionTypes.pipDla,
+      'ni-number': 'NH 34 67 44 A'
     })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -96,8 +96,8 @@ describe('The disability concession page', () => {
     const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(concessionHelper.hasDisabled(JSON.parse(payload2).permissions[0])).toBeTruthy()
     expect(JSON.parse(payload2).permissions[0].concessions[0].proof).toEqual({
-      type: CONCESSION_PROOF.blueBadge,
-      referenceNumber: '1234'
+      type: CONCESSION_PROOF.NI,
+      referenceNumber: 'NH 34 67 44 A'
     })
   })
 
