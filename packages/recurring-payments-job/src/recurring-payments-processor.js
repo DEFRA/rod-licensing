@@ -35,10 +35,10 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
   const transactionData = await processPermissionData(referenceNumber, agreementId)
-  debug('Creating new transaction based on: ', referenceNumber, 'with agreementId: ', agreementId)
+  console.log('Creating new transaction based on: ', referenceNumber, 'with agreementId: ', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    debug('New transaction created:', response)
+    console.log('New transaction created:', response)
     return response
   } catch (e) {
     console.error('Error creating transaction', JSON.stringify(transactionData))
@@ -48,7 +48,7 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  debug('Requesting payment:', preparedPayment)
+  console.log('Requesting payment:', preparedPayment)
   const payment = await sendPayment(preparedPayment)
   payments.push({
     agreementId,
@@ -59,7 +59,7 @@ const takeRecurringPayment = async (agreementId, transaction) => {
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
-  debug('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
+  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
@@ -107,11 +107,11 @@ const processRecurringPaymentStatus = async record => {
   const {
     state: { status }
   } = await getPaymentStatus(paymentId)
-  debug(`Payment status for ${paymentId}: ${status}`)
+  console.log(`Payment status for ${paymentId}: ${status}`)
   if (status === PAYMENT_STATUS_SUCCESS) {
     const payment = payments.find(p => p.paymentId === paymentId)
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
-    debug(`Processed Recurring Payment for ${payment.transaction.id}`)
+    console.log(`Processed Recurring Payment for ${payment.transaction.id}`)
   }
 }
 
