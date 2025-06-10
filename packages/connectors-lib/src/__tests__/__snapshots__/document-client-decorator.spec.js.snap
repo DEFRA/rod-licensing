@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`document client decorations createUpdateExpression transforms object to an update expression, with provided attribute names and values 1`] = `
+Object {
+  "ExpressionAttributeNames": Object {
+    "#payload": "payload",
+    "#payment": "payment",
+    "#permissions": "permissions",
+    "#status": "status",
+  },
+  "ExpressionAttributeValues": Object {
+    ":payload": Object {
+      "id": "abc-123",
+      "name": "ABCDE-123JJ-ABK12",
+      "type": "ddd-111-ggg-888",
+    },
+    ":payment": Object {
+      "amount": 16.32,
+      "method": "barter",
+      "source": "credit",
+      "timestamp": "2025-04-09T11:53:17.854Z",
+    },
+    ":permissions": Array [
+      Object {
+        "id": "abc-123",
+        "name": "ABCDE-123JJ-ABK12",
+        "type": "ddd-111-ggg-888",
+      },
+    ],
+    ":status": Object {
+      "id": "finalised",
+    },
+  },
+  "UpdateExpression": "SET #payload = :payload,#permissions = :permissions,#status = :status,#payment = :payment",
+}
+`;

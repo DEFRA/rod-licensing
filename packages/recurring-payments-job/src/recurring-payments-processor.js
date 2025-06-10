@@ -60,20 +60,20 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
   const transactionData = await processPermissionData(referenceNumber, agreementId)
-  console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Creating new transaction based on: ', referenceNumber, 'with agreementId: ', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    console.log('New transaction created:', response)
+    debug('New transaction created:', response)
     return response
   } catch (e) {
-    console.log('Error creating transaction', JSON.stringify(transactionData))
+    console.error('Error creating transaction', JSON.stringify(transactionData))
     throw e
   }
 }
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  console.log('Requesting payment:', preparedPayment)
+  debug('Requesting payment:', preparedPayment)
   const payment = await sendPayment(preparedPayment)
   payments.push({
     agreementId,
@@ -84,7 +84,7 @@ const takeRecurringPayment = async (agreementId, transaction) => {
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
-  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {

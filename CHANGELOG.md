@@ -1,4 +1,113 @@
 
+## v1.61.0-rc.14 (2025-06-03)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2138](https://github.com/DEFRA/rod-licensing/pull/2138) Implement fail screen for easy renewals journey Part 1 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.13 (2025-06-02)
+
+#### :rocket: Enhancement
+* [#2163](https://github.com/DEFRA/rod-licensing/pull/2163) Amend test:watch to automatically enable verbose and non-silent running ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.12 (2025-05-30)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2140](https://github.com/DEFRA/rod-licensing/pull/2140) Upgrade AWS SDK to v3 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.11 (2025-05-30)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2158](https://github.com/DEFRA/rod-licensing/pull/2158) Upgrade to v20 of node ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+## v1.61.0-rc.8 (2025-05-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2157](https://github.com/DEFRA/rod-licensing/pull/2157) Remove logging code for new prices bug ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.7 (2025-05-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2155](https://github.com/DEFRA/rod-licensing/pull/2155) Add link-recurring-payments endpoint ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.6 (2025-05-15)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2152](https://github.com/DEFRA/rod-licensing/pull/2152) Remove date picker from start kind screen ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.5 (2025-05-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2151](https://github.com/DEFRA/rod-licensing/pull/2151) RCP confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.4 (2025-05-13)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2135](https://github.com/DEFRA/rod-licensing/pull/2135) Recurring payments logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.3 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2150](https://github.com/DEFRA/rod-licensing/pull/2150) Fix capitalisation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.2 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2149](https://github.com/DEFRA/rod-licensing/pull/2149) Fix field names in test ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.1 (2025-04-28)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2139](https://github.com/DEFRA/rod-licensing/pull/2139) Card digits dynamics lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.61.0-rc.0 (2025-04-24)
 
 #### :rocket: Enhancement

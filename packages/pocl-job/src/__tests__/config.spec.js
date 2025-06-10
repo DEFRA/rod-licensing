@@ -1,12 +1,7 @@
-import AwsMock from 'aws-sdk'
 import config from '../config.js'
 
 describe('config', () => {
   beforeAll(async () => {
-    AwsMock.SecretsManager.__setResponse('getSecretValue', {
-      SecretString: 'test-ssh-key'
-    })
-
     process.env.POCL_FILE_STAGING_TABLE = 'test-file-staging-table'
     process.env.POCL_RECORD_STAGING_TABLE = 'test-record-staging-table'
     process.env.POCL_STAGING_TTL = 1234
