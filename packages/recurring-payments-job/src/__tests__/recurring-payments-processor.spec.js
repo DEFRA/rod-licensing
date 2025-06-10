@@ -1,7 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
-import db from 'debug'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -17,11 +16,11 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     processRPResult: jest.fn()
   }
 }))
+
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
   getPaymentStatus: jest.fn()
 }))
-jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 jest.mock('http-response-status-code', () => {
   const actual = jest.requireActual('http-response-status-code')
@@ -54,18 +53,21 @@ describe('recurring-payments-processor', () => {
     global.setTimeout = jest.fn((cb, ms) => cb())
   })
 
-  it('debug displays "Recurring Payments job disabled" when env is false', async () => {
+  it('console log displays "Recurring Payments job disabled" when env is false', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'false'
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
 
     await processRecurringPayments()
 
-    expect(debugMock).toHaveBeenCalledWith('Recurring Payments job disabled')
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job disabled')
   })
 
-  it('debug displays "Recurring Payments job enabled" when env is true', async () => {
+  it('console log displays "Recurring Payments job enabled" when env is true', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
     await processRecurringPayments()
 
-    expect(debugMock).toHaveBeenCalledWith('Recurring Payments job enabled')
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
   })
 
   it('get recurring payments is called when env is true', async () => {
@@ -342,7 +344,8 @@ describe('recurring-payments-processor', () => {
     expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
   })
 
-  it('debug should log payment status for recurring payment', async () => {
+  it('should log payment status for recurring payment', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
     const mockPaymentId = 'test-payment-id'
     const mockResponse = [
       {
@@ -356,48 +359,17 @@ describe('recurring-payments-processor', () => {
         }
       }
     ]
-    const mockStatus = getPaymentStatusSuccess()
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
     salesApi.createTransaction.mockResolvedValueOnce({
       id: mockPaymentId
     })
     const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(mockStatus)
-
-    await processRecurringPayments()
-
-    expect(debugMock).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${mockStatus.state.status}`)
-  })
-
-  it('debug should inform that the recurring payment has been processed', async () => {
-    const mockTransactionId = 'test-transaction-id'
-    salesApi.createTransaction.mockReturnValueOnce({
-      cost: 50
-    })
-    const mockResponse = [
-      {
-        entity: { agreementId: 'agreement-1' },
-        expanded: {
-          activePermission: {
-            entity: {
-              referenceNumber: 'ref-1'
-            }
-          }
-        }
-      }
-    ]
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
-    salesApi.createTransaction.mockResolvedValueOnce({
-      id: mockTransactionId
-    })
-    const mockPaymentResponse = { payment_id: 'payment-id', agreementId: 'agreement-1' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
-    expect(debugMock).toHaveBeenCalledWith(`Processed Recurring Payment for ${mockTransactionId}`)
+    expect(consoleLogSpy).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: success`)
   })
 
   it.each([
@@ -617,7 +589,7 @@ describe('recurring-payments-processor', () => {
 
       const permits = []
       for (let i = 0; i < count; i++) {
-        permits.push(`permit${i}`)
+        permits.push(Symbol(`permit${i}`))
       }
 
       permits.forEach((permit, i) => {
