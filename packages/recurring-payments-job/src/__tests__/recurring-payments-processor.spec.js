@@ -100,6 +100,38 @@ describe('recurring-payments-processor', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith('Run aborted. Error fetching due recurring payments:', error)
   })
 
+  it('logs and re-throws when a payment request fails', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
+    const oopsie = new Error('payment gate down')
+    sendPayment.mockRejectedValueOnce(oopsie)
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    await expect(processRecurringPayments()).rejects.toBe(oopsie)
+
+    expect(errorSpy).toHaveBeenCalledWith('Run aborted. Error requesting payments:', oopsie)
+  })
+
+  it('logs and re-throws when a payment status request fails', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
+
+    const mockPaymentResponse = {
+      payment_id: 'test-payment-id',
+      agreementId: 'test-agreement-id',
+      created_date: '2025-01-01T00:00:00.000Z'
+    }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+
+    const apiError = { response: { status: 503 } }
+    getPaymentStatus.mockRejectedValueOnce(apiError)
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+    await expect(processRecurringPayments()).rejects.toBe(apiError)
+
+    expect(errorSpy).toHaveBeenCalledWith('Run aborted. Error retrieving payment statuses:', apiError)
+  })
+
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
