@@ -30,7 +30,9 @@ export const processRecurringPayments = async () => {
 
   // FETCH DUE PAYMENTS
   const dueRCPayments = await fetchDueRecurringPayments(date)
-  if (dueRCPayments.length === 0) return
+  if (dueRCPayments.length === 0) {
+    return
+  }
 
   // REQUEST THE PAYMENTS
   try {
