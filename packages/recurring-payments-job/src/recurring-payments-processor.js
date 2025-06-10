@@ -8,6 +8,17 @@ const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 const PAYMENT_STATUS_SUCCESS = 'success'
 
+const fetchDueRecurringPayments = async date => {
+  try {
+    const payments = await salesApi.getDueRecurringPayments(date)
+    console.log('Recurring Payments found:', payments)
+    return payments
+  } catch (error) {
+    console.error('Run aborted. Error fetching due recurring payments:', error)
+    throw error
+  }
+}
+
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() !== 'true') {
     console.log('Recurring Payments job disabled')
@@ -18,19 +29,8 @@ export const processRecurringPayments = async () => {
   const date = new Date().toISOString().split('T')[0]
 
   // FETCH DUE PAYMENTS
-  let dueRCPayments
-  try {
-    dueRCPayments = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found:', dueRCPayments)
-  } catch (error) {
-    console.error('Run aborted. Error fetching due recurring payments:', error)
-    throw error
-  }
-
-  // NOTHING TO DO
-  if (dueRCPayments.length === 0) {
-    return
-  }
+  const dueRCPayments = await fetchDueRecurringPayments(date)
+  if (dueRCPayments.length === 0) return
 
   // REQUEST THE PAYMENTS
   try {
@@ -60,20 +60,20 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
   const transactionData = await processPermissionData(referenceNumber, agreementId)
-  console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Creating new transaction based on: ', referenceNumber, 'with agreementId: ', agreementId)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    console.log('New transaction created:', response)
+    debug('New transaction created:', response)
     return response
   } catch (e) {
-    console.log('Error creating transaction', JSON.stringify(transactionData))
+    console.error('Error creating transaction', JSON.stringify(transactionData))
     throw e
   }
 }
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  console.log('Requesting payment:', preparedPayment)
+  debug('Requesting payment:', preparedPayment)
   const payment = await sendPayment(preparedPayment)
   payments.push({
     agreementId,
@@ -84,7 +84,7 @@ const takeRecurringPayment = async (agreementId, transaction) => {
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
-  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
+  debug('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
