@@ -31,15 +31,6 @@ describe('The disability concession page', () => {
     expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
   })
 
-  it('redirects back to itself on posting blue badge with an empty blue number', async () => {
-    const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-      'disability-concession': disabilityConcessionTypes.blueBadge,
-      'blue-badge-number': ''
-    })
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
-  })
-
   it('on setting a correct ni number it redirects to the licence-to-start page', async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.pipDla,
@@ -62,10 +53,9 @@ describe('The disability concession page', () => {
     })
   })
 
-  it('on setting a correct blue badge number redirects to the licence-to-start page', async () => {
+  it("on setting 'blue badge' or 'meets criteria for bb' it causes a redirect to the licence-to-start page", async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-      'disability-concession': disabilityConcessionTypes.blueBadge,
-      'blue-badge-number': '1234'
+      'disability-concession': disabilityConcessionTypes.blueBadge
     })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)

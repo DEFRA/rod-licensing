@@ -14,10 +14,6 @@
         'ni-number': {
             'string.empty': { ref: '#ni-number', text: mssgs.disability_concession_error_ni_empty },
             'string.pattern.base': { ref: '#ni-number', text: mssgs.disability_concession_error_ni_pattern }
-        },
-        'blue-badge-number': {
-            'string.empty': { ref: '#blue-badge-number', text: mssgs.disability_concession_badge_error_msg },
-            'string.max': { ref: '#blue-badge-number', text: mssgs.disability_concession_badge_error_msg }
         }
     }
 %}
@@ -39,20 +35,6 @@
     }) }}
 {% endset -%}
 
-{% set blueBadge %}
-    {{ govukInput({
-      label: {
-        html: mssgs.disability_concession_badge_error_msg
-      },
-      id: "blue-badge-number",
-      name: "blue-badge-number",
-      value: payload['blue-badge-number'],
-      classes: "govuk-input--width-20",
-      attributes: { maxlength: 25 },
-      errorMessage: { text: mssgs.disability_concession_badge_error_msg } if error['blue-badge-number']
-    }) }}
-{% endset -%}
-
 {% block pageContent %}
     {% if not data.hasJunior and not data.hasSenior %}
         <p class="govuk-hint">{{ mssgs.disability_concession_12_month }}<a href="https://www.gov.uk/government/publications/blue-badge-can-i-get-one/can-i-get-a-blue-badge" class="govuk-link" target="_blank">{{ mssgs.disability_concession_12_month_link }}</a></p>
@@ -71,8 +53,7 @@
                {
                   text: mssgs['disability_concession_radio_badge_' ~ suffix],
                   value: data.blueBadge,
-                  checked: payload['disability-concession'] === data.blueBadge,
-                  conditional: { html: blueBadge }
+                  checked: payload['disability-concession'] === data.blueBadge
                },
                {
                    text: mssgs['disability_concession_radio_no_' ~ suffix],
