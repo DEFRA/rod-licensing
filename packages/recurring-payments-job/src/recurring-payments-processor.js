@@ -10,9 +10,9 @@ const PAYMENT_STATUS_SUCCESS = 'success'
 
 const fetchDueRecurringPayments = async date => {
   try {
-    const payments = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found:', payments)
-    return payments
+    const duePayments = await salesApi.getDueRecurringPayments(date)
+    console.log('Recurring Payments found:', duePayments)
+    return duePayments
   } catch (error) {
     console.error('Run aborted. Error fetching due recurring payments:', error)
     throw error
