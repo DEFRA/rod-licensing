@@ -56,9 +56,9 @@
                   checked: payload['disability-concession'] === data.blueBadge
                },
                {
-                   text: mssgs['disability_concession_radio_no_' ~ suffix],
-                   value: data.no,
-                   checked: payload['disability-concession'] === data.no
+                  text: mssgs['disability_concession_radio_no_' ~ suffix],
+                  value: data.no,
+                  checked: payload['disability-concession'] === data.no
                }
            ],
            errorMessage: { text: mssgs.disability_concession_error_choose_option } if error['disability-concession']
