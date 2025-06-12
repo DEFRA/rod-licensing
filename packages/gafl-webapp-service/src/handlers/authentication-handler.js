@@ -43,7 +43,7 @@ export default async (request, h) => {
 
   if (!authenticationResult) {
     payload.referenceNumber = referenceNumber
-    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
+    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload })
     await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
     return h.redirectWithLanguageCode(LICENCE_NOT_FOUND.uri)
   } else {

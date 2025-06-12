@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.15 (2025-06-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2166](https://github.com/DEFRA/rod-licensing/pull/2166) https://eaflood.atlassian.net/browse/IWTF-4392 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.61.0-rc.14 (2025-06-03)
 
 #### :rocket: Enhancement
