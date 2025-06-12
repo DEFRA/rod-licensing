@@ -53,7 +53,7 @@ describe('The disability concession page', () => {
     })
   })
 
-  it("on setting 'blue badge' or 'meets criteria for bb', it causes a redirect to the licence-to-start page", async () => {
+  it('on selecting blue badge or meets criteria of bb, it causes a redirect to the licence-to-start page', async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.blueBadge
     })
