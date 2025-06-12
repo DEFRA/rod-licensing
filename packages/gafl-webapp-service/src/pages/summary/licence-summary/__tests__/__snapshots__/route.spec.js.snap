@@ -938,7 +938,7 @@ Array [
       "text": "licence_summary_blue_badge",
     },
     "value": Object {
-      "html": undefined,
+      "html": "licence_summary_blue_badge_eligible",
     },
   },
   Object {

@@ -85,6 +85,7 @@ const getMockRequest = ({
       licence_type_8d: 'licence_type_8d',
       licence_type_1d: 'licence_type_1d',
       licence_summary_blue_badge: 'licence_summary_blue_badge',
+      licence_summary_blue_badge_eligible: "licence_summary_blue_badge_eligible",
       licence_summary_ni_num: 'licence_summary_ni_num',
       licence_summary_disability_concession: 'licence_summary_disability_concession',
       free: 'gratis',
