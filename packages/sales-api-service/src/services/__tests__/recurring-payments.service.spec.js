@@ -4,6 +4,7 @@ import {
   findRecurringPaymentsByAgreementId,
   findById,
   Permission,
+  persist,
   RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import {
@@ -30,7 +31,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   executeQuery: jest.fn(),
   findById: jest.fn(),
   findDueRecurringPayments: jest.fn(),
-  findRecurringPaymentsByAgreementId: jest.fn(() => ['foo'])
+  findRecurringPaymentsByAgreementId: jest.fn(() => ['foo']),
+  persist: jest.fn()
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -664,6 +666,13 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2025-06-02T14:36:42.648Z'))
+    })
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
     it('should call findById with RecurringPayment and the provided id', async () => {
       const id = 'abc123'
       await cancelRecurringPayment(id)
@@ -678,6 +687,19 @@ describe('recurring payments service', () => {
       await cancelRecurringPayment('id')
 
       expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+    })
+
+    it('should call persist with the updated RecurringPayment', async () => {
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      const cancelledDate = '2025-06-02T14:36:42.648Z'
+      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
+      const expectedUpdatedRecurringPaymentEntity = { ...recurringPayment.entity, cancelledDate, cancelledReason }
+
+      await cancelRecurringPayment('id')
+
+      expect(persist).toHaveBeenCalledWith([expectedUpdatedRecurringPaymentEntity])
     })
 
     it('should log no matches when there are no matches', async () => {
