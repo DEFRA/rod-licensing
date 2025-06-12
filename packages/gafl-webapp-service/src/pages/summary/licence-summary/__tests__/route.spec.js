@@ -84,7 +84,7 @@ const getMockRequest = ({
       licence_type_12m: 'licence_type_12m',
       licence_type_8d: 'licence_type_8d',
       licence_type_1d: 'licence_type_1d',
-      licence_summary_blue_badge_num: 'licence_summary_blue_badge_num',
+      licence_summary_blue_badge: 'licence_summary_blue_badge',
       licence_summary_ni_num: 'licence_summary_ni_num',
       licence_summary_disability_concession: 'licence_summary_disability_concession',
       free: 'gratis',
@@ -163,8 +163,7 @@ const getMockBlueBadgePermission = () => ({
     {
       type: mappingConstants.CONCESSION.DISABLED,
       proof: {
-        type: mappingConstants.CONCESSION_PROOF.blueBadge,
-        referenceNumber: 'AB1 CDE 0 1234F5678'
+        type: mappingConstants.CONCESSION_PROOF.blueBadge
       }
     }
   ]
