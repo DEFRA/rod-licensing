@@ -1,7 +1,14 @@
 import { getPaymentStatus, sendPayment } from '../govuk-pay-service.js'
 import { govUkPayApi } from '@defra-fish/connectors-lib'
 
-jest.mock('@defra-fish/connectors-lib')
+jest.mock('@defra-fish/connectors-lib', () => ({
+  govUkPayApi: {
+    createRecurringPaymentAgreement: jest.fn(),
+    createPayment: jest.fn(),
+    fetchPaymentStatus: jest.fn(),
+    fetchPaymentEvents: jest.fn()
+  }
+}))
 
 describe('govuk-pay-service', () => {
   describe('sendPayment', () => {

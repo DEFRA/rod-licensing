@@ -3,7 +3,9 @@ import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
 import db from 'debug'
 
-jest.mock('@defra-fish/business-rules-lib')
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  SERVICE_LOCAL_TIME: 'Europe/London'
+}))
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     getDueRecurringPayments: jest.fn(() => []),
