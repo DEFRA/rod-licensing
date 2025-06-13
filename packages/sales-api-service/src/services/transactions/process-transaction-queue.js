@@ -1,4 +1,5 @@
 import {
+  findById,
   persist,
   Permission,
   Permit,
@@ -8,11 +9,11 @@ import {
   Transaction,
   TransactionCurrency,
   TransactionJournal,
-  RecurringPaymentInstruction
+  RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, FULFILMENT_SWITCHOVER_DATE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
-import { generateRecurringPaymentRecord, processRecurringPayment } from '../recurring-payments.service.js'
+import { generateRecurringPaymentRecord, processRecurringPayment, findNewestExistingRecurringPaymentInCrm } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
@@ -77,11 +78,11 @@ export async function processQueue ({ id }) {
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       entities.push(recurringPayment)
-      const paymentInstruction = new RecurringPaymentInstruction()
-      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
-      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)
-      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.recurringPayment, recurringPayment)
-      entities.push(paymentInstruction)
+      const existingRP = await findNewestExistingRecurringPaymentInCrm(recurringPayment.agreementId)
+      if (existingRP) {
+        existingRP.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, recurringPayment)
+        entities.push(existingRP)
+      }
     }
 
     for (const concession of concessions || []) {

@@ -169,7 +169,6 @@ describe('transaction service', () => {
             expect.any(Contact),
             expect.any(Permission),
             expect.any(RecurringPayment),
-            expect.any(RecurringPaymentInstruction),
             expect.any(ConcessionProof)
           ]
         ]
