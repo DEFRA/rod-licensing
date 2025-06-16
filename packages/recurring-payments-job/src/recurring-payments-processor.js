@@ -13,7 +13,6 @@ export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     debug('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
-    // const date = '2025-05-27' // I've been toggling this on temporarily for easier testing
     const response = await salesApi.getDueRecurringPayments(date)
     debug('Recurring Payments found: ', response)
     await Promise.all(response.map(record => processRecurringPayment(record)))
