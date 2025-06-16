@@ -1,9 +1,6 @@
 import recurringPayments from '../recurring-payments.js'
 import { getRecurringPayments, processRPResult } from '../../../services/recurring-payments.service.js'
-import {
-  dueRecurringPaymentsRequestParamsSchema,
-  processRPResultRequestParamsSchema
-} from '../../../schema/recurring-payments.schema.js'
+import { dueRecurringPaymentsRequestParamsSchema, processRPResultRequestParamsSchema } from '../../../schema/recurring-payments.schema.js'
 
 const [
   {
@@ -11,9 +8,6 @@ const [
   },
   {
     options: { handler: prpHandler }
-  },
-  {
-    options: { handler: lrpHandler }
   }
 ] = recurringPayments
 

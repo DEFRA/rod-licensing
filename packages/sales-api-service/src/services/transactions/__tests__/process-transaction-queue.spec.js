@@ -1,14 +1,11 @@
 import { processQueue, getTransactionJournalRefNumber } from '../process-transaction-queue.js'
 import {
   persist,
-  findById,
   ConcessionProof,
   Contact,
   FulfilmentRequest,
   Permission,
-  PoclFile,
   RecurringPayment,
-  RecurringPaymentInstruction,
   Transaction,
   TransactionJournal
 } from '@defra-fish/dynamics-lib'
@@ -25,7 +22,11 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import { processRecurringPayment, generateRecurringPaymentRecord, findNewestExistingRecurringPaymentInCrm } from '../../recurring-payments.service.js'
+import {
+  processRecurringPayment,
+  generateRecurringPaymentRecord,
+  findNewestExistingRecurringPaymentInCrm
+} from '../../recurring-payments.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
 const { docClient } = AWS.mock.results[0].value
 
@@ -50,8 +51,7 @@ jest.mock('../../reference-data.service.js', () => ({
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
-  persist: jest.fn(),
-  findById: jest.fn()
+  persist: jest.fn()
 }))
 
 jest.mock('../../contacts.service.js', () => ({
@@ -367,15 +367,13 @@ describe('transaction service', () => {
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
-    it('handles requests which relate to an transaction file', async () => {
+    it('handles requests which relate to a transaction file', async () => {
       const transactionFilename = 'test-file.xml'
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.transactionFile = transactionFilename
       docClient.get.mockResolvedValueOnce({ Item: mockRecord })
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToAlternateKey')
       const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToAlternateKey')
-      const testPoclFileEntity = new PoclFile()
-      findById.mockResolvedValueOnce(testPoclFileEntity)
       await processQueue({ id: mockRecord.id })
       expect(transactionToFileBindingSpy).toHaveBeenCalledWith(Transaction.definition.relationships.poclFile, transactionFilename)
       expect(permissionToFileBindingSpy).toHaveBeenCalledWith(Permission.definition.relationships.poclFile, transactionFilename)
@@ -466,7 +464,7 @@ describe('transaction service', () => {
         const finalisedTransaction = mockFinalisedTransactionRecord()
         findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(mockExistingRecurringPayment)
         processRecurringPayment.mockReturnValueOnce({ recurringPayment: mockNewRecurringPayment })
-        docClient.get.mockResolvedValueOnce({  Item: finalisedTransaction })
+        docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
         await processQueue({ id: finalisedTransaction.id })
         expect(mockExistingRecurringPayment.bindToEntity).toHaveBeenCalledWith(
           RecurringPayment.definition.relationships.nextRecurringPayment,

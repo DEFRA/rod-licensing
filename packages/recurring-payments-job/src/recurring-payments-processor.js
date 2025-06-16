@@ -118,7 +118,3 @@ const processRecurringPaymentStatus = async record => {
 const getPaymentId = agreementId => {
   return payments.find(p => p.agreementId === agreementId).paymentId
 }
-
-const linkRecurringPayments = async record => {
-  await salesApi.linkRecurringPayments(record.entity.id, record.entity.agreementId)
-}

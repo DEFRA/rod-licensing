@@ -149,4 +149,3 @@ describe('processRPResultRequestParamsSchema', () => {
     expect(() => processRPResultRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
   })
 })
-
