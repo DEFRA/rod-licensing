@@ -3,8 +3,7 @@ import {
   getRecurringPayments,
   processRecurringPayment,
   generateRecurringPaymentRecord,
-  processRPResult,
-  linkRecurringPayments
+  processRPResult
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
@@ -614,78 +613,5 @@ describe('recurring payments service', () => {
         MessageBody: JSON.stringify({ id: transactionId })
       })
     })
-  })
-
-  describe('linkRecurringPayments', () => {
-    it('should call executeQuery with findRecurringPaymentsByAgreementId and the provided agreementId', async () => {
-      const agreementId = 'abc123'
-      await linkRecurringPayments('existing-recurring-payment-id', agreementId)
-      expect(executeQuery).toHaveBeenCalledWith(findRecurringPaymentsByAgreementId(agreementId))
-    })
-
-    it('should log a RecurringPayment record when there is one match', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      const onlyRecord = { entity: getMockRecurringPayment() }
-      dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
-
-      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('newRecurringPaymentId: ', onlyRecord.id)
-    })
-
-    it('should log the RecurringPayment record with the latest endDate when there are multiple matches', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      const oldestRecord = { entity: getMockRecurringPayment({ id: Symbol('oldest'), endDate: new Date('2021-12-15T00:00:00Z') }) }
-      const newestRecord = { entity: getMockRecurringPayment({ id: Symbol('newest'), endDate: new Date('2023-12-15T00:00:00Z') }) }
-      const middlestRecord = { entity: getMockRecurringPayment({ id: Symbol('middlest'), endDate: new Date('2022-12-15T00:00:00Z') }) }
-      dynamicsLib.executeQuery.mockReturnValueOnce([oldestRecord, newestRecord, middlestRecord])
-
-      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('newRecurringPaymentId: ', newestRecord.entity.id)
-    })
-
-    it('should log no matches when there are no matches', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      dynamicsLib.executeQuery.mockReturnValueOnce([])
-
-      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found')
-    })
-
-    // Various failing tests commented out (I know these also need work):
-
-    // it('should call Object.assign', async () => {
-    //   const onlyRecord = { entity: getMockRecurringPayment({ id: Symbol('only') }) }
-    //   dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
-    //   const existingRecord = getMockRecurringPayment()
-
-    //   await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-    //   expect(Object.assign).toHaveBeenCalledWith(new RecurringPayment(), existingRecord)
-    // })
-
-    // it('should call bindToEntity', async () => {
-    //   const onlyRecord = { entity: getMockRecurringPayment({ id: Symbol('only') }) }
-    //   dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
-    //   const existingRecord = getMockRecurringPayment()
-    //   bindToEntity.mockReturnValueOnce(existingRecord)
-
-    //   await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-    //   expect(bindToEntity).toHaveBeenCalledWith(new RecurringPayment(), existingRecord)
-    // })
-
-    // it('should persist the updated recurring payment', async () => {
-    //   const onlyRecord = { entity: getMockRecurringPayment({ id: Symbol('only') }) }
-    //   dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
-    //   const existingRecord = getMockRecurringPayment({ id: Symbol('existing') })
-    //   bindToEntity.mockReturnValueOnce(existingRecord)
-
-    //   await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-    //   expect(persist).toHaveBeenCalledWith(objectContaining({ id: existingRecord.id }))
-    // })
   })
 })

@@ -125,45 +125,6 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   return { permission }
 }
 
-export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
-  console.log('existingRecurringPaymentId: ', existingRecurringPaymentId)
-  console.log('agreementId: ', agreementId)
-  const newRecurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
-  if (newRecurringPayment) {
-    const newRecurringPaymentId = newRecurringPayment.entity.id
-    console.log('newRecurringPaymentId: ', newRecurringPaymentId)
-
-    const data = await findById(RecurringPayment, existingRecurringPaymentId)
-    console.log(data)
-
-    // Updating the data directly before assigning it all to a new object doesn't work
-    // Have tried a bunch of variations on this – setting it to the object, to a copy of the object, to the ID, etc etc
-    // data.nextRecurringPayment = newRecurringPayment
-
-    // So I try bindToEntity again instead...
-    // const existingRecurringPayment = Object.assign(new RecurringPayment(), data)
-    // console.log('BEFORE bindToEntity:')
-    // console.log(existingRecurringPayment)
-
-    // existingRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, newRecurringPayment)
-    // console.log('AFTER bindToEntity:')
-    // console.log(existingRecurringPayment)
-
-    // But bindToEntity does nothing either :(
-
-    // Also tried this in a fit of desperation but it did not work:
-    // const newRecurringPaymentData = await getReferenceDataForEntityAndId(RecurringPayment, newRecurringPaymentId)
-    // console.log(newRecurringPaymentData)
-    // existingRecurringPayment.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, newRecurringPaymentData)
-
-    // Haven't even gotten this far because none of the above work!!
-    // const result = await persist([updatedExistingRecurringPayment])
-    // console.log(result)
-  } else {
-    console.log('No matches found')
-  }
-}
-
 export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
   const query = findRecurringPaymentsByAgreementId(agreementId)
   const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())

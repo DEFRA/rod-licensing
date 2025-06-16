@@ -25,7 +25,7 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
+import { processRecurringPayment, generateRecurringPaymentRecord, findNewestExistingRecurringPaymentInCrm } from '../../recurring-payments.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
 const { docClient } = AWS.mock.results[0].value
 
@@ -168,6 +168,36 @@ describe('transaction service', () => {
             expect.any(TransactionJournal),
             expect.any(Contact),
             expect.any(Permission),
+            expect.any(RecurringPayment),
+            expect.any(ConcessionProof)
+          ]
+        ],
+        [
+          'licences with a previous recurring payment linked to new recurring payment',
+          () => {
+            processRecurringPayment.mockResolvedValueOnce({ recurringPayment: new RecurringPayment() })
+            findNewestExistingRecurringPaymentInCrm.mockResolvedValueOnce(new RecurringPayment())
+            const mockRecord = mockFinalisedTransactionRecord()
+            mockRecord.payment.recurring = {
+              name: 'Test name',
+              nextDueDate: new Date('2020/01/11'),
+              endDate: new Date('2022/01/16'),
+              agreementId: '123446jjng',
+              publicId: 'sdf-123',
+              status: 1,
+              activePermission: mockRecord.permissions[0],
+              contact: Object.assign(mockContactPayload(), { firstName: 'Esther' })
+            }
+            mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
+            return mockRecord
+          },
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(RecurringPayment),
             expect.any(RecurringPayment),
             expect.any(ConcessionProof)
           ]
@@ -426,6 +456,22 @@ describe('transaction service', () => {
         docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
         await processQueue({ id: finalisedTransaction.id })
         expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
+      })
+
+      it('binds existing recurring payment to new recurring payment', async () => {
+        const mockExistingRecurringPayment = {
+          bindToEntity: jest.fn()
+        }
+        const mockNewRecurringPayment = new RecurringPayment()
+        const finalisedTransaction = mockFinalisedTransactionRecord()
+        findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(mockExistingRecurringPayment)
+        processRecurringPayment.mockReturnValueOnce({ recurringPayment: mockNewRecurringPayment })
+        docClient.get.mockResolvedValueOnce({  Item: finalisedTransaction })
+        await processQueue({ id: finalisedTransaction.id })
+        expect(mockExistingRecurringPayment.bindToEntity).toHaveBeenCalledWith(
+          RecurringPayment.definition.relationships.nextRecurringPayment,
+          mockNewRecurringPayment
+        )
       })
     })
   })

@@ -14,8 +14,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       id: 'test-transaction-id',
       cost: 30
     })),
-    processRPResult: jest.fn(),
-    linkRecurringPayments: jest.fn()
+    processRPResult: jest.fn()
   }
 }))
 jest.mock('../services/govuk-pay-service.js', () => ({
@@ -395,21 +394,6 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
   })
 
-  // it('links recurring payments', async () => {
-  //   const mockTransactionId = 'test-transaction-id'
-  //   const mockPaymentId = 'test-payment-id'
-  //   const mockPaymentCreatedDate = '2025-01-01T00:00:00.000Z'
-  //   const mockAgreementId = Symbol('agreement-id')
-  //   salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
-  //   salesApi.createTransaction.mockResolvedValueOnce({ id: mockTransactionId, cost: 30 })
-  //   sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: mockAgreementId, created_date: mockPaymentCreatedDate })
-  //   getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-
-  //   await processRecurringPayments()
-
-  //   expect(salesApi.linkRecurringPayments).toHaveBeenCalledWith(mockTransactionId, mockAgreementId)
-  // })
-
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
     it('prepares the data for each one', async () => {
       const references = []
@@ -553,10 +537,6 @@ describe('recurring-payments-processor', () => {
       expectedData.forEach(paymentId => {
         expect(getPaymentStatus).toHaveBeenCalledWith(paymentId)
       })
-
-      // it('links recurring payments for each one', async () => {
-      //   // TODO
-      // })
     })
   })
 })
