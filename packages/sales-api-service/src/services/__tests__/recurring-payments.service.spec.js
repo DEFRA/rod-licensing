@@ -689,7 +689,6 @@ describe('recurring payments service', () => {
       jest.spyOn(RecurringPayment, 'fromResponse')
       dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce(getMockResponse())
       const rcp = await findNewestExistingRecurringPaymentInCrm()
-      // would be nice if we could do expect(rcp).toBe(expect.any(RecurringPayment)), but no...
       expect(RecurringPayment.fromResponse.mock.results[0].value).toBe(rcp)
     })
 
