@@ -1,4 +1,10 @@
-import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, RecurringPayment } from '@defra-fish/dynamics-lib'
+import {
+  executeQuery,
+  findDueRecurringPayments,
+  findRecurringPaymentsByAgreementId,
+  RecurringPayment,
+  dynamicsClient
+} from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
@@ -123,22 +129,12 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   return { permission }
 }
 
-export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
-  console.log('existingRecurringPaymentId: ', existingRecurringPaymentId)
-  console.log('agreementId: ', agreementId)
-  const newRecurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
-  if (newRecurringPayment) {
-    console.log('newRecurringPaymentId: ', newRecurringPayment.id)
-  } else {
-    console.log('No matches found')
+export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
+  const query = findRecurringPaymentsByAgreementId(agreementId)
+  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  if (response.value.length) {
+    const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
+    return RecurringPayment.fromResponse(rcpResponseData)
   }
-}
-
-const findNewestExistingRecurringPaymentInCrm = async agreementId => {
-  const matchingRecords = await executeQuery(findRecurringPaymentsByAgreementId(agreementId))
-  if (matchingRecords?.length) {
-    return [...matchingRecords].sort((a, b) => a.entity.endDate - b.entity.endDate).pop()
-  } else {
-    return false
-  }
+  return false
 }

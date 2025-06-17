@@ -19,10 +19,7 @@ describe('Recurring Payment Queries', () => {
           'defra_cancelledreason',
           'defra_enddate',
           'defra_agreementid',
-          '_defra_activepermission_value',
-          '_defra_contact_value',
           'defra_publicid',
-          '_defra_nextrecurringpayment_value',
           'defra_lastdigitscardnumbers'
         ],
         expand: [{ property: 'defra_Contact' }, { property: 'defra_ActivePermission' }]
@@ -48,10 +45,7 @@ describe('Recurring Payment Queries', () => {
           'defra_cancelledreason',
           'defra_enddate',
           'defra_agreementid',
-          '_defra_activepermission_value',
-          '_defra_contact_value',
           'defra_publicid',
-          '_defra_nextrecurringpayment_value',
           'defra_lastdigitscardnumbers'
         ]
       })

@@ -1,8 +1,7 @@
 import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
-  processRPResultRequestParamsSchema,
-  linkRecurringPaymentsRequestParamsSchema
+  processRPResultRequestParamsSchema
 } from '../recurring-payments.schema.js'
 
 jest.mock('../validators/validators.js', () => ({
@@ -61,11 +60,6 @@ const getProcessRPResultSampleData = () => ({
   transactionId: 'abc123',
   paymentId: 'def456',
   createdDate: '2025-01-01T00:00:00.000Z'
-})
-
-const getLinkRecurringPaymentsSampleData = () => ({
-  existingRecurringPaymentId: 'ghi123',
-  agreementId: 'jkl456'
 })
 
 describe('getDueRecurringPaymentsSchema', () => {
@@ -153,26 +147,5 @@ describe('processRPResultRequestParamsSchema', () => {
     const sampleData = getProcessRPResultSampleData()
     sampleData[property] = value
     expect(() => processRPResultRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
-  })
-})
-
-describe('linkRecurringPaymentsRequestParamsSchema', () => {
-  it('validates expected object', async () => {
-    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(getLinkRecurringPaymentsSampleData())).not.toThrow()
-  })
-
-  it.each([['existingRecurringPaymentId'], ['agreementId']])('throws an error if %s is missing', async property => {
-    const sampleData = getLinkRecurringPaymentsSampleData()
-    delete sampleData[property]
-    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
-  })
-
-  it.each([
-    ['existingRecurringPaymentId', 99],
-    ['agreementId', 99]
-  ])('throws an error if %s is not the correct type', async (property, value) => {
-    const sampleData = getLinkRecurringPaymentsSampleData()
-    sampleData[property] = value
-    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
   })
 })
