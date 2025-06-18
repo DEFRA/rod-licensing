@@ -9,6 +9,8 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
+{% set govukRebrand = true %}
+
 {% if pageLanguageSetToWelsh %}
     {% set htmlLang = "cy" %}
 {% endif %}
@@ -114,6 +116,7 @@
     {% endif %}
 
     {{ govukHeader({
+        rebrand: true,
         assetsPath: assetPath + '/images',
         homepageUrl: "https://www.gov.uk/",
         serviceUrl: "/",
