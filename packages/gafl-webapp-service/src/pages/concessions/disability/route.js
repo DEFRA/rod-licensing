@@ -14,11 +14,6 @@ const validator = Joi.object({
     is: disabilityConcessionTypes.pipDla,
     then: validation.contact.createNationalInsuranceNumberValidator(Joi).required(),
     otherwise: Joi.string().empty('')
-  }),
-  'blue-badge-number': Joi.alternatives().conditional('disability-concession', {
-    is: disabilityConcessionTypes.blueBadge,
-    then: Joi.string().max(25).required(),
-    otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })
 

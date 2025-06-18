@@ -1,4 +1,22 @@
 
+## v1.61.0-rc.17 (2025-06-17)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2161](https://github.com/DEFRA/rod-licensing/pull/2161) Link recurring payments after new objects created ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.16 (2025-06-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2170](https://github.com/DEFRA/rod-licensing/pull/2170) Allow customers to indicate concession eligibility ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.61.0-rc.15 (2025-06-12)
 
 #### :rocket: Enhancement
