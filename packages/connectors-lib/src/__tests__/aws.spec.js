@@ -21,13 +21,38 @@ describe('AWS Special cases', () => {
       })
     )
   })
+
+  it('exports ListObjectsV2Command from S3 SDK', () => {
+    const { ListObjectsV2Command } = AWS()
+    expect(ListObjectsV2Command).toBeDefined()
+  })
+
+  describe('AWS connectors for S3Client', () => {
+    it('has region set to eu-west-2', async () => {
+      const { s3 } = AWS()
+      const region = await s3.config.region()
+      expect(region).toBe('eu-west-2')
+    })
+
+    it('sets forcePathStyle to true when endpoint is defined', () => {
+      Config.aws.s3.endpoint = 'http://localhost:8080'
+      const { s3 } = AWS()
+      expect(s3.config.forcePathStyle).toBe(true)
+      delete Config.aws.s3.endpoint
+    })
+
+    it('does not set forcePathStyle when no endpoint is defined', () => {
+      const { s3 } = AWS()
+      expect(s3.config.forcePathStyle).not.toBe(true)
+    })
+  })
 })
 
 describe.each`
   name                | clientName            | configName          | expectedAPIVersion
   ${'ddb'}            | ${'DynamoDB'}         | ${''}               | ${'2012-08-10'}
   ${'sqs'}            | ${'SQS'}              | ${''}               | ${'2012-11-05'}
-  ${'s3'}             | ${'S3'}               | ${''}               | ${'2006-03-01'}
+  ${'s3'}             | ${'S3Client'}         | ${'s3'}             | ${'2006-03-01'}
   ${'secretsManager'} | ${'SecretsManager'}   | ${'secretsManager'} | ${'2017-10-17'}
   ${'docClient'}      | ${'DynamoDBDocument'} | ${'dynamodb'}       | ${'2012-08-10'}
 `('AWS connectors for $clientName', ({ name, clientName, configName, expectedAPIVersion }) => {

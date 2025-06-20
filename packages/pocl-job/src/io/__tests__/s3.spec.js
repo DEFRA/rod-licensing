@@ -4,7 +4,7 @@ import { updateFileStagingTable } from '../../io/db.js'
 import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../../staging/constants.js'
 import { salesApi, AWS } from '@defra-fish/connectors-lib'
 import fs from 'fs'
-const { s3 } = AWS.mock.results[0].value
+const { s3, ListObjectsV2Command } = AWS.mock.results[0].value
 
 jest.mock('md5-file')
 jest.mock('../../io/db.js')
@@ -18,13 +18,12 @@ jest.mock('@defra-fish/connectors-lib', () => {
       createUpdateExpression: jest.fn(() => ({}))
     },
     s3: {
-      listObjectsV2: jest.fn(() => ({
-        Contents: []
-      })),
       getObject: jest.fn(() => ({
         createReadStream: jest.fn()
-      }))
-    }
+      })),
+      send: jest.fn()
+    },
+    ListObjectsV2Command: jest.fn()
   }))
   return {
     AWS,
@@ -54,7 +53,7 @@ describe('s3 operations', () => {
       const s3Key2 = `${moment().format('YYYY-MM-DD')}/test2.xml`
 
       beforeEach(async () => {
-        s3.listObjectsV2.mockReturnValueOnce({
+        s3.send.mockReturnValueOnce({
           IsTruncated: false,
           Contents: [
             {
@@ -75,8 +74,8 @@ describe('s3 operations', () => {
         await refreshS3Metadata()
       })
 
-      it('calls listObjectsV2, with bucket name and no continuation token', () => {
-        expect(s3.listObjectsV2).toHaveBeenNthCalledWith(1, {
+      it('calls ListObjectsV2Command, with bucket name and no continuation token', () => {
+        expect(ListObjectsV2Command).toHaveBeenNthCalledWith(1, {
           Bucket: 'testbucket',
           ContinuationToken: undefined
         })
@@ -129,7 +128,7 @@ describe('s3 operations', () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
       beforeEach(async () => {
-        s3.listObjectsV2
+        s3.send
           .mockReturnValue({
             IsTruncated: false,
             Contents: [
@@ -157,15 +156,15 @@ describe('s3 operations', () => {
         await refreshS3Metadata()
       })
 
-      it('calls listObjectsV2 a first time with bucket name and no continuation token', () => {
-        expect(s3.listObjectsV2).toHaveBeenNthCalledWith(1, {
+      it('calls ListObjectsV2Command a first time with bucket name and no continuation token', () => {
+        expect(ListObjectsV2Command).toHaveBeenNthCalledWith(1, {
           Bucket: 'testbucket',
           ContinuationToken: undefined
         })
       })
 
-      it('calls listObjectsV2 a second time with bucket name and continuation token', () => {
-        expect(s3.listObjectsV2).toHaveBeenNthCalledWith(2, {
+      it('calls ListObjectsV2Command a second time with bucket name and continuation token', () => {
+        expect(ListObjectsV2Command).toHaveBeenNthCalledWith(2, {
           Bucket: 'testbucket',
           ContinuationToken: 'token'
         })
@@ -209,7 +208,7 @@ describe('s3 operations', () => {
       salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: 'Processed' } })
       const s3Key = `${moment().format('YYYY-MM-DD')}/test-already-processed.xml`
 
-      s3.listObjectsV2.mockReturnValueOnce({
+      s3.send.mockReturnValueOnce({
         IsTruncated: false,
         Contents: [
           {
@@ -230,7 +229,7 @@ describe('s3 operations', () => {
     it('skips file processing if a file is older than one week', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
-      s3.listObjectsV2
+      s3.send
         .mockReturnValue({
           IsTruncated: false,
           Contents: [
@@ -261,11 +260,11 @@ describe('s3 operations', () => {
       expect(salesApi.upsertTransactionFile).not.toHaveBeenCalled()
     })
 
-    it('logs any errors raised by calling s3.listObjectsV2', async () => {
+    it('logs any errors raised by calling ListObjectsV2Command', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
       const testError = new Error('Test error')
-      s3.listObjectsV2.mockRejectedValueOnce(testError)
+      s3.send.mockRejectedValueOnce(testError)
 
       await expect(refreshS3Metadata()).rejects.toThrow(testError)
       expect(consoleErrorSpy).toHaveBeenCalledWith(testError)
@@ -274,7 +273,7 @@ describe('s3 operations', () => {
     it('raises a warning if the bucket is empty', async () => {
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
-      s3.listObjectsV2.mockReturnValueOnce({
+      s3.send.mockReturnValueOnce({
         IsTruncated: false
       })
 

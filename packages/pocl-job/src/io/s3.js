@@ -4,11 +4,12 @@ import config from '../config.js'
 import { DYNAMICS_IMPORT_STAGE } from '../staging/constants.js'
 import { storeS3Metadata } from '../transport/storeS3MetaData.js'
 import { AWS, salesApi } from '@defra-fish/connectors-lib'
-const { s3 } = AWS()
+const { s3, ListObjectsV2Command } = AWS()
 
 const listObjectsV2 = async function (params) {
   try {
-    return await s3.listObjectsV2(params)
+    const command = new ListObjectsV2Command(params)
+    return await s3.send(command)
   } catch (e) {
     console.error(e)
     throw e
