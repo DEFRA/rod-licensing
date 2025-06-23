@@ -31,6 +31,7 @@
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
     "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build",
     "docker:services": "docker stack deploy -c docker/services.yml rls",
+    "docker:gafl-webapp-refresh": "docker-compose -f docker/services.build.yml build --no-cache gafl_webapp && docker stack deploy -c docker/services.yml rls",
     "pre-commit": "npm run test && lint-staged",
     "pre-push": "prettier-standard --check --lint --since develop"
   },
