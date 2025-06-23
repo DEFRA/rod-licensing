@@ -36,41 +36,41 @@
 {% block header %}
     {% if displayAnalytics and not analyticsMessageDisplayed %}
   {{ govukCookieBanner({
-  rebrand: true,
-  ariaLabel: mssgs.analytics_banner_title,
-  messages: [
-    {
-      headingText: mssgs.analytics_banner_title,
-      html: cbHtml,
-      actions: [
-        {
-          text: mssgs.analytics_banner_accept,
-          type: "submit",
-          name: "analyticsResponse",
-          id: "analytics-accept",
-          value: "accept"
-        },
-        {
-          text: mssgs.analytics_banner_reject,
-          type: "submit",
-          name: "analyticsResponse",
-          id: "analytics-reject",
-          value: "reject"
-        },
-        {
-          text: mssgs.analytics_banner_view_cookies_link,
-          href: _uri.cookies,
-          id: "analytics-view"
+        rebrand: true,
+        ariaLabel: mssgs.analytics_banner_title,
+        messages: [
+            {
+            headingText: mssgs.analytics_banner_title,
+            html: cbHtml,
+            actions: [
+                {
+                text: mssgs.analytics_banner_accept,
+                type: "submit",
+                name: "analyticsResponse",
+                id: "analytics-accept",
+                value: "accept"
+                },
+                {
+                text: mssgs.analytics_banner_reject,
+                type: "submit",
+                name: "analyticsResponse",
+                id: "analytics-reject",
+                value: "reject"
+                },
+                {
+                text: mssgs.analytics_banner_view_cookies_link,
+                href: _uri.cookies,
+                id: "analytics-view"
+                }
+            ]
+            }
+        ],
+        form: {
+            action: uri.analyticsFormAction,
+            method: "POST",
+            hiddenHtml: csrf()
         }
-      ]
-    }
-  ],
-  form: {
-    action: uri.analyticsFormAction,
-    method: "POST",
-    hiddenHtml: csrf()
-  }
-}) }}
+    }) }}
 
 {% endif %}
 
