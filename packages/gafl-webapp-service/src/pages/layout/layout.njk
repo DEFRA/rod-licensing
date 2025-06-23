@@ -5,19 +5,25 @@
     <meta name="robots" content="noindex">
 {% endif %}
 
+{% from "cookie-banner/macro.njk" import govukCookieBanner %}
 {% from "header/macro.njk" import govukHeader %}
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
-
-{% set govukRebrand = true %}
 
 {% if pageLanguageSetToWelsh %}
     {% set htmlLang = "cy" %}
 {% endif %}
 
+{% set govukRebrand = true %}
+
 {% macro csrf() %}
     <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
 {% endmacro %}
+
+{% set cbHtml %}
+  <p class="govuk-body">{{ mssgs.analytics_banner_preamble_1 }}</p>
+  <p class="govuk-body">{{ mssgs.analytics_banner_preamble_2 }}</p>
+{% endset %}
 
 {% block head %}
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
@@ -28,93 +34,6 @@
 {% endblock %}
 
 {% block header %}
-    {% if displayAnalytics %}
-        {% if not analyticsMessageDisplayed %}
-            <form method="POST" novalidate action='{{ uri.analyticsFormAction }}'>
-                {% if not analyticsSelected %}
-                    <div id="cookie-banner" class="cookie-banner no-print" role="region" aria-label="cookie banner">
-                        <div id="cookie-message" class="cookie-message no-print" role="region" aria-label="cookie message">
-                            <div class="govuk-width-container">
-                                <h2 class="govuk-cookie-banner__heading govuk-heading-m">
-                                    {{ mssgs.analytics_banner_title }}
-                                </h2>
-                                <div class="govuk-cookie-banner__content">
-                                    <p class="govuk-body">
-                                    {{ mssgs.analytics_banner_preamble_1 }}
-                                    </p>
-                                    <p class="govuk-body">
-                                    {{ mssgs.analytics_banner_preamble_2 }}
-                                    </p>
-                                </div>
-                                <div class="govuk-button-group">
-                                    {{ govukButton({
-                                        attributes: { id: 'accept' },
-                                        preventDoubleClick: true,
-                                        name: "analyticsResponse",
-                                        text: mssgs.analytics_banner_accept,
-                                        value: 'accept'
-                                    }) }}
-                                    {{ govukButton({
-                                        attributes: { id: 'reject' },
-                                        preventDoubleClick: true,
-                                        name: "analyticsResponse",
-                                        text: mssgs.analytics_banner_reject,
-                                        value: 'reject'
-                                    }) }}
-                                    <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_view_cookies_link }}</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-                {% if analyticsSelected %}
-                    {% if acceptedTracking %}
-                        <div id="cookie-accept" class="cookie-message" role="region" aria-label="cookie accept">
-                            <div class="govuk-width-container">
-                                <div class="govuk-cookie-banner__content">
-                                    <p class="govuk-body" id="cookie-acceptance">
-                                        {{ mssgs.analytics_banner_acceptance_1 }} <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_cookies_link }}</a> {{ mssgs.analytics_banner_acceptance_2 }}
-                                    </p>
-                                </div>
-                                <div class="govuk-button-group">
-                                    {{ govukButton({
-                                        attributes: { id: 'hide' },
-                                        preventDoubleClick: true,
-                                        name: "hide",
-                                        text: mssgs.analytics_banner_hide,
-                                        value: true
-                                    }) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div id="cookie-reject" class="cookie-banner no-print" role="region">
-                            <div class="govuk-width-container">
-                                <div class="govuk-cookie-banner__content">
-                                    <p class="govuk-body">
-                                        {{ mssgs.analytics_banner_rejection_1 }} <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_cookies_link }}</a> {{ mssgs.analytics_banner_rejection_2 }}
-                                    </p>
-                                </div>
-                                <div class="govuk-button-group">
-                                    {{ govukButton({
-                                        attributes: { id: 'hide' },
-                                        preventDoubleClick: true,
-                                        name: "hideMessage",
-                                        text: mssgs.analytics_banner_hide,
-                                        value: true
-                                    }) }}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endif %}
-
-            {{ csrf() }}
-            </form>
-        {% endif %}
-    {% endif %}
-
     {{ govukHeader({
         rebrand: true,
         assetsPath: assetPath + '/images',
@@ -125,6 +44,42 @@
         serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)",
         useTudorCrown: true
     }) }}
+{% endblock %}
+
+{% block bodyStart %}
+  {% if displayAnalytics and not analyticsMessageDisplayed %}
+    <form method="POST" action="{{ uri.analyticsFormAction }}" class="govuk-width-container">
+      {{ csrf() }}
+
+      {{ govukCookieBanner({
+        rebrand: true,
+        messages: [
+          {
+            headingText: mssgs.analytics_banner_title,
+            html: cbHtml,
+            actions: [
+              {
+                text: mssgs.analytics_banner_accept,
+                type: "submit",
+                name: "analyticsResponse",
+                value: "accept"
+              },
+              {
+                text: mssgs.analytics_banner_reject,
+                type: "submit",
+                name: "analyticsResponse",
+                value: "reject"
+              },
+              {
+                text: mssgs.analytics_banner_view_cookies_link,
+                href: _uri.cookies
+              }
+            ]
+          }
+        ]
+      }) }}
+    </form>
+  {% endif %}
 {% endblock %}
 
 {% block beforeContent %}
@@ -248,6 +203,7 @@
     </div>
     </footer>
 {% endblock %}
+
 {% block bodyEnd %}
     <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
     <script nonce="{{nonce}}" type="module">
