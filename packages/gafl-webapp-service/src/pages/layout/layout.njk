@@ -26,14 +26,54 @@
 {% endset %}
 
 {% block head %}
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<link href="/public/stylesheets/main.css" rel="stylesheet" type="text/css" />
-<meta http-equiv="Cache-Control" content="no-store" />
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link href="/public/stylesheets/main.css" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
 {% endblock %}
 
 {% block header %}
+    {% if displayAnalytics and not analyticsMessageDisplayed %}
+  {{ govukCookieBanner({
+  rebrand: true,
+  ariaLabel: mssgs.analytics_banner_title,
+  messages: [
+    {
+      headingText: mssgs.analytics_banner_title,
+      html: cbHtml,
+      actions: [
+        {
+          text: mssgs.analytics_banner_accept,
+          type: "submit",
+          name: "analyticsResponse",
+          id: "analytics-accept",
+          value: "accept"
+        },
+        {
+          text: mssgs.analytics_banner_reject,
+          type: "submit",
+          name: "analyticsResponse",
+          id: "analytics-reject",
+          value: "reject"
+        },
+        {
+          text: mssgs.analytics_banner_view_cookies_link,
+          href: _uri.cookies,
+          id: "analytics-view"
+        }
+      ]
+    }
+  ],
+  form: {
+    action: uri.analyticsFormAction,
+    method: "POST",
+    hiddenHtml: csrf()
+  }
+}) }}
+
+{% endif %}
+
     {{ govukHeader({
         rebrand: true,
         assetsPath: assetPath + '/images',
@@ -44,42 +84,6 @@
         serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)",
         useTudorCrown: true
     }) }}
-{% endblock %}
-
-{% block bodyStart %}
-  {% if displayAnalytics and not analyticsMessageDisplayed %}
-    <form method="POST" action="{{ uri.analyticsFormAction }}" class="govuk-width-container">
-      {{ csrf() }}
-
-      {{ govukCookieBanner({
-        rebrand: true,
-        messages: [
-          {
-            headingText: mssgs.analytics_banner_title,
-            html: cbHtml,
-            actions: [
-              {
-                text: mssgs.analytics_banner_accept,
-                type: "submit",
-                name: "analyticsResponse",
-                value: "accept"
-              },
-              {
-                text: mssgs.analytics_banner_reject,
-                type: "submit",
-                name: "analyticsResponse",
-                value: "reject"
-              },
-              {
-                text: mssgs.analytics_banner_view_cookies_link,
-                href: _uri.cookies
-              }
-            ]
-          }
-        ]
-      }) }}
-    </form>
-  {% endif %}
 {% endblock %}
 
 {% block beforeContent %}
