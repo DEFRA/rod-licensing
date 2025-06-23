@@ -34,56 +34,93 @@
 {% endblock %}
 
 {% block header %}
-    {% if displayAnalytics and not analyticsMessageDisplayed %}
-  {{ govukCookieBanner({
-        rebrand: true,
-        ariaLabel: mssgs.analytics_banner_title,
-        messages: [
-            {
-            headingText: mssgs.analytics_banner_title,
-            html: cbHtml,
-            actions: [
-                {
-                text: mssgs.analytics_banner_accept,
-                type: "submit",
-                name: "analyticsResponse",
-                id: "analytics-accept",
-                value: "accept"
-                },
-                {
-                text: mssgs.analytics_banner_reject,
-                type: "submit",
-                name: "analyticsResponse",
-                id: "analytics-reject",
-                value: "reject"
-                },
-                {
-                text: mssgs.analytics_banner_view_cookies_link,
-                href: _uri.cookies,
-                id: "analytics-view"
-                }
-            ]
-            }
-        ],
-        form: {
-            action: uri.analyticsFormAction,
-            method: "POST",
-            hiddenHtml: csrf()
-        }
-    }) }}
+  <form action="{{ uri.analyticsFormAction }}" method="POST">
+    {{ csrf() }}
 
-{% endif %}
+    {% if displayAnalytics and not analyticsMessageDisplayed %}
+      {% if not analyticsSelected %}
+        {{ govukCookieBanner({
+          rebrand: true,
+          ariaLabel: mssgs.analytics_banner_title,
+          messages: [
+            {
+              headingText: mssgs.analytics_banner_title,
+              html: cbHtml,
+              actions: [
+                {
+                  text: mssgs.analytics_banner_accept,
+                  type: "submit",
+                  name: "analyticsResponse",
+                  id: "analytics-accept",
+                  value: "accept"
+                },
+                {
+                  text: mssgs.analytics_banner_reject,
+                  type: "submit",
+                  name: "analyticsResponse",
+                  id: "analytics-reject",
+                  value: "reject"
+                },
+                {
+                  text: mssgs.analytics_banner_view_cookies_link,
+                  href: _uri.cookies,
+                  id: "analytics-view"
+                }
+              ]
+            }
+          ]
+        }) }}
+      {% else %}
+        {% if acceptedTracking %}
+          {% set messageHtml %}
+            <p class="govuk-body">
+              {{ mssgs.analytics_banner_acceptance_1 }}
+              <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_cookies_link }}</a>
+              {{ mssgs.analytics_banner_acceptance_2 }}
+            </p>
+          {% endset %}
+        {% else %}
+          {% set messageHtml %}
+            <p class="govuk-body">
+              {{ mssgs.analytics_banner_rejection_1 }}
+              <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_cookies_link }}</a>
+              {{ mssgs.analytics_banner_rejection_2 }}
+            </p>
+          {% endset %}
+        {% endif %}
+
+        {{ govukCookieBanner({
+          rebrand: true,
+          ariaLabel: mssgs.analytics_banner_title,
+          messages: [
+            {
+              html: messageHtml,
+              actions: [
+                {
+                  text: mssgs.analytics_banner_hide,
+                  type: 'submit',
+                  name: 'hideMessage',
+                  id: 'hide-message',
+                  value: "true"
+                }
+              ]
+            }
+          ]
+        }) }}
+      {% endif %}
+    {% endif %}
 
     {{ govukHeader({
-        rebrand: true,
-        assetsPath: assetPath + '/images',
-        homepageUrl: "https://www.gov.uk/",
-        serviceUrl: "/",
-        classes: "no-print",
-        containerClasses: "govuk-width-container",
-        serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)",
-        useTudorCrown: true
+      rebrand: true,
+      assetsPath: assetPath + '/images',
+      homepageUrl: "https://www.gov.uk/",
+      serviceUrl: "/",
+      classes: "no-print",
+      containerClasses: "govuk-width-container",
+      serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)",
+      useTudorCrown: true
     }) }}
+  </form>
 {% endblock %}
 
 {% block beforeContent %}
