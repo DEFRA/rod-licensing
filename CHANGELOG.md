@@ -1,4 +1,13 @@
 
+## v1.61.0-rc.19 (2025-06-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2172](https://github.com/DEFRA/rod-licensing/pull/2172) Update GAFL Frontend to v5.10.2 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.61.0-rc.18 (2025-06-20)
 
 #### :rocket: Enhancement
