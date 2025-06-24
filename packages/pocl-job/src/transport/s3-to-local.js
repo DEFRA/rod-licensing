@@ -11,6 +11,8 @@ const { s3, GetObjectCommand } = AWS()
 const debug = db('pocl:transport')
 
 export async function s3ToLocal (s3Key) {
+  const awsExports = AWS()
+  console.log('GetObjectCommand:', awsExports.GetObjectCommand)
   debug('Transferring %s to the local storage', s3Key)
   const localPath = Path.join(getTempDir(Path.dirname(s3Key)), Path.basename(s3Key))
   const localWriteStream = fs.createWriteStream(localPath)

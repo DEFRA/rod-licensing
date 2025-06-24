@@ -1,5 +1,5 @@
 import Config from '../config.js'
-import AWS from '../aws.js'
+import { AWS } from '../aws.js'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
 import { createDocumentClient } from '../documentclient-decorator.js'
@@ -22,9 +22,14 @@ describe('AWS Special cases', () => {
     )
   })
 
-  it('exports ListObjectsV2Command from S3 SDK', () => {
+  it('exports ListObjectsV2Command', () => {
     const { ListObjectsV2Command } = AWS()
     expect(ListObjectsV2Command).toBeDefined()
+  })
+
+  it('exports GetObjectCommand', () => {
+    const { GetObjectCommand } = AWS()
+    expect(GetObjectCommand).toBeDefined()
   })
 
   describe('AWS connectors for S3Client', () => {
