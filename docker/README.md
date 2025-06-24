@@ -22,7 +22,7 @@ To start the infrastructure, run the following command in the root of the rod-li
 npm run docker:infrastructure
 ```
 
-To ensure that the updated GOV.UK frontend is properly built, run:
+To rebuild the webapp with the latest GOV.UK Frontend updates, run:
 
 ```shell script
 npm run docker:gafl-webapp-refresh
