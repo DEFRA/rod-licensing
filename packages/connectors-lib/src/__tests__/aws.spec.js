@@ -1,5 +1,5 @@
 import Config from '../config.js'
-import { AWS } from '../aws.js'
+import AWS from '../aws.js'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
 import { createDocumentClient } from '../documentclient-decorator.js'

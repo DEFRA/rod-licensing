@@ -5,7 +5,7 @@ import { SQS } from '@aws-sdk/client-sqs'
 import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3'
 import { SecretsManager } from '@aws-sdk/client-secrets-manager'
 
-export function AWS () {
+export default function () {
   return {
     ddb: new DynamoDB({
       apiVersion: '2012-08-10',
