@@ -29,8 +29,9 @@
     "docker:infrastructure": "docker-compose -f docker/infrastructure.yml build && docker stack deploy -c docker/infrastructure.yml rli",
     "docker:build-dev": "TAG=dev PROJECT_DOCKERFILE=Dockerfile.dev docker-compose -f docker/services.build.yml build",
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
-    "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build",
+    "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build && npm run docker:gafl-webapp-refresh",
     "docker:services": "docker stack deploy -c docker/services.yml rls",
+    "docker:gafl-webapp-refresh": "docker-compose -f docker/services.build.yml build --no-cache gafl_webapp && docker stack deploy -c docker/services.yml rls",
     "pre-commit": "npm run test && lint-staged",
     "pre-push": "prettier-standard --check --lint --since develop"
   },
@@ -105,5 +106,8 @@
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "silent": true
+  },
+  "dependencies": {
+    "govuk-frontend": "^5.10.2"
   }
 }
