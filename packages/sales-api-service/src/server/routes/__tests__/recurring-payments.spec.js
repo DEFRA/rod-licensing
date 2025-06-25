@@ -1,5 +1,6 @@
 import recurringPayments from '../recurring-payments.js'
 import { getRecurringPayments, processRPResult } from '../../../services/recurring-payments.service.js'
+import { dueRecurringPaymentsRequestParamsSchema, processRPResultRequestParamsSchema } from '../../../schema/recurring-payments.schema.js'
 
 const [
   {
@@ -15,13 +16,20 @@ jest.mock('../../../services/recurring-payments.service.js', () => ({
   processRPResult: jest.fn()
 }))
 
+jest.mock('../../../schema/recurring-payments.schema.js', () => ({
+  dueRecurringPaymentsRequestParamsSchema: jest.fn(),
+  processRPResultRequestParamsSchema: jest.fn()
+}))
+
 const getMockRequest = ({
   date = '2023-10-19',
   transactionId = 'transaction-id',
   paymentId = 'payment-id',
-  createdDate = 'created-date'
+  createdDate = 'created-date',
+  existingRecurringPaymentId = 'existing-recurring-payment-id',
+  agreementId = 'agreement-id'
 }) => ({
-  params: { date, transactionId, paymentId, createdDate }
+  params: { date, transactionId, paymentId, createdDate, existingRecurringPaymentId, agreementId }
 })
 
 const getMockResponseToolkit = () => ({
@@ -44,6 +52,13 @@ describe('recurring payments', () => {
       await drpHandler(request, getMockResponseToolkit())
       expect(getRecurringPayments).toHaveBeenCalledWith(date)
     })
+
+    it('should validate with dueRecurringPaymentsRequestParamsSchema', async () => {
+      const date = Symbol('date')
+      const request = getMockRequest({ date })
+      await drpHandler(request, getMockResponseToolkit())
+      expect(recurringPayments[0].options.validate.params).toBe(dueRecurringPaymentsRequestParamsSchema)
+    })
   })
 
   describe('processRPResult', () => {
@@ -60,6 +75,15 @@ describe('recurring payments', () => {
       const request = getMockRequest({ transactionId, paymentId, createdDate })
       await prpHandler(request, getMockResponseToolkit())
       expect(processRPResult).toHaveBeenCalledWith(transactionId, paymentId, createdDate)
+    })
+
+    it('should validate with processRPResultRequestParamsSchema', async () => {
+      const transactionId = Symbol('transaction-id')
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      const request = getMockRequest({ transactionId, paymentId, createdDate })
+      await prpHandler(request, getMockResponseToolkit())
+      expect(recurringPayments[1].options.validate.params).toBe(processRPResultRequestParamsSchema)
     })
   })
 })

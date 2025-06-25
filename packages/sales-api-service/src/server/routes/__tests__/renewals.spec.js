@@ -92,8 +92,12 @@ describe('permissionRenewalData', () => {
   })
 
   describe('metadata', () => {
-    it.each(['description', 'notes', 'tags', 'validate'])('should have expected %s', async key => {
+    it.each(['description', 'notes', 'tags'])('should have expected %s', key => {
       expect(permissionRenewalData[0].options[key]).toMatchSnapshot()
+    })
+
+    it('should have expected validation', () => {
+      expect(permissionRenewalData[0].options.validate.params.schema().describe()).toMatchSnapshot()
     })
   })
 

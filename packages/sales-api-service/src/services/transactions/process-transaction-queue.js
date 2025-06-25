@@ -8,11 +8,15 @@ import {
   Transaction,
   TransactionCurrency,
   TransactionJournal,
-  RecurringPaymentInstruction
+  RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, FULFILMENT_SWITCHOVER_DATE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
-import { generateRecurringPaymentRecord, processRecurringPayment } from '../recurring-payments.service.js'
+import {
+  generateRecurringPaymentRecord,
+  processRecurringPayment,
+  findNewestExistingRecurringPaymentInCrm
+} from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
@@ -77,11 +81,11 @@ export async function processQueue ({ id }) {
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       entities.push(recurringPayment)
-      const paymentInstruction = new RecurringPaymentInstruction()
-      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
-      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)
-      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.recurringPayment, recurringPayment)
-      entities.push(paymentInstruction)
+      const existingRP = await findNewestExistingRecurringPaymentInCrm(recurringPayment.agreementId)
+      if (existingRP) {
+        existingRP.bindToEntity(RecurringPayment.definition.relationships.nextRecurringPayment, recurringPayment)
+        entities.push(existingRP)
+      }
     }
 
     for (const concession of concessions || []) {
@@ -100,14 +104,12 @@ export async function processQueue ({ id }) {
   debug('Persisting %d entities for staging id %s', entities.length, id)
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
-  await docClient
-    .put({
-      TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
-      Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
-      ConditionExpression: 'attribute_not_exists(id)'
-    })
-    .promise()
+  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } })
+  await docClient.put({
+    TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+    Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
+    ConditionExpression: 'attribute_not_exists(id)'
+  })
 }
 
 const shouldCreateFulfilmentRequest = (permission, permit, contact) => {

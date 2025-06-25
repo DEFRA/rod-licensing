@@ -9,7 +9,8 @@ import {
   RENEWAL_INACTIVE,
   LICENCE_LENGTH,
   CONTACT_SUMMARY,
-  NEW_TRANSACTION
+  NEW_TRANSACTION,
+  LICENCE_NOT_FOUND
 } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
@@ -52,15 +53,12 @@ mockSalesApi()
 salesApi.countries.getAll = jest.fn(() => Promise.resolve(mockDefraCountries))
 
 describe('The easy renewal identification page', () => {
-  it('redirects to identify page when called with an invalid permission reference', async () => {
+  it('redirects from identify to licence not found page when called with an invalid permission reference', async () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
-    const data2 = await injectWithCookies('GET', IDENTIFY.uri)
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toHaveValidPathFor(IDENTIFY.uri)
-    const data3 = await injectWithCookies('GET', IDENTIFY.uri)
-    expect(data3.statusCode).toBe(200)
+    const data2 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('returns successfully when called with a valid reference ', async () => {
@@ -87,7 +85,7 @@ describe('The easy renewal identification page', () => {
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
   })
 
-  it('redirects back to itself on posting an valid but not authenticated details', async () => {
+  it('redirects to licence not found on posting valid but not authenticated details', async () => {
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(null))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC_URI)
     await injectWithCookies('GET', IDENTIFY.uri)
@@ -100,8 +98,8 @@ describe('The easy renewal identification page', () => {
     expect(data.headers.location).toHaveValidPathFor(AUTHENTICATE.uri)
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toHaveValidPathFor(IDENTIFY.uri)
-    const data3 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data2.headers.location).toHaveValidPathFor(LICENCE_NOT_FOUND.uri)
+    const data3 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
     expect(data3.statusCode).toBe(200)
   })
 
