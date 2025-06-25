@@ -2,7 +2,7 @@ import Config from './config.js'
 import { createDocumentClient } from './documentclient-decorator.js'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { SQS } from '@aws-sdk/client-sqs'
-import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
+import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3'
 import { SecretsManager } from '@aws-sdk/client-secrets-manager'
 
 export default function () {
@@ -40,6 +40,7 @@ export default function () {
         endpoint: Config.aws.secretsManager.endpoint
       })
     }),
-    ListObjectsV2Command
+    ListObjectsV2Command,
+    GetObjectCommand
   }
 }
