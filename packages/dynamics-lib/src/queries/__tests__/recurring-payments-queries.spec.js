@@ -39,7 +39,7 @@ describe('Recurring Payment Queries', () => {
 
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
-        filter: `defra_agreementid eq '${agreementId}'`,
+        filter: `defra_agreementid eq '${agreementId}' and statecode eq 0`,
         select: [
           'defra_recurringpaymentid',
           'defra_name',
