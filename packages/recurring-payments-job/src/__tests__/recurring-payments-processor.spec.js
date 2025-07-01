@@ -409,7 +409,7 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(salesApi.processRPResult).not.toHaveBeenCalledWith()
+    expect(salesApi.processRPResult).not.toHaveBeenCalled()
   })
 
   it.each([
