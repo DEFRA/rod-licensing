@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.0 (2025-07-01)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2159](https://github.com/DEFRA/rod-licensing/pull/2159) Exclude completed recurring payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.61.0-rc.19 (2025-06-24)
 
