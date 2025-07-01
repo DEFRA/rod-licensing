@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/dynamics-lib",
-  "version": "1.61.0-rc.14",
+  "version": "1.62.0-rc.0",
   "description": "Framework to support integration with dynamics",
   "type": "module",
   "engines": {

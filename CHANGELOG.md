@@ -1,4 +1,59 @@
 
+## v1.62.0-rc.0 (2025-07-01)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2159](https://github.com/DEFRA/rod-licensing/pull/2159) Exclude completed recurring payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.61.0-rc.19 (2025-06-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2172](https://github.com/DEFRA/rod-licensing/pull/2172) Update GAFL Frontend to v5.10.2 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.18 (2025-06-20)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `pocl-job`
+  * [#2171](https://github.com/DEFRA/rod-licensing/pull/2171) AWS SDK v3 pocl job ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.17 (2025-06-17)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2161](https://github.com/DEFRA/rod-licensing/pull/2161) Link recurring payments after new objects created ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.16 (2025-06-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2170](https://github.com/DEFRA/rod-licensing/pull/2170) Allow customers to indicate concession eligibility ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.15 (2025-06-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2166](https://github.com/DEFRA/rod-licensing/pull/2166) https://eaflood.atlassian.net/browse/IWTF-4392 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.61.0-rc.14 (2025-06-03)
 
 #### :rocket: Enhancement

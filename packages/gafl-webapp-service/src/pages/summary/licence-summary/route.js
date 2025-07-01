@@ -70,7 +70,7 @@ class RowGenerator {
 
   _getConcessionText () {
     if (this.disabled?.proof?.type === CONCESSION_PROOF.blueBadge) {
-      return this.labels.licence_summary_blue_badge_num
+      return this.labels.licence_summary_blue_badge
     } else if (this.disabled?.proof?.type === CONCESSION_PROOF.NI) {
       return this.labels.licence_summary_ni_num
     }
@@ -93,7 +93,16 @@ class RowGenerator {
   }
 
   generateConcessionRow () {
-    const label = this.disabled ? this.disabled.proof.referenceNumber : `<span>${this.labels.licence_summary_none}</span>`
+    const label = (() => {
+      if (this.disabled?.proof?.type === CONCESSION_PROOF.blueBadge) {
+        return this.labels.licence_summary_blue_badge_eligible
+      }
+      if (this.disabled?.proof?.type === CONCESSION_PROOF.NI) {
+        return this.disabled.proof.referenceNumber
+      }
+      return this.labels.licence_summary_none
+    })()
+
     const concessionText = this._getConcessionText()
     return this._generateRow(concessionText, label, DISABILITY_CONCESSION.uri, concessionText, 'change-benefit-check')
   }

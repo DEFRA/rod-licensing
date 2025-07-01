@@ -9,7 +9,8 @@ describe('Recurring Payment Queries', () => {
 
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
-        filter: "defra_nextduedate eq 'Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)' and defra_cancelleddate eq null",
+        filter:
+          "defra_nextduedate eq 'Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)' and defra_cancelleddate eq null and _defra_nextrecurringpayment_value eq null and statecode eq 0",
         select: [
           'defra_recurringpaymentid',
           'defra_name',
@@ -19,10 +20,7 @@ describe('Recurring Payment Queries', () => {
           'defra_cancelledreason',
           'defra_enddate',
           'defra_agreementid',
-          '_defra_activepermission_value',
-          '_defra_contact_value',
           'defra_publicid',
-          '_defra_nextrecurringpayment_value',
           'defra_lastdigitscardnumbers'
         ],
         expand: [{ property: 'defra_Contact' }, { property: 'defra_ActivePermission' }]
@@ -38,7 +36,7 @@ describe('Recurring Payment Queries', () => {
 
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
-        filter: `defra_agreementid eq '${agreementId}'`,
+        filter: `defra_agreementid eq '${agreementId}' and statecode eq 0`,
         select: [
           'defra_recurringpaymentid',
           'defra_name',
@@ -48,10 +46,7 @@ describe('Recurring Payment Queries', () => {
           'defra_cancelledreason',
           'defra_enddate',
           'defra_agreementid',
-          '_defra_activepermission_value',
-          '_defra_contact_value',
           'defra_publicid',
-          '_defra_nextrecurringpayment_value',
           'defra_lastdigitscardnumbers'
         ]
       })
