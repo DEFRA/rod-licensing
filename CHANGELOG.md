@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.1 (2025-07-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2176](https://github.com/DEFRA/rod-licensing/pull/2176) Remove Gov.UK Frontend dependency for the whole repo ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.62.0-rc.0 (2025-07-01)
 
 #### :rocket: Enhancement
