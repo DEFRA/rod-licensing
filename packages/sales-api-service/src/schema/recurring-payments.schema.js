@@ -30,11 +30,6 @@ export const processRPResultRequestParamsSchema = Joi.object({
   createdDate: Joi.string().isoDate().required()
 })
 
-export const linkRecurringPaymentsRequestParamsSchema = Joi.object({
-  existingRecurringPaymentId: Joi.string().required(),
-  agreementId: Joi.string().required()
-})
-
 export const cancelRecurringPaymentRequestParamsSchema = Joi.object({
   id: Joi.string().required()
 })

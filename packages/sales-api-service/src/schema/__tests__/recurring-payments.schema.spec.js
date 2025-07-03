@@ -2,7 +2,6 @@ import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
   processRPResultRequestParamsSchema,
-  linkRecurringPaymentsRequestParamsSchema,
   cancelRecurringPaymentRequestParamsSchema
 } from '../recurring-payments.schema.js'
 
@@ -149,27 +148,6 @@ describe('processRPResultRequestParamsSchema', () => {
     const sampleData = getProcessRPResultSampleData()
     sampleData[property] = value
     expect(() => processRPResultRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
-  })
-})
-
-describe('linkRecurringPaymentsRequestParamsSchema', () => {
-  it('validates expected object', async () => {
-    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(getLinkRecurringPaymentsSampleData())).not.toThrow()
-  })
-
-  it.each([['existingRecurringPaymentId'], ['agreementId']])('throws an error if %s is missing', async property => {
-    const sampleData = getLinkRecurringPaymentsSampleData()
-    delete sampleData[property]
-    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
-  })
-
-  it.each([
-    ['existingRecurringPaymentId', 99],
-    ['agreementId', 99]
-  ])('throws an error if %s is not the correct type', async (property, value) => {
-    const sampleData = getLinkRecurringPaymentsSampleData()
-    sampleData[property] = value
-    expect(() => linkRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
   })
 })
 
