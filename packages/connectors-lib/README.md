@@ -20,7 +20,8 @@ Provides connectivity to the resources/infrastructure used in the rod licensing 
 | GOV_PAY_APIKEY                      | GOV pay access identifier                                          |   yes    |                 |                                                                                                |                                                                             |
 | GOV_PAY_RECURRING_APIKEY            | GOV pay access identifier for recurring payments                   |   yes    |                 |                                                                                                |                                                                             |
 | GOV_PAY_REQUEST_TIMEOUT_MS          | Timeout in milliseconds for API requests                           |    no    | 10000           |                                                                                                |                                                                             |
-| GOV_PAY_RCP_API_URL                 | The GOV.UK Pay API url for agreements                              |   yes    |                 |
+| GOV_PAY_RCP_API_URL                 | The GOV.UK Pay API url for agreements                              |   yes    |                 |                                                                                                |                                                                             |
+| GOV_PAY_HEALTH_CHECK_URL            | The Gov.UK Pay health check url                                    |   yes    |                 |                                                                                                |                                                                             |
 
 # Prerequisites
 
