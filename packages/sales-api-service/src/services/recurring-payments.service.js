@@ -1,5 +1,6 @@
 import {
   executeQuery,
+  findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
   RecurringPayment,
@@ -137,4 +138,13 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
     return RecurringPayment.fromResponse(rcpResponseData)
   }
   return false
+}
+
+export const cancelRecurringPayment = async id => {
+  const recurringPayment = await findById(RecurringPayment, id)
+  if (recurringPayment) {
+    console.log('RecurringPayment for cancellation: ', recurringPayment)
+  } else {
+    console.log('No matches found for cancellation')
+  }
 }
