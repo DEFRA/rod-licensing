@@ -104,7 +104,7 @@ describe('getDueRecurringPaymentsSchema', () => {
   })
 
   it('snapshot test schema', async () => {
-    expect(dueRecurringPaymentsResponseSchema).toMatchSnapshot()
+    expect(dueRecurringPaymentsResponseSchema.schema().describe()).toMatchSnapshot()
   })
 })
 

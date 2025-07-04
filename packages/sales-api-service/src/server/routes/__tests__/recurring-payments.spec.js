@@ -25,9 +25,11 @@ const getMockRequest = ({
   date = '2023-10-19',
   transactionId = 'transaction-id',
   paymentId = 'payment-id',
-  createdDate = 'created-date'
+  createdDate = 'created-date',
+  existingRecurringPaymentId = 'existing-recurring-payment-id',
+  agreementId = 'agreement-id'
 }) => ({
-  params: { date, transactionId, paymentId, createdDate }
+  params: { date, transactionId, paymentId, createdDate, existingRecurringPaymentId, agreementId }
 })
 
 const getMockResponseToolkit = () => ({
@@ -75,10 +77,12 @@ describe('recurring payments', () => {
       expect(processRPResult).toHaveBeenCalledWith(transactionId, paymentId, createdDate)
     })
 
-    it('should validate with dueRecurringPaymentsRequestParamsSchema', async () => {
-      const date = Symbol('date')
-      const request = getMockRequest({ date })
-      await drpHandler(request, getMockResponseToolkit())
+    it('should validate with processRPResultRequestParamsSchema', async () => {
+      const transactionId = Symbol('transaction-id')
+      const paymentId = Symbol('payment-id')
+      const createdDate = Symbol('created-date')
+      const request = getMockRequest({ transactionId, paymentId, createdDate })
+      await prpHandler(request, getMockResponseToolkit())
       expect(recurringPayments[1].options.validate.params).toBe(processRPResultRequestParamsSchema)
     })
   })

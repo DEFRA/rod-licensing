@@ -94,13 +94,9 @@ const getOrderCompleteContent = (permission, mssgs, transaction) => {
       ? mssgs.order_complete_when_fishing_self_postal_non_digital_2
       : mssgs.order_complete_when_fishing_bobo_postal_non_digital_2,
 
-    futurePaymentsParagraphOne: digitalReminder(permission)
-      ? mssgs.order_complete_future_payments_digital_paragraph_1
-      : mssgs.order_complete_future_payments_postal_paragraph_1,
-
-    futurePaymentsParagraphTwo: digitalReminder(permission)
-      ? mssgs.order_complete_future_payments_digital_paragraph_2
-      : mssgs.order_complete_future_payments_postal_paragraph_2
+    futurePaymentsParagraph: digitalReminder(permission)
+      ? mssgs.order_complete_future_payments_digital_paragraph
+      : mssgs.order_complete_future_payments_postal_paragraph
   }
 }
 

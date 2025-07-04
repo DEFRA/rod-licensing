@@ -19,7 +19,7 @@ export default async request => {
     concessionHelper.addDisabled(permission, CONCESSION_PROOF.NI, payload['ni-number'])
     Object.assign(permission, { licenceLength: '12M', licenceStartTime: '0' })
   } else if (payload['disability-concession'] === disabilityConcessionTypes.blueBadge) {
-    concessionHelper.addDisabled(permission, CONCESSION_PROOF.blueBadge, payload['blue-badge-number'])
+    concessionHelper.addDisabled(permission, CONCESSION_PROOF.blueBadge)
     Object.assign(permission, { licenceLength: '12M', licenceStartTime: '0' })
   } else {
     concessionHelper.removeDisabled(permission)
