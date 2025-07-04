@@ -5,6 +5,7 @@ import {
   findRecurringPaymentsByAgreementId,
   findById,
   Permission,
+  persist,
   RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import {
@@ -34,7 +35,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
     retrieveMultipleRequest: jest.fn(() => ({ value: [] }))
-  }
+  },
+  persist: jest.fn()
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -752,6 +754,53 @@ describe('recurring payments service', () => {
       await cancelRecurringPayment('id')
 
       expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+    })
+
+    it('should log no matches when there are no matches', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      findById.mockReturnValueOnce(undefined)
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
+    })
+  })
+
+  describe('cancelRecurringPayment', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2025-06-02T14:36:42.648Z'))
+    })
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('should call findById with RecurringPayment and the provided id', async () => {
+      const id = 'abc123'
+      await cancelRecurringPayment(id)
+      expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
+    })
+
+    it('should log a RecurringPayment record when there is one match', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+    })
+
+    it('should call persist with the updated RecurringPayment', async () => {
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      const cancelledDate = '2025-06-02T14:36:42.648Z'
+      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
+      const expectedUpdatedRecurringPaymentEntity = { ...recurringPayment.entity, cancelledDate, cancelledReason }
+
+      await cancelRecurringPayment('id')
+
+      expect(persist).toHaveBeenCalledWith([expectedUpdatedRecurringPaymentEntity])
     })
 
     it('should log no matches when there are no matches', async () => {
