@@ -45,7 +45,6 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       sendMessage: jest.fn()
     }
   })),
-  // receiver: jest.fn(),
   govUkPayApi: {
     getRecurringPaymentAgreementInformation: jest.fn()
   }
