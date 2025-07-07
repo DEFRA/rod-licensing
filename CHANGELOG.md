@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.2 (2025-07-04)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2162](https://github.com/DEFRA/rod-licensing/pull/2162) Add endpoint for cancelling recurring payments ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.62.0-rc.1 (2025-07-02)
 
 #### :bug: Bug Fix

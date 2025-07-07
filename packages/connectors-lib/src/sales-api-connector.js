@@ -308,3 +308,14 @@ export const preparePermissionDataForRenewal = async referenceNumber =>
 export const processRPResult = async (transactionId, paymentId, createdDate) => {
   return exec2xxOrThrow(call(new URL(`/processRPResult/${transactionId}/${paymentId}/${createdDate}`, urlBase), 'get'))
 }
+
+/**
+ * Cancel a RecurringPayment
+ *
+ * @param id
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const cancelRecurringPayment = async id => {
+  return exec2xxOrThrow(call(new URL(`/cancelRecurringPayment/${id}`, urlBase), 'get'))
+}
