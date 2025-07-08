@@ -3,6 +3,7 @@ import {
   executeQuery,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
+  findById,
   Permission,
   RecurringPayment
 } from '@defra-fish/dynamics-lib'
@@ -11,7 +12,8 @@ import {
   processRecurringPayment,
   generateRecurringPaymentRecord,
   processRPResult,
-  findNewestExistingRecurringPaymentInCrm
+  findNewestExistingRecurringPaymentInCrm,
+  cancelRecurringPayment
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
@@ -27,6 +29,7 @@ const { docClient, sqs } = AWS.mock.results[0].value
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   executeQuery: jest.fn(),
+  findById: jest.fn(),
   findDueRecurringPayments: jest.fn(),
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
@@ -731,6 +734,33 @@ describe('recurring payments service', () => {
       dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: [] })
       const rcp = await findNewestExistingRecurringPaymentInCrm()
       expect(rcp).toBeFalsy()
+    })
+  })
+
+  describe('cancelRecurringPayment', () => {
+    it('should call findById with RecurringPayment and the provided id', async () => {
+      const id = 'abc123'
+      await cancelRecurringPayment(id)
+      expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
+    })
+
+    it('should log a RecurringPayment record when there is one match', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+    })
+
+    it('should log no matches when there are no matches', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      findById.mockReturnValueOnce(undefined)
+
+      await cancelRecurringPayment('id')
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
     })
   })
 })
