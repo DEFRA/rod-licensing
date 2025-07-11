@@ -61,11 +61,12 @@ const processPaymentResults = async transaction => {
   }
 }
 
-const getStatus = async paymentReference => {
-  const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference)
+const getStatus = async (paymentReference, agreementId) => {
+  const recurring = !!agreementId
+  const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference, recurring)
   const paymentStatus = await paymentStatusResponse.json()
   if (paymentStatus.state?.status === 'success') {
-    const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference)
+    const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference, recurring)
     const { events } = await eventsResponse.json()
     paymentStatus.transactionTimestamp = events.find(e => e.state.status === 'success')?.updated
   }
@@ -94,7 +95,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   const transactions = await Promise.all(
     paymentJournals.map(async p => ({
       ...p,
-      paymentStatus: await getStatusWrapped(p.paymentReference)
+      paymentStatus: await getStatusWrapped(p.paymentReference, p.agreementId)
     }))
   )
 
