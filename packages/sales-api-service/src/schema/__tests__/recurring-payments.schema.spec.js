@@ -33,10 +33,10 @@ const getResponseSampleData = () => ({
         mobilePhone: null,
         organisation: null,
         premises: '1',
-        street: 'Catharine Place',
+        street: 'Test Street',
         locality: null,
-        town: 'Bath',
-        postcode: 'BA1 2PR'
+        town: 'Testville',
+        postcode: 'TE1 1ST'
       }
     },
     activePermission: {
