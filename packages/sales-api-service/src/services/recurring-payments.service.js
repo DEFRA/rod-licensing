@@ -169,12 +169,12 @@ export const cancelRecurringPayment = async id => {
   if (recurringPayment) {
     console.log('RecurringPayment for cancellation: ', recurringPayment)
     const data = recurringPayment
-    data.entity.cancelledDate = new Date().toISOString()
-    data.entity.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment failure')
+    // Temporary fudge until dynamics-lib is updated with correct optionset name
+    // data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment Failure')
+    data.cancelledReason = await getGlobalOptionSetValue('defra_cancelledreasons', 'Payment Failure')
     const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
-    console.log(updatedRecurringPayment.entity)
-    const result = persist([updatedRecurringPayment.entity])
-    console.log(result)
+    await persist([updatedRecurringPayment])
+    return updatedRecurringPayment
   } else {
     console.log('No matches found for cancellation')
   }
