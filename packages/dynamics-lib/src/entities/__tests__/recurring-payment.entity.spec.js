@@ -83,7 +83,7 @@ describe('recurring payment entity', () => {
         contact,
         permission,
         cancelledDate: '2019-10-14T00:00:00Z',
-        cancelledReason: optionSetData.defra_cancelledreason.options['910400003']
+        cancelledReason: optionSetData.defra_cancelledreasons.options['910400003']
       })
       const dynamicsEntity = recurringPayment.toRequestBody()
       expect(dynamicsEntity).toMatchObject(
