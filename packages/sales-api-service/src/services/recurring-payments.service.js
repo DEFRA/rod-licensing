@@ -167,7 +167,6 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 export const cancelRecurringPayment = async id => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
-    console.log('RecurringPayment for cancellation: ', recurringPayment)
     const data = recurringPayment
     // Temporary fudge until dynamics-lib is updated with correct optionset name
     // data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment Failure')
@@ -176,7 +175,7 @@ export const cancelRecurringPayment = async id => {
     await persist([updatedRecurringPayment])
     return updatedRecurringPayment
   } else {
-    console.log('No matches found for cancellation')
+    throw new Error('Invalid id provided for recurring payment cancellation')
   }
 }
 
