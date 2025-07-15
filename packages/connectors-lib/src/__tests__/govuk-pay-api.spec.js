@@ -149,10 +149,14 @@ describe('govuk-pay-api-connector', () => {
   })
 
   describe('isGovPayUp', () => {
-    it('calls healthy endpoint', async () => {
-      await govUkPayApi.isGovPayUp()
-      expect(fetch).toHaveBeenCalledWith('https://publicapi.payments.service.gov.uk/healthcheck')
-    })
+    it.each(['http://gov.uk.pay/health/check/url', 'https://gov-uk-pay?health-check-url'])(
+      'calls healthy endpoint %s',
+      async healthCheckURL => {
+        process.env.GOV_PAY_HEALTH_CHECK_URL = healthCheckURL
+        await govUkPayApi.isGovPayUp()
+        expect(fetch).toHaveBeenCalledWith(healthCheckURL)
+      }
+    )
 
     it('returns the fetch response', async () => {
       const response = Symbol('response')
