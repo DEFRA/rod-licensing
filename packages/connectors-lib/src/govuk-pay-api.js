@@ -94,5 +94,4 @@ export const isGovPayUp = async () => {
     console.error('Error retrieving GovPay health status', err)
     throw err
   }
-  
 }

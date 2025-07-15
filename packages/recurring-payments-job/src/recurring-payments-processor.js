@@ -6,7 +6,6 @@ import db from 'debug'
 
 const debug = db('recurring-payments:processor')
 
-
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
 const PAYMENT_STATUS_SUCCESS = 'success'

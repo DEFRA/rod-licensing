@@ -171,7 +171,9 @@ describe('govuk-pay-api-connector', () => {
     it('logs errors', async () => {
       const error = new Error('Fail')
       const consoleErrorSpy = jest.spyOn(console, 'error')
-      fetch.mockImplementationOnce(() => { throw error })
+      fetch.mockImplementationOnce(() => {
+        throw error
+      })
       try {
         await govUkPayApi.isGovPayUp()
       } catch {}

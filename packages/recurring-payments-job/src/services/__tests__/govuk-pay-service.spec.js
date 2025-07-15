@@ -1,9 +1,16 @@
-import { getPaymentStatus, sendPayment } from '../govuk-pay-service.js'
+import { getPaymentStatus, sendPayment, isGovPayUp } from '../govuk-pay-service.js'
 import { govUkPayApi } from '@defra-fish/connectors-lib'
+import db from 'debug'
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const mockDebug = db.mock.results[0].value
 
 describe('govuk-pay-service', () => {
+  it('initialises logger', () => {
+    expect(db).toHaveBeenCalledWith('recurring-payments:gov.uk-pay-service')
+  })
+
   describe('sendPayment', () => {
     const preparedPayment = { id: '1234' }
 
@@ -115,6 +122,36 @@ describe('govuk-pay-service', () => {
       govUkPayApi.fetchPaymentStatus.mockRejectedValue(mockError)
 
       await expect(getPaymentStatus('test-payment-id')).rejects.toThrow('Network error')
+    })
+  })
+
+  describe('isGovPayUp', () => {
+    it.each([
+      [true, 'true', 'true'],
+      [false, 'true', 'false'],
+      [false, 'false', 'true'],
+      [false, 'false', 'false']
+    ])('resolves to %p if healthy is %s and deadlocks is %s', async (expectedResult, pingHealthy, deadlocksHealthy) => {
+      govUkPayApi.isGovPayUp.mockResolvedValueOnce({
+        ok: true,
+        text: async () => `{"ping":{"healthy":${pingHealthy}},"deadlocks":{"healthy":${deadlocksHealthy}}}`
+      })
+      expect(await isGovPayUp()).toBe(expectedResult)
+    })
+
+    it("resolves to false if we don't receive a 2xx response", async () => {
+      govUkPayApi.isGovPayUp.mockResolvedValueOnce({
+        ok: false
+      })
+      expect(await isGovPayUp()).toBe(false)
+    })
+
+    it("logs if we don't receive a 2xx response", async () => {
+      govUkPayApi.isGovPayUp.mockResolvedValueOnce({
+        ok: false
+      })
+      await isGovPayUp()
+      expect(mockDebug).toHaveBeenCalledWith('Health endpoint unavailable')
     })
   })
 })
