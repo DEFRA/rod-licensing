@@ -150,8 +150,6 @@ export const cancelRecurringPayment = async id => {
 }
 
 const determineRecurringPaymentName = (transactionRecord, contact) => {
-  console.log(transactionRecord)
-  console.log(contact)
   const dueYear = transactionRecord.payment.recurring.nextDueDate.split('-')[0]
   return [contact.firstName, contact.lastName, dueYear].join(' ')
 }
