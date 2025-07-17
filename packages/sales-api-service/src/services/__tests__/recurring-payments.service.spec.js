@@ -96,7 +96,7 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
     debit: Symbol('debit')
   }
 }))
-global.structuredClone = (obj) => JSON.parse(JSON.stringify(obj))
+global.structuredClone = obj => JSON.parse(JSON.stringify(obj))
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 const debugMock = db.mock.results[0].value
 
