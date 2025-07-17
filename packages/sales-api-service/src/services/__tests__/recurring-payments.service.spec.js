@@ -230,7 +230,7 @@ describe('recurring payments service', () => {
   const createSimpleSampleTransactionRecord = () => ({
     payment: {
       recurring: {
-        nextDueDate: new Date('2025-01-01')
+        nextDueDate: '2025-01-01T00:00:00.000Z'
       }
     },
     permissions: [{}]
@@ -291,10 +291,10 @@ describe('recurring payments service', () => {
       const transactionRecord = {
         payment: {
           recurring: {
-            nextDueDate: new Date('2023-11-02'),
+            nextDueDate: '2023-11-02T00:00:00.000Z',
             cancelledDate: null,
             cancelledReason: null,
-            endDate: new Date('2023-11-12'),
+            endDate: '2023-11-12T00:00:00.000Z',
             agreementId: '435678',
             status: 0
           }
@@ -310,7 +310,7 @@ describe('recurring payments service', () => {
       const transactionRecord = {
         payment: {
           recurring: {
-            nextDueDate: new Date('2023-11-02')
+            nextDueDate: '2023-07-07T00:00:00.000Z'
           }
         },
         permissions: [getMockPermission()]
