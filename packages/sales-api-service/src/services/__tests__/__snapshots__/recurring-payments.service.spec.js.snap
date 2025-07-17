@@ -6,7 +6,7 @@ Object {
   "cancelledDate": null,
   "cancelledReason": null,
   "endDate": 2023-11-12T00:00:00.000Z,
-  "name": "Firstname Lastname 2023",
+  "name": "Fester Tester 2023",
   "nextDueDate": 2023-11-02T00:00:00.000Z,
   "publicId": "abcdef99987",
   "status": 0,

@@ -316,7 +316,7 @@ describe('recurring payments service', () => {
         permissions: [getMockPermission()]
       }
       const result = await processRecurringPayment(transactionRecord, getMockContact())
-      expect(result.recurringPayment.name).toBe('Firstname Lastname 2023')
+      expect(result.recurringPayment.name).toBe('Fester Tester 2023')
     })
 
     it.each(['abc-123', 'def-987'])('generates a publicId %s for the recurring payment', async samplePublicId => {
