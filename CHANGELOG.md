@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.3 (2025-07-10)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2165](https://github.com/DEFRA/rod-licensing/pull/2165) Logs not diplsaying aws ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.62.0-rc.2 (2025-07-04)
 
 #### :rocket: Enhancement
