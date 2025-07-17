@@ -426,23 +426,20 @@ describe('The govuk-pay-service', () => {
       [false, false],
       [false, undefined]
     ])('should call the govUkPayApi with recurring as %s if the argument is %s', async (expected, value) => {
-      const mockResponse = { ok: true, status: 200, json: () => {} }
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockResponse)
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus())
       await getPaymentStatus(paymentId, value)
       expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, expected)
     })
 
     it('should send provided paymentId to Gov.UK Pay', async () => {
-      const mockResponse = { ok: true, status: 200, json: () => {} }
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockResponse)
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus())
       await getPaymentStatus(paymentId)
       expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentId, false)
     })
 
     it('should return response body when payment status check is successful', async () => {
-      const resBody = Symbol('body')
-      const mockResponse = { ok: true, status: 200, json: jest.fn().mockResolvedValue(resBody) }
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockResponse)
+      const resBody = { card_details: { foo: Symbol('foo') }, bar: Symbol('bar'), baz: Symbol('baz') }
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus(resBody))
 
       const result = await getPaymentStatus(paymentId)
 
@@ -450,13 +447,14 @@ describe('The govuk-pay-service', () => {
     })
 
     it('should log debug message when response.ok is true', async () => {
-      const resBody = Symbol('body')
-      const mockResponse = { ok: true, status: 200, json: jest.fn().mockResolvedValue(resBody) }
-      govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockResponse)
+      const resBody = { card_details: { foo: Symbol('foo') }, bar: Symbol('bar'), baz: Symbol('baz') }
+      // eslint-disable-next-line camelcase
+      const { card_details, ...expectedLoggedOutput } = resBody
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus(resBody))
 
       await getPaymentStatus(paymentId)
 
-      expect(debug).toHaveBeenCalledWith('Payment status response: %o', resBody)
+      expect(debug).toHaveBeenCalledWith('Payment status response: %o', expectedLoggedOutput)
     })
 
     it('should log error message when response.ok is false', async () => {
@@ -529,4 +527,10 @@ describe('The govuk-pay-service', () => {
       }
     })
   })
+})
+
+const getMockFetchPaymentStatus = (resBody = { card_details: 'foo' }) => ({
+  ok: true,
+  status: 200,
+  json: jest.fn().mockResolvedValue(resBody)
 })
