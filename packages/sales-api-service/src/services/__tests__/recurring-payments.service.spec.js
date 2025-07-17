@@ -227,7 +227,14 @@ const getMockResponse = () => ({
 })
 
 describe('recurring payments service', () => {
-  const createSimpleSampleTransactionRecord = () => ({ payment: { recurring: true }, permissions: [{}] })
+  const createSimpleSampleTransactionRecord = () => ({
+    payment: {
+      recurring: {
+        nextDueDate: '2025-01-01T00:00:00.000Z'
+      }
+    },
+    permissions: [{}]
+  })
   const createSamplePermission = overrides => {
     const p = new Permission()
     p.referenceNumber = 'ABC123'
@@ -284,11 +291,10 @@ describe('recurring payments service', () => {
       const transactionRecord = {
         payment: {
           recurring: {
-            name: 'Test Name',
-            nextDueDate: new Date('2023-11-02'),
+            nextDueDate: '2023-11-02T00:00:00.000Z',
             cancelledDate: null,
             cancelledReason: null,
-            endDate: new Date('2023-11-12'),
+            endDate: '2023-11-12T00:00:00.000Z',
             agreementId: '435678',
             status: 0
           }
@@ -298,6 +304,19 @@ describe('recurring payments service', () => {
       const contact = getMockContact()
       const result = await processRecurringPayment(transactionRecord, contact)
       expect(result.recurringPayment).toMatchSnapshot()
+    })
+
+    it('should set a valid name on the recurringPayment', async () => {
+      const transactionRecord = {
+        payment: {
+          recurring: {
+            nextDueDate: '2023-07-07T00:00:00.000Z'
+          }
+        },
+        permissions: [getMockPermission()]
+      }
+      const result = await processRecurringPayment(transactionRecord, getMockContact())
+      expect(result.recurringPayment.name).toBe('Fester Tester 2023')
     })
 
     it.each(['abc-123', 'def-987'])('generates a publicId %s for the recurring payment', async samplePublicId => {
