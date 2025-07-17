@@ -284,7 +284,6 @@ describe('recurring payments service', () => {
       const transactionRecord = {
         payment: {
           recurring: {
-            name: 'Test Name',
             nextDueDate: new Date('2023-11-02'),
             cancelledDate: null,
             cancelledReason: null,
@@ -298,6 +297,11 @@ describe('recurring payments service', () => {
       const contact = getMockContact()
       const result = await processRecurringPayment(transactionRecord, contact)
       expect(result.recurringPayment).toMatchSnapshot()
+    })
+
+    it('should set a valid name on the recurringPayment', async () => {
+      const result = await processRecurringPayment(createSimpleSampleTransactionRecord(), getMockContact())
+      expect(result.recurringPayment.name).toBe('Firstname Lastname Duedate')
     })
 
     it.each(['abc-123', 'def-987'])('generates a publicId %s for the recurring payment', async samplePublicId => {
