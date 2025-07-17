@@ -16,6 +16,8 @@ import { retrieveStagedTransaction } from '../services/transactions/retrieve-tra
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
+import db from 'debug'
+const debug = db('sales:recurring')
 const { sqs, docClient } = AWS()
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
@@ -87,10 +89,14 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
 
 export const getRecurringPaymentAgreement = async agreementId => {
   const response = await govUkPayApi.getRecurringPaymentAgreementInformation(agreementId)
-
   if (response.ok) {
     const resBody = await response.json()
-    console.log('Successfully got recurring payment agreement information: %o', resBody)
+    const resBodyNoCardDetails = structuredClone(resBody)
+
+    if (resBodyNoCardDetails.payment_instrument?.card_details) {
+      delete resBodyNoCardDetails.payment_instrument.card_details
+    }
+    debug('Successfully got recurring payment agreement information: %o', resBodyNoCardDetails)
     return resBody
   } else {
     throw new Error('Failure getting agreement in the GOV.UK API service')

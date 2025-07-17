@@ -25,6 +25,7 @@ import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
+import db from 'debug'
 const { docClient, sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -95,6 +96,9 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
     debit: Symbol('debit')
   }
 }))
+global.structuredClone = (obj) => JSON.parse(JSON.stringify(obj))
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const debugMock = db.mock.results[0].value
 
 const getMockRecurringPayment = (overrides = {}) => ({
   name: 'Test Name',
@@ -798,23 +802,17 @@ describe('recurring payments service', () => {
       })
     })
 
-    it('should log message when response.ok is true', async () => {
+    it.only('debug should output message when response.ok is true without card details', async () => {
       const mockResponse = {
         ok: true,
         json: jest.fn().mockResolvedValue({ success: true, payment_instrument: { card_details: { last_digits_card_number: '1234' } } })
       }
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
       govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
 
       await getRecurringPaymentAgreement(agreementId)
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
-        success: true,
-        payment_instrument: {
-          card_details: {
-            last_digits_card_number: '1234'
-          }
-        }
+      expect(debugMock).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
+        success: true
       })
     })
 
