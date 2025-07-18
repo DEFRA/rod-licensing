@@ -86,3 +86,12 @@ export const fetchPaymentEvents = async (paymentId, recurring = false) => {
     throw err
   }
 }
+
+export const isGovPayUp = async () => {
+  try {
+    return await fetch(process.env.GOV_PAY_HEALTH_CHECK_URL)
+  } catch (err) {
+    console.error('Error retrieving GovPay health status', err)
+    throw err
+  }
+}
