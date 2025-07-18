@@ -8,9 +8,13 @@ const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
 const PAYMENT_STATUS_SUCCESS = 'success'
+const MIN_CLIENT_ERROR = 400
+const MAX_CLIENT_ERROR = 499
+const MIN_SERVER_ERROR = 500
+const MAX_SERVER_ERROR = 599
 
-const isClientError = code => code >= 400 && code <= 499
-const isServerError = code => code >= 500 && code <= 599
+const isClientError = code => code >= MIN_CLIENT_ERROR && code <= MAX_CLIENT_ERROR
+const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERROR
 
 const fetchDueRecurringPayments = async date => {
   try {
