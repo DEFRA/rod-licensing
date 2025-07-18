@@ -114,16 +114,11 @@ describe('recurring-payments-processor', () => {
       const oopsie = new Error('payment gate down')
       sendPayment.mockRejectedValueOnce(oopsie)
 
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-
       try {
         await processRecurringPayments()
       } catch {}
 
-      expect(debugLogger).toHaveBeenCalledWith(
-        expect.any(String),
-        oopsie
-      )
+      expect(debugLogger).toHaveBeenCalledWith(expect.any(String), oopsie)
     })
 
     it('prepares and sends all payment requests, even if some fail', async () => {
@@ -135,15 +130,15 @@ describe('recurring-payments-processor', () => {
         getMockDueRecurringPayment('foe', agreementIds[2]),
         getMockDueRecurringPayment('fum', agreementIds[3])
       ])
-  
+
       const permissionData = { licensee: { countryCode: 'GB-ENG' } }
       for (let x = 0; x < agreementIds.length; x++) {
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce(permissionData)
         salesApi.createTransaction.mockReturnValueOnce({
           cost: 50,
           id: `transaction-id-${x + 1}`
-        })  
-  
+        })
+
         if (x === 1) {
           const err = new Error('Payment request failed')
           sendPayment.mockRejectedValueOnce(err)
@@ -160,24 +155,32 @@ describe('recurring-payments-processor', () => {
         reference: 'transactionId',
         authorisation_mode: 'agreement'
       }
-  
+
       // act...
       await processRecurringPayments()
-  
+
       // assert...
       expect(sendPayment).toHaveBeenCalledTimes(4)
-      expect(sendPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({ ...expectedData, reference: 'transaction-id-1', agreement_id: agreementIds[0]}))
-      expect(sendPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({ ...expectedData, reference: 'transaction-id-2', agreement_id: agreementIds[1]}))
-      expect(sendPayment).toHaveBeenNthCalledWith(3, expect.objectContaining({ ...expectedData, reference: 'transaction-id-3', agreement_id: agreementIds[2]}))
-      expect(sendPayment).toHaveBeenNthCalledWith(4, expect.objectContaining({ ...expectedData, reference: 'transaction-id-4', agreement_id: agreementIds[3]}))
+      expect(sendPayment).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-1', agreement_id: agreementIds[0] })
+      )
+      expect(sendPayment).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-2', agreement_id: agreementIds[1] })
+      )
+      expect(sendPayment).toHaveBeenNthCalledWith(
+        3,
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-3', agreement_id: agreementIds[2] })
+      )
+      expect(sendPayment).toHaveBeenNthCalledWith(
+        4,
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-4', agreement_id: agreementIds[3] })
+      )
     })
-    
+
     it('logs an error for every failure', async () => {
-      const errors = [
-        new Error('error 1'),
-        new Error('error 2'),
-        new Error('error 3')
-      ]
+      const errors = [new Error('error 1'), new Error('error 2'), new Error('error 3')]
       // arrange...
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
         getMockDueRecurringPayment('fee', 'a1'),
@@ -189,15 +192,12 @@ describe('recurring-payments-processor', () => {
         .mockRejectedValueOnce(errors[0])
         .mockReturnValueOnce(permissionData)
         .mockReturnValueOnce(permissionData)
-      salesApi.createTransaction
-        .mockRejectedValueOnce(errors[1])
-        .mockReturnValueOnce({ cost: 50, id: `transaction-id-3` })
-      sendPayment
-        .mockRejectedValueOnce(errors[2])
-  
+      salesApi.createTransaction.mockRejectedValueOnce(errors[1]).mockReturnValueOnce({ cost: 50, id: 'transaction-id-3' })
+      sendPayment.mockRejectedValueOnce(errors[2])
+
       // act...
       await processRecurringPayments()
-  
+
       // assert...
       expect(debugLogger).toHaveBeenCalledWith(expect.any(String), ...errors)
     })
@@ -474,10 +474,7 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(debugLogger).toHaveBeenCalledWith(
-      expect.any(String),
-      error
-    )
+    expect(debugLogger).toHaveBeenCalledWith(expect.any(String), error)
   })
 
   it.each([
