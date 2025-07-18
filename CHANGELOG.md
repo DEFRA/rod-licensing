@@ -1,4 +1,31 @@
 
+## v1.62.0-rc.3 (2025-07-10)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2165](https://github.com/DEFRA/rod-licensing/pull/2165) Logs not diplsaying aws ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.2 (2025-07-04)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2162](https://github.com/DEFRA/rod-licensing/pull/2162) Add endpoint for cancelling recurring payments ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.1 (2025-07-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2176](https://github.com/DEFRA/rod-licensing/pull/2176) Remove Gov.UK Frontend dependency for the whole repo ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.62.0-rc.0 (2025-07-01)
 
 #### :rocket: Enhancement
