@@ -1,13 +1,12 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
-import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
+import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
 
 const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
-const payments = []
 const PAYMENT_STATUS_SUCCESS = 'success'
 
 const isClientError = code => code >= 400 && code <= 499
@@ -30,6 +29,11 @@ export const processRecurringPayments = async () => {
     return
   }
 
+  if (!(await isGovPayUp())) {
+    debug('Gov.UK Pay reporting unhealthy, aborting run')
+    throw new Error('Run aborted, Gov.UK Pay health endpoint is reporting problems.')
+  }
+
   debug('Recurring Payments job enabled')
   const date = new Date().toISOString().split('T')[0]
 
@@ -40,11 +44,11 @@ export const processRecurringPayments = async () => {
   }
 
   // request payment...
-  try {
-    await Promise.all(dueRCPayments.map(processRecurringPayment))
-  } catch (error) {
-    console.error('Run aborted. Error requesting payments:', error)
-    throw error
+  const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
+  const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
+  const failures = paymentRequestResults.filter(prr => prr.status === 'rejected').map(f => f.reason)
+  if (failures.length) {
+    debug('Error requesting payments:', ...failures)
   }
 
   // pause for payments to process...
@@ -52,7 +56,7 @@ export const processRecurringPayments = async () => {
 
   // check payment status...
   try {
-    await Promise.all(dueRCPayments.map(processRecurringPaymentStatus))
+    await Promise.all(payments.map(p => processRecurringPaymentStatus(p)))
   } catch (error) {
     console.error('Run aborted. Error retrieving payment statuses:', error)
     throw error
@@ -63,36 +67,26 @@ const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
   const transaction = await createNewTransaction(referenceNumber, agreementId)
-  await takeRecurringPayment(agreementId, transaction)
+  return takeRecurringPayment(agreementId, transaction)
 }
 
 const createNewTransaction = async (referenceNumber, agreementId) => {
   const transactionData = await processPermissionData(referenceNumber, agreementId)
-  console.log('Creating new transaction based on', referenceNumber, 'with agreementId', agreementId)
-  try {
-    const response = await salesApi.createTransaction(transactionData)
-    console.log('New transaction created:', response)
-    return response
-  } catch (e) {
-    console.log('Error creating transaction', JSON.stringify(transactionData))
-    throw e
-  }
+  return salesApi.createTransaction(transactionData)
 }
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  console.log('Requesting payment:', preparedPayment)
   const payment = await sendPayment(preparedPayment)
-  payments.push({
+  return {
     agreementId,
     paymentId: payment.payment_id,
     created_date: payment.created_date,
     transaction
-  })
+  }
 }
 
 const processPermissionData = async (referenceNumber, agreementId) => {
-  console.log('Preparing data based on', referenceNumber, 'with agreementId', agreementId)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
@@ -134,34 +128,26 @@ const preparePayment = (agreementId, transaction) => {
   return result
 }
 
-const processRecurringPaymentStatus = async record => {
-  const agreementId = record.entity.agreementId
-  const paymentId = getPaymentId(agreementId)
-
+const processRecurringPaymentStatus = async payment => {
   try {
     const {
       state: { status }
-    } = await getPaymentStatus(paymentId)
+    } = await getPaymentStatus(payment.paymentId)
 
-    debug(`Payment status for ${paymentId}: ${status}`)
+    debug(`Payment status for ${payment.paymentId}: ${status}`)
     if (status === PAYMENT_STATUS_SUCCESS) {
-      const payment = payments.find(p => p.paymentId === paymentId)
-      await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
+      await salesApi.processRPResult(payment.transaction.id, payment.paymentId, payment.created_date)
     }
   } catch (error) {
     const status = error.response?.status
 
     if (isClientError(status)) {
-      debug(`Failed to fetch status for payment ${paymentId}, error ${status}`)
+      debug(`Failed to fetch status for payment ${payment.paymentId}, error ${status}`)
     } else if (isServerError(status)) {
-      debug(`Payment status API error for ${paymentId}, error ${status}`)
+      debug(`Payment status API error for ${payment.paymentId}, error ${status}`)
     } else {
-      debug(`Unexpected error fetching payment status for ${paymentId}.`)
+      debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
     throw error
   }
-}
-
-const getPaymentId = agreementId => {
-  return payments.find(p => p.agreementId === agreementId).paymentId
 }

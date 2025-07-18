@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
-import { getPaymentStatus, sendPayment } from '../services/govuk-pay-service.js'
+import { getPaymentStatus, isGovPayUp, sendPayment } from '../services/govuk-pay-service.js'
 import db from 'debug'
 
 jest.mock('@defra-fish/business-rules-lib')
@@ -20,7 +20,8 @@ jest.mock('@defra-fish/connectors-lib', () => ({
 
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(),
-  getPaymentStatus: jest.fn()
+  getPaymentStatus: jest.fn(),
+  isGovPayUp: jest.fn(() => true)
 }))
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
@@ -63,6 +64,11 @@ describe('recurring-payments-processor', () => {
     expect(debugLogger).toHaveBeenCalledWith('Recurring Payments job enabled')
   })
 
+  it('throws if Gov.UK Pay is not healthy', async () => {
+    isGovPayUp.mockResolvedValueOnce(false)
+    await expect(() => processRecurringPayments()).rejects.toThrow('Run aborted, Gov.UK Pay health endpoint is reporting problems.')
+  })
+
   it('get recurring payments is called when env is true', async () => {
     const date = new Date().toISOString().split('T')[0]
 
@@ -103,15 +109,7 @@ describe('recurring-payments-processor', () => {
   })
 
   describe('When payment request throws an error...', () => {
-    it('processRecurringPayments re-throws the error', async () => {
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
-      const oopsie = new Error('payment gate down')
-      sendPayment.mockRejectedValueOnce(oopsie)
-
-      await expect(processRecurringPayments()).rejects.toBe(oopsie)
-    })
-
-    it('console.error is called with error message', async () => {
+    it('debug is called with error message', async () => {
       salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
       const oopsie = new Error('payment gate down')
       sendPayment.mockRejectedValueOnce(oopsie)
@@ -122,12 +120,91 @@ describe('recurring-payments-processor', () => {
         await processRecurringPayments()
       } catch {}
 
-      expect(errorSpy).toHaveBeenCalledWith('Run aborted. Error requesting payments:', oopsie)
+      expect(debugLogger).toHaveBeenCalledWith(
+        expect.any(String),
+        oopsie
+      )
+    })
+
+    it('prepares and sends all payment requests, even if some fail', async () => {
+      // arrange...
+      const agreementIds = [Symbol('agreementId1'), Symbol('agreementId2'), Symbol('agreementId3'), Symbol('agreementId4')]
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([
+        getMockDueRecurringPayment('fee', agreementIds[0]),
+        getMockDueRecurringPayment('fi', agreementIds[1]),
+        getMockDueRecurringPayment('foe', agreementIds[2]),
+        getMockDueRecurringPayment('fum', agreementIds[3])
+      ])
+  
+      const permissionData = { licensee: { countryCode: 'GB-ENG' } }
+      for (let x = 0; x < agreementIds.length; x++) {
+        salesApi.preparePermissionDataForRenewal.mockReturnValueOnce(permissionData)
+        salesApi.createTransaction.mockReturnValueOnce({
+          cost: 50,
+          id: `transaction-id-${x + 1}`
+        })  
+  
+        if (x === 1) {
+          const err = new Error('Payment request failed')
+          sendPayment.mockRejectedValueOnce(err)
+        } else {
+          sendPayment.mockResolvedValueOnce({ payment_id: `test-payment-id-${x + 1}`, agreementId: agreementIds[x] })
+        }
+        if (x < 3) {
+          getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+        }
+      }
+      const expectedData = {
+        amount: 5000,
+        description: 'The recurring card payment for your rod fishing licence',
+        reference: 'transactionId',
+        authorisation_mode: 'agreement'
+      }
+  
+      // act...
+      await processRecurringPayments()
+  
+      // assert...
+      expect(sendPayment).toHaveBeenCalledTimes(4)
+      expect(sendPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({ ...expectedData, reference: 'transaction-id-1', agreement_id: agreementIds[0]}))
+      expect(sendPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({ ...expectedData, reference: 'transaction-id-2', agreement_id: agreementIds[1]}))
+      expect(sendPayment).toHaveBeenNthCalledWith(3, expect.objectContaining({ ...expectedData, reference: 'transaction-id-3', agreement_id: agreementIds[2]}))
+      expect(sendPayment).toHaveBeenNthCalledWith(4, expect.objectContaining({ ...expectedData, reference: 'transaction-id-4', agreement_id: agreementIds[3]}))
+    })
+    
+    it('logs an error for every failure', async () => {
+      const errors = [
+        new Error('error 1'),
+        new Error('error 2'),
+        new Error('error 3')
+      ]
+      // arrange...
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([
+        getMockDueRecurringPayment('fee', 'a1'),
+        getMockDueRecurringPayment('fi', 'a2'),
+        getMockDueRecurringPayment('foe', 'a3')
+      ])
+      const permissionData = { licensee: { countryCode: 'GB-ENG' } }
+      salesApi.preparePermissionDataForRenewal
+        .mockRejectedValueOnce(errors[0])
+        .mockReturnValueOnce(permissionData)
+        .mockReturnValueOnce(permissionData)
+      salesApi.createTransaction
+        .mockRejectedValueOnce(errors[1])
+        .mockReturnValueOnce({ cost: 50, id: `transaction-id-3` })
+      sendPayment
+        .mockRejectedValueOnce(errors[2])
+  
+      // act...
+      await processRecurringPayments()
+  
+      // assert...
+      expect(debugLogger).toHaveBeenCalledWith(expect.any(String), ...errors)
     })
   })
 
   describe('When payment status request throws an error...', () => {
-    it('processRecurringPayments re-throws the error', async () => {
+    beforeEach(() => {
       salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
 
       const mockPaymentResponse = {
@@ -136,22 +213,16 @@ describe('recurring-payments-processor', () => {
         created_date: '2025-01-01T00:00:00.000Z'
       }
       sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    })
 
+    it('processRecurringPayments re-throws the error', async () => {
       const apiError = { response: { status: 503 } }
       getPaymentStatus.mockRejectedValueOnce(apiError)
 
       await expect(processRecurringPayments()).rejects.toBe(apiError)
     })
+
     it('console.error is called with error message', async () => {
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
-
-      const mockPaymentResponse = {
-        payment_id: 'test-payment-id',
-        agreementId: 'test-agreement-id',
-        created_date: '2025-01-01T00:00:00.000Z'
-      }
-      sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-
       const apiError = { response: { status: 503 } }
       getPaymentStatus.mockRejectedValueOnce(apiError)
 
@@ -309,16 +380,6 @@ describe('recurring-payments-processor', () => {
     )
   })
 
-  it('raises an error if createTransaction fails', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
-    const error = 'Wuh-oh!'
-    salesApi.createTransaction.mockImplementationOnce(() => {
-      throw new Error(error)
-    })
-
-    await expect(processRecurringPayments()).rejects.toThrowError(error)
-  })
-
   it('prepares and sends the payment request', async () => {
     const agreementId = Symbol('agreementId')
     const transactionId = 'transactionId'
@@ -402,6 +463,21 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(debugLogger).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: success`)
+  })
+
+  it('logs an error if createTransaction fails', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const error = new Error('Wuh-oh!')
+    salesApi.createTransaction.mockImplementationOnce(() => {
+      throw error
+    })
+
+    await processRecurringPayments()
+
+    expect(debugLogger).toHaveBeenCalledWith(
+      expect.any(String),
+      error
+    )
   })
 
   it.each([
