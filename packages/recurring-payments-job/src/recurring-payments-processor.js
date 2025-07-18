@@ -55,12 +55,7 @@ export const processRecurringPayments = async () => {
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
   // check payment status...
-  try {
-    await Promise.all(payments.map(p => processRecurringPaymentStatus(p)))
-  } catch (error) {
-    console.error('Run aborted. Error retrieving payment statuses:', error)
-    throw error
-  }
+  await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
 }
 
 const processRecurringPayment = async record => {
@@ -148,6 +143,5 @@ const processRecurringPaymentStatus = async payment => {
     } else {
       debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
-    throw error
   }
 }
