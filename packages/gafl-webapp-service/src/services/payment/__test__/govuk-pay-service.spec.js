@@ -449,7 +449,7 @@ describe('The govuk-pay-service', () => {
     it('should log debug message when response.ok is true', async () => {
       const resBody = { card_details: { foo: Symbol('foo') }, bar: Symbol('bar'), baz: Symbol('baz') }
       // eslint-disable-next-line camelcase
-      const { card_details, ...expectedLoggedOutput } = resBody
+      const { _card_details, ...expectedLoggedOutput } = resBody
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus(resBody))
 
       await getPaymentStatus(paymentId)
