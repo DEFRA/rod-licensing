@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.5 (2025-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2178](https://github.com/DEFRA/rod-licensing/pull/2178) Sanitise payment details in logging ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.62.0-rc.4 (2025-07-21)
 
 #### :rocket: Enhancement
