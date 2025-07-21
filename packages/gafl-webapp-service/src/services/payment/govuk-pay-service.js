@@ -94,7 +94,7 @@ export const getPaymentStatus = async (paymentId, recurring = false) => {
   if (response.ok) {
     const resBody = await response.json()
     // eslint-disable-next-line camelcase
-    const { _card_details, ...loggableBody } = resBody
+    const { card_details: _card_details, ...loggableBody } = resBody
     debug('Payment status response: %o', loggableBody)
     return resBody
   } else {
