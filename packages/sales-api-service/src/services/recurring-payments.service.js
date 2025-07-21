@@ -1,4 +1,11 @@
-import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, RecurringPayment } from '@defra-fish/dynamics-lib'
+import {
+  executeQuery,
+  findById,
+  findDueRecurringPayments,
+  findRecurringPaymentsByAgreementId,
+  RecurringPayment,
+  dynamicsClient
+} from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
@@ -96,53 +103,48 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
   permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
   permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
-  await docClient
-    .update({
-      TableName: TRANSACTION_STAGING_TABLE.TableName,
-      Key: { id: transactionId },
-      ...docClient.createUpdateExpression({
-        payload: permission,
-        permissions: transactionRecord.permissions,
-        status: { id: TRANSACTION_STATUS.FINALISED },
-        payment: {
-          amount: transactionRecord.cost,
-          method: TRANSACTION_SOURCE.govPay,
-          source: PAYMENT_TYPE.debit,
-          timestamp: new Date().toISOString()
-        }
-      }),
-      ReturnValues: 'ALL_NEW'
-    })
-    .promise()
+  await docClient.update({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id: transactionId },
+    ...docClient.createUpdateExpression({
+      payload: permission,
+      permissions: transactionRecord.permissions,
+      status: { id: TRANSACTION_STATUS.FINALISED },
+      payment: {
+        amount: transactionRecord.cost,
+        method: TRANSACTION_SOURCE.govPay,
+        source: PAYMENT_TYPE.debit,
+        timestamp: new Date().toISOString()
+      }
+    }),
+    ReturnValues: 'ALL_NEW'
+  })
 
-  await sqs
-    .sendMessage({
-      QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: transactionId,
-      MessageDeduplicationId: transactionId,
-      MessageBody: JSON.stringify({ id: transactionId })
-    })
-    .promise()
+  await sqs.sendMessage({
+    QueueUrl: TRANSACTION_QUEUE.Url,
+    MessageGroupId: transactionId,
+    MessageDeduplicationId: transactionId,
+    MessageBody: JSON.stringify({ id: transactionId })
+  })
 
   return { permission }
 }
 
-export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
-  console.log('existingRecurringPaymentId: ', existingRecurringPaymentId)
-  console.log('agreementId: ', agreementId)
-  const newRecurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
-  if (newRecurringPayment) {
-    console.log('newRecurringPaymentId: ', newRecurringPayment.id)
-  } else {
-    console.log('No matches found')
+export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
+  const query = findRecurringPaymentsByAgreementId(agreementId)
+  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  if (response.value.length) {
+    const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
+    return RecurringPayment.fromResponse(rcpResponseData)
   }
+  return false
 }
 
-const findNewestExistingRecurringPaymentInCrm = async agreementId => {
-  const matchingRecords = await executeQuery(findRecurringPaymentsByAgreementId(agreementId))
-  if (matchingRecords?.length) {
-    return [...matchingRecords].sort((a, b) => a.entity.endDate - b.entity.endDate).pop()
+export const cancelRecurringPayment = async id => {
+  const recurringPayment = await findById(RecurringPayment, id)
+  if (recurringPayment) {
+    console.log('RecurringPayment for cancellation: ', recurringPayment)
   } else {
-    return false
+    console.log('No matches found for cancellation')
   }
 }

@@ -21,10 +21,7 @@ export class RecurringPayment extends BaseEntity {
       cancelledReason: { field: 'defra_cancelledreason', type: 'optionset', ref: 'defra_cancelledreason' },
       endDate: { field: 'defra_enddate', type: 'datetime' },
       agreementId: { field: 'defra_agreementid', type: 'string' },
-      activePermission: { field: '_defra_activepermission_value', type: 'string' },
-      contactId: { field: '_defra_contact_value', type: 'string' },
       publicId: { field: 'defra_publicid', type: 'string' },
-      nextRecurringPayment: { field: '_defra_nextrecurringpayment_value', type: 'string' },
       lastDigitsCardNumbers: { field: 'defra_lastdigitscardnumbers', type: 'string' }
     },
     relationships: {

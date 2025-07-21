@@ -1,7 +1,9 @@
 import Config from './config.js'
 import { createDocumentClient } from './documentclient-decorator.js'
-import AWS from 'aws-sdk'
-const { DynamoDB, SQS, S3, SecretsManager } = AWS
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { SQS } from '@aws-sdk/client-sqs'
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
+import { SecretsManager } from '@aws-sdk/client-secrets-manager'
 
 export default function () {
   return {
@@ -24,11 +26,12 @@ export default function () {
         endpoint: Config.aws.sqs.endpoint
       })
     }),
-    s3: new S3({
+    s3: new S3Client({
+      region: 'eu-west-2',
       apiVersion: '2006-03-01',
       ...(Config.aws.s3.endpoint && {
         endpoint: Config.aws.s3.endpoint,
-        s3ForcePathStyle: true
+        forcePathStyle: true
       })
     }),
     secretsManager: new SecretsManager({
@@ -36,6 +39,7 @@ export default function () {
       ...(Config.aws.secretsManager.endpoint && {
         endpoint: Config.aws.secretsManager.endpoint
       })
-    })
+    }),
+    ListObjectsV2Command
   }
 }

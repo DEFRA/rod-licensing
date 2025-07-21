@@ -707,24 +707,21 @@ describe('sales-api-connector', () => {
     })
   })
 
-  describe('linkRecurringPayments', () => {
-    describe.each([
-      ['existing-recurring-payment-id', 'agreement-id'],
-      ['abc-123', 'def-456']
-    ])("Processing payment for transaction id '%s'", (existingRecurringPaymentId, agreementId) => {
+  describe('cancelRecurringPayment', () => {
+    describe.each([['id'], ['abc-123']])("Cancelling recurring payment id '%s'", id => {
       beforeEach(() => {
         fetch.mockReturnValue({
           ok: true,
           status: 200,
           statusText: 'OK',
-          text: async () => JSON.stringify({ existingRecurringPaymentId, agreementId })
+          text: async () => JSON.stringify({ id })
         })
       })
 
       it('calls the endpoint with the correct parameters', async () => {
-        await salesApi.linkRecurringPayments(existingRecurringPaymentId, agreementId)
+        await salesApi.cancelRecurringPayment(id)
 
-        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/linkRecurringPayments/${existingRecurringPaymentId}/${agreementId}`, {
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}`, {
           method: 'get',
           headers: expect.any(Object),
           timeout: 20000
@@ -732,9 +729,9 @@ describe('sales-api-connector', () => {
       })
 
       it('returns the expected response data', async () => {
-        const processedResult = await salesApi.linkRecurringPayments(existingRecurringPaymentId, agreementId)
+        const processedResult = await salesApi.cancelRecurringPayment(id)
 
-        expect(processedResult).toEqual({ existingRecurringPaymentId, agreementId })
+        expect(processedResult).toEqual({ id })
       })
     })
 
@@ -746,12 +743,7 @@ describe('sales-api-connector', () => {
         text: async () => 'Server Error'
       })
 
-      await expect(salesApi.linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')).rejects.toThrow('Internal Server Error')
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/linkRecurringPayments/existing-recurring-payment-id/agreement-id', {
-        method: 'get',
-        headers: expect.any(Object),
-        timeout: 20000
-      })
+      await expect(salesApi.cancelRecurringPayment('id')).rejects.toThrow('Internal Server Error')
     })
   })
 })

@@ -1,10 +1,19 @@
-import { executeQuery, findDueRecurringPayments, findRecurringPaymentsByAgreementId, Permission } from '@defra-fish/dynamics-lib'
+import {
+  dynamicsClient,
+  executeQuery,
+  findDueRecurringPayments,
+  findRecurringPaymentsByAgreementId,
+  findById,
+  Permission,
+  RecurringPayment
+} from '@defra-fish/dynamics-lib'
 import {
   getRecurringPayments,
   processRecurringPayment,
   generateRecurringPaymentRecord,
   processRPResult,
-  linkRecurringPayments
+  findNewestExistingRecurringPaymentInCrm,
+  cancelRecurringPayment
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
@@ -15,24 +24,30 @@ import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
-const AWSMocks = {}
+const { docClient, sqs } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   executeQuery: jest.fn(),
   findById: jest.fn(),
   findDueRecurringPayments: jest.fn(),
-  findRecurringPaymentsByAgreementId: jest.fn(() => ['foo'])
+  findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
+  dynamicsClient: {
+    retrieveMultipleRequest: jest.fn(() => ({ value: [] }))
+  }
 }))
 
-jest.mock('@defra-fish/connectors-lib', () => {
-  const realConnectors = jest.requireActual('@defra-fish/connectors-lib')
-  return {
-    ...realConnectors,
-    AWS: jest.fn(() => realConnectors.AWS()),
-    receiver: jest.fn()
-  }
-})
+jest.mock('@defra-fish/connectors-lib', () => ({
+  AWS: jest.fn(() => ({
+    docClient: {
+      update: jest.fn(),
+      createUpdateExpression: jest.fn()
+    },
+    sqs: {
+      sendMessage: jest.fn()
+    }
+  }))
+}))
 
 jest.mock('node:crypto', () => ({
   createHash: jest.fn(() => ({
@@ -76,8 +91,6 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
     debit: Symbol('debit')
   }
 }))
-
-const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
 const getMockRecurringPayment = (overrides = {}) => ({
   name: 'Test Name',
@@ -165,6 +178,54 @@ const getMockTransaction = (id = 'test-id') => ({
   ]
 })
 
+const getMockResponse = () => ({
+  '@odata.context': 'https://ea-fish-devsandbox.crm4.dynamics.com/api/data/v9.1/$metadata#defra_recurringpayments',
+  value: [
+    {
+      '@odata.etag': 'W/"183695502"',
+      defra_recurringpaymentid: 'ed8e5dc7-d346-f011-877a-6045bde009c2',
+      defra_name: null,
+      statecode: 1,
+      defra_nextduedate: '2025-06-11T00:00:00Z',
+      defra_cancelleddate: null,
+      defra_cancelledreason: null,
+      defra_enddate: '2025-06-20T22:59:59Z',
+      defra_agreementid: 's6i8q2lcrgqene2s8u1qeaiel6',
+      defra_publicid: 'JIwepr5/XgxwLHF9u20F1veSdWqeMJz/dzVfjPKrflM=',
+      defra_lastdigitscardnumbers: null
+    },
+    {
+      '@odata.etag': 'W/"184173292"',
+      statecode: 1,
+      defra_recurringpaymentid: 'f5011f95-ac47-f011-877a-6045bde009c2',
+      defra_publicid: '/KTtr4kFQvLwSP3Xz/xAxh9jWbGuzW17ALni4rmip4k=',
+      defra_cancelleddate: null,
+      defra_inceptionmonth: null,
+      defra_cancelledreason: null,
+      defra_nextduedate: '2026-06-10T00:00:00Z',
+      defra_last_digits_card_number: null,
+      defra_enddate: '2026-06-20T22:59:59Z',
+      defra_agreementid: 's6i8q2lcrgqene2s8u1qeaiel6',
+      defra_lastdigitscardnumbers: null,
+      defra_name: null
+    },
+    {
+      '@odata.etag': 'W/"184173352"',
+      statecode: 1,
+      defra_recurringpaymentid: '0d021f95-ac47-f011-877a-6045bde009c2',
+      defra_publicid: 'y3vgHMkqiMyp0vyb3rrS9KvqvU+kUl6P4b74X62SFOU=',
+      defra_cancelleddate: null,
+      defra_cancelledreason: null,
+      defra_nextduedate: '2024-06-10T00:00:00Z',
+      defra_last_digits_card_number: null,
+      defra_enddate: '2024-06-20T22:59:59Z',
+      defra_agreementid: 's6i8q2lcrgqene2s8u1qeaiel6',
+      defra_lastdigitscardnumbers: null,
+      defra_name: null
+    }
+  ]
+})
+
 describe('recurring payments service', () => {
   const createSimpleSampleTransactionRecord = () => ({ payment: { recurring: true }, permissions: [{}] })
   const createSamplePermission = overrides => {
@@ -186,14 +247,6 @@ describe('recurring payments service', () => {
   beforeAll(() => {
     TRANSACTION_QUEUE.Url = 'TestUrl'
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
-    const [
-      {
-        value: { docClient, sqs }
-      }
-    ] = AWS.mock.results
-    AWSMocks.docClient = docClient
-    AWSMocks.sqs = sqs
-    Object.freeze(AWSMocks)
   })
 
   describe('getRecurringPayments', () => {
@@ -202,7 +255,7 @@ describe('recurring payments service', () => {
       const mockContact = mockRecurringPayments[0].expanded.contact
       const mockPermission = mockRecurringPayments[0].expanded.activePermission
 
-      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+      executeQuery.mockResolvedValueOnce(mockRecurringPayments)
 
       const result = await getRecurringPayments(new Date())
 
@@ -212,11 +265,11 @@ describe('recurring payments service', () => {
     it('executeQuery is called with findDueRecurringPayments with a date', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
       const mockDate = new Date()
-      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+      executeQuery.mockResolvedValueOnce(mockRecurringPayments)
 
       await getRecurringPayments(mockDate)
 
-      expect(dynamicsLib.executeQuery).toHaveBeenCalledWith(findDueRecurringPayments(mockDate))
+      expect(executeQuery).toHaveBeenCalledWith(findDueRecurringPayments(mockDate))
     })
   })
 
@@ -548,8 +601,7 @@ describe('recurring payments service', () => {
       expect(getObfuscatedDob).toHaveBeenCalledWith(permission.licensee)
     })
 
-    it('should call AWSMocks.docClient.createUpdateExpression with payload, permissions, status and payment details', async () => {
-      jest.spyOn(AWSMocks.docClient, 'createUpdateExpression')
+    it('should call use docClient to create update expression with payload, permissions, status and payment details', async () => {
       const fakeNow = '2024-03-19T14:09:00.000Z'
       jest.setSystemTime(new Date(fakeNow))
       const mockTransaction = getMockTransaction(transactionId)
@@ -577,7 +629,7 @@ describe('recurring payments service', () => {
 
       await processRPResult(transactionId, '123abc', '2025-01-01')
 
-      expect(AWSMocks.docClient.createUpdateExpression).toHaveBeenCalledWith({
+      expect(docClient.createUpdateExpression).toHaveBeenCalledWith({
         payload: expect.objectContaining(expectedPermission),
         permissions: expect.arrayContaining([expectedPermission]),
         status: expect.objectContaining({ id: TRANSACTION_STATUS.FINALISED }),
@@ -590,17 +642,16 @@ describe('recurring payments service', () => {
       })
     })
 
-    it('should call AWSMocks.docClient.update with expected params', async () => {
-      jest.spyOn(AWSMocks.docClient, 'createUpdateExpression')
+    it('should update DynamoDB with expected params', async () => {
       const mockTransaction = getMockTransaction(transactionId)
       mockTransaction.cost = 38.72
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
       const updateExpression = { expression: Symbol('update expression') }
-      AWSMocks.docClient.createUpdateExpression.mockReturnValue(updateExpression)
+      docClient.createUpdateExpression.mockReturnValue(updateExpression)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      expect(AWSMocks.docClient.update).toHaveBeenCalledWith({
+      expect(docClient.update).toHaveBeenCalledWith({
         TableName: TRANSACTION_STAGING_TABLE.TableName,
         Key: { id: transactionId },
         ...updateExpression,
@@ -608,13 +659,13 @@ describe('recurring payments service', () => {
       })
     })
 
-    it('should call AWSMocks.sqs.sendMessage with expected params', async () => {
+    it('should send sqs message with expected params', async () => {
       const mockTransaction = getMockTransaction(transactionId)
       retrieveStagedTransaction.mockResolvedValueOnce(mockTransaction)
 
       await processRPResult(mockTransaction.id, '123', '2025-01-01')
 
-      expect(AWSMocks.sqs.sendMessage).toHaveBeenCalledWith({
+      expect(sqs.sendMessage).toHaveBeenCalledWith({
         QueueUrl: TRANSACTION_QUEUE.Url,
         MessageGroupId: transactionId,
         MessageDeduplicationId: transactionId,
@@ -623,42 +674,93 @@ describe('recurring payments service', () => {
     })
   })
 
-  describe('linkRecurringPayments', () => {
-    it('should call executeQuery with findRecurringPaymentsByAgreementId and the provided agreementId', async () => {
-      const agreementId = 'abc123'
-      await linkRecurringPayments('existing-recurring-payment-id', agreementId)
-      expect(executeQuery).toHaveBeenCalledWith(findRecurringPaymentsByAgreementId(agreementId))
+  describe('findNewestExistingRecurringPaymentInCrm', () => {
+    it('passes agreement id to findRecurringPaymentsByAgreementId', async () => {
+      const agreementId = Symbol('agreement-id')
+      await findNewestExistingRecurringPaymentInCrm(agreementId)
+      expect(findRecurringPaymentsByAgreementId).toHaveBeenCalledWith(agreementId)
+    })
+
+    it('passes query created by findRecurringPaymentsByAgreementId to retrieveMultipleRequest', async () => {
+      const retrieveRequest = Symbol('retrieve request')
+      findRecurringPaymentsByAgreementId.mockReturnValueOnce({ toRetrieveRequest: () => retrieveRequest })
+      await findNewestExistingRecurringPaymentInCrm()
+      expect(dynamicsClient.retrieveMultipleRequest).toHaveBeenCalledWith(retrieveRequest)
+    })
+
+    it('returns a Recurring Payment (not a plain object)', async () => {
+      jest.spyOn(RecurringPayment, 'fromResponse')
+      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce(getMockResponse())
+      const rcp = await findNewestExistingRecurringPaymentInCrm()
+      expect(RecurringPayment.fromResponse.mock.results[0].value).toBe(rcp)
+    })
+
+    it.each([
+      [
+        'dataset of three with midpoint most recent',
+        [
+          { defra_recurringpaymentid: '1', defra_enddate: '2024-05-31T00:37:24.123' },
+          { defra_recurringpaymentid: '2', defra_enddate: '2025-05-31T00:37:24.456' },
+          { defra_recurringpaymentid: '3', defra_enddate: '2025-05-31T00:37:24.123' }
+        ],
+        '2'
+      ],
+      [
+        'dataset of five with penultimate most recent',
+        [
+          { defra_recurringpaymentid: '111-aaa', defra_enddate: '2024-05-31T00:37:24.123' },
+          { defra_recurringpaymentid: '222-ddd', defra_enddate: '2022-05-31T00:37:24.456' },
+          { defra_recurringpaymentid: '304-jkj', defra_enddate: '2021-05-31T00:37:24.123' },
+          { defra_recurringpaymentid: 'abc-123', defra_enddate: '2025-05-31T00:37:24.123' },
+          { defra_recurringpaymentid: '908-oid', defra_enddate: '1876-05-30T00:37:24.123' }
+        ],
+        'abc-123'
+      ],
+      [
+        'dataset of two with last most recent',
+        [
+          { defra_recurringpaymentid: 'abc-123', defra_enddate: '1876-05-30T00:37:24.123' },
+          { defra_recurringpaymentid: '908-oid', defra_enddate: '2025-05-31T00:37:24.123' }
+        ],
+        '908-oid'
+      ]
+    ])('returns most recent existing recurring payment from %s', async (_desc, mockResponseData, expectedId) => {
+      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: mockResponseData })
+      const rcp = await findNewestExistingRecurringPaymentInCrm()
+      expect(rcp.id).toBe(expectedId)
+    })
+
+    it('returns boolean false if no recurring payments found', async () => {
+      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: [] })
+      const rcp = await findNewestExistingRecurringPaymentInCrm()
+      expect(rcp).toBeFalsy()
+    })
+  })
+
+  describe('cancelRecurringPayment', () => {
+    it('should call findById with RecurringPayment and the provided id', async () => {
+      const id = 'abc123'
+      await cancelRecurringPayment(id)
+      expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
     })
 
     it('should log a RecurringPayment record when there is one match', async () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      const onlyRecord = { entity: getMockRecurringPayment() }
-      dynamicsLib.executeQuery.mockReturnValueOnce([onlyRecord])
+      const recurringPayment = { entity: getMockRecurringPayment() }
+      findById.mockReturnValueOnce(recurringPayment)
 
-      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
+      await cancelRecurringPayment('id')
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('newRecurringPaymentId: ', onlyRecord.id)
-    })
-
-    it('should log the RecurringPayment record with the latest endDate when there are multiple matches', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      const oldestRecord = { entity: getMockRecurringPayment({ id: Symbol('oldest'), endDate: new Date('2021-12-15T00:00:00Z') }) }
-      const newestRecord = { entity: getMockRecurringPayment({ id: Symbol('newest'), endDate: new Date('2023-12-15T00:00:00Z') }) }
-      const middlestRecord = { entity: getMockRecurringPayment({ id: Symbol('middlest'), endDate: new Date('2022-12-15T00:00:00Z') }) }
-      dynamicsLib.executeQuery.mockReturnValueOnce([oldestRecord, newestRecord, middlestRecord])
-
-      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('newRecurringPaymentId: ', newestRecord.id)
+      expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
     })
 
     it('should log no matches when there are no matches', async () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      dynamicsLib.executeQuery.mockReturnValueOnce([])
+      findById.mockReturnValueOnce(undefined)
 
-      await linkRecurringPayments('existing-recurring-payment-id', 'agreement-id')
+      await cancelRecurringPayment('id')
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found')
+      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
     })
   })
 })

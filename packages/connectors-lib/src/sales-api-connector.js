@@ -310,13 +310,12 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
 }
 
 /**
- * Link an old RecurringPayment to its replacement
+ * Cancel a RecurringPayment
  *
- * @param existingRecurringPaymentId
- * @param agreementId
+ * @param id
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const linkRecurringPayments = async (existingRecurringPaymentId, agreementId) => {
-  return exec2xxOrThrow(call(new URL(`/linkRecurringPayments/${existingRecurringPaymentId}/${agreementId}`, urlBase), 'get'))
+export const cancelRecurringPayment = async id => {
+  return exec2xxOrThrow(call(new URL(`/cancelRecurringPayment/${id}`, urlBase), 'get'))
 }

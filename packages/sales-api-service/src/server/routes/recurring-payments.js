@@ -1,10 +1,10 @@
 import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
-  linkRecurringPaymentsRequestParamsSchema,
-  processRPResultRequestParamsSchema
+  processRPResultRequestParamsSchema,
+  cancelRecurringPaymentRequestParamsSchema
 } from '../../schema/recurring-payments.schema.js'
-import { getRecurringPayments, linkRecurringPayments, processRPResult } from '../../services/recurring-payments.service.js'
+import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '../../services/recurring-payments.service.js'
 
 const SWAGGER_TAGS = ['api', 'recurring-payments']
 
@@ -59,22 +59,22 @@ export default [
   },
   {
     method: 'GET',
-    path: '/linkRecurringPayments/{existingRecurringPaymentId}/{agreementId}',
+    path: '/cancelRecurringPayment/{id}',
     options: {
       handler: async (request, h) => {
-        const { existingRecurringPaymentId, agreementId } = request.params
-        const result = await linkRecurringPayments(existingRecurringPaymentId, agreementId)
+        const { id } = request.params
+        const result = await cancelRecurringPayment(id)
         return h.response(result)
       },
-      description: 'Link an old RecurringPayment to its replacement',
+      description: 'Cancel a recurring payment',
       tags: SWAGGER_TAGS,
       validate: {
-        params: linkRecurringPaymentsRequestParamsSchema
+        params: cancelRecurringPaymentRequestParamsSchema
       },
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { description: 'Old RecurringPayment linked to new RecurringPayment successfully' }
+            200: { description: 'Recurring payment cancelled' }
           },
           order: 3
         }
