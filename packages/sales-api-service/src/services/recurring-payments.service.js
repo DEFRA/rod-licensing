@@ -65,7 +65,7 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   if (transactionRecord.payment?.recurring) {
     const recurringPayment = new RecurringPayment()
     hash.update(recurringPayment.uniqueContentId)
-    recurringPayment.name = transactionRecord.payment.recurring.name
+    recurringPayment.name = determineRecurringPaymentName(transactionRecord, contact)
     recurringPayment.nextDueDate = transactionRecord.payment.recurring.nextDueDate
     recurringPayment.cancelledDate = transactionRecord.payment.recurring.cancelledDate
     recurringPayment.cancelledReason = transactionRecord.payment.recurring.cancelledReason
@@ -147,4 +147,9 @@ export const cancelRecurringPayment = async id => {
   } else {
     console.log('No matches found for cancellation')
   }
+}
+
+const determineRecurringPaymentName = (transactionRecord, contact) => {
+  const [dueYear] = transactionRecord.payment.recurring.nextDueDate.split('-')
+  return [contact.firstName, contact.lastName, dueYear].join(' ')
 }
