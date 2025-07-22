@@ -22,8 +22,8 @@ it.only('debug should output message when response.ok is true without card detai
   }
   govUkPayApi.getRecurringPaymentAgreementInformation.mockResolvedValue(mockResponse)
   await getRecurringPaymentAgreement(agreementId)
-  expect(debug).toHaveBeenCalledWith(
-    'Successfully got recurring payment agreement information: %o',
-    { success: true, payment_instrument: {} }
-  )
+  expect(debug).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
+    success: true,
+    payment_instrument: {}
+  })
 })
