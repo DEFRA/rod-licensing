@@ -127,7 +127,6 @@ describe('recurring-payments-processor', () => {
     })
 
     it('prepares and sends all payment requests, even if some fail', async () => {
-      // arrange...
       const agreementIds = [Symbol('agreementId1'), Symbol('agreementId2'), Symbol('agreementId3'), Symbol('agreementId4')]
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
         getMockDueRecurringPayment('fee', agreementIds[0]),
@@ -161,10 +160,8 @@ describe('recurring-payments-processor', () => {
         authorisation_mode: 'agreement'
       }
 
-      // act...
       await processRecurringPayments()
 
-      // assert...
       expect(sendPayment).toHaveBeenCalledTimes(4)
       expect(sendPayment).toHaveBeenNthCalledWith(
         1,
@@ -186,7 +183,6 @@ describe('recurring-payments-processor', () => {
 
     it('logs an error for every failure', async () => {
       const errors = [new Error('error 1'), new Error('error 2'), new Error('error 3')]
-      // arrange...
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
         getMockDueRecurringPayment('fee', 'a1'),
         getMockDueRecurringPayment('fi', 'a2'),
@@ -200,10 +196,8 @@ describe('recurring-payments-processor', () => {
       salesApi.createTransaction.mockRejectedValueOnce(errors[1]).mockReturnValueOnce({ cost: 50, id: 'transaction-id-3' })
       sendPayment.mockRejectedValueOnce(errors[2])
 
-      // act...
       await processRecurringPayments()
 
-      // assert...
       expect(debugLogger).toHaveBeenCalledWith(expect.any(String), ...errors)
     })
   })

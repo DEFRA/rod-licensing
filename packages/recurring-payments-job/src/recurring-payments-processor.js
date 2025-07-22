@@ -41,25 +41,26 @@ export const processRecurringPayments = async () => {
   debug('Recurring Payments job enabled')
   const date = new Date().toISOString().split('T')[0]
 
-  // fetch due payments...
   const dueRCPayments = await fetchDueRecurringPayments(date)
   if (dueRCPayments.length === 0) {
     return
   }
 
-  // request payment...
+  const payments = await requestPayments(dueRCPayments)
+
+  await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+
+  await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+}
+
+const requestPayments = async dueRCPayments => {
   const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
   const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
   const failures = paymentRequestResults.filter(prr => prr.status === 'rejected').map(f => f.reason)
   if (failures.length) {
     debug('Error requesting payments:', ...failures)
   }
-
-  // pause for payments to process...
-  await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
-
-  // check payment status...
-  await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+  return payments
 }
 
 const processRecurringPayment = async record => {
