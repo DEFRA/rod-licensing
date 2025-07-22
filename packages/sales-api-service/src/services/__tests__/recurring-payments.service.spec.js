@@ -27,6 +27,14 @@ import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '.
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 import db from 'debug'
 
+jest.mock('ioredis', () => ({
+  built: {
+    utils: {
+      debug: jest.fn()
+    }
+  }
+}))
+
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'sales:recurring')]
 
@@ -814,7 +822,8 @@ describe('recurring payments service', () => {
       await getRecurringPaymentAgreement(agreementId)
 
       expect(debug).toHaveBeenCalledWith('Successfully got recurring payment agreement information: %o', {
-        success: true
+        success: true,
+        payment_instrument: {}
       })
     })
 
