@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.7 (2025-07-22)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `recurring-payments-job`
+  * [#2148](https://github.com/DEFRA/rod-licensing/pull/2148) Recurring payments failed payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.62.0-rc.6 (2025-07-21)
 
 #### :bug: Bug Fix
