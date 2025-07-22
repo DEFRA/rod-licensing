@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment } from './services/govuk-pay-service.js'
 import db from 'debug'
@@ -7,7 +7,6 @@ const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
 const payments = []
-const PAYMENT_STATUS_SUCCESS = 'success'
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -107,10 +106,18 @@ const processRecurringPaymentStatus = async record => {
     state: { status }
   } = await getPaymentStatus(paymentId)
   debug(`Payment status for ${paymentId}: ${status}`)
-  if (status === PAYMENT_STATUS_SUCCESS) {
-    const payment = payments.find(p => p.paymentId === paymentId)
+  const payment = payments.find(p => p.paymentId === paymentId)
+  if (status === PAYMENT_STATUS.Success) {
     await salesApi.processRPResult(payment.transaction.id, paymentId, payment.created_date)
     debug(`Processed Recurring Payment for ${payment.transaction.id}`)
+  }
+  if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
+    console.error(`Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`)
+    if (await salesApi.getPaymentJournal(payment.transaction.id)) {
+      await salesApi.updatePaymentJournal(payment.transaction.id, {
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
+      })
+    }
   }
 }
 
