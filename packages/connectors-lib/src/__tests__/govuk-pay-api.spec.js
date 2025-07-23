@@ -184,7 +184,7 @@ describe('govuk-pay-api-connector', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error retrieving GovPay health status', error)
     })
   })
-  
+
   describe('getRecurringPaymentAgreementInformation', () => {
     it('retrieves recurring payment agreement information', async () => {
       fetch.mockReturnValue({ ok: true, status: 200, json: () => {} })

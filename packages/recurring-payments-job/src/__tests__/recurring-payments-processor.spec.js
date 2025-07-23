@@ -1,8 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { PAYMENT_STATUS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, isGovPayUp, sendPayment } from '../services/govuk-pay-service.js'
-import { PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import db from 'debug'
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
@@ -553,7 +552,9 @@ describe('recurring-payments-processor', () => {
   })
 
   it('calls processRPResult with transaction id, payment id and created date when payment is successful', async () => {
-    debugLogger.mockImplementation(function() {console.log(...arguments)})
+    debugLogger.mockImplementation(function () {
+      console.log(...arguments)
+    })
     const mockTransactionId = 'test-transaction-id'
     const mockPaymentId = 'test-payment-id'
     const mockPaymentCreatedDate = '2025-01-01T00:00:00.000Z'

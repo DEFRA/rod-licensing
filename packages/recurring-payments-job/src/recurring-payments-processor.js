@@ -140,7 +140,9 @@ const processRecurringPaymentStatus = async payment => {
       debug(`Processed Recurring Payment for ${payment.transaction.id}`)
     }
     if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
-      console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+      console.error(
+        `Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`
+      )
       if (await salesApi.getPaymentJournal(payment.transaction.id)) {
         await salesApi.updatePaymentJournal(payment.transaction.id, {
           paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
@@ -156,14 +158,6 @@ const processRecurringPaymentStatus = async payment => {
       debug(`Payment status API error for ${payment.paymentId}, error ${status}`)
     } else {
       debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
-    }
-  }
-  if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
-    console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
-    if (await salesApi.getPaymentJournal(payment.transaction.id)) {
-      await salesApi.updatePaymentJournal(payment.transaction.id, {
-        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
-      })
     }
   }
 }
