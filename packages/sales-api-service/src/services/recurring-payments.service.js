@@ -15,7 +15,9 @@ import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
 import moment from 'moment'
-import { AWS } from '@defra-fish/connectors-lib'
+import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
+import db from 'debug'
+const debug = db('sales:recurring')
 const { sqs, docClient } = AWS()
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
@@ -34,8 +36,10 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
   throw new Error('Invalid dates provided for permission')
 }
 
-export const generateRecurringPaymentRecord = (transactionRecord, permission) => {
+export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
   if (transactionRecord.agreementId) {
+    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.agreementId)
+    const lastDigitsCardNumbers = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
     return {
       payment: {
@@ -46,7 +50,8 @@ export const generateRecurringPaymentRecord = (transactionRecord, permission) =>
           cancelledReason: null,
           endDate,
           agreementId: transactionRecord.agreementId,
-          status: 1
+          status: 1,
+          last_digits_card_number: lastDigitsCardNumbers
         }
       },
       permissions: [permission]
@@ -73,12 +78,29 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = hash.digest('base64')
     recurringPayment.status = transactionRecord.payment.recurring.status
+    recurringPayment.lastDigitsCardNumbers = transactionRecord.payment.recurring.last_digits_card_number
     const [permission] = transactionRecord.permissions
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
     return { recurringPayment }
   }
   return { recurringPayment: null }
+}
+
+export const getRecurringPaymentAgreement = async agreementId => {
+  const response = await govUkPayApi.getRecurringPaymentAgreementInformation(agreementId)
+  if (response.ok) {
+    const resBody = await response.json()
+    const resBodyNoCardDetails = structuredClone(resBody)
+
+    if (resBodyNoCardDetails.payment_instrument?.card_details) {
+      delete resBodyNoCardDetails.payment_instrument.card_details
+    }
+    debug('Successfully got recurring payment agreement information: %o', resBodyNoCardDetails)
+    return resBody
+  } else {
+    throw new Error('Failure getting agreement in the GOV.UK API service')
+  }
 }
 
 export const processRPResult = async (transactionId, paymentId, createdDate) => {
