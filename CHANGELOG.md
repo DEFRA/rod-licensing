@@ -1,4 +1,13 @@
 
+## v1.62.0-rc.8 (2025-07-23)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2145](https://github.com/DEFRA/rod-licensing/pull/2145) Store bank card digits ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.62.0-rc.7 (2025-07-22)
 
 #### :rocket: Enhancement
