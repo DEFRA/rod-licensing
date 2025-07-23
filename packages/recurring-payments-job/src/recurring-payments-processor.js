@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
@@ -7,7 +7,6 @@ import db from 'debug'
 const debug = db('recurring-payments:processor')
 
 const PAYMENT_STATUS_DELAY = 60000
-const PAYMENT_STATUS_SUCCESS = 'success'
 const MIN_CLIENT_ERROR = 400
 const MAX_CLIENT_ERROR = 499
 const MIN_SERVER_ERROR = 500
@@ -135,8 +134,18 @@ const processRecurringPaymentStatus = async payment => {
     } = await getPaymentStatus(payment.paymentId)
 
     debug(`Payment status for ${payment.paymentId}: ${status}`)
-    if (status === PAYMENT_STATUS_SUCCESS) {
+
+    if (status === PAYMENT_STATUS.Success) {
       await salesApi.processRPResult(payment.transaction.id, payment.paymentId, payment.created_date)
+      debug(`Processed Recurring Payment for ${payment.transaction.id}`)
+    }
+    if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
+      console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+      if (await salesApi.getPaymentJournal(payment.transaction.id)) {
+        await salesApi.updatePaymentJournal(payment.transaction.id, {
+          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
+        })
+      }
     }
   } catch (error) {
     const status = error.response?.status
@@ -147,6 +156,14 @@ const processRecurringPaymentStatus = async payment => {
       debug(`Payment status API error for ${payment.paymentId}, error ${status}`)
     } else {
       debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
+    }
+  }
+  if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
+    console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+    if (await salesApi.getPaymentJournal(payment.transaction.id)) {
+      await salesApi.updatePaymentJournal(payment.transaction.id, {
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
+      })
     }
   }
 }

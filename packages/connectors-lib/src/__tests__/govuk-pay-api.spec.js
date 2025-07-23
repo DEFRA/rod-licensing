@@ -184,4 +184,23 @@ describe('govuk-pay-api-connector', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error retrieving GovPay health status', error)
     })
   })
+  
+  describe('getRecurringPaymentAgreementInformation', () => {
+    it('retrieves recurring payment agreement information', async () => {
+      fetch.mockReturnValue({ ok: true, status: 200, json: () => {} })
+      await expect(govUkPayApi.getRecurringPaymentAgreementInformation(123)).resolves.toEqual(
+        expect.objectContaining({ ok: true, status: 200 })
+      )
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/123', { headers: recurringHeaders, method: 'get', timeout: 10000 })
+    })
+
+    it('logs and throws errors', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      fetch.mockImplementation(() => {
+        throw new Error('test event error')
+      })
+      await expect(govUkPayApi.getRecurringPaymentAgreementInformation(123)).rejects.toEqual(Error('test event error'))
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+  })
 })

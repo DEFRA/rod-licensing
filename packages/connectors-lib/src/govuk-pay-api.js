@@ -95,3 +95,21 @@ export const isGovPayUp = async () => {
     throw err
   }
 }
+
+/**
+ * Gets payment information linked too a payment
+ * @param agreementId - agreementId set up when  creating recurring payment
+ * @returns {Promise<*>}
+ */
+export const getRecurringPaymentAgreementInformation = async agreementId => {
+  try {
+    return fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}`, {
+      headers: headers(true),
+      method: 'get',
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+    })
+  } catch (err) {
+    console.error(`Error fetching recurring payment agreement information in the GOV.UK API service - agreementId: ${agreementId}`, err)
+    throw err
+  }
+}
