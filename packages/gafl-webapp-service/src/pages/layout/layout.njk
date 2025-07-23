@@ -1,5 +1,5 @@
 {% extends "template.njk" %}
-{% set assetPath = "/public" %}
+{% set assetPath = "/public/assets/rebrand" %}
 
 {% if not journeyBeginning %}
     <meta name="robots" content="noindex">
@@ -182,7 +182,7 @@
     <footer class="govuk-footer">
     <div class="govuk-width-container">
         <div class="govuk-footer__meta">
-            <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">      
+            <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
                 {% if (title === mssgs.address_lookup_title_you) or (title === mssgs.address_lookup_title_other) %}
                     <p class="govuk-body-s">{{ mssgs.address_lookup_crown_copyright }}<a class="govuk-link" href="http://www.ordnancesurvey.co.uk" rel="noreferrer noopener" target="_blank">{{ mssgs.address_lookup_crown_copyright_new_tab }}</a> {{ mssgs.address_lookup_crown_copyright_ref }}
                     <br>{{ mssgs.address_lookup_crown_copyright_terms }} <a class="govuk-link" href="{{ data.uri.osTerms }}">{{ mssgs.address_lookup_crown_copyright_terms_link }}</a></p>
