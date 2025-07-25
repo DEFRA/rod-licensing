@@ -88,6 +88,8 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
 }
 
 export const getRecurringPaymentAgreement = async agreementId => {
+  console.log('process.env.GOV_PAY_RCP_API_URL', process.env.GOV_PAY_RCP_API_URL)
+  console.log('process.env.GOV_PAY_REQUEST_TIMEOUT_MS', process.env.GOV_PAY_REQUEST_TIMEOUT_MS)
   const response = await govUkPayApi.getRecurringPaymentAgreementInformation(agreementId)
   if (response.ok) {
     const resBody = await response.json()
