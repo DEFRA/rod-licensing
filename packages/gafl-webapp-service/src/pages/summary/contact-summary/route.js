@@ -122,13 +122,13 @@ export class RowGenerator {
     }
 
     const formattedParts = [
-      licensee.premises && titleCase(licensee.premises),
-      licensee.street && titleCase(licensee.street),
-      licensee.locality && titleCase(licensee.locality),
-      licensee.town && titleCase(licensee.town),
-      licensee.postcode && licensee.postcode.toUpperCase(),
-      countryName && countryName.toUpperCase()
-    ].filter(Boolean)
+      titleCase(licensee.premises),
+      titleCase(licensee.street),
+      titleCase(licensee.locality),
+      titleCase(licensee.town),
+      licensee.postcode.toUpperCase(),
+      countryName.toUpperCase()
+    ]
 
     const text = formattedParts.join(', ')
 
