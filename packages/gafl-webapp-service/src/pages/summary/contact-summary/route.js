@@ -131,7 +131,7 @@ export class RowGenerator {
       countryName.toUpperCase()
     ]
 
-    const text = formattedParts.join(', ')
+    const text = formattedParts.filter(Boolean).join(', ')
 
     return this._generateRow({
       label: this.labels.contact_summary_row_address,
