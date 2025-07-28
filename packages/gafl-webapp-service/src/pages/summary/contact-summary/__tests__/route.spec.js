@@ -123,7 +123,28 @@ const getRequestMock = ({
   }
 })
 
-describe('contact-summary > route', () => {
+describe('RowGenerator > generateAddressRow', () => {
+  it('formats default mock address correctly', () => {
+    const permission = getMockPermission()
+    const request = getRequestMock({ permission })
+    const rowGenerator = new route.RowGenerator(request, permission)
+    const row = rowGenerator.generateAddressRow('GB')
+
+    expect(row.value.text).toBe('14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB')
+  })
+
+  it('omits locality when undefined', () => {
+    const permission = getMockPermission({
+      locality: undefined
+    })
+
+    const request = getRequestMock({ permission })
+    const rowGenerator = new route.RowGenerator(request, permission)
+    const row = rowGenerator.generateAddressRow('GB')
+
+    expect(row.value.text).toBe('14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB')
+  })
+
   it('should set status.fromSummary to seen', async () => {
     const mockPermission = jest.fn()
     const mockRequest = getRequestMock({ setStatusPermission: mockPermission })
