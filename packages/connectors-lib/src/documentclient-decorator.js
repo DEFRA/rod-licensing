@@ -1,6 +1,6 @@
 import db from 'debug'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocument, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 const debug = db('connectors:aws')
 
 export const createDocumentClient = options => {
@@ -13,23 +13,24 @@ export const createDocumentClient = options => {
   })
 
   // Support for large query/scan operations which return results in pages
-  const wrapPagedDocumentClientOperation = operationName => {
+  const wrapPagedDocumentClientOperation = commandType => {
     return async params => {
       const items = []
       let lastEvaluatedKey = null
       do {
-        const response = await docClient[operationName]({
+        const command = new commandType({
           ...params,
           ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
         })
+        const response = await docClient.send(command)
         lastEvaluatedKey = response.LastEvaluatedKey
         response.Items && items.push(...response.Items)
       } while (lastEvaluatedKey)
       return items
     }
   }
-  docClient.queryAllPromise = wrapPagedDocumentClientOperation('query')
-  docClient.scanAllPromise = wrapPagedDocumentClientOperation('scan')
+  docClient.queryAllPromise = wrapPagedDocumentClientOperation(QueryCommand)
+  docClient.scanAllPromise = wrapPagedDocumentClientOperation(ScanCommand)
 
   /**
    * Handles batch writes which may return UnprocessedItems. If UnprocessedItems are returned then they will be retried with exponential backoff
