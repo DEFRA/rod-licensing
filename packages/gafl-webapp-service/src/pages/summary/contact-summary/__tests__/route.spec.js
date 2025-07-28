@@ -123,14 +123,21 @@ const getRequestMock = ({
   }
 })
 
-describe('RowGenerator > generateAddressRow', () => {
-  it('formats default mock address correctly', () => {
-    const permission = getMockPermission()
+  describe('contact-summary > route', () => {
+  it('transforms uppercase input into title case', () => {
+    const permission = getMockPermission({
+      premises: '1',
+      street: 'BAGSHOT ROW',
+      locality: 'HOBBITON',
+      town: 'MIDDLE-EARTH',
+      postcode: 'ab1 2cd'
+    })
+
     const request = getRequestMock({ permission })
     const rowGenerator = new route.RowGenerator(request, permission)
-    const row = rowGenerator.generateAddressRow('GB')
+    const row = rowGenerator.generateAddressRow('united kingdom')
 
-    expect(row.value.text).toBe('14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB')
+    expect(row.value.text).toBe('1, Bagshot Row, Hobbiton, Middle-earth, AB1 2CD, UNITED KINGDOM')
   })
 
   it('omits locality when undefined', () => {

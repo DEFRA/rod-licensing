@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RowGenerator > generateAddressRow generateContactRow should generate a contact row with meta tag when includeMeta is true 1`] = `
+exports[`contact-summary > route generateContactRow should generate a contact row with meta tag when includeMeta is true 1`] = `
 Object {
   "actions": Object {
     "items": Array [
@@ -24,7 +24,7 @@ Object {
 }
 `;
 
-exports[`RowGenerator > generateAddressRow generateContactRow should generate a contact row without meta tag when includeMeta is false 1`] = `
+exports[`contact-summary > route generateContactRow should generate a contact row without meta tag when includeMeta is false 1`] = `
 Object {
   "actions": Object {
     "items": Array [
@@ -47,7 +47,7 @@ Object {
 }
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Please not contact moi 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -112,7 +112,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Yes 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Yes 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -177,7 +177,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Please not contact moi and Newsletter as Please not contact moi 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Please not contact moi and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -242,7 +242,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Please not contact moi and Newsletter as Yes 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Please not contact moi and Newsletter as Yes 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -307,7 +307,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Text Me and Newsletter as Please not contact moi 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Text Me and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -373,7 +373,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Text Me and Newsletter as Yes 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Text Me and Newsletter as Yes 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -439,7 +439,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -544,7 +544,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -629,7 +629,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -734,7 +734,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Yes without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Yes without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -819,7 +819,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -925,7 +925,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1011,7 +1011,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1117,7 +1117,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Yes without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Yes without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1203,7 +1203,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as By pigeon and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as By pigeon and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1308,7 +1308,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as By pigeon and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as By pigeon and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1413,7 +1413,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1518,7 +1518,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1623,7 +1623,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1729,7 +1729,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1835,7 +1835,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1941,7 +1941,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2027,7 +2027,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2133,7 +2133,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Yes without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Yes without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2219,7 +2219,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2326,7 +2326,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2413,7 +2413,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2520,7 +2520,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Yes without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Yes without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2607,7 +2607,7 @@ Array [
 ]
 `;
 
-exports[`RowGenerator > generateAddressRow getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should not include newsletter row in the summary table if licence is not for you 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should not include newsletter row in the summary table if licence is not for you 1`] = `
 Array [
   Object {
     "actions": Object {
