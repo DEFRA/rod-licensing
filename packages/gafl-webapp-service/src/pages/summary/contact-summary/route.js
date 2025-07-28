@@ -114,6 +114,7 @@ export class RowGenerator {
     const { licensee } = this.permission
 
     const titleCase = str => {
+      if (typeof str !== 'string') return ''
       return str
         .toLowerCase()
         .split(' ')
