@@ -122,10 +122,10 @@ export class RowGenerator {
     }
 
     const formattedParts = [
-      licensee.premises && toProperCase(licensee.premises),
-      licensee.street && toProperCase(licensee.street),
-      licensee.locality && toProperCase(licensee.locality),
-      licensee.town && toProperCase(licensee.town),
+      licensee.premises && titleCase(licensee.premises),
+      licensee.street && titleCase(licensee.street),
+      licensee.locality && titleCase(licensee.locality),
+      licensee.town && titleCase(licensee.town),
       licensee.postcode && licensee.postcode.toUpperCase(),
       countryName && countryName.toUpperCase()
     ].filter(Boolean)
