@@ -112,9 +112,25 @@ export class RowGenerator {
 
   generateAddressRow (countryName) {
     const { licensee } = this.permission
-    const text = [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
-      .filter(Boolean)
-      .join(', ')
+
+    const titleCase = str => {
+      return str
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+    }
+
+    const formattedParts = [
+      licensee.premises && toProperCase(licensee.premises),
+      licensee.street && toProperCase(licensee.street),
+      licensee.locality && toProperCase(licensee.locality),
+      licensee.town && toProperCase(licensee.town),
+      licensee.postcode && licensee.postcode.toUpperCase(),
+      countryName && countryName.toUpperCase()
+    ].filter(Boolean)
+
+    const text = formattedParts.join(', ')
 
     return this._generateRow({
       label: this.labels.contact_summary_row_address,
