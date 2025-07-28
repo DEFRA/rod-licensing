@@ -126,9 +126,9 @@ const getRequestMock = ({
 describe('contact-summary > route', () => {
   it('transforms uppercase input into title case', () => {
     const permission = getMockPermission({
-      premises: '1',
-      street: 'BAGSHOT ROW',
-      locality: 'HOBBITON',
+      premises: 'bAGEND',
+      street: 'bAgShOt RoW',
+      locality: 'HObbITON',
       town: 'MIDDLE-EARTH',
       postcode: 'ab1 2cd'
     })
@@ -137,7 +137,7 @@ describe('contact-summary > route', () => {
     const rowGenerator = new route.RowGenerator(request, permission)
     const row = rowGenerator.generateAddressRow('united kingdom')
 
-    expect(row.value.text).toBe('1, Bagshot Row, Hobbiton, Middle-earth, AB1 2CD, UNITED KINGDOM')
+    expect(row.value.text).toBe('Bagend, Bagshot Row, Hobbiton, Middle-earth, AB1 2CD, UNITED KINGDOM')
   })
 
   it('omits locality when undefined', () => {
