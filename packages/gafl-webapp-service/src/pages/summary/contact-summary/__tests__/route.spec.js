@@ -123,7 +123,7 @@ const getRequestMock = ({
   }
 })
 
-  describe('contact-summary > route', () => {
+describe('contact-summary > route', () => {
   it('transforms uppercase input into title case', () => {
     const permission = getMockPermission({
       premises: '1',
