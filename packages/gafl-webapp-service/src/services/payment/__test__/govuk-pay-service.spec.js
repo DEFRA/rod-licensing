@@ -438,7 +438,7 @@ describe('The govuk-pay-service', () => {
     })
 
     it('should return response body when payment status check is successful', async () => {
-      const resBody = { card_details: { foo: Symbol('foo') }, bar: Symbol('bar'), baz: Symbol('baz') }
+      const resBody = { card_details: { foo: Symbol('foo') }, card_brand: Symbol('bar'), baz: Symbol('baz') }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus(resBody))
 
       const result = await getPaymentStatus(paymentId)
@@ -448,7 +448,7 @@ describe('The govuk-pay-service', () => {
 
     it('should log debug message when response.ok is true', async () => {
       const expectedLoggedOutput = { bar: Symbol('bar'), baz: Symbol('baz') }
-      const resBody = { card_details: { foo: Symbol('foo') }, ...expectedLoggedOutput }
+      const resBody = { card_details: { foo: Symbol('foo') }, card_brand: Symbol('foobarbaz'), ...expectedLoggedOutput }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(getMockFetchPaymentStatus(resBody))
 
       await getPaymentStatus(paymentId)
@@ -528,7 +528,7 @@ describe('The govuk-pay-service', () => {
   })
 })
 
-const getMockFetchPaymentStatus = (resBody = { card_details: 'foo' }) => ({
+const getMockFetchPaymentStatus = (resBody = { card_details: 'foo', card_brand: 'bar' }) => ({
   ok: true,
   status: 200,
   json: jest.fn().mockResolvedValue(resBody)
