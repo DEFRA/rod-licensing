@@ -1,4 +1,6 @@
 import { govUkPayApi } from '@defra-fish/connectors-lib'
+import db from 'debug'
+const debug = db('recurring-payments:gov.uk-pay-service')
 
 export const sendPayment = async preparedPayment => {
   try {
@@ -30,4 +32,14 @@ export const getPaymentStatus = async paymentId => {
     console.error('Error in getPaymentStatus:', error)
     throw error
   }
+}
+
+export const isGovPayUp = async () => {
+  const response = await govUkPayApi.isGovPayUp()
+  if (response.ok) {
+    const isHealthy = JSON.parse(await response.text())
+    return isHealthy.ping.healthy && isHealthy.deadlocks.healthy
+  }
+  debug('Health endpoint unavailable')
+  return false
 }
