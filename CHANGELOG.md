@@ -1,4 +1,23 @@
 
+
+## v1.62.0-rc.10 (2025-07-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2185](https://github.com/DEFRA/rod-licensing/pull/2185) Exclude card_brand from logs ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.9 (2025-07-24)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`
+  * [#2169](https://github.com/DEFRA/rod-licensing/pull/2169) RP job handles GOV.UK Pay error responses ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.62.0-rc.8 (2025-07-23)
 
 #### :rocket: Enhancement
