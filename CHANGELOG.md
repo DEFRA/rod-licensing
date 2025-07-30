@@ -1,4 +1,103 @@
 
+## v1.62.0-rc.10 (2025-07-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2185](https://github.com/DEFRA/rod-licensing/pull/2185) Exclude card_brand from logs ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.9 (2025-07-24)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`
+  * [#2169](https://github.com/DEFRA/rod-licensing/pull/2169) RP job handles GOV.UK Pay error responses ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.62.0-rc.8 (2025-07-23)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2145](https://github.com/DEFRA/rod-licensing/pull/2145) Store bank card digits ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.7 (2025-07-22)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `recurring-payments-job`
+  * [#2148](https://github.com/DEFRA/rod-licensing/pull/2148) Recurring payments failed payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.6 (2025-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2180](https://github.com/DEFRA/rod-licensing/pull/2180) Use blue favicon ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.5 (2025-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2178](https://github.com/DEFRA/rod-licensing/pull/2178) Sanitise payment details in logging ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.4 (2025-07-21)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2179](https://github.com/DEFRA/rod-licensing/pull/2179) Set name of RecurringPayment record ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.3 (2025-07-10)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2165](https://github.com/DEFRA/rod-licensing/pull/2165) Logs not diplsaying aws ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.2 (2025-07-04)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2162](https://github.com/DEFRA/rod-licensing/pull/2162) Add endpoint for cancelling recurring payments ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.1 (2025-07-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2176](https://github.com/DEFRA/rod-licensing/pull/2176) Remove Gov.UK Frontend dependency for the whole repo ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.62.0-rc.0 (2025-07-01)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2159](https://github.com/DEFRA/rod-licensing/pull/2159) Exclude completed recurring payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.61.0-rc.19 (2025-06-24)
 
