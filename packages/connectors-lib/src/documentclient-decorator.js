@@ -13,12 +13,12 @@ export const createDocumentClient = options => {
   })
 
   // Support for large query/scan operations which return results in pages
-  const wrapPagedDocumentClientOperation = commandType => {
+  const wrapPagedDocumentClientOperation = CommandType => {
     return async params => {
       const items = []
       let lastEvaluatedKey = null
       do {
-        const command = new commandType({
+        const command = new CommandType({
           ...params,
           ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
         })

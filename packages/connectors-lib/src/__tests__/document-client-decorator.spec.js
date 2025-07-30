@@ -70,7 +70,7 @@ describe('document client decorations', () => {
       expect(docClient.send).toHaveBeenCalledWith(command)
     })
 
-    it(`calls send repeatedly until LastEvaluatedKey evaluates to false, concatenating all returned items`, async () => {
+    it('calls send repeatedly until LastEvaluatedKey evaluates to false, concatenating all returned items', async () => {
       const expectedItems = [
         { id: 1, data: Symbol('data1') },
         { id: 2, data: Symbol('data2') },
