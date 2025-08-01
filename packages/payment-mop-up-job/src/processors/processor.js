@@ -76,9 +76,9 @@ const getStatus = async (paymentReference, agreementId) => {
 const getStatusWrapped = limiter.wrap(getStatus)
 
 export const execute = async (ageMinutes, scanDurationHours) => {
-  debug(
-    `Running payment mop up processor with a payment age of ${ageMinutes} minutes ` + `and a scan duration of ${scanDurationHours} hours`
-  )
+  const msg = `Running payment mop up processor with a payment age of ${ageMinutes} minutes ` + `and a scan duration of ${scanDurationHours} hours`
+  debug(msg)
+  console.log(msg)
 
   const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
   const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
@@ -90,6 +90,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     from: fromTimestamp.toISOString(),
     to: toTimestamp.toISOString()
   })
+  console.log('found payment journals', paymentJournals)
 
   // Get the status for each payment from the GOV.UK Pay API.
   const transactions = await Promise.all(
@@ -98,6 +99,8 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       paymentStatus: await getStatusWrapped(p.paymentReference, p.agreementId)
     }))
   )
+
+  console.log('transactions', transactions)
 
   // Process each result
   await Promise.all(transactions.map(async t => processPaymentResults(t)))
