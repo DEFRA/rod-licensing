@@ -112,7 +112,7 @@ export class RowGenerator {
 
   generateAddressRow (countryName) {
     const { licensee } = this.permission
-    
+
     const text = [
       licensee.premises?.toLowerCase(),
       licensee.street?.toLowerCase(),
