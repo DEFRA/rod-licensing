@@ -27,25 +27,32 @@ const fetchDueRecurringPayments = async date => {
 }
 
 export const processRecurringPayments = async () => {
+  console.log('checking if job is enabled')
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() !== 'true') {
     debug('Recurring Payments job disabled')
     return
   }
+  console.log('it is, checking for Gov.UK Pay being up')
 
   if (!(await isGovPayUp())) {
     debug('Gov.UK Pay reporting unhealthy, aborting run')
     throw new Error('Run aborted, Gov.UK Pay health endpoint is reporting problems.')
   }
 
+  console.log('it is, getting date')
   debug('Recurring Payments job enabled')
   const date = new Date().toISOString().split('T')[0]
+  console.log('Getting RCPs for ', date)
 
   const dueRCPayments = await fetchDueRecurringPayments(date)
+  console.log(`Got ${dueRCPayments.length} RCP(s)`)
   if (dueRCPayments.length === 0) {
     return
   }
 
+  console.log('requesting payment')
   const payments = await requestPayments(dueRCPayments)
+  console.log('all payments requested')
 
   // await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
@@ -56,6 +63,8 @@ const requestPayments = async dueRCPayments => {
   const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
   const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
   const failures = paymentRequestResults.filter(prr => prr.status === 'rejected').map(f => f.reason)
+  console.log('successes', payments)
+  console.log('failures', failures)
   if (failures.length) {
     debug('Error requesting payments:', ...failures)
   }
@@ -65,7 +74,9 @@ const requestPayments = async dueRCPayments => {
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const agreementId = record.entity.agreementId
+  console.log('creating transaction')
   const transaction = await createNewTransaction(referenceNumber, agreementId)
+  console.log('created transaction', transaction)
   return takeRecurringPayment(agreementId, transaction)
 }
 
@@ -76,7 +87,16 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
+  console.log('sending payment', preparedPayment)
   const payment = await sendPayment(preparedPayment)
+  console.log('sent payment', payment, 'creating payment journal')
+  await salesApi.createPaymentJournal(transaction.id, {
+    paymentReference: payment.payment_id,
+    paymentTimestamp: payment.created_date,
+    paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+  })
+  console.log('created payment journal')
+
   return {
     agreementId,
     paymentId: payment.payment_id,
