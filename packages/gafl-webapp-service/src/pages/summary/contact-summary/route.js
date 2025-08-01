@@ -112,7 +112,15 @@ export class RowGenerator {
 
   generateAddressRow (countryName) {
     const { licensee } = this.permission
-    const text = [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+
+    const text = [
+      licensee.premises?.toLowerCase(),
+      licensee.street?.toLowerCase(),
+      licensee.locality?.toLowerCase(),
+      licensee.town?.toLowerCase(),
+      licensee.postcode?.toUpperCase(),
+      countryName?.toUpperCase()
+    ]
       .filter(Boolean)
       .join(', ')
 
