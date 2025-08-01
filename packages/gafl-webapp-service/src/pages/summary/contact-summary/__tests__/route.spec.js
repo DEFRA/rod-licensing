@@ -124,23 +124,7 @@ const getRequestMock = ({
 })
 
 describe('contact-summary > route', () => {
-  it('transforms uppercase input into title case', () => {
-    const permission = getMockPermission({
-      premises: 'bAGEND',
-      street: 'bAgShOt RoW',
-      locality: 'HObbITON',
-      town: 'MIDDLE-EARTH',
-      postcode: 'ab1 2cd'
-    })
-
-    const request = getRequestMock({ permission })
-    const rowGenerator = new route.RowGenerator(request, permission)
-    const row = rowGenerator.generateAddressRow('united kingdom')
-
-    expect(row.value.text).toBe('Bagend, Bagshot Row, Hobbiton, Middle-earth, AB1 2CD, UNITED KINGDOM')
-  })
-
-  it('omits locality when undefined', () => {
+  it('omits undefined address fields from the output string', () => {
     const permission = getMockPermission({
       locality: undefined
     })
@@ -149,7 +133,7 @@ describe('contact-summary > route', () => {
     const rowGenerator = new route.RowGenerator(request, permission)
     const row = rowGenerator.generateAddressRow('GB')
 
-    expect(row.value.text).toBe('14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB')
+    expect(row.value.text).toBe('14 howecroft court, eastmead lane, bristol, BS9 1HJ, GB')
   })
 
   it('should set status.fromSummary to seen', async () => {
