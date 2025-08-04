@@ -5,7 +5,6 @@ import {
   TRANSACTION_SOURCE,
   PAYMENT_TYPE
 } from '@defra-fish/business-rules-lib'
-
 import Bottleneck from 'bottleneck'
 import moment from 'moment'
 import db from 'debug'
@@ -85,8 +84,6 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
   const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
 
-  console.log(`Scanning the payment journal for payments created between ${fromTimestamp} and ${toTimestamp}`)
-
   const paymentJournals = await salesApi.paymentJournals.getAll({
     paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress,
     from: fromTimestamp.toISOString(),
@@ -96,10 +93,13 @@ export const execute = async (ageMinutes, scanDurationHours) => {
 
   // Get the status for each payment from the GOV.UK Pay API.
   const transactions = await Promise.all(
-    paymentJournals.map(async p => ({
-      ...p,
-      paymentStatus: await getStatusWrapped(p.paymentReference, p.agreementId)
-    }))
+    paymentJournals.map(async p => {
+      const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
+      return {
+        ...p,
+        paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.agreementId)
+      }
+    })
   )
 
   console.log('transactions', transactions)

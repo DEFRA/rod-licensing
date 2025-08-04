@@ -1,6 +1,9 @@
 import initialiseServer from '../../server.js'
 import { mockTransactionPayload, mockStagedTransactionRecord } from '../../../__mocks__/test-data.js'
 import { v4 as uuidv4 } from 'uuid'
+import { retrieveStagedTransactionParamsSchema } from '../../../schema/transaction.schema.js'
+import { retrieveStagedTransaction } from '../../../services/transactions/retrieve-transaction.js'
+import transactions from '../transactions.js'
 jest.mock('../../../services/transactions/transactions.service.js', () => ({
   createTransaction: jest.fn(async () => mockStagedTransactionRecord()),
   createTransactions: jest.fn(async payloads => Array(payloads.length).fill(mockStagedTransactionRecord())),
@@ -212,6 +215,32 @@ describe('transaction handler', () => {
         payload: {}
       })
       expect(result).toBeUnprocessableEntityErrorResponse()
+    })
+  })
+
+  describe('retrieveStagedTransaction', () => {
+    const getMockRequest = ({ id = 'abc123' }) => ({ params: { id } })
+    const getMockResponseToolkit = () => ({ response: jest.fn() })
+    const retrieveHandler = transactions[transactions.length - 1].options.handler
+
+    it('handler should return continue response', async () => {
+      const request = getMockRequest({})
+      const responseToolkit = getMockResponseToolkit()
+      expect(await retrieveHandler(request, responseToolkit)).toEqual(responseToolkit.continue)
+    })
+
+    it('should call retrieveStagedTransaction with id', async () => {
+      const id = 'transaction-id'
+      const request = getMockRequest({ id })
+      await retrieveHandler(request, getMockResponseToolkit())
+      expect(retrieveStagedTransaction).toHaveBeenCalledWith(id)
+    })
+
+    it('should validate with cancelRecurringPaymentRequestParamsSchema', async () => {
+      const id = 'transaction-id'
+      const request = getMockRequest({ id })
+      await retrieveHandler(request, getMockResponseToolkit())
+      expect(transactions[5].options.validate.params).toBe(retrieveStagedTransactionParamsSchema)
     })
   })
 })
