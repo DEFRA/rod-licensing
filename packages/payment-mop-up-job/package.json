@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@defra-fish/business-rules-lib": "1.62.0",
-    "@defra-fish/connectors-lib": "1.62.0",
+    "@defra-fish/connectors-lib": "1.62.0-rst.1",
     "bottleneck": "^2.19.5",
     "debug": "^4.3.3",
     "moment": "^2.29.1"
