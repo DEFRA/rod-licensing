@@ -63,8 +63,10 @@ const processPaymentResults = async transaction => {
 
 const getStatus = async (paymentReference, agreementId) => {
   const recurring = !!agreementId
+  console.log(`getStatus('${paymentReference}', ${agreementId}), recurring: ${recurring}`)
   const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference, recurring)
   const paymentStatus = await paymentStatusResponse.json()
+  console.log('paymentStatus', paymentStatus)
   if (paymentStatus.state?.status === 'success') {
     const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference, recurring)
     const { events } = await eventsResponse.json()
