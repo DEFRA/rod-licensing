@@ -1,4 +1,4 @@
-import { createTransactionSchema, createTransactionResponseSchema, finaliseTransactionResponseSchema } from '../transaction.schema.js'
+import { createTransactionSchema, createTransactionResponseSchema, finaliseTransactionResponseSchema, retrieveStagedTransactionParamsSchema } from '../transaction.schema.js'
 import { mockTransactionPayload, mockStagedTransactionRecord, mockFinalisedTransactionRecord } from '../../__mocks__/test-data.js'
 
 jest.mock('../validators/validators.js', () => ({
@@ -133,5 +133,21 @@ describe('finaliseTransactionResponseSchema', () => {
     mockRecord.status.messageId = 'test_message_id'
     const result = await finaliseTransactionResponseSchema.validateAsync(mockRecord)
     expect(result).toBeInstanceOf(Object)
+  })
+})
+
+describe('retrieveStagedTransactionParamsSchema', () => {
+  it('validates expected object', async () => {
+    const sampleData = { id: 'abc123' }
+    expect(() => retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if id missing', async () => {
+    expect(() => retrieveStagedTransactionParamsSchema.validateAsync({}).rejects.toThrow())
+  })
+
+  it('throws an error if id is not the correct type', async () => {
+    const sampleData = { id: 99 }
+    expect(() => retrieveStagedTransactionParamsSchema.validateAsync(sampleData).rejects.toThrow())
   })
 })

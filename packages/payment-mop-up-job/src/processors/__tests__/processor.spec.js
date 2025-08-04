@@ -162,14 +162,14 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentStatus with recurring as true since agreementId exists', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ agreementId: '123' })
     const paymentReference = '15nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
         paymentStatus: 'In Progress',
         paymentReference,
-        paymentTimestamp: '2020-06-01T10:35:56.873Z',
-        agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472'
+        paymentTimestamp: '2020-06-01T10:35:56.873Z'
       }
     ]
     salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
@@ -185,6 +185,7 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentStatus with recurring as false since agreementId does not exist', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({})
     const paymentReference = '25nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
@@ -207,6 +208,7 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentEvents with recurring as true since agreementId exists', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ agreementId: '123' })
     const paymentReference = '35nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
@@ -230,6 +232,7 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentEvents with recurring as false since agreementId does not exist', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({})
     const paymentReference = '45nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
