@@ -123,8 +123,8 @@ const createRecurringPaymentAgreement = async preparedPayment => {
 
 const loggableBody = resBody => {
   // eslint-disable-next-line camelcase
-  const { card_brand, card_details, ...loggableBody } = resBody
-  return loggableBody
+  const { card_brand, card_details, ...filteredBody } = resBody
+  return filteredBody
 }
 
 export const sendRecurringPayment = async preparedPayment => {
