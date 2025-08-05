@@ -4,12 +4,17 @@ import { v4 as uuidv4 } from 'uuid'
 import { retrieveStagedTransactionParamsSchema } from '../../../schema/transaction.schema.js'
 import { retrieveStagedTransaction } from '../../../services/transactions/retrieve-transaction.js'
 import transactions from '../transactions.js'
+
 jest.mock('../../../services/transactions/transactions.service.js', () => ({
   createTransaction: jest.fn(async () => mockStagedTransactionRecord()),
   createTransactions: jest.fn(async payloads => Array(payloads.length).fill(mockStagedTransactionRecord())),
   finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),
   processQueue: jest.fn(async () => {}),
   processDlq: jest.fn(async () => {})
+}))
+
+jest.mock('../../../services/transactions/retrieve-transaction.js', () => ({
+  retrieveStagedTransaction: jest.fn()
 }))
 
 jest.mock('../../../schema/validators/validators.js', () => ({
@@ -20,6 +25,20 @@ jest.mock('../../../schema/validators/validators.js', () => ({
   createReferenceDataEntityValidator: () => async () => undefined,
   createPermitConcessionValidator: () => async () => undefined
 }))
+
+jest.mock('@defra-fish/connectors-lib', () => {
+  const awsMock = {
+    docClient: {
+      get: jest.fn(() => ({ Item: { id: 'abc123' } }))
+    }
+  }
+  return {
+    AWS: jest.fn(() => awsMock),
+    airbrake: {
+      initialise: jest.fn()
+    }
+  }
+})
 
 let server = null
 
