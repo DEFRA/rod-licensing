@@ -20,17 +20,18 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
 }))
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
-    getDueRecurringPayments: jest.fn(() => []),
-    preparePermissionDataForRenewal: jest.fn(() => ({
-      licensee: { countryCode: 'GB-ENG' }
-    })),
+    createPaymentJournal: jest.fn(),
     createTransaction: jest.fn(() => ({
       id: 'test-transaction-id',
       cost: 30
     })),
+    getDueRecurringPayments: jest.fn(() => []),
+    getPaymentJournal: jest.fn(),
+    preparePermissionDataForRenewal: jest.fn(() => ({
+      licensee: { countryCode: 'GB-ENG' }
+    })),
     processRPResult: jest.fn(),
-    updatePaymentJournal: jest.fn(),
-    getPaymentJournal: jest.fn()
+    updatePaymentJournal: jest.fn()
   }
 }))
 
@@ -301,6 +302,31 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
+  })
+
+  it('creates a payment journal entry', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const samplePayment = {
+      payment_id: Symbol('payment-id'),
+      created_date: Symbol('created-date')
+    }
+    const sampleTransaction = {
+      id: Symbol('transaction-id'),
+      cost: 99
+    }
+    sendPayment.mockResolvedValueOnce(samplePayment)
+    salesApi.createTransaction.mockResolvedValueOnce(sampleTransaction)
+
+    await processRecurringPayments()
+
+    expect(salesApi.createPaymentJournal).toHaveBeenCalledWith(
+      sampleTransaction.id,
+      expect.objectContaining({
+        paymentReference: samplePayment.payment_id,
+        paymentTimestamp: samplePayment.created_date,
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    )
   })
 
   it('strips the concession name returned by preparePermissionDataForRenewal before passing to createTransaction', async () => {

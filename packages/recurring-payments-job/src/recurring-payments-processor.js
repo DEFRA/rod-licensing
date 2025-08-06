@@ -77,6 +77,12 @@ const createNewTransaction = async (referenceNumber, agreementId) => {
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   const payment = await sendPayment(preparedPayment)
+  await salesApi.createPaymentJournal(transaction.id, {
+    paymentReference: payment.payment_id,
+    paymentTimestamp: payment.created_date,
+    paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+  })
+
   return {
     agreementId,
     paymentId: payment.payment_id,
