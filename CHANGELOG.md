@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.0 (2025-08-07)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2190](https://github.com/DEFRA/rod-licensing/pull/2190) Fix name of cancelledreasons optionset ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.62.0-rc.10 (2025-07-29)
 
