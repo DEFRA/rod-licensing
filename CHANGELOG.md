@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.1 (2025-08-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2187](https://github.com/DEFRA/rod-licensing/pull/2187) Make reference number entry box on renewal journey smaller ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.63.0-rc.0 (2025-08-07)
 
 #### :bug: Bug Fix
