@@ -71,6 +71,7 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, recurringPayment) => {
   const transactionData = await processPermissionData(referenceNumber, recurringPayment)
+  debug('creating transaction', JSON.stringify(transactionData))
   return salesApi.createTransaction(transactionData)
 }
 
