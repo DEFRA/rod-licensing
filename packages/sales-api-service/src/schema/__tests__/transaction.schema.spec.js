@@ -96,15 +96,27 @@ describe('createTransactionSchema', () => {
     await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 
-  it('validates successfully when an agreementId is supplied', async () => {
+  it('validates successfully when recurring payment detail is supplied', async () => {
     const mockPayload = mockTransactionPayload()
-    mockPayload.agreementId = 't3jl08v2nqqmujrnhs09pmhtjx'
+    mockPayload.recurringPayment = {
+      agreementId: 't3jl08v2nqqmujrnhs09pmhtjx',
+      id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509'
+    }
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
   })
 
-  it('validates successfully when agreementId is omitted', async () => {
+  it('validates successfully when recurring payment detail is omitted', async () => {
     const mockPayload = mockTransactionPayload()
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
+  })
+
+  it.each([
+    ['agreement id', { id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509' }],
+    ['id', { agreementId: 'jhy7u8ii87uyhjui87u89ui8ie' }]
+  ])('fails validation if %s is omitted from recurring payment detail', async (_d, recurringPayment) => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.recurringPayment = recurringPayment
+    await expect(() => createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 
   it.each([
