@@ -64,13 +64,13 @@ const requestPayments = async dueRCPayments => {
 
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
-  const agreementId = record.entity.agreementId
-  const transaction = await createNewTransaction(referenceNumber, agreementId)
+  const { agreementId, id } = record.entity
+  const transaction = await createNewTransaction(referenceNumber, { agreementId, id })
   return takeRecurringPayment(agreementId, transaction)
 }
 
-const createNewTransaction = async (referenceNumber, agreementId) => {
-  const transactionData = await processPermissionData(referenceNumber, agreementId)
+const createNewTransaction = async (referenceNumber, recurringPayment) => {
+  const transactionData = await processPermissionData(referenceNumber, recurringPayment)
   return salesApi.createTransaction(transactionData)
 }
 
@@ -91,12 +91,12 @@ const takeRecurringPayment = async (agreementId, transaction) => {
   }
 }
 
-const processPermissionData = async (referenceNumber, agreementId) => {
+const processPermissionData = async (referenceNumber, recurringPayment) => {
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
     dataSource: 'Recurring Payment',
-    agreementId,
+    recurringPayment,
     permissions: [
       {
         isLicenceForYou: data.isLicenceForYou,

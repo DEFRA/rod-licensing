@@ -60,8 +60,8 @@ const getMockPaymentRequestResponse = () => [
   }
 ]
 
-const getMockDueRecurringPayment = (referenceNumber = '123', agreementId = 'test-agreement-id') => ({
-  entity: { agreementId },
+const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'abc-123', referenceNumber = '123' } = {}) => ({
+  entity: { id, agreementId },
   expanded: { activePermission: { entity: { referenceNumber } } }
 })
 
@@ -148,10 +148,10 @@ describe('recurring-payments-processor', () => {
     it('prepares and sends all payment requests, even if some fail', async () => {
       const agreementIds = [Symbol('agreementId1'), Symbol('agreementId2'), Symbol('agreementId3'), Symbol('agreementId4')]
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
-        getMockDueRecurringPayment('fee', agreementIds[0]),
-        getMockDueRecurringPayment('fi', agreementIds[1]),
-        getMockDueRecurringPayment('foe', agreementIds[2]),
-        getMockDueRecurringPayment('fum', agreementIds[3])
+        getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: agreementIds[0] }),
+        getMockDueRecurringPayment({ referenceNumber: 'fi', agreementId: agreementIds[1] }),
+        getMockDueRecurringPayment({ referenceNumber: 'foe', agreementId: agreementIds[2] }),
+        getMockDueRecurringPayment({ referenceNumber: 'fum', agreementId: agreementIds[3] })
       ])
 
       const permissionData = { licensee: { countryCode: 'GB-ENG' } }
@@ -203,9 +203,9 @@ describe('recurring-payments-processor', () => {
     it('logs an error for every failure', async () => {
       const errors = [new Error('error 1'), new Error('error 2'), new Error('error 3')]
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
-        getMockDueRecurringPayment('fee', 'a1'),
-        getMockDueRecurringPayment('fi', 'a2'),
-        getMockDueRecurringPayment('foe', 'a3')
+        getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: 'a1' }),
+        getMockDueRecurringPayment({ referenceNumber: 'fi', agreementId: 'a2' }),
+        getMockDueRecurringPayment({ referenceNumber: 'foe', agreementId: 'a3' })
       ])
       const permissionData = { licensee: { countryCode: 'GB-ENG' } }
       salesApi.preparePermissionDataForRenewal
@@ -242,7 +242,7 @@ describe('recurring-payments-processor', () => {
 
   it('prepares the data for found recurring payments', async () => {
     const referenceNumber = Symbol('reference')
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(referenceNumber)])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber })])
     const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
@@ -253,7 +253,9 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a transaction with the correct data', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const id = Symbol('recurring-payment-id')
+    const agreementId = Symbol('agreement-id')
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, id })])
 
     const isLicenceForYou = Symbol('isLicenceForYou')
     const isRenewal = Symbol('isRenewal')
@@ -278,7 +280,10 @@ describe('recurring-payments-processor', () => {
 
     const expectedData = {
       dataSource: 'Recurring Payment',
-      agreementId: 'test-agreement-id',
+      recurringPayment: {
+        agreementId,
+        id
+      },
       permissions: [
         {
           isLicenceForYou,
@@ -413,7 +418,7 @@ describe('recurring-payments-processor', () => {
     const agreementId = Symbol('agreementId')
     const transactionId = 'transactionId'
 
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('foo', agreementId)])
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber: 'foo', agreementId: agreementId })])
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' }
@@ -555,7 +560,7 @@ describe('recurring-payments-processor', () => {
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
     const referenceNumber = Symbol('reference')
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(referenceNumber)])
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment({ referenceNumber })])
     const mockPaymentResponse = { payment_id: 'test-payment-id' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
@@ -618,7 +623,7 @@ describe('recurring-payments-processor', () => {
     'console error displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
     async (agreementId, mockStatus, status) => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment('reference', agreementId)])
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
       const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
       sendPayment.mockResolvedValueOnce(mockPaymentResponse)
       getPaymentStatus.mockResolvedValueOnce(mockStatus)
@@ -672,8 +677,8 @@ describe('recurring-payments-processor', () => {
         references.push(Symbol('reference' + i))
       }
       const mockGetDueRecurringPayments = []
-      references.forEach(reference => {
-        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(reference))
+      references.forEach(referenceNumber => {
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ referenceNumber }))
       })
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
       const mockPaymentResponse = { payment_id: 'test-payment-id' }
@@ -693,8 +698,14 @@ describe('recurring-payments-processor', () => {
 
     it('creates a transaction for each one', async () => {
       const mockGetDueRecurringPayments = []
+      const agreementIds = []
+      const ids = []
       for (let i = 0; i < count; i++) {
-        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i))
+        const agreementId = Symbol(`agreement-id-${i}`)
+        const id = Symbol(`recurring-payment-${i}`)
+        agreementIds.push(agreementId)
+        ids.push(id)
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId, id, referenceNumber: i }))
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
@@ -711,11 +722,14 @@ describe('recurring-payments-processor', () => {
       })
 
       const expectedData = []
-      permits.forEach(permit => {
+      permits.forEach((permit, i) => {
         expectedData.push([
           {
             dataSource: 'Recurring Payment',
-            agreementId: 'test-agreement-id',
+            recurringPayment: {
+              agreementId: agreementIds[i],
+              id: ids[i]
+            },
             permissions: [expect.objectContaining({ permitId: permit })]
           }
         ])
@@ -732,7 +746,7 @@ describe('recurring-payments-processor', () => {
       for (let i = 0; i < count; i++) {
         const agreementId = Symbol(`agreementId${1}`)
         agreementIds.push(agreementId)
-        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i, agreementId))
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId }))
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
@@ -775,7 +789,7 @@ describe('recurring-payments-processor', () => {
       for (let i = 0; i < count; i++) {
         const agreementId = Symbol(`agreementId${1}`)
         agreementIds.push(agreementId)
-        mockGetDueRecurringPayments.push(getMockDueRecurringPayment(i, agreementId))
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId }))
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
