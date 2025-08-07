@@ -47,9 +47,9 @@ export const processRecurringPayments = async () => {
 
   const payments = await requestPayments(dueRCPayments)
 
-  // await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+  await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
-  // await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+  await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
 }
 
 const requestPayments = async dueRCPayments => {
@@ -71,7 +71,6 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, recurringPayment) => {
   const transactionData = await processPermissionData(referenceNumber, recurringPayment)
-  debug('creating transaction', JSON.stringify(transactionData))
   return salesApi.createTransaction(transactionData)
 }
 
