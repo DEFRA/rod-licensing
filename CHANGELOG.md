@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.4 (2025-08-08)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#2191](https://github.com/DEFRA/rod-licensing/pull/2191)  Amend RP job with RP id ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.63.0-rc.3 (2025-08-08)
 
 #### :bug: Bug Fix
