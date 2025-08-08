@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.2 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2189](https://github.com/DEFRA/rod-licensing/pull/2189) Add additional card_details filtering ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.63.0-rc.1 (2025-08-07)
 
 #### :rocket: Enhancement
