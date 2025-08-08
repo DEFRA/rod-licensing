@@ -1,4 +1,49 @@
 
+## v1.63.0-rc.4 (2025-08-08)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#2191](https://github.com/DEFRA/rod-licensing/pull/2191)  Amend RP job with RP id ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.3 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2184](https://github.com/DEFRA/rod-licensing/pull/2184) Incorrect capitalistion of address in contact summary ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.63.0-rc.2 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2189](https://github.com/DEFRA/rod-licensing/pull/2189) Add additional card_details filtering ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.1 (2025-08-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2187](https://github.com/DEFRA/rod-licensing/pull/2187) Make reference number entry box on renewal journey smaller ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.63.0-rc.0 (2025-08-07)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2190](https://github.com/DEFRA/rod-licensing/pull/2190) Fix name of cancelledreasons optionset ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.62.0-rc.10 (2025-07-29)
 
