@@ -60,7 +60,7 @@ export const sendPayment = async (preparedPayment, recurring = false) => {
 
   if (response.ok) {
     const resBody = await response.json()
-    debug('Successful payment creation response: %o', resBody)
+    debug('Successful payment creation response: %o', loggableBody(resBody))
     return resBody
   } else {
     const errMsg = await getTransactionErrorMessage(preparedPayment.id, preparedPayment, response)
@@ -93,9 +93,7 @@ export const getPaymentStatus = async (paymentId, recurring = false) => {
 
   if (response.ok) {
     const resBody = await response.json()
-    // eslint-disable-next-line camelcase
-    const { card_brand, card_details, ...loggableBody } = resBody
-    debug('Payment status response: %o', loggableBody)
+    debug('Payment status response: %o', loggableBody(resBody))
     return resBody
   } else {
     const mes = {
@@ -123,12 +121,18 @@ const createRecurringPaymentAgreement = async preparedPayment => {
   }
 }
 
+const loggableBody = resBody => {
+  // eslint-disable-next-line camelcase
+  const { card_brand, card_details, ...filteredBody } = resBody
+  return filteredBody
+}
+
 export const sendRecurringPayment = async preparedPayment => {
   const response = await createRecurringPaymentAgreement(preparedPayment)
 
   if (response.ok) {
     const resBody = await response.json()
-    debug('Successful agreement creation response: %o', resBody)
+    debug('Successful agreement creation response: %o', loggableBody(resBody))
     return resBody
   } else {
     const errMsg = await getTransactionErrorMessage(preparedPayment.reference, preparedPayment, response)
