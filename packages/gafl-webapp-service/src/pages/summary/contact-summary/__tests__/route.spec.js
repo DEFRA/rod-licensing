@@ -124,6 +124,18 @@ const getRequestMock = ({
 })
 
 describe('contact-summary > route', () => {
+  it('omits undefined address fields from the output string', () => {
+    const permission = getMockPermission({
+      locality: undefined
+    })
+
+    const request = getRequestMock({ permission })
+    const rowGenerator = new route.RowGenerator(request, permission)
+    const row = rowGenerator.generateAddressRow('GB')
+
+    expect(row.value.text).toBe('14 howecroft court, eastmead lane, bristol, BS9 1HJ, GB')
+  })
+
   it('should set status.fromSummary to seen', async () => {
     const mockPermission = jest.fn()
     const mockRequest = getRequestMock({ setStatusPermission: mockPermission })
