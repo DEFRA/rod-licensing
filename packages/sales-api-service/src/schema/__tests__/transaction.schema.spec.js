@@ -120,15 +120,21 @@ describe('createTransactionSchema', () => {
   })
 
   it.each([
-    ['too short string', 'foo'],
-    ['too long string', 'foobarbazfoobarbazfoobarbaz'],
-    ['string containing invalid characters', '!3j@08v2nqqmujrnhs09_mhtjx'],
-    ['null', null],
-    ['numeric', 4567]
-  ])('fails validation when provided with a %s for agreementId', async (_d, agreementId) => {
+    ['agreement id is too long', { agreementId: 'thisistoolongtobeanagreementid' }],
+    ['agreement id is too short', { agreementId: 'tooshorttobeanagreementid' }],
+    ['agreement id contains invalid characters', '!3j@08v2nqqmujrnhs09_mhtjx'],
+    ['agreement id is null', { agreementId: null }],
+    ['agreement id is a numeric', { agreementId: 4567 }],
+    ['id is not a guid', { id: 'not-a-guid' }],
+    ['id is null', { id: null }]
+  ])('fails validation if %s', async (_d, recurringPayment) => {
     const mockPayload = mockTransactionPayload()
-    mockPayload.agreementId = agreementId
-    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
+    mockPayload.recurringPayment = {
+      agreementId: 'jhyu78iujhy7u87y6thu87uyj8',
+      id: '7a0660ec-8535-4357-b925-e598a9358119',
+      ...recurringPayment
+    }
+    await expect(() => createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 })
 
