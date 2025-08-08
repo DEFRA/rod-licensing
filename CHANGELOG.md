@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.3 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2184](https://github.com/DEFRA/rod-licensing/pull/2184) Incorrect capitalistion of address in contact summary ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.63.0-rc.2 (2025-08-08)
 
 #### :bug: Bug Fix
