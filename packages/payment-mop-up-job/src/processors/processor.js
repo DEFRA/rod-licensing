@@ -62,16 +62,14 @@ const processPaymentResults = async transaction => {
       }
     })
     await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
-  } else {
-    if (shouldUpdatePaymentJournal(transaction)) {
-      await salesApi.updatePaymentJournal(transaction.id, {
-        paymentStatus: getPaymentJournalStatusCodeFromGovPayErrorStatusCode(
-          transaction.paymentStatus.state?.code || transaction.paymentStatus.code
-        )
-      })
-      if (transaction.recurringPaymentId) {
-        await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
-      }
+  } else if (shouldUpdatePaymentJournal(transaction)) {
+    await salesApi.updatePaymentJournal(transaction.id, {
+      paymentStatus: getPaymentJournalStatusCodeFromGovPayErrorStatusCode(
+        transaction.paymentStatus.state?.code || transaction.paymentStatus.code
+      )
+    })
+    if (transaction.recurringPaymentId) {
+      await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
     }
   }
 }
