@@ -38,6 +38,8 @@ export const processRecurringPayments = async () => {
   }
 
   debug('Recurring Payments job enabled')
+  // temporary for testing
+  // const date = new Date('2025-08-04').toISOString().split('T')[0]
   const date = new Date().toISOString().split('T')[0]
 
   const dueRCPayments = await fetchDueRecurringPayments(date)
@@ -134,6 +136,8 @@ const preparePayment = (agreementId, transaction) => {
 }
 
 const processRecurringPaymentStatus = async payment => {
+  console.log('processRecurringPaymentStatus:')
+  console.log(payment)
   try {
     const {
       state: { status }
@@ -154,6 +158,7 @@ const processRecurringPaymentStatus = async payment => {
           paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
         })
       }
+      await salesApi.cancelRecurringPayment(payment.transaction.recurringPayment.id)
     }
   } catch (error) {
     const status = error.response?.status
@@ -165,5 +170,6 @@ const processRecurringPaymentStatus = async payment => {
     } else {
       debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
+    await salesApi.cancelRecurringPayment(payment.transaction.recurringPayment.id)
   }
 }
