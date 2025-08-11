@@ -80,7 +80,8 @@ const govUkPayStatusEntries = [
   }
 ]
 
-const govUkPayStatusNotFound = { code: 'P0200', description: 'Not found' }
+// differs from other responses - see https://docs.payments.service.gov.uk/api_reference/#gov-uk-pay-api-error-codes
+const govUkPayStatusNotFound = () => ({ code: 'P0200', description: 'Not found' })
 
 const createPaymentEventsEntry = paymentStatus => {
   return {
@@ -162,7 +163,7 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentStatus with recurring as true since agreementId exists', async () => {
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ agreementId: '123' })
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
     const paymentReference = '15nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
@@ -177,6 +178,9 @@ describe('processor', () => {
     salesApi.finaliseTransaction.mockImplementation(jest.fn())
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2025-08-08T12:00:00.000Z' } }] })
     })
 
     await execute(1, 1)
@@ -208,15 +212,14 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentEvents with recurring as true since agreementId exists', async () => {
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ agreementId: '123' })
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
     const paymentReference = '35nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
         paymentStatus: 'In Progress',
         paymentReference,
-        paymentTimestamp: '2020-06-01T10:35:56.873Z',
-        agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472'
+        paymentTimestamp: '2020-06-01T10:35:56.873Z'
       }
     ]
     salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
@@ -224,6 +227,9 @@ describe('processor', () => {
     salesApi.finaliseTransaction.mockImplementation(jest.fn())
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2025-08-08T12:00:00.000Z' } }] })
     })
 
     await execute(1, 1)
@@ -248,13 +254,16 @@ describe('processor', () => {
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
     })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2025-08-08T12:00:00.000Z' } }] })
+    })
 
     await execute(1, 1)
 
     expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledWith(paymentReference, false)
   })
 
-  describe('Result not present in GovPay', () => {
+  describe("When a payment isn't present in GovPay", () => {
     const NOT_FOUND_ID = journalEntries[2].id
     const NOT_FOUND_PAYMENT_REFERENCE = journalEntries[2].paymentReference
     beforeEach(() => {
@@ -264,24 +273,24 @@ describe('processor', () => {
 
       govUkPayApi.fetchPaymentEvents.mockImplementation(paymentReference => {
         if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
-          return { json: async () => govUkPayStatusNotFound }
+          return { json: async () => govUkPayStatusNotFound() }
         }
         return { json: async () => createPaymentEventsEntry(govUkPayStatusEntries.find(se => se.payment_id === paymentReference)) }
       })
 
       govUkPayApi.fetchPaymentStatus.mockImplementation(paymentReference => {
         if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
-          return { json: async () => govUkPayStatusNotFound }
+          return { json: async () => govUkPayStatusNotFound() }
         }
         return { json: async () => govUkPayStatusEntries.find(se => se.payment_id === paymentReference) }
       })
     })
 
-    it("When a payment isn't present in GovPay, no error is thrown", async () => {
+    it('no error is thrown', async () => {
       await expect(execute(1, 1)).resolves.toBeUndefined()
     })
 
-    it("when a payment isn't present in GovPay, other results process", async () => {
+    it('other results process', async () => {
       await execute(1, 1)
 
       const foundIds = journalEntries.map(j => j.id).filter(id => id !== NOT_FOUND_ID)
@@ -290,7 +299,7 @@ describe('processor', () => {
       }
     })
 
-    it("when a payment isn't present in GovPay, it's marked as expired after 3 hours", async () => {
+    it("it's marked as expired after 3 hours", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
       missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
       await execute(1, 1)
@@ -302,7 +311,7 @@ describe('processor', () => {
       )
     })
 
-    it("when a payment isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
+    it("it's not marked as expired if 3 hours haven't passed", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
       missingJournalEntry.paymentTimestamp = moment().subtract(2, 'hours').toISOString()
       await execute(1, 1)
@@ -312,6 +321,58 @@ describe('processor', () => {
           paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
         })
       )
+    })
+
+    it('cancels the recurring payment when being marked as expired', async () => {
+      const rpid = Symbol('rp-id')
+      salesApi.retrieveStagedTransaction.mockImplementation(pjid => {
+        if (pjid === NOT_FOUND_ID) {
+          return {
+            paymentTimestamp: moment().subtract(3, 'hours'),
+            recurringPayment: { agreementId: 'abc-123', id: rpid }
+          }
+        }
+      })
+      const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
+      missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
+      await execute(1, 1)
+      expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(rpid)
+    })
+
+    it("doesn't call cancel for payments without a recurring payment", async () => {
+      salesApi.retrieveStagedTransaction.mockImplementation(pjid => {
+        if (pjid === NOT_FOUND_ID) {
+          return {
+            paymentTimestamp: moment().subtract(3, 'hours'),
+            recurringPayment: { agreementId: 'abc-123', id: 'def-456' }
+          }
+        }
+      })
+      const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
+      missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
+
+      await execute(1, 1)
+
+      expect(salesApi.cancelRecurringPayment).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('Recurring Payment is cancelled when', () => {
+    it.each([
+      ['expired', GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED],
+      ['user_cancelled', GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED],
+      ['rejected', GOVUK_PAY_ERROR_STATUS_CODES.REJECTED]
+    ])('payment status code is %s', async (_d, paymentStatus) => {
+      const id = Symbol('rp-id')
+      salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries[0]])
+      salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id } })
+      govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+        json: async () => ({ state: { code: paymentStatus } })
+      })
+
+      await execute(1, 1)
+
+      expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(id)
     })
   })
 })
