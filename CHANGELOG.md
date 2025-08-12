@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.5 (2025-08-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2193](https://github.com/DEFRA/rod-licensing/pull/2193) Fix bug with creating RPs in Web Sales journey ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.63.0-rc.4 (2025-08-08)
 
 #### :rocket: Enhancement
