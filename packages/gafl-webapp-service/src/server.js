@@ -220,7 +220,12 @@ const init = async () => {
 
   logGtmConfig(process.env.GTM_CONTAINER_ID)
 
-  console.log('Server running on %s', server.info.uri)
+  console.log(
+    'Server running on %s. name: %s. version: %s',
+    server.info.uri,
+    process.env.name,
+    process.env.version
+  )
 }
 
 const shutdownBehavior = () => {

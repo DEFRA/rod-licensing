@@ -27,6 +27,22 @@ describe('payment-mop-up-job', () => {
     global.lockReleased = false
   })
 
+  it('logs startup details including name and version', () => {
+    process.env.name = 'payment-mop-up-test'
+    process.env.version = '1.2.3'
+
+    jest.isolateModules(() => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      require('../payment-mop-up-job.js')
+      expect(logSpy).toHaveBeenCalledWith(
+        'Payment mop up job starting at %s. name: %s. version: %s',
+        expect.any(String),
+        process.env.name,
+        process.env.version
+      )
+    })
+  })
+
   it('starts the mop up job with --age-minutes=3 and --scan-duration=67', done => {
     jest.isolateModules(() => {
       const mockExecute = jest.fn()

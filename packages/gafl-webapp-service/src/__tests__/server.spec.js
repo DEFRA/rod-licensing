@@ -130,6 +130,22 @@ describe('The server', () => {
     })
   })
 
+  it('logs startup details including name and version', async () => {
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    process.env.name = 'gafl-webapp-test'
+    process.env.version = '1.2.3'
+
+    createServer(catboxOptions)
+    await init()
+
+    expect(logSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Server running on %s. name: %s. version: %s'),
+      server.info.uri,
+      process.env.name,
+      process.env.version
+    )
+  })
+
   describe('layoutContextAmalgamation', () => {
     it('should add query parameters to the response', () => {
       const request = getSampleRequest()

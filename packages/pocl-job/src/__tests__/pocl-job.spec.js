@@ -26,6 +26,22 @@ describe('pocl-job', () => {
     jest.clearAllMocks()
   })
 
+  it('logs startup details including name and version', () => {
+    process.env.name = 'pocl-job-test'
+    process.env.version = '1.2.3'
+
+    jest.isolateModules(() => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      require('../pocl-job.js')
+      expect(logSpy).toHaveBeenCalledWith(
+        'POCL job starting at %s. name: %s. version: %s',
+        expect.any(String),
+        process.env.name,
+        process.env.version
+      )
+    })
+  })
+
   it('exposes an execute command to the cli', async () => {
     jest.isolateModules(() => {
       require('../pocl-job.js')

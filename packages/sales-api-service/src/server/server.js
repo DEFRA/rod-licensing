@@ -49,7 +49,13 @@ export default async (opts = { port: SERVER.Port }) => {
   server.route(Routes)
 
   await server.start()
-  console.log('Server started at %s. Listening on %s', moment().toISOString(), server.info.uri)
+  console.log(
+    'Server started at %s. Listening on %s. name: %s. version: %s',
+    moment().toISOString(),
+    server.info.uri,
+    process.env.name,
+    process.env.version
+  )
 
   const shutdown = async code => {
     await server.stop()

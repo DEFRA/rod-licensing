@@ -5,6 +5,7 @@ import { SERVER } from '../../config.js'
 
 describe('hapi server', () => {
   describe('initialisation', () => {
+    const serverInfoUri = 'test'
     let serverConfigSpy
     beforeAll(() => {
       const Hapi = jest.requireActual('@hapi/hapi')
@@ -15,7 +16,7 @@ describe('hapi server', () => {
         register: jest.fn(),
         route: jest.fn(),
         info: {
-          uri: 'test'
+          uri: serverInfoUri
         },
         listener: {}
       }))
@@ -47,6 +48,22 @@ describe('hapi server', () => {
         keepAliveTimeout: 123,
         headersTimeout: 5123
       })
+    })
+
+    it('logs startup details including name and version', async () => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      process.env.name = 'sales-api-test'
+      process.env.version = '1.2.3'
+
+      await initialiseServer({ port: 4000 })
+
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Server started at %s. Listening on %s. name: %s. version: %s'),
+        expect.any(String),
+        serverInfoUri,
+        process.env.name,
+        process.env.version
+      )
     })
   })
 

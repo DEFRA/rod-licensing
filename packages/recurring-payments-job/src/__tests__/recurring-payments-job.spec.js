@@ -23,6 +23,22 @@ describe('recurring-payments-job', () => {
     commander.args = ['test']
   })
 
+  it('logs startup details including name and version', () => {
+    process.env.name = 'recurring-payments-test'
+    process.env.version = '1.2.3'
+
+    jest.isolateModules(() => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      require('../recurring-payments-job.js')
+      expect(logSpy).toHaveBeenCalledWith(
+        'Recurring payments job starting at %s. name: %s. version: %s',
+        expect.any(String),
+        process.env.name,
+        process.env.version
+      )
+    })
+  })
+
   it('calls processRecurringPayments when no delay', () => {
     jest.isolateModules(() => {
       require('../recurring-payments-job.js')
