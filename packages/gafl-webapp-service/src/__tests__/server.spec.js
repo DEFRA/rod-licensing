@@ -30,8 +30,10 @@ export const catboxOptions = {
   ]
 }
 
-afterEach(() => {
-  server.stop()
+afterEach(async () => {
+  if (server && server.info && server.info.started && server.phase !== 'stopping') {
+    await server.stop()
+  }
 })
 
 describe('The server', () => {
