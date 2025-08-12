@@ -392,7 +392,9 @@ describe('recurring payments service', () => {
           ...permission
         }
       ],
-      agreementId,
+      recurringPayment: {
+        agreementId
+      },
       payment: {
         amount: 35.8,
         source: 'Gov Pay',

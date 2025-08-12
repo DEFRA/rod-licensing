@@ -12,7 +12,7 @@ export const prepareApiTransactionPayload = async (request, transactionId, agree
   const concessions = await salesApi.concessions.getAll()
   const countryList = await countries.getAll()
 
-  return {
+  const payload = {
     dataSource: process.env.CHANNEL === 'telesales' ? mappings.DATA_SOURCE.telesales : mappings.DATA_SOURCE.web,
     permissions: transactionCache.permissions.map(p => {
       const permission = {
@@ -63,9 +63,12 @@ export const prepareApiTransactionPayload = async (request, transactionId, agree
       request.state && request.state[process.env.OIDC_SESSION_COOKIE_NAME]
         ? request.state[process.env.OIDC_SESSION_COOKIE_NAME].oid
         : undefined,
-    transactionId,
-    agreementId
+    transactionId
   }
+  if (agreementId) {
+    payload.recurringPayment = { agreementId }
+  }
+  return payload
 }
 
 export const prepareApiFinalisationPayload = async request => {

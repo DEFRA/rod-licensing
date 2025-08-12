@@ -38,7 +38,7 @@ const createTransactionRequestSchemaContent = {
   transactionId: Joi.string().guid({ version: 'uuidv4' }).optional(),
   recurringPayment: Joi.object({
     agreementId: Joi.string().alphanum().length(AGREEMENT_ID_LENGTH).required(),
-    id: Joi.string().guid().required()
+    id: Joi.string().guid()
   }).optional()
 }
 

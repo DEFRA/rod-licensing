@@ -110,12 +110,9 @@ describe('createTransactionSchema', () => {
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
   })
 
-  it.each([
-    ['agreement id', { id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509' }],
-    ['id', { agreementId: 'jhy7u8ii87uyhjui87u89ui8ie' }]
-  ])('fails validation if %s is omitted from recurring payment detail', async (_d, recurringPayment) => {
+  it('fails validation if agreement id is omitted from recurring payment detail', async () => {
     const mockPayload = mockTransactionPayload()
-    mockPayload.recurringPayment = recurringPayment
+    mockPayload.recurringPayment = { id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509' }
     await expect(() => createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 
