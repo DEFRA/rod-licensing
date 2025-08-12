@@ -168,6 +168,7 @@ export const cancelRecurringPayment = async id => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
     const data = recurringPayment
+    data.cancelledDate = new Date().toISOString().split('T')[0]
     data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment Failure')
     const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
     await persist([updatedRecurringPayment])
