@@ -38,8 +38,6 @@ export const processRecurringPayments = async () => {
   }
 
   debug('Recurring Payments job enabled')
-  // temporary for testing
-  // const date = new Date('2025-08-04').toISOString().split('T')[0]
   const date = new Date().toISOString().split('T')[0]
 
   const dueRCPayments = await fetchDueRecurringPayments(date)
@@ -136,8 +134,6 @@ const preparePayment = (agreementId, transaction) => {
 }
 
 const processRecurringPaymentStatus = async payment => {
-  console.log('processRecurringPaymentStatus:')
-  console.log(payment)
   try {
     const {
       state: { status }
