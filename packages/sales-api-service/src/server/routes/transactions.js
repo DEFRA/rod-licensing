@@ -7,6 +7,7 @@ import {
   processQueue,
   processDlq
 } from '../../services/transactions/transactions.service.js'
+import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import {
   createTransactionSchema,
   createTransactionResponseSchema,
@@ -14,6 +15,7 @@ import {
   createTransactionBatchResponseSchema,
   finaliseTransactionRequestSchema,
   finaliseTransactionResponseSchema,
+  retrieveStagedTransactionParamsSchema,
   BATCH_CREATE_MAX_COUNT
 } from '../../schema/transaction.schema.js'
 import db from 'debug'
@@ -171,6 +173,30 @@ export default [
             422: { description: 'The transaction dlq processing payload was invalid' }
           },
           order: 4
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/retrieveStagedTransaction/{id}',
+    options: {
+      handler: async (request, h) => {
+        const { id } = request.params
+        const result = await retrieveStagedTransaction(id)
+        return h.response(result)
+      },
+      description: 'Retrieve a staged transaction',
+      tags: ['api', 'transactions'],
+      validate: {
+        params: retrieveStagedTransactionParamsSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Staged transaction retreived' }
+          },
+          order: 5
         }
       }
     }

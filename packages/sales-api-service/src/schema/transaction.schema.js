@@ -156,3 +156,7 @@ export const finaliseTransactionResponseSchema = Joi.object({
     .required()
     .label('finalise-transaction-status')
 }).label('finalise-transaction-response')
+
+export const retrieveStagedTransactionParamsSchema = Joi.object({
+  id: Joi.string().guid({ version: 'uuidv4' }).required()
+})

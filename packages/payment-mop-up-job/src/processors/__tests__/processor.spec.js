@@ -161,6 +161,105 @@ describe('processor', () => {
     })
   })
 
+  it('calls fetchPaymentStatus with recurring as true since agreementId exists', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
+    const paymentReference = '15nioqikvvnuu5l8m2qeaj0qap'
+    const journalEntriesAgreement = [
+      {
+        id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
+        paymentStatus: 'In Progress',
+        paymentReference,
+        paymentTimestamp: '2020-06-01T10:35:56.873Z'
+      }
+    ]
+    salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
+    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+    salesApi.finaliseTransaction.mockImplementation(jest.fn())
+    govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({
+      json: async () => ({ state: { status: 'success' } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2020-06-01T10:35:56.873Z' }] })
+    })
+
+    await execute(1, 1)
+
+    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentReference, true)
+  })
+
+  it('calls fetchPaymentStatus with recurring as false since agreementId does not exist', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({})
+    const paymentReference = '25nioqikvvnuu5l8m2qeaj0qap'
+    const journalEntriesAgreement = [
+      {
+        id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
+        paymentStatus: 'In Progress',
+        paymentReference,
+        paymentTimestamp: '2020-06-01T10:35:56.873Z'
+      }
+    ]
+    salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
+    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+    salesApi.finaliseTransaction.mockImplementation(jest.fn())
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' } })
+    })
+
+    await execute(1, 1)
+
+    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentReference, false)
+  })
+
+  it('calls fetchPaymentEvents with recurring as true since agreementId exists', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
+    const paymentReference = '35nioqikvvnuu5l8m2qeaj0qap'
+    const journalEntriesAgreement = [
+      {
+        id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
+        paymentStatus: 'In Progress',
+        paymentReference,
+        paymentTimestamp: '2020-06-01T10:35:56.873Z',
+        agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472'
+      }
+    ]
+    salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
+    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+    salesApi.finaliseTransaction.mockImplementation(jest.fn())
+    govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({
+      json: async () => ({ state: { status: 'success' } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2020-06-01T10:35:56.873Z' }] })
+    })
+
+    await execute(1, 1)
+
+    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledWith(paymentReference, true)
+  })
+
+  it('calls fetchPaymentEvents with recurring as false since agreementId does not exist', async () => {
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({})
+    const paymentReference = '45nioqikvvnuu5l8m2qeaj0qap'
+    const journalEntriesAgreement = [
+      {
+        id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
+        paymentStatus: 'In Progress',
+        paymentReference,
+        paymentTimestamp: '2020-06-01T10:35:56.873Z'
+      }
+    ]
+    salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
+    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+    salesApi.finaliseTransaction.mockImplementation(jest.fn())
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' } })
+    })
+
+    await execute(1, 1)
+
+    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledWith(paymentReference, false)
+  })
+
   describe('Result not present in GovPay', () => {
     const NOT_FOUND_ID = journalEntries[2].id
     const NOT_FOUND_PAYMENT_REFERENCE = journalEntries[2].paymentReference
@@ -199,9 +298,7 @@ describe('processor', () => {
 
     it("when a payment isn't present in GovPay, it's marked as expired after 3 hours", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
-      missingJournalEntry.paymentTimestamp = moment()
-        .subtract(3, 'hours')
-        .toISOString()
+      missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
       await execute(1, 1)
       expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(
         NOT_FOUND_ID,
@@ -213,9 +310,7 @@ describe('processor', () => {
 
     it("when a payment isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
-      missingJournalEntry.paymentTimestamp = moment()
-        .subtract(2, 'hours')
-        .toISOString()
+      missingJournalEntry.paymentTimestamp = moment().subtract(2, 'hours').toISOString()
       await execute(1, 1)
       expect(salesApi.updatePaymentJournal).not.toHaveBeenCalledWith(
         NOT_FOUND_ID,
