@@ -149,7 +149,7 @@ describe('retrieveStagedTransactionParamsSchema', () => {
     ['9c6b79be-28be-4916-aa5c-08520aa1e804']
   ])('validates successfully when a uuid v4 transactionId is %s', async transactionId => {
     const sampleData = { id: transactionId }
-    await expect(retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).resolves.not.toThrow() // Works here because `.resolves` is for Promises
+    await expect(retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).resolves.not.toThrow()
   })
 
   it.each([
