@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.6 (2025-08-13)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `payment-mop-up-job`, `sales-api-service`
+  * [#2177](https://github.com/DEFRA/rod-licensing/pull/2177) Recurring payments mop up ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.63.0-rc.5 (2025-08-12)
 
 #### :bug: Bug Fix
