@@ -94,7 +94,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
       return {
         ...p,
-        paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.agreementId)
+        paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
       }
     })
   )

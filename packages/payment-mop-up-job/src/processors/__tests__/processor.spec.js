@@ -162,7 +162,7 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentStatus with recurring as true since agreementId exists', async () => {
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ agreementId: '123' })
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
     const paymentReference = '15nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
@@ -175,8 +175,11 @@ describe('processor', () => {
     salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
     salesApi.updatePaymentJournal.mockImplementation(jest.fn())
     salesApi.finaliseTransaction.mockImplementation(jest.fn())
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+    govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({
       json: async () => ({ state: { status: 'success' } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2020-06-01T10:35:56.873Z' }] })
     })
 
     await execute(1, 1)
@@ -208,7 +211,7 @@ describe('processor', () => {
   })
 
   it('calls fetchPaymentEvents with recurring as true since agreementId exists', async () => {
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ agreementId: '123' })
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
     const paymentReference = '35nioqikvvnuu5l8m2qeaj0qap'
     const journalEntriesAgreement = [
       {
@@ -222,8 +225,11 @@ describe('processor', () => {
     salesApi.paymentJournals.getAll.mockReturnValue(journalEntriesAgreement)
     salesApi.updatePaymentJournal.mockImplementation(jest.fn())
     salesApi.finaliseTransaction.mockImplementation(jest.fn())
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+    govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({
       json: async () => ({ state: { status: 'success' } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2020-06-01T10:35:56.873Z' }] })
     })
 
     await execute(1, 1)
