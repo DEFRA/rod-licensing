@@ -37,8 +37,8 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
 }
 
 export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
-  if (transactionRecord.agreementId) {
-    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.agreementId)
+  if (transactionRecord.recurringPayment.agreementId) {
+    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.recurringPayment.agreementId)
     const lastDigitsCardNumbers = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
     return {
@@ -49,7 +49,7 @@ export const generateRecurringPaymentRecord = async (transactionRecord, permissi
           cancelledDate: null,
           cancelledReason: null,
           endDate,
-          agreementId: transactionRecord.agreementId,
+          agreementId: transactionRecord.recurringPayment.agreementId,
           status: 1,
           last_digits_card_number: lastDigitsCardNumbers
         }

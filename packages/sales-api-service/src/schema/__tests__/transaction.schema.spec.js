@@ -115,12 +115,9 @@ describe('createTransactionSchema', () => {
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
   })
 
-  it.each([
-    ['agreement id', { id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509' }],
-    ['id', { agreementId: 'jhy7u8ii87uyhjui87u89ui8ie' }]
-  ])('fails validation if %s is omitted from recurring payment detail', async (_d, recurringPayment) => {
+  it('fails validation if agreement id is omitted from recurring payment detail', async () => {
     const mockPayload = mockTransactionPayload()
-    mockPayload.recurringPayment = recurringPayment
+    mockPayload.recurringPayment = { id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509' }
     await expect(() => createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 
@@ -160,17 +157,30 @@ describe('finaliseTransactionResponseSchema', () => {
 })
 
 describe('retrieveStagedTransactionParamsSchema', () => {
-  it('validates expected object', async () => {
-    const sampleData = { id: 'abc123' }
-    expect(() => retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).not.toThrow()
+  it.each([
+    ['36fb757c-6377-49c5-ab6e-32eb9782fcf0'],
+    ['c290b78d-3bbc-4445-b4dd-b36f6ee044a2'],
+    ['2323a890-b36f-47b1-ab9f-d60e292ac4ae'],
+    ['9c6b79be-28be-4916-aa5c-08520aa1e804']
+  ])('validates successfully when a uuid v4 transactionId is %s', async transactionId => {
+    const sampleData = { id: transactionId }
+    await expect(retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).resolves.not.toThrow()
+  })
+
+  it.each([
+    ['uuid1 string', '5a429f62-871b-11ef-b864-0242ac120002'],
+    ['uuid2 string', '000003e8-871b-21ef-8000-325096b39f47'],
+    ['uuid3 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
+    ['uuid5 string', 'a6edc906-2f9f-5fb2-a373-efac406f0ef2'],
+    ['uuid6 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
+    ['uuid7 string', '01927705-ffac-77b5-89af-c97451b1bbe2'],
+    ['numeric', 4567]
+  ])('fails validation when provided with a %s for transactionId', async (_d, transactionId) => {
+    const sampleData = { id: transactionId }
+    await expect(() => retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
   it('throws an error if id missing', async () => {
-    expect(() => retrieveStagedTransactionParamsSchema.validateAsync({}).rejects.toThrow())
-  })
-
-  it('throws an error if id is not the correct type', async () => {
-    const sampleData = { id: 99 }
-    expect(() => retrieveStagedTransactionParamsSchema.validateAsync(sampleData).rejects.toThrow())
+    await expect(() => retrieveStagedTransactionParamsSchema.validateAsync({}).rejects.toThrow())
   })
 })

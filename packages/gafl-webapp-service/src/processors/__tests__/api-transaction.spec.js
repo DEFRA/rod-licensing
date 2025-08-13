@@ -76,7 +76,7 @@ describe('prepareApiTransactionPayload', () => {
 
     const payload = await prepareApiTransactionPayload(getMockRequest(), 'transaction_id', agreementId)
 
-    expect(payload.agreementId).toBe(agreementId)
+    expect(payload.recurringPayment.agreementId).toBe(agreementId)
   })
 
   const getMockRequest = (overrides = {}, state = {}) => ({
