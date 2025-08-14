@@ -143,7 +143,7 @@ describe('govuk-pay-service', () => {
     })
 
     it('should return the payment status on successful response', async () => {
-      const mockPaymentStatus = { code: 'P1234', description: 'Success' }
+      const mockPaymentStatus = { amount: 37.5, state: { status: 'success', finished: 'true' } }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue(mockPaymentStatus)
@@ -158,25 +158,47 @@ describe('govuk-pay-service', () => {
     })
 
     it('should throw an error when response is not ok', async () => {
-      const mockErrorDetails = { error: 'Payment not found' }
       const mockFetchResponse = {
         ok: false,
-        json: jest.fn().mockResolvedValue(mockErrorDetails)
+        status: 404,
+        json: jest.fn().mockResolvedValue({
+          code: 'P0200',
+          field: 'payment_id',
+          description: 'No payment matched the payment id you provided'
+        })
       }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
 
-      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Payment not found')
+      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Unexpected response from GOV.UK Pay API')
     })
 
-    it('should throw an error when response is not ok but errorDetails has no value', async () => {
-      const mockErrorDetails = {}
+    it('should log details when response is not ok', async () => {
+      const serviceResponseBody = {
+        code: 'P0200',
+        field: 'payment_id',
+        description: 'No payment matched the payment id you provided'
+      }
       const mockFetchResponse = {
         ok: false,
-        json: jest.fn().mockResolvedValue(mockErrorDetails)
+        status: 404,
+        json: jest.fn().mockResolvedValue(serviceResponseBody)
       }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
+      jest.spyOn(console, 'error')
+      const paymentId = 'invalid-payment-id'
 
-      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Error fetching payment status')
+      try {
+        await getPaymentStatus(paymentId)
+      } catch {}
+
+      expect(console.error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          status: mockFetchResponse.status,
+          response: serviceResponseBody,
+          paymentId
+        })
+      )
     })
 
     it('should throw an error when fetchPaymentStatus fails', async () => {
