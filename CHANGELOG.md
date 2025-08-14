@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.7 (2025-08-14)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2196](https://github.com/DEFRA/rod-licensing/pull/2196) Don't try to generate RCP record without data ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.63.0-rc.6 (2025-08-13)
 
 #### :rocket: Enhancement
