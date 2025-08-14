@@ -3,13 +3,26 @@ import db from 'debug'
 const debug = db('recurring-payments:gov.uk-pay-service')
 
 export const sendPayment = async preparedPayment => {
-  try {
-    const response = await govUkPayApi.createPayment(preparedPayment, true)
-    return await response.json()
-  } catch (e) {
-    console.error('Error creating payment', preparedPayment.id)
-    throw e
+  const createPayment = async () => {
+    try {
+      return await govUkPayApi.createPayment(preparedPayment, true)
+    } catch (e) {
+      console.error('Error creating payment', preparedPayment.id)
+      throw e
+    }
   }
+  const response = await createPayment()
+  if (!response.ok) {
+    console.error({
+      method: 'POST',
+      status: response.status,
+      response: await response.json(),
+      transactionId: preparedPayment.id,
+      payload: preparedPayment
+    })
+    throw new Error('Unexpected response from GOV.UK Pay API')
+  }
+  return await response.json()
 }
 
 export const getPaymentStatus = async paymentId => {

@@ -16,9 +16,11 @@ describe('govuk-pay-service', () => {
 
     it('sendPayment should return response from createPayment in json format', async () => {
       const mockPreparedPayment = { id: 'test-payment-id' }
-      const mockResponse = { status: 'success', paymentId: 'abc123' }
+      const mockResponse = { state: { status: 'created' }, payment_id: 'abcde12345' }
 
       const mockFetchResponse = {
+        status: 200,
+        ok: true,
         json: jest.fn().mockResolvedValue(mockResponse)
       }
       govUkPayApi.createPayment.mockResolvedValue(mockFetchResponse)
@@ -66,6 +68,66 @@ describe('govuk-pay-service', () => {
       } catch (error) {
         expect(consoleSpy).toHaveBeenCalledWith('Error creating payment', preparedPayment.id)
       }
+    })
+
+    it('should throw an error when response is not ok', async () => {
+      const mockFetchResponse = {
+        ok: false,
+        status: 400,
+        json: jest.fn().mockResolvedValue({
+          code: 'P0102',
+          field: 'agreement_id',
+          description: 'Invalid attribute value: agreement_id. Agreement does not exist'
+        })
+      }
+      govUkPayApi.createPayment.mockResolvedValueOnce(mockFetchResponse)
+
+      await expect(
+        sendPayment({
+          amount: 100,
+          description: 'The recurring card payment for your rod fishing licence',
+          id: 'a50f0d51-295f-42b3-98f8-97c0641ede5a',
+          authorisation_mode: 'agreement',
+          agreement_id: 'does_not_exist'
+        })
+      ).rejects.toThrow('Unexpected response from GOV.UK Pay API')
+    })
+
+    it('should log details when response is not ok', async () => {
+      const status = 400
+      const serviceResponseBody = {
+        code: 'P0102',
+        field: 'agreement_id',
+        description: 'Invalid attribute value: agreement_id. Agreement does not exist'
+      }
+      const transactionId = 'a50f0d51-295f-42b3-98f8-97c0641ede5a'
+      const preparedPayment = {
+        amount: 100,
+        description: 'The recurring card payment for your rod fishing licence',
+        id: transactionId,
+        authorisation_mode: 'agreement',
+        agreement_id: 'does_not_exist'
+      }
+      govUkPayApi.createPayment.mockResolvedValueOnce({
+        ok: false,
+        status,
+        json: jest.fn().mockResolvedValue(serviceResponseBody)
+      })
+      jest.spyOn(console, 'error')
+
+      try {
+        await sendPayment(preparedPayment)
+      } catch {}
+
+      expect(console.error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'POST',
+          status,
+          response: serviceResponseBody,
+          transactionId,
+          payload: preparedPayment
+        })
+      )
     })
   })
 
