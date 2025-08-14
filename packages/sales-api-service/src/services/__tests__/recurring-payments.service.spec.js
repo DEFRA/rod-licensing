@@ -530,6 +530,15 @@ describe('recurring payments service', () => {
       await expect(generateRecurringPaymentRecord(sampleTransaction)).rejects.toThrow('Invalid dates provided for permission')
     })
 
+    it('returns a false flag when recurringPayment is not present', async () => {
+      const sampleTransaction = createFinalisedSampleTransaction()
+      delete sampleTransaction.recurringPayment
+
+      const rpRecord = await generateRecurringPaymentRecord(sampleTransaction)
+
+      expect(rpRecord.payment?.recurring).toBeFalsy()
+    })
+
     it('returns a false flag when agreementId is not present', async () => {
       const sampleTransaction = createFinalisedSampleTransaction(
         null,
