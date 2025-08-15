@@ -127,7 +127,7 @@ const preparePayment = (agreementId, transaction) => {
   return result
 }
 
-const processRecurringPaymentStatus = async payment => {
+export const processRecurringPaymentStatus = async payment => {
   try {
     const {
       state: { status }
@@ -136,9 +136,15 @@ const processRecurringPaymentStatus = async payment => {
     debug(`Payment status for ${payment.paymentId}: ${status}`)
 
     if (status === PAYMENT_STATUS.Success) {
-      await salesApi.processRPResult(payment.transaction.id, payment.paymentId, payment.created_date)
-      debug(`Processed Recurring Payment for ${payment.transaction.id}`)
+      try {
+        await salesApi.processRPResult(payment.transaction.id, payment.paymentId, payment.created_date)
+        debug(`Processed Recurring Payment for ${payment.transaction.id}`)
+      } catch (err) {
+        console.error(`Failed to process Recurring Payment for ${payment.transaction.id}`, err)
+        return
+      }
     }
+
     if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
       console.error(
         `Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`

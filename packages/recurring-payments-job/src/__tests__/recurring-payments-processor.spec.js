@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { PAYMENT_STATUS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { processRecurringPayments } from '../recurring-payments-processor.js'
+import { processRecurringPayments, processRecurringPaymentStatus } from '../recurring-payments-processor.js'
 import { getPaymentStatus, isGovPayUp, sendPayment } from '../services/govuk-pay-service.js'
 import db from 'debug'
 
@@ -584,6 +584,50 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(salesApi.processRPResult).not.toHaveBeenCalled()
+  })
+
+  it('should log errors from await salesApi.processRPResult', async () => {
+    const payment = {
+      paymentId: 'pay-1',
+      created_date: '2025-01-01T00:00:00.000Z',
+      agreementId: 'agr-1',
+      transaction: { id: 'trans-1' }
+    }
+
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+    salesApi.processRPResult.mockRejectedValueOnce(new Error('boom'))
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    await processRecurringPaymentStatus(payment)
+
+    expect(errorSpy).toHaveBeenCalledWith(`Failed to process Recurring Payment for ${payment.transaction.id}`, expect.any(Error))
+    errorSpy.mockRestore()
+  })
+
+  it('salesApi.processRPResult continues job after logging errors', async () => {
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([
+      getMockDueRecurringPayment({ agreementId: 'agr-1', id: 'rp-1', referenceNumber: 'ref-1' }),
+      getMockDueRecurringPayment({ agreementId: 'agr-2', id: 'rp-2', referenceNumber: 'ref-2' })
+    ])
+
+    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
+
+    const date1 = '2025-01-01T00:00:00.000Z'
+    const date2 = '2025-01-01T00:01:00.000Z'
+    sendPayment
+      .mockResolvedValueOnce({ payment_id: 'pay-1', agreementId: 'agr-1', created_date: date1 })
+      .mockResolvedValueOnce({ payment_id: 'pay-2', agreementId: 'agr-2', created_date: date2 })
+
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess()).mockResolvedValueOnce(getPaymentStatusSuccess())
+    salesApi.processRPResult.mockRejectedValueOnce(new Error('boom')).mockResolvedValueOnce()
+
+    await processRecurringPayments()
+
+    expect(salesApi.processRPResult.mock.calls).toEqual([
+      ['trans-1', 'pay-1', date1],
+      ['trans-2', 'pay-2', date2]
+    ])
   })
 
   it.each([
