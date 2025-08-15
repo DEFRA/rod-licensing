@@ -1,6 +1,6 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { execute } from '../processor.js'
-import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 
 jest.mock('@defra-fish/connectors-lib')
@@ -369,6 +369,19 @@ describe('processor', () => {
   })
 
   describe('Recurring Payment is cancelled when', () => {
+    it('payment has an error status', async () => {
+      const id = Symbol('rp-id')
+      salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
+      salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id } })
+      govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+        json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+      })
+
+      await execute(1, 1)
+
+      expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(id)
+    })
+
     it.each([
       ['expired', GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED],
       ['user_cancelled', GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED],
@@ -385,5 +398,17 @@ describe('processor', () => {
 
       expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(id)
     })
+  })
+
+  it("doesn't cancel Recurring Payment if payment succeeded", async () => {
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: 'def-456' } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' } })
+    })
+
+    await execute(1, 1)
+
+    expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
   })
 })

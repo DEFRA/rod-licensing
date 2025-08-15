@@ -3,7 +3,8 @@ import {
   GOVUK_PAY_ERROR_STATUS_CODES,
   PAYMENT_JOURNAL_STATUS_CODES,
   TRANSACTION_SOURCE,
-  PAYMENT_TYPE
+  PAYMENT_TYPE,
+  PAYMENT_STATUS
 } from '@defra-fish/business-rules-lib'
 import Bottleneck from 'bottleneck'
 import moment from 'moment'
@@ -18,7 +19,14 @@ const limiter = new Bottleneck({
   maxConcurrent: process.env.CONCURRENCY || CONCURRENCY_DEFAULT
 })
 
-const getPaymentJournalStatusCodeFromGovPayErrorStatusCode = govPayErrorStatusCode => {
+const getPaymentJournalStatusCodeFromTransaction = transaction => {
+  if (transaction.paymentStatus.state?.status === PAYMENT_STATUS.Error) {
+    return PAYMENT_JOURNAL_STATUS_CODES.Failed
+  }
+  if (transaction.paymentStatus.state?.status === PAYMENT_STATUS.Success) {
+    return PAYMENT_JOURNAL_STATUS_CODES.Completed
+  }
+  const govPayErrorStatusCode = transaction.paymentStatus.state?.code || transaction.paymentStatus.code
   switch (govPayErrorStatusCode) {
     case GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED:
     case GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND:
@@ -30,27 +38,39 @@ const getPaymentJournalStatusCodeFromGovPayErrorStatusCode = govPayErrorStatusCo
   }
 }
 
-const shouldUpdatePaymentJournal = transaction => {
-  const { code, state } = transaction.paymentStatus
-  const { paymentTimestamp } = transaction
+const isExpiredCancelledRejectedOrNotFoundAndPastTimeout = transaction => {
+  const { paymentStatus, paymentTimestamp } = transaction
 
   const isExpiredCancelledOrRejected = [
     GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED,
     GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED,
     GOVUK_PAY_ERROR_STATUS_CODES.REJECTED
-  ].includes(state?.code)
+  ].includes(paymentStatus.state?.code)
 
-  const isExpiredNotFound =
-    code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND && moment().diff(moment(paymentTimestamp), 'hours') >= MISSING_PAYMENT_EXPIRY_TIMEOUT
+  // The payment's not found and three hours have elapsed
+  const isNotFoundAndPastTimeout =
+    paymentStatus?.code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND &&
+    moment().diff(moment(paymentTimestamp), 'hours') >= MISSING_PAYMENT_EXPIRY_TIMEOUT
 
-  return isExpiredCancelledOrRejected || isExpiredNotFound
+  return isExpiredCancelledOrRejected || isNotFoundAndPastTimeout
+}
+
+const shouldUpdatePaymentJournal = transaction => {
+  const isSuccessOrError = [PAYMENT_STATUS.Success, PAYMENT_STATUS.Error].includes(transaction.paymentStatus.state?.status)
+
+  return isSuccessOrError || isExpiredCancelledRejectedOrNotFoundAndPastTimeout(transaction)
+}
+
+const shouldCancelRecurringPayment = transaction => {
+  if (transaction.recurringPaymentId) {
+    const isError = transaction.paymentStatus.state?.status === PAYMENT_STATUS.Error
+
+    return isError || isExpiredCancelledRejectedOrNotFoundAndPastTimeout(transaction)
+  }
+  return false
 }
 
 const processPaymentResults = async transaction => {
-  if (transaction.paymentStatus.state?.status === 'error') {
-    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-  }
-
   if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalization for transaction id: ${transaction.id}`)
     await salesApi.finaliseTransaction(transaction.id, {
@@ -61,16 +81,16 @@ const processPaymentResults = async transaction => {
         method: PAYMENT_TYPE.debit
       }
     })
-    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
-  } else if (shouldUpdatePaymentJournal(transaction)) {
+  }
+
+  if (shouldUpdatePaymentJournal(transaction)) {
     await salesApi.updatePaymentJournal(transaction.id, {
-      paymentStatus: getPaymentJournalStatusCodeFromGovPayErrorStatusCode(
-        transaction.paymentStatus.state?.code || transaction.paymentStatus.code
-      )
+      paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
     })
-    if (transaction.recurringPaymentId) {
-      await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
-    }
+  }
+
+  if (shouldCancelRecurringPayment(transaction)) {
+    await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
   }
 }
 
