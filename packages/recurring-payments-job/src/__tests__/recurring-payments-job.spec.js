@@ -1,5 +1,6 @@
 import commander from 'commander'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
+import fs from 'fs'
 
 jest.useFakeTimers()
 
@@ -17,6 +18,8 @@ jest.mock('commander', () => {
   return global.commander
 })
 
+jest.mock('fs')
+
 describe('recurring-payments-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -24,8 +27,8 @@ describe('recurring-payments-job', () => {
   })
 
   it('logs startup details including name and version', () => {
-    process.env.name = 'recurring-payments-test'
-    process.env.version = '1.2.3'
+    const mockPkg = { name: 'recurring-payments-test', version: '1.2.3' }
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
 
     jest.isolateModules(() => {
       const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -33,8 +36,8 @@ describe('recurring-payments-job', () => {
       expect(logSpy).toHaveBeenCalledWith(
         'Recurring payments job starting at %s. name: %s. version: %s',
         expect.any(String),
-        process.env.name,
-        process.env.version
+        mockPkg.name,
+        mockPkg.version
       )
     })
   })

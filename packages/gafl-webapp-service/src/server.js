@@ -221,13 +221,10 @@ const init = async () => {
 
   logGtmConfig(process.env.GTM_CONTAINER_ID)
 
-  // Construct an absolute path relative to the current working directory
   const pkgPath = path.join(process.cwd(), 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
-  console.log('pkg: ', pkg)
-  console.log('version: ', pkg.version)
-  // console.log('Server running on %s. name: %s. version: %s. ATTEMPT 11', server.info.uri, pkg.name, pkg.version)
+  console.log('Server running on %s. name: %s. version: %s.', server.info.uri, pkg.name, pkg.version)
 }
 
 const shutdownBehavior = () => {

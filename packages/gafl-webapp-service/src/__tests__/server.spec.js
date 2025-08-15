@@ -2,6 +2,7 @@ import { createServer, init, server, layoutContextAmalgamation } from '../server
 import CatboxMemory from '@hapi/catbox-memory'
 import uris from '../uri.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
+import fs from 'fs'
 
 jest.mock('../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn(),
@@ -18,6 +19,13 @@ jest.mock('../uri.js', () => ({
   NEW_PRICES: { uri: '/NEW_PRICES' },
   RECURRING_TERMS_CONDITIONS: { uri: '/RECURRING_TERMS_CONDITIONS' }
 }))
+jest.mock('fs', () => {
+  const actual = jest.requireActual('fs')
+  return {
+    ...actual,
+    readFileSync: jest.fn(() => JSON.stringify({ name: 'gafl-webapp-test', version: '1.2.3' }))
+  }
+})
 
 export const catboxOptions = {
   port: 1234,
@@ -132,10 +140,10 @@ describe('The server', () => {
     })
   })
 
-  it('logs startup details including name and version', async () => {
+  it.only('logs startup details including name and version', async () => {
+    const mockPkg = { name: 'gafl-webapp-test', version: '1.2.3' }
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-    process.env.name = 'gafl-webapp-test'
-    process.env.version = '1.2.3'
 
     createServer(catboxOptions)
     await init()
@@ -143,8 +151,8 @@ describe('The server', () => {
     expect(logSpy).toHaveBeenCalledWith(
       expect.stringContaining('Server running on %s. name: %s. version: %s'),
       server.info.uri,
-      process.env.name,
-      process.env.version
+      mockPkg.name,
+      mockPkg.version
     )
   })
 

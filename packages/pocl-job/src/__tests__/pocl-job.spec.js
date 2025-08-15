@@ -1,5 +1,6 @@
 import { execute } from '../pocl-processor.js'
 import commander from 'commander'
+import fs from 'fs'
 
 jest.mock('commander', () => {
   if (!global.commander) {
@@ -27,8 +28,8 @@ describe('pocl-job', () => {
   })
 
   it('logs startup details including name and version', () => {
-    process.env.name = 'pocl-job-test'
-    process.env.version = '1.2.3'
+    const mockPkg = { name: 'pocl-test', version: '1.2.3' }
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
 
     jest.isolateModules(() => {
       const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -36,8 +37,8 @@ describe('pocl-job', () => {
       expect(logSpy).toHaveBeenCalledWith(
         'POCL job starting at %s. name: %s. version: %s',
         expect.any(String),
-        process.env.name,
-        process.env.version
+        mockPkg.name,
+        mockPkg.version
       )
     })
   })

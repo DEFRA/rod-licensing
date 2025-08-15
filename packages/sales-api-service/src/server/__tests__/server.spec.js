@@ -2,6 +2,15 @@ import initialiseServer from '../server.js'
 import Boom from '@hapi/boom'
 import dotProp from 'dot-prop'
 import { SERVER } from '../../config.js'
+import fs from 'fs'
+
+jest.mock('fs', () => {
+  const actual = jest.requireActual('fs')
+  return {
+    ...actual,
+    readFileSync: jest.fn(() => JSON.stringify({ name: 'sales-api-test', version: '1.2.3' }))
+  }
+})
 
 describe('hapi server', () => {
   describe('initialisation', () => {
@@ -51,9 +60,9 @@ describe('hapi server', () => {
     })
 
     it('logs startup details including name and version', async () => {
+      const mockPkg = { name: 'sales-api-test', version: '1.2.3' }
+      fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
       const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-      process.env.name = 'sales-api-test'
-      process.env.version = '1.2.3'
 
       await initialiseServer({ port: 4000 })
 
@@ -61,8 +70,8 @@ describe('hapi server', () => {
         expect.stringContaining('Server started at %s. Listening on %s. name: %s. version: %s'),
         expect.any(String),
         serverInfoUri,
-        process.env.name,
-        process.env.version
+        mockPkg.name,
+        mockPkg.version
       )
     })
   })

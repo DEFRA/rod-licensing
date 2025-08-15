@@ -1,3 +1,5 @@
+import fs from 'fs'
+
 global.simulateLockError = false
 global.lockReleased = false
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -20,6 +22,13 @@ jest.mock('@defra-fish/connectors-lib', () => ({
   })
 }))
 
+jest.mock('fs', () => ({
+  readFileSync: jest.fn(),
+  promises: {
+    readFile: jest.fn()
+  }
+}))
+
 describe('payment-mop-up-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -28,8 +37,8 @@ describe('payment-mop-up-job', () => {
   })
 
   it('logs startup details including name and version', () => {
-    process.env.name = 'payment-mop-up-test'
-    process.env.version = '1.2.3'
+    const mockPkg = { name: 'payment-mop-up-test', version: '1.2.3' }
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
 
     jest.isolateModules(() => {
       const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -37,8 +46,8 @@ describe('payment-mop-up-job', () => {
       expect(logSpy).toHaveBeenCalledWith(
         'Payment mop up job starting at %s. name: %s. version: %s',
         expect.any(String),
-        process.env.name,
-        process.env.version
+        mockPkg.name,
+        mockPkg.version
       )
     })
   })
