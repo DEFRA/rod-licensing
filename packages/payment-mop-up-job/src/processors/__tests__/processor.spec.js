@@ -129,16 +129,13 @@ describe('processor', () => {
   beforeEach(jest.clearAllMocks)
 
   it('completes normally where there are no journal records retrieved', async () => {
-    salesApi.paymentJournals.getAll.mockReturnValue([])
-    govUkPayApi.fetchPaymentStatus.mockImplementation(jest.fn())
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([])
     await execute(1, 1)
     expect(govUkPayApi.fetchPaymentStatus).not.toHaveBeenCalled()
   })
 
   it('completes normally where there are journal records retrieved', async () => {
-    salesApi.paymentJournals.getAll.mockReturnValue(journalEntries())
-    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
-    salesApi.finaliseTransaction.mockImplementation(jest.fn())
+    salesApi.paymentJournals.getAll.mockReturnValueOnce(journalEntries())
     govUkPayStatusEntries.forEach(status => {
       govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => status })
       govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({ json: async () => createPaymentEventsEntry(status) })
@@ -194,7 +191,7 @@ describe('processor', () => {
 
   it('calls fetchPaymentStatus with recurring as false since agreementId does not exist', async () => {
     const paymentReference = '25nioqikvvnuu5l8m2qeaj0qap'
-    salesApi.paymentJournals.getAll.mockReturnValue([
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
         paymentStatus: 'In Progress',
@@ -214,7 +211,7 @@ describe('processor', () => {
   it('calls fetchPaymentEvents with recurring as true since agreementId exists', async () => {
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
     const paymentReference = '35nioqikvvnuu5l8m2qeaj0qap'
-    salesApi.paymentJournals.getAll.mockReturnValue([
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
         paymentStatus: 'In Progress',
@@ -237,7 +234,7 @@ describe('processor', () => {
 
   it('calls fetchPaymentEvents with recurring as false since agreementId does not exist', async () => {
     const paymentReference = '45nioqikvvnuu5l8m2qeaj0qap'
-    salesApi.paymentJournals.getAll.mockReturnValue([
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
         paymentStatus: 'In Progress',
@@ -263,9 +260,9 @@ describe('processor', () => {
       const NOT_FOUND_ID = sampleJournalEntries[2].id
       const NOT_FOUND_PAYMENT_REFERENCE = sampleJournalEntries[2].paymentReference
 
-      salesApi.paymentJournals.getAll.mockReturnValue(sampleJournalEntries)
+      salesApi.paymentJournals.getAll.mockReturnValueOnce(sampleJournalEntries)
 
-      govUkPayApi.fetchPaymentEvents.mockImplementation(paymentReference => {
+      govUkPayApi.fetchPaymentEvents.mockImplementationOnce(paymentReference => {
         if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
           return { json: async () => govUkPayStatusNotFound() }
         }
@@ -284,6 +281,7 @@ describe('processor', () => {
         NOT_FOUND_ID
       }
     }
+    afterEach(() => govUkPayApi.fetchPaymentStatus.mockClear())
 
     it('no error is thrown', async () => {
       absentPaymentSetup()
@@ -348,11 +346,12 @@ describe('processor', () => {
       await execute(1, 1)
 
       expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(rpid)
+      salesApi.retrieveStagedTransaction.mockClear()
     })
 
     it("doesn't call cancel for payments without a recurring payment", async () => {
       const { NOT_FOUND_ID, sampleJournalEntries } = absentPaymentSetup()
-      salesApi.retrieveStagedTransaction.mockImplementation(pjid => {
+      salesApi.retrieveStagedTransaction.mockImplementationOnce(pjid => {
         if (pjid === NOT_FOUND_ID) {
           return {
             paymentTimestamp: moment().subtract(3, 'hours'),
