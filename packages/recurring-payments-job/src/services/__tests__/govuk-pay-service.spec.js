@@ -16,9 +16,11 @@ describe('govuk-pay-service', () => {
 
     it('sendPayment should return response from createPayment in json format', async () => {
       const mockPreparedPayment = { id: 'test-payment-id' }
-      const mockResponse = { status: 'success', paymentId: 'abc123' }
+      const mockResponse = { state: { status: 'created' }, payment_id: 'abcde12345' }
 
       const mockFetchResponse = {
+        status: 200,
+        ok: true,
         json: jest.fn().mockResolvedValue(mockResponse)
       }
       govUkPayApi.createPayment.mockResolvedValue(mockFetchResponse)
@@ -67,6 +69,66 @@ describe('govuk-pay-service', () => {
         expect(consoleSpy).toHaveBeenCalledWith('Error creating payment', preparedPayment.id)
       }
     })
+
+    it('should throw an error when response is not ok', async () => {
+      const mockFetchResponse = {
+        ok: false,
+        status: 400,
+        json: jest.fn().mockResolvedValue({
+          code: 'P0102',
+          field: 'agreement_id',
+          description: 'Invalid attribute value: agreement_id. Agreement does not exist'
+        })
+      }
+      govUkPayApi.createPayment.mockResolvedValueOnce(mockFetchResponse)
+
+      await expect(
+        sendPayment({
+          amount: 100,
+          description: 'The recurring card payment for your rod fishing licence',
+          id: 'a50f0d51-295f-42b3-98f8-97c0641ede5a',
+          authorisation_mode: 'agreement',
+          agreement_id: 'does_not_exist'
+        })
+      ).rejects.toThrow('Unexpected response from GOV.UK Pay API')
+    })
+
+    it('should log details when response is not ok', async () => {
+      const status = 400
+      const serviceResponseBody = {
+        code: 'P0102',
+        field: 'agreement_id',
+        description: 'Invalid attribute value: agreement_id. Agreement does not exist'
+      }
+      const transactionId = 'a50f0d51-295f-42b3-98f8-97c0641ede5a'
+      const preparedPayment = {
+        amount: 100,
+        description: 'The recurring card payment for your rod fishing licence',
+        id: transactionId,
+        authorisation_mode: 'agreement',
+        agreement_id: 'does_not_exist'
+      }
+      govUkPayApi.createPayment.mockResolvedValueOnce({
+        ok: false,
+        status,
+        json: jest.fn().mockResolvedValue(serviceResponseBody)
+      })
+      jest.spyOn(console, 'error')
+
+      try {
+        await sendPayment(preparedPayment)
+      } catch {}
+
+      expect(console.error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'POST',
+          status,
+          response: serviceResponseBody,
+          transactionId,
+          payload: preparedPayment
+        })
+      )
+    })
   })
 
   describe('getPaymentStatus', () => {
@@ -81,7 +143,7 @@ describe('govuk-pay-service', () => {
     })
 
     it('should return the payment status on successful response', async () => {
-      const mockPaymentStatus = { code: 'P1234', description: 'Success' }
+      const mockPaymentStatus = { amount: 37.5, state: { status: 'success', finished: 'true' } }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue(mockPaymentStatus)
@@ -96,25 +158,47 @@ describe('govuk-pay-service', () => {
     })
 
     it('should throw an error when response is not ok', async () => {
-      const mockErrorDetails = { error: 'Payment not found' }
       const mockFetchResponse = {
         ok: false,
-        json: jest.fn().mockResolvedValue(mockErrorDetails)
+        status: 404,
+        json: jest.fn().mockResolvedValue({
+          code: 'P0200',
+          field: 'payment_id',
+          description: 'No payment matched the payment id you provided'
+        })
       }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
 
-      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Payment not found')
+      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Unexpected response from GOV.UK Pay API')
     })
 
-    it('should throw an error when response is not ok but errorDetails has no value', async () => {
-      const mockErrorDetails = {}
+    it('should log details when response is not ok', async () => {
+      const serviceResponseBody = {
+        code: 'P0200',
+        field: 'payment_id',
+        description: 'No payment matched the payment id you provided'
+      }
       const mockFetchResponse = {
         ok: false,
-        json: jest.fn().mockResolvedValue(mockErrorDetails)
+        status: 404,
+        json: jest.fn().mockResolvedValue(serviceResponseBody)
       }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
+      jest.spyOn(console, 'error')
+      const paymentId = 'invalid-payment-id'
 
-      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Error fetching payment status')
+      try {
+        await getPaymentStatus(paymentId)
+      } catch {}
+
+      expect(console.error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          status: mockFetchResponse.status,
+          response: serviceResponseBody,
+          paymentId
+        })
+      )
     })
 
     it('should throw an error when fetchPaymentStatus fails', async () => {
