@@ -22,7 +22,7 @@ export const sendPayment = async preparedPayment => {
     })
     throw new Error('Unexpected response from GOV.UK Pay API')
   }
-  return await response.json()
+  return response.json()
 }
 
 export const getPaymentStatus = async paymentId => {
@@ -51,7 +51,7 @@ export const getPaymentStatus = async paymentId => {
     throw new Error('Unexpected response from GOV.UK Pay API')
   }
 
-  return await response.json()
+  return response.json()
 }
 
 export const isGovPayUp = async () => {
