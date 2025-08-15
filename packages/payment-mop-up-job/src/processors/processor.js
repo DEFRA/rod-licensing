@@ -3,7 +3,8 @@ import {
   GOVUK_PAY_ERROR_STATUS_CODES,
   PAYMENT_JOURNAL_STATUS_CODES,
   TRANSACTION_SOURCE,
-  PAYMENT_TYPE
+  PAYMENT_TYPE,
+  PAYMENT_STATUS
 } from '@defra-fish/business-rules-lib'
 import Bottleneck from 'bottleneck'
 import moment from 'moment'
@@ -18,11 +19,58 @@ const limiter = new Bottleneck({
   maxConcurrent: process.env.CONCURRENCY || CONCURRENCY_DEFAULT
 })
 
-const processPaymentResults = async transaction => {
-  if (transaction.paymentStatus.state?.status === 'error') {
-    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
+const getPaymentJournalStatusCodeFromTransaction = transaction => {
+  if (transaction.paymentStatus.state?.status === PAYMENT_STATUS.Error) {
+    return PAYMENT_JOURNAL_STATUS_CODES.Failed
   }
+  if (transaction.paymentStatus.state?.status === PAYMENT_STATUS.Success) {
+    return PAYMENT_JOURNAL_STATUS_CODES.Completed
+  }
+  const govPayErrorStatusCode = transaction.paymentStatus.state?.code || transaction.paymentStatus.code
+  switch (govPayErrorStatusCode) {
+    case GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED:
+    case GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND:
+      return PAYMENT_JOURNAL_STATUS_CODES.Expired
+    case GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED:
+      return PAYMENT_JOURNAL_STATUS_CODES.Cancelled
+    case GOVUK_PAY_ERROR_STATUS_CODES.REJECTED:
+      return PAYMENT_JOURNAL_STATUS_CODES.Failed
+  }
+}
 
+const isExpiredCancelledRejectedOrNotFoundAndPastTimeout = transaction => {
+  const { paymentStatus, paymentTimestamp } = transaction
+
+  const isExpiredCancelledOrRejected = [
+    GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED,
+    GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED,
+    GOVUK_PAY_ERROR_STATUS_CODES.REJECTED
+  ].includes(paymentStatus.state?.code)
+
+  // The payment's not found and three hours have elapsed
+  const isNotFoundAndPastTimeout =
+    paymentStatus?.code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND &&
+    moment().diff(moment(paymentTimestamp), 'hours') >= MISSING_PAYMENT_EXPIRY_TIMEOUT
+
+  return isExpiredCancelledOrRejected || isNotFoundAndPastTimeout
+}
+
+const shouldUpdatePaymentJournal = transaction => {
+  const isSuccessOrError = [PAYMENT_STATUS.Success, PAYMENT_STATUS.Error].includes(transaction.paymentStatus.state?.status)
+
+  return isSuccessOrError || isExpiredCancelledRejectedOrNotFoundAndPastTimeout(transaction)
+}
+
+const shouldCancelRecurringPayment = transaction => {
+  if (transaction.recurringPaymentId) {
+    const isError = transaction.paymentStatus.state?.status === PAYMENT_STATUS.Error
+
+    return isError || isExpiredCancelledRejectedOrNotFoundAndPastTimeout(transaction)
+  }
+  return false
+}
+
+const processPaymentResults = async transaction => {
   if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalization for transaction id: ${transaction.id}`)
     await salesApi.finaliseTransaction(transaction.id, {
@@ -33,30 +81,16 @@ const processPaymentResults = async transaction => {
         method: PAYMENT_TYPE.debit
       }
     })
-    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
-  } else {
-    // The payment expired
-    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired })
-    }
+  }
 
-    // The user cancelled the payment
-    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled })
-    }
+  if (shouldUpdatePaymentJournal(transaction)) {
+    await salesApi.updatePaymentJournal(transaction.id, {
+      paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
+    })
+  }
 
-    // The payment was rejected
-    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-    }
-
-    // The payment's not found and three hours have elapsed
-    if (
-      transaction.paymentStatus.code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND &&
-      moment().diff(moment(transaction.paymentTimestamp), 'hours') >= MISSING_PAYMENT_EXPIRY_TIMEOUT
-    ) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired })
-    }
+  if (shouldCancelRecurringPayment(transaction)) {
+    await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
   }
 }
 
@@ -75,9 +109,7 @@ const getStatus = async (paymentReference, agreementId) => {
 const getStatusWrapped = limiter.wrap(getStatus)
 
 export const execute = async (ageMinutes, scanDurationHours) => {
-  debug(
-    `Running payment mop up processor with a payment age of ${ageMinutes} minutes ` + `and a scan duration of ${scanDurationHours} hours`
-  )
+  debug(`Running payment mop up processor with a payment age of ${ageMinutes} minutes and a scan duration of ${scanDurationHours} hours`)
 
   const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
   const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
@@ -89,16 +121,20 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   })
 
   // Get the status for each payment from the GOV.UK Pay API.
-  const transactions = await Promise.all(
+  const journalsWithRecurringPaymentIDs = await Promise.all(
     paymentJournals.map(async p => {
       const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
-      return {
+      const paymentJournalWithStatus = {
         ...p,
         paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
       }
+      if (transactionRecord?.recurringPayment) {
+        paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
+      }
+      return paymentJournalWithStatus
     })
   )
 
   // Process each result
-  await Promise.all(transactions.map(async t => processPaymentResults(t)))
+  await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
 }

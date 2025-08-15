@@ -1,6 +1,6 @@
 import { createDocumentClient } from '../documentclient-decorator'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocument, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 
 jest.mock('@aws-sdk/client-dynamodb')
 jest.mock('@aws-sdk/lib-dynamodb')
@@ -9,6 +9,7 @@ describe('document client decorations', () => {
   beforeAll(() => {
     jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
     DynamoDBDocument.from.mockReturnValue({
+      send: jest.fn().mockResolvedValue({ Items: [], lastEvaluatedKey: false }),
       query: jest.fn().mockResolvedValue({ Items: [], lastEvaluatedKey: false }),
       scan: jest.fn().mockResolvedValue({ Items: [], lastEvaluatedKey: false }),
       batchWrite: jest.fn().mockResolvedValue({ UnprocessedItems: {} })
@@ -46,23 +47,30 @@ describe('document client decorations', () => {
   })
 
   describe.each`
-    aggregateMethod      | baseMethod
-    ${'queryAllPromise'} | ${'query'}
-    ${'scanAllPromise'}  | ${'scan'}
-  `('$aggregateMethod', ({ aggregateMethod, baseMethod }) => {
+    aggregateMethod      | commandType
+    ${'queryAllPromise'} | ${QueryCommand}
+    ${'scanAllPromise'}  | ${ScanCommand}
+  `('$aggregateMethod', ({ aggregateMethod, commandType }) => {
     it('is added to document client', () => {
       const docClient = createDocumentClient()
       expect(docClient[aggregateMethod]).toBeDefined()
     })
 
-    it(`passes arguments provided for ${aggregateMethod} to ${baseMethod}`, async () => {
+    it(`passes arguments provided for ${aggregateMethod} to ${commandType.name}`, async () => {
       const params = { TableName: 'TEST', KeyConditionExpression: 'id = :id', ExpressionAttributeValues: { ':id': 1 } }
       const docClient = createDocumentClient()
       await docClient[aggregateMethod](params)
-      expect(docClient[baseMethod]).toHaveBeenCalledWith(params)
+      expect(commandType).toHaveBeenCalledWith(params)
     })
 
-    it(`calls ${baseMethod} repeatedly until LastEvaluatedKey evaluates to false, concatenating all returned items`, async () => {
+    it(`passes created command ${commandType.name} to docClient.send`, async () => {
+      const docClient = createDocumentClient()
+      await docClient[aggregateMethod]()
+      const [command] = commandType.mock.instances
+      expect(docClient.send).toHaveBeenCalledWith(command)
+    })
+
+    it('calls send repeatedly until LastEvaluatedKey evaluates to false, concatenating all returned items', async () => {
       const expectedItems = [
         { id: 1, data: Symbol('data1') },
         { id: 2, data: Symbol('data2') },
@@ -71,7 +79,7 @@ describe('document client decorations', () => {
         { id: 5, data: Symbol('data5') }
       ]
       const docClient = createDocumentClient()
-      docClient[baseMethod]
+      docClient.send
         .mockResolvedValueOnce({ Items: expectedItems.slice(0, 2), LastEvaluatedKey: true })
         .mockResolvedValueOnce({ Items: expectedItems.slice(2, 4), LastEvaluatedKey: true })
         .mockResolvedValueOnce({ Items: expectedItems.slice(4), LastEvaluatedKey: false })
@@ -79,13 +87,12 @@ describe('document client decorations', () => {
       expect(actualItems).toEqual(expectedItems)
     })
 
-    it(`whilst concatenating ${baseMethod} results, passes ExclusiveStartKey param`, async () => {
+    it(`whilst concatenating ${commandType.name} results, passes ExclusiveStartKey param`, async () => {
       const expectedKey = Symbol('🔑')
       const docClient = createDocumentClient()
-      docClient[baseMethod].mockResolvedValueOnce({ Items: [], LastEvaluatedKey: expectedKey }).mockResolvedValueOnce({ Items: [] })
+      docClient.send.mockResolvedValueOnce({ Items: [], LastEvaluatedKey: expectedKey }).mockResolvedValueOnce({ Items: [] })
       await docClient[aggregateMethod]()
-      expect(docClient[baseMethod]).toHaveBeenNthCalledWith(
-        2,
+      expect(commandType).toHaveBeenLastCalledWith(
         expect.objectContaining({
           ExclusiveStartKey: expectedKey
         })
@@ -95,7 +102,7 @@ describe('document client decorations', () => {
     it("omits ExclusiveStartKey if previous LastEvaluatedKey isn't available", async () => {
       const docClient = createDocumentClient()
       await docClient[aggregateMethod]()
-      expect(docClient[baseMethod]).toHaveBeenNthCalledWith(
+      expect(docClient.send).toHaveBeenNthCalledWith(
         1,
         expect.not.objectContaining({
           ExclusiveStartKey: expect.anything()
