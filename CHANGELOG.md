@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.8 (2025-08-15)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2192](https://github.com/DEFRA/rod-licensing/pull/2192) Log when GOV.UK Pay cannot find an Agreement ID ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.63.0-rc.7 (2025-08-14)
 
 #### :bug: Bug Fix
