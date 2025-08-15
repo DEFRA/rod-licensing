@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.9 (2025-08-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `payment-mop-up-job`, `recurring-payments-job`
+  * [#2183](https://github.com/DEFRA/rod-licensing/pull/2183) RCP - Clean up from previous jobs ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.63.0-rc.8 (2025-08-15)
 
 #### :bug: Bug Fix
