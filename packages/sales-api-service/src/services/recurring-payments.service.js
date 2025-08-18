@@ -23,6 +23,7 @@ const { sqs, docClient } = AWS()
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
 
 const getNextDueDate = (startDate, issueDate, endDate) => {
+  debug(`getNextDueDate start date ${startDate}, issue date ${issueDate}, end date ${endDate}`)
   const mStart = moment(startDate)
   if (mStart.isAfter(moment(issueDate)) && mStart.isSameOrBefore(moment(issueDate).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'), 'day')) {
     if (mStart.isSame(moment(issueDate), 'day')) {
@@ -41,6 +42,7 @@ export const generateRecurringPaymentRecord = async (transactionRecord, permissi
     const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.recurringPayment.agreementId)
     const lastDigitsCardNumbers = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
+    debug('generateRecurringPaymentRecord permission', transactionRecord.permissions[0])
     return {
       payment: {
         recurring: {
