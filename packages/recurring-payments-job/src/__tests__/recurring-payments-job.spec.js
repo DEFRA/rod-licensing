@@ -41,8 +41,61 @@ describe('recurring-payments-job', () => {
     })
   })
 
+  it.each([
+    ['SIGINT', 130],
+    ['SIGTERM', 137]
+  ])('flushes airbrake on %s signal', (signal, code) => {
+    jest.isolateModules(() => {
+      // setup a delay so script doesn't call processRecurringPayments and exit naturally
+      process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '1'
+      const signalCallbacks = {}
+      jest.spyOn(process, 'on')
+      jest.spyOn(process, 'exit')
+      process.on.mockImplementation((signalToken, callback) => {
+        signalCallbacks[signalToken] = callback
+      })
+      process.exit.mockImplementation(() => {
+        // so we don't crash out of the tests!
+      })
+
+      require('../recurring-payments-job.js')
+      signalCallbacks[signal]()
+
+      expect(airbrake.flush).toHaveBeenCalled()
+      process.on.mockRestore()
+      process.exit.mockRestore()
+    })
+  })
+
+  it.each([
+    ['SIGINT', 130],
+    ['SIGTERM', 137]
+  ])('calls process.exit on %s signal with %i code', (signal, code) => {
+    jest.isolateModules(() => {
+      // setup a delay so script doesn't call processRecurringPayments and exit naturally
+      process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '1'
+      const signalCallbacks = {}
+      jest.spyOn(process, 'on')
+      jest.spyOn(process, 'exit')
+      process.on.mockImplementation((signalToken, callback) => {
+        signalCallbacks[signalToken] = callback
+      })
+      process.exit.mockImplementation(() => {
+        // so we don't crash out of the tests!
+      })
+
+      require('../recurring-payments-job.js')
+      signalCallbacks[signal]()
+
+      expect(process.exit).toHaveBeenCalledWith(code)
+      process.on.mockRestore()
+      process.exit.mockRestore()
+    })
+  })
+
   it('calls processRecurringPayments when no delay', () => {
     jest.isolateModules(() => {
+      process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '0'
       require('../recurring-payments-job.js')
       expect(processRecurringPayments).toHaveBeenCalled()
     })
@@ -50,6 +103,7 @@ describe('recurring-payments-job', () => {
 
   it('doesnt call setTimeout when no correct delay', () => {
     jest.isolateModules(() => {
+      process.env.RECURRING_PAYMENTS_LOCAL_DELAY = 'invalid-delay'
       const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
       require('../recurring-payments-job.js')
       expect(setTimeoutSpy).not.toHaveBeenCalled()

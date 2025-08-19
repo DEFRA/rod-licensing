@@ -18,4 +18,12 @@ function executeRecurringPaymentsJob () {
   airbrake.flush()
 }
 
+const shutdown = (code) => {
+  airbrake.flush()
+  process.exit(code)
+}
+
+process.on('SIGINT', () => shutdown(130))
+process.on('SIGTERM', () => shutdown(137))
+
 export default recurringPaymentsJob
