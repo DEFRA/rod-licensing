@@ -8,17 +8,7 @@ jest.mock('../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn(),
   addEmptyFragmentToUri: jest.fn()
 }))
-jest.mock('@defra-fish/connectors-lib', () => ({
-  airbrake: {
-    initialise: jest.fn(),
-    flush: jest.fn()
-  },
-  salesApi: {
-    permits: {
-      getAll: jest.fn()
-    }
-  }
-}))
+jest.mock('@defra-fish/connectors-lib')
 jest.mock('../uri.js', () => ({
   ...jest.requireActual('../uri.js'),
   ACCESSIBILITY_STATEMENT: { uri: '/ACCESSIBILITY_STATEMENT' },
@@ -29,24 +19,6 @@ jest.mock('../uri.js', () => ({
   NEW_PRICES: { uri: '/NEW_PRICES' },
   RECURRING_TERMS_CONDITIONS: { uri: '/RECURRING_TERMS_CONDITIONS' }
 }))
-jest.mock('@defra-fish/business-rules-lib', () => {
-  return {
-    validation: {
-      contact: {
-        createNationalInsuranceNumberValidator: jest.fn(() => ({ required: () => 'ni-validator' })),
-        createFirstNameValidator: jest.fn(() => () => true),
-        createLastNameValidator: jest.fn(() => () => true),
-        createPremisesValidator: jest.fn(() => () => true),
-        createUKPostcodeValidator: jest.fn(() => () => true),
-        createStreetValidator: jest.fn(() => () => true),
-        createLocalityValidator: jest.fn(() => () => true),
-        createTownValidator: jest.fn(() => () => true),
-        createOverseasPostcodeValidator: jest.fn(() => () => true),
-        createEmailValidator: jest.fn(() => () => true)
-      }
-    }
-  }
-})
 
 jest.mock('fs', () => {
   const actual = jest.requireActual('fs')
