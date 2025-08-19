@@ -1,7 +1,9 @@
 'use strict'
 import recurringPaymentsJob from 'commander'
 import { processRecurringPayments } from './recurring-payments-processor.js'
+import { airbrake } from '@defra-fish/connectors-lib'
 
+airbrake.initialise()
 const delay = parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY || '0', 10)
 if (delay > 0) {
   setTimeout(() => {
@@ -13,6 +15,7 @@ if (delay > 0) {
 
 function executeRecurringPaymentsJob () {
   recurringPaymentsJob.action(processRecurringPayments())
+  airbrake.flush()
 }
 
 export default recurringPaymentsJob

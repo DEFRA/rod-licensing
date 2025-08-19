@@ -1,26 +1,44 @@
 import commander from 'commander'
+import { airbrake } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
 jest.useFakeTimers()
 
-jest.mock('../recurring-payments-processor.js', () => {
-  if (!global.processRecurringPayments) {
-    global.processRecurringPayments = jest.fn()
+jest.mock('../recurring-payments-processor.js')
+jest.mock('@defra-fish/connectors-lib', () => ({
+  airbrake: {
+    initialise: jest.fn(),
+    flush: jest.fn()
   }
-  return { processRecurringPayments: global.processRecurringPayments }
-})
-
-jest.mock('commander', () => {
-  if (!global.commander) {
-    global.commander = jest.requireActual('commander')
-  }
-  return global.commander
-})
+}))
 
 describe('recurring-payments-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     commander.args = ['test']
+  })
+
+  it('initialises airbrake', () => {
+    jest.isolateModules(() => {
+      require('../recurring-payments-job.js')
+      expect(airbrake.initialise).toHaveBeenCalled()
+    })
+  })
+
+  it('flushes airbrake before script ends', () => {
+    jest.isolateModules(() => {
+      require('../recurring-payments-job.js')
+      expect(airbrake.flush).toHaveBeenCalled()
+    })
+  })
+
+  it("doesn't flush airbrake before processRecurringPayments has been called", () => {
+    jest.isolateModules(() => {
+      processRecurringPayments.mockImplementationOnce(() => {
+        expect(airbrake.flush).not.toHaveBeenCalled()
+      })
+      require('../recurring-payments-job.js')
+    })
   })
 
   it('calls processRecurringPayments when no delay', () => {
