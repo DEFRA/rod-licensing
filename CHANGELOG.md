@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.10 (2025-08-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`
+  * [#2194](https://github.com/DEFRA/rod-licensing/pull/2194) Output version of service on startup ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.63.0-rc.9 (2025-08-15)
 
 #### :rocket: Enhancement
