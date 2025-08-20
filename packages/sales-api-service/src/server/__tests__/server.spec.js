@@ -2,9 +2,19 @@ import initialiseServer from '../server.js'
 import Boom from '@hapi/boom'
 import dotProp from 'dot-prop'
 import { SERVER } from '../../config.js'
+import fs from 'fs'
+
+jest.mock('fs', () => {
+  const actual = jest.requireActual('fs')
+  return {
+    ...actual,
+    readFileSync: jest.fn(() => JSON.stringify({ name: 'sales-api-test', version: '1.2.3' }))
+  }
+})
 
 describe('hapi server', () => {
   describe('initialisation', () => {
+    const serverInfoUri = 'test'
     let serverConfigSpy
     beforeAll(() => {
       const Hapi = jest.requireActual('@hapi/hapi')
@@ -15,7 +25,7 @@ describe('hapi server', () => {
         register: jest.fn(),
         route: jest.fn(),
         info: {
-          uri: 'test'
+          uri: serverInfoUri
         },
         listener: {}
       }))
@@ -47,6 +57,22 @@ describe('hapi server', () => {
         keepAliveTimeout: 123,
         headersTimeout: 5123
       })
+    })
+
+    it('logs startup details including name and version', async () => {
+      const mockPkg = { name: 'sales-api-test', version: '1.2.3' }
+      fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+
+      await initialiseServer({ port: 4000 })
+
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Server started at %s. Listening on %s. name: %s. version: %s'),
+        expect.any(String),
+        serverInfoUri,
+        mockPkg.name,
+        mockPkg.version
+      )
     })
   })
 

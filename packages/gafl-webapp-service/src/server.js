@@ -34,6 +34,7 @@ import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
 import { addEmptyFragmentToUri, addLanguageCodeToUri } from './processors/uri-helper.js'
+import fs from 'fs'
 
 airbrake.initialise()
 let server
@@ -220,7 +221,10 @@ const init = async () => {
 
   logGtmConfig(process.env.GTM_CONTAINER_ID)
 
-  console.log('Server running on %s', server.info.uri)
+  const pkgPath = path.join(process.cwd(), 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+
+  console.log('Server running on %s. name: %s. version: %s.', server.info.uri, pkg.name, pkg.version)
 }
 
 const shutdownBehavior = () => {

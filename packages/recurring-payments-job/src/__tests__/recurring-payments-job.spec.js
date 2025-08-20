@@ -1,6 +1,7 @@
 import commander from 'commander'
 import { airbrake } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
+import fs from 'fs'
 
 jest.useFakeTimers()
 
@@ -11,6 +12,8 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     flush: jest.fn()
   }
 }))
+
+jest.mock('fs')
 
 describe('recurring-payments-job', () => {
   beforeEach(() => {
@@ -90,6 +93,22 @@ describe('recurring-payments-job', () => {
       expect(process.exit).toHaveBeenCalledWith(code)
       process.on.mockRestore()
       process.exit.mockRestore()
+    })
+  })
+
+  it('logs startup details including name and version', () => {
+    const mockPkg = { name: 'recurring-payments-test', version: '1.2.3' }
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
+
+    jest.isolateModules(() => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      require('../recurring-payments-job.js')
+      expect(logSpy).toHaveBeenCalledWith(
+        'Recurring payments job starting at %s. name: %s. version: %s',
+        expect.any(String),
+        mockPkg.name,
+        mockPkg.version
+      )
     })
   })
 
