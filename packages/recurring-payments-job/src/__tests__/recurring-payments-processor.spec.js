@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { PAYMENT_STATUS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { processRecurringPayments, processRecurringPaymentStatus } from '../recurring-payments-processor.js'
+import { processRecurringPayments } from '../recurring-payments-processor.js'
 import { getPaymentStatus, isGovPayUp, sendPayment } from '../services/govuk-pay-service.js'
 import db from 'debug'
 
@@ -587,21 +587,28 @@ describe('recurring-payments-processor', () => {
   })
 
   it('should log errors from await salesApi.processRPResult', async () => {
-    const payment = {
-      paymentId: 'pay-1',
-      created_date: '2025-01-01T00:00:00.000Z',
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([
+      getMockDueRecurringPayment({ agreementId: 'agr-1', id: 'rp-1', referenceNumber: 'ref-1' })
+    ])
+
+    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 })
+
+    const mockPaymentResponse = {
+      payment_id: 'pay-1',
       agreementId: 'agr-1',
-      transaction: { id: 'trans-1' }
+      created_date: '2025-01-01T00:00:00.000Z'
     }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
 
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
     salesApi.processRPResult.mockRejectedValueOnce(new Error('boom'))
 
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
-    await processRecurringPaymentStatus(payment)
+    await processRecurringPayments()
 
-    expect(errorSpy).toHaveBeenCalledWith(`Failed to process Recurring Payment for ${payment.transaction.id}`, expect.any(Error))
+    expect(errorSpy).toHaveBeenCalledWith('Failed to process Recurring Payment for transaction 1', expect.any(Error))
+
     errorSpy.mockRestore()
   })
 

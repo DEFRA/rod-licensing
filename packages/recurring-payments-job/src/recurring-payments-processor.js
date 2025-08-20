@@ -127,7 +127,7 @@ const preparePayment = (agreementId, transaction) => {
   return result
 }
 
-export const processRecurringPaymentStatus = async payment => {
+const processRecurringPaymentStatus = async payment => {
   try {
     const {
       state: { status }
