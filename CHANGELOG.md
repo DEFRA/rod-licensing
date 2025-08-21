@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.11 (2025-08-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`, `sales-api-service`
+  * [#2164](https://github.com/DEFRA/rod-licensing/pull/2164) Add function to cancel recurring payments in Sales API ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.63.0-rc.10 (2025-08-20)
 
 #### :rocket: Enhancement
