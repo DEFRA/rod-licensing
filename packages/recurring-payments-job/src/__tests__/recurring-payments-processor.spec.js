@@ -67,6 +67,20 @@ const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'a
 describe('recurring-payments-processor', () => {
   const [{ value: debugLogger }] = db.mock.results
 
+  const date1 = '2025-01-01T00:00:00.000Z'
+  const date2 = '2025-01-01T00:01:00.000Z'
+
+  const mockTwoDuePayments = () => {
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([
+      getMockDueRecurringPayment({ agreementId: 'agr-1', id: 'rp-1', referenceNumber: 'ref-1' }),
+      getMockDueRecurringPayment({ agreementId: 'agr-2', id: 'rp-2', referenceNumber: 'ref-2' })
+    ])
+
+    salesApi.preparePermissionDataForRenewal.mockResolvedValue({ licensee: { countryCode: 'GB-ENG' } })
+
+    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
     process.env.RUN_RECURRING_PAYMENTS = 'true'
@@ -590,16 +604,8 @@ describe('recurring-payments-processor', () => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([
       getMockDueRecurringPayment({ agreementId: 'agr-1', id: 'rp-1', referenceNumber: 'ref-1' })
     ])
-
     salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 })
-
-    const mockPaymentResponse = {
-      payment_id: 'pay-1',
-      agreementId: 'agr-1',
-      created_date: '2025-01-01T00:00:00.000Z'
-    }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-
+    sendPayment.mockResolvedValueOnce({ payment_id: 'pay-1', agreementId: 'agr-1', created_date: date1 })
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
     salesApi.processRPResult.mockRejectedValueOnce(new Error('boom'))
 
@@ -608,49 +614,36 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(errorSpy).toHaveBeenCalledWith('Failed to process Recurring Payment for trans-1', expect.any(Error))
-
-    errorSpy.mockRestore()
   })
 
   it('continues when one sendPayment rejects (Promise.allSettled check)', async () => {
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce([
-      getMockDueRecurringPayment({ agreementId: 'agr-1', id: 'rp-1', referenceNumber: 'ref-1' }),
-      getMockDueRecurringPayment({ agreementId: 'agr-2', id: 'rp-2', referenceNumber: 'ref-2' })
-    ])
+    mockTwoDuePayments()
 
-    salesApi.preparePermissionDataForRenewal
-      .mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
-      .mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
-
-    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
-
-    // p1: sendPayment fails; p2: ok end-to-end
     sendPayment
       .mockRejectedValueOnce(new Error('gateway down'))
-      .mockResolvedValueOnce({ payment_id: 'pay-2', agreementId: 'agr-2', created_date: '2025-01-01T00:00:00.000Z' })
+      .mockResolvedValueOnce({ payment_id: 'pay-2', agreementId: 'agr-2', created_date: date1 })
 
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
     salesApi.processRPResult.mockResolvedValueOnce()
 
-    await expect(processRecurringPayments()).resolves.toBeUndefined()
+    await processRecurringPayments()
 
-    expect(sendPayment).toHaveBeenCalledTimes(2)
-
-    expect(getPaymentStatus).toHaveBeenCalledWith('pay-2')
-    expect(salesApi.processRPResult).toHaveBeenCalledWith('trans-2', 'pay-2', '2025-01-01T00:00:00.000Z')
+    const errorSummary = {
+      statusArgs: getPaymentStatus.mock.calls,
+      rpResultArgs: salesApi.processRPResult.mock.calls
+    }
+    expect(errorSummary).toEqual({
+      statusArgs: [['pay-2']],
+      rpResultArgs: [['trans-2', 'pay-2', date1]]
+    })
   })
 
   it('continues when processRPResult rejects for one payment', async () => {
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce([
-      getMockDueRecurringPayment({ agreementId: 'agr-1', id: 'rp-1', referenceNumber: 'ref-1' }),
-      getMockDueRecurringPayment({ agreementId: 'agr-2', id: 'rp-2', referenceNumber: 'ref-2' })
-    ])
-
-    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
+    mockTwoDuePayments()
 
     sendPayment
-      .mockResolvedValueOnce({ payment_id: 'pay-1', agreementId: 'agr-1', created_date: '2025-01-01T00:00:00.000Z' })
-      .mockResolvedValueOnce({ payment_id: 'pay-2', agreementId: 'agr-2', created_date: '2025-01-01T00:01:00.000Z' })
+      .mockResolvedValueOnce({ payment_id: 'pay-1', agreementId: 'agr-1', created_date: date1 })
+      .mockResolvedValueOnce({ payment_id: 'pay-2', agreementId: 'agr-2', created_date: date2 })
 
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess()).mockResolvedValueOnce(getPaymentStatusSuccess())
 
@@ -658,14 +651,19 @@ describe('recurring-payments-processor', () => {
 
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
-    await expect(processRecurringPayments()).resolves.toBeUndefined()
+    await processRecurringPayments()
 
-    expect(salesApi.processRPResult.mock.calls).toEqual([
-      ['trans-1', 'pay-1', '2025-01-01T00:00:00.000Z'],
-      ['trans-2', 'pay-2', '2025-01-01T00:01:00.000Z']
-    ])
-    expect(errorSpy).toHaveBeenCalledWith('Failed to process Recurring Payment for trans-1', expect.any(Error))
-    errorSpy.mockRestore()
+    const errorSummary = {
+      rpResultArgs: salesApi.processRPResult.mock.calls,
+      firstError: errorSpy.mock.calls[0]
+    }
+    expect(errorSummary).toEqual({
+      rpResultArgs: [
+        ['trans-1', 'pay-1', date1],
+        ['trans-2', 'pay-2', date2]
+      ],
+      firstError: ['Failed to process Recurring Payment for trans-1', expect.any(Error)]
+    })
   })
 
   it('salesApi.processRPResult continues job after logging errors', async () => {
