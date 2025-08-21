@@ -14,8 +14,11 @@ jest.mock('@defra-fish/connectors-lib', () => ({
 }))
 
 jest.mock('fs')
-
 describe('recurring-payments-job', () => {
+  beforeAll(() => {
+    fs.readFileSync.mockReturnValue(JSON.stringify({ name: 'recurring-payments-test', version: '1.0.0' }))
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     commander.args = ['test']
@@ -98,7 +101,7 @@ describe('recurring-payments-job', () => {
 
   it('logs startup details including name and version', () => {
     const mockPkg = { name: 'recurring-payments-test', version: '1.2.3' }
-    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
+    fs.readFileSync.mockReturnValueOnce(JSON.stringify(mockPkg))
 
     jest.isolateModules(() => {
       const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
@@ -109,6 +112,7 @@ describe('recurring-payments-job', () => {
         mockPkg.name,
         mockPkg.version
       )
+      logSpy.mockRestore()
     })
   })
 
