@@ -141,7 +141,7 @@ const processRecurringPaymentStatus = async payment => {
         debug(`Processed Recurring Payment for ${payment.transaction.id}`)
       } catch (err) {
         console.error(`Failed to process Recurring Payment for ${payment.transaction.id}`, err)
-        return
+        throw err
       }
     }
 
