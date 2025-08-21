@@ -607,7 +607,7 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(errorSpy).toHaveBeenCalledWith('Failed to process Recurring Payment for transaction 1', expect.any(Error))
+    expect(errorSpy).toHaveBeenCalledWith('Failed to process Recurring Payment for trans-1', expect.any(Error))
 
     errorSpy.mockRestore()
   })
