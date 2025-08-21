@@ -1,10 +1,11 @@
 import {
+  dynamicsClient,
   executeQuery,
   findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
-  RecurringPayment,
-  dynamicsClient
+  persist,
+  RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
@@ -14,6 +15,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
+import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -165,9 +167,14 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 export const cancelRecurringPayment = async id => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
-    console.log('RecurringPayment for cancellation: ', recurringPayment)
+    const data = recurringPayment
+    data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment Failure')
+    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+    await persist([updatedRecurringPayment])
+    return updatedRecurringPayment
   } else {
-    console.log('No matches found for cancellation')
+    throw new Error('Invalid id provided for recurring payment cancellation')
   }
 }
 

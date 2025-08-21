@@ -20,6 +20,7 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
 }))
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
+    cancelRecurringPayment: jest.fn(),
     createPaymentJournal: jest.fn(),
     createTransaction: jest.fn(() => ({
       id: 'test-transaction-id',
@@ -635,6 +636,30 @@ describe('recurring-payments-processor', () => {
       )
     }
   )
+
+  it.each([
+    ['a failure', 'agreement-id', getPaymentStatusFailure()],
+    ['a failure', 'test-agreement-id', getPaymentStatusFailure()],
+    ['a failure', 'another-agreement-id', getPaymentStatusFailure()],
+    ['an error', 'agreement-id', getPaymentStatusError()],
+    ['an error', 'test-agreement-id', getPaymentStatusError()],
+    ['an error', 'another-agreement-id', getPaymentStatusError()]
+  ])('cancelRecurringPayment is called when payment is %s', async (_status, agreementId, mockStatus) => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
+    const id = Symbol('recurring-payment-id')
+    salesApi.createTransaction.mockResolvedValueOnce({
+      recurringPayment: {
+        id
+      }
+    })
+    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
+    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
+    getPaymentStatus.mockResolvedValueOnce(mockStatus)
+
+    await processRecurringPayments()
+
+    expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(id)
+  })
 
   it('updatePaymentJournal is called with transaction id and failed status code payment is not succesful and payment journal exists', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])

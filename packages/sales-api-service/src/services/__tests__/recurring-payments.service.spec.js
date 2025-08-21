@@ -5,6 +5,7 @@ import {
   findRecurringPaymentsByAgreementId,
   findById,
   Permission,
+  persist,
   RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import {
@@ -48,7 +49,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
     retrieveMultipleRequest: jest.fn(() => ({ value: [] }))
-  }
+  },
+  persist: jest.fn()
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -870,28 +872,29 @@ describe('recurring payments service', () => {
 
   describe('cancelRecurringPayment', () => {
     it('should call findById with RecurringPayment and the provided id', async () => {
+      findById.mockReturnValueOnce(getMockRecurringPayment())
       const id = 'abc123'
       await cancelRecurringPayment(id)
       expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
     })
 
-    it('should log a RecurringPayment record when there is one match', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      const recurringPayment = { entity: getMockRecurringPayment() }
+    it('should call persist with the updated RecurringPayment', async () => {
+      const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
 
+      const cancelledDate = new Date().toISOString().split('T')[0]
+      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
+      const expectedUpdatedRecurringPayment = { ...recurringPayment, cancelledReason, cancelledDate }
+
       await cancelRecurringPayment('id')
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+      expect(persist).toHaveBeenCalledWith([expect.objectContaining(expectedUpdatedRecurringPayment)])
     })
 
-    it('should log no matches when there are no matches', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    it('should raise an error when there are no matches', async () => {
       findById.mockReturnValueOnce(undefined)
 
-      await cancelRecurringPayment('id')
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
+      await expect(cancelRecurringPayment('id')).rejects.toThrow('Invalid id provided for recurring payment cancellation')
     })
   })
 })
