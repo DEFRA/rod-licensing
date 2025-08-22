@@ -41,6 +41,8 @@ export const getPaymentStatus = async paymentId => {
 
   const response = await fetchPaymentStatus()
 
+  throw new Error('Throwing this error for the sake of testing!')
+
   if (!response.ok) {
     console.error({
       method: 'GET',
