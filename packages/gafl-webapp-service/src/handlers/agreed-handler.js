@@ -130,7 +130,8 @@ const createPayment = async (request, transaction, status) => {
     payment_id: paymentResponse.payment_id,
     payment_provider: paymentResponse.payment_provider,
     created_date: paymentResponse.created_date,
-    href: paymentResponse._links.next_url.href,
+    // href: paymentResponse._links.next_url.href,
+    href: 'force-payment-mop-up',
     self_href: paymentResponse._links.self.href
   }
 

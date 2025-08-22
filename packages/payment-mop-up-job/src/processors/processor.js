@@ -47,9 +47,6 @@ const isExpiredCancelledRejectedOrNotFoundAndPastTimeout = transaction => {
     GOVUK_PAY_ERROR_STATUS_CODES.REJECTED
   ].includes(paymentStatus.state?.code)
 
-  console.log('code: ', paymentStatus.state?.code)
-  console.log('isExpiredCancelledOrRejected: ', isExpiredCancelledOrRejected)
-
   // The payment's not found and three hours have elapsed
   const isNotFoundAndPastTimeout =
     paymentStatus?.code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND &&
@@ -101,7 +98,6 @@ const getStatus = async (paymentReference, agreementId) => {
   const recurring = !!agreementId
   const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference, recurring)
   const paymentStatus = await paymentStatusResponse.json()
-  console.log('paymentStatus: ', paymentStatus)
   if (paymentStatus.state?.status === 'success') {
     const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference, recurring)
     const { events } = await eventsResponse.json()
@@ -124,7 +120,6 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     to: toTimestamp.toISOString()
   })
 
-  console.log('payment journals: ', paymentJournals)
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await Promise.all(
     paymentJournals.map(async p => {
