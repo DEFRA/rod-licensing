@@ -13,11 +13,11 @@ import Boom from '@hapi/boom'
 import db from 'debug'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
-import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
+import { sendPayment, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../constants.js'
-import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
-import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { ORDER_COMPLETE } from '../uri.js'
+import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { v4 as uuidv4 } from 'uuid'
 const debug = db('webapp:agreed-handler')
 
@@ -136,78 +136,6 @@ const createPayment = async (request, transaction, status) => {
   status[COMPLETION_STATUS.paymentCreated] = true
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.transaction.set(transaction)
-}
-
-/**
- * Called when the user has returned to the service from the payment pages. It queries the
- * GOV.UK pay API for the payment status. It updates the journal and determines the
- * next page to display which is either order-complete, or the cancelled or failure pages
- * @param request
- * @param transaction
- * @param status
- * @returns {Promise<void>}
- */
-const processPayment = async (request, transaction, status) => {
-  const recurring = status && status[COMPLETION_STATUS.recurringAgreement] === true
-
-  /*
-   * Get the payment status
-   */
-  const { state } = await getPaymentStatus(transaction.payment.payment_id, recurring)
-
-  if (!state.finished) {
-    throw Boom.forbidden('Attempt to access the agreed handler during payment journey')
-  }
-
-  let next = null
-
-  if (state.status === 'error') {
-    // The payment failed
-    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-    status[COMPLETION_STATUS.paymentFailed] = true
-    status.payment = { code: state.code }
-    await request.cache().helpers.status.set(status)
-    next = PAYMENT_FAILED.uri
-  }
-
-  if (state.status === 'success') {
-    // Defer setting the completed status in the journal until after finalization
-    status[COMPLETION_STATUS.paymentCompleted] = true
-    await request.cache().helpers.status.set(status)
-  } else {
-    /*
-     * This block deals with failed or cancelled payments
-     */
-
-    // The payment expired
-    if (state.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-      status[COMPLETION_STATUS.paymentFailed] = true
-      status.payment = { code: state.code }
-      await request.cache().helpers.status.set(status)
-      next = PAYMENT_FAILED.uri
-    }
-
-    // The user cancelled the payment
-    if (state.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled })
-      status[COMPLETION_STATUS.paymentCancelled] = true
-      status.pay = { code: state.code }
-      await request.cache().helpers.status.set(status)
-      next = PAYMENT_CANCELLED.uri
-    }
-
-    // The payment was rejected
-    if (state.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
-      status[COMPLETION_STATUS.paymentFailed] = true
-      status.payment = { code: state.code }
-      await request.cache().helpers.status.set(status)
-      next = PAYMENT_FAILED.uri
-    }
-  }
-
-  return next
 }
 
 const finaliseTransaction = async (request, transaction, status) => {
