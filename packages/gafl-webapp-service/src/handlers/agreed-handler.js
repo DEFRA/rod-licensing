@@ -64,7 +64,6 @@ const createRecurringPayment = async (request, transaction, status) => {
    * Prepare the payment payload
    */
   const preparedPayment = await prepareRecurringPaymentAgreement(request, transaction)
-
   /*
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
@@ -130,8 +129,7 @@ const createPayment = async (request, transaction, status) => {
     payment_id: paymentResponse.payment_id,
     payment_provider: paymentResponse.payment_provider,
     created_date: paymentResponse.created_date,
-    // href: paymentResponse._links.next_url.href,
-    href: 'force-payment-mop-up',
+    href: paymentResponse._links.next_url.href,
     self_href: paymentResponse._links.self.href
   }
 
@@ -281,11 +279,14 @@ export default async (request, h) => {
       return h.redirect(transaction.payment.href)
     }
 
+    debug('Payment created, skipping processPayment/finaliseTransaction to allow mop-up')
+    return h.redirect('/payment-pending')
+
     // Note: At this point payment completed status is never set
-    const next = await processPayment(request, transaction, status)
-    if (next) {
-      return h.redirectWithLanguageCode(next)
-    }
+    // const next = await processPayment(request, transaction, status)
+    // if (next) {
+    //   return h.redirectWithLanguageCode(next)
+    // }
   }
 
   // If the transaction has already been finalised then redirect to the order completed page
