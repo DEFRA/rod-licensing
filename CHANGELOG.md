@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.12 (2025-08-27)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2198](https://github.com/DEFRA/rod-licensing/pull/2198) Setup Recurring Payments job to log to Errbit ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.63.0-rc.11 (2025-08-21)
 
 #### :rocket: Enhancement
