@@ -1,5 +1,5 @@
 import { Permission, Permit } from '@defra-fish/dynamics-lib'
-import { isJunior, isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import { redis } from './ioredis.service.js'
 import moment from 'moment-timezone'
@@ -86,8 +86,9 @@ const getAgeCategory = (birthDate, issueDate) => {
   const dob = moment(birthDate)
   const issue = moment(issueDate)
   const diff = issue.diff(dob, 'years', true)
+  const seventeenthBirthday = dob.clone().add(17, 'years')
 
-  if (isJunior(diff)) {
+  if (issue.isBefore(seventeenthBirthday)) {
     return 'J'
   } else if (isSenior(diff)) {
     return 'S'
