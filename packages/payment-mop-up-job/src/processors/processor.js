@@ -120,6 +120,8 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     to: toTimestamp.toISOString()
   })
 
+  console.log('paymentJournals: ', paymentJournals)
+
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await Promise.all(
     paymentJournals.map(async p => {
@@ -131,6 +133,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       if (transactionRecord?.recurringPayment) {
         paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
       }
+      console.log('paymentJournalWithStatus: ', paymentJournalWithStatus)
       return paymentJournalWithStatus
     })
   )
