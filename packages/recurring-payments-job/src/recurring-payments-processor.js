@@ -166,6 +166,5 @@ const processRecurringPaymentStatus = async payment => {
     } else {
       debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
-    await salesApi.cancelRecurringPayment(payment.transaction.recurringPayment.id)
   }
 }
