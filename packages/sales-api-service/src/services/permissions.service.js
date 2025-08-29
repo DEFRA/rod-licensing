@@ -76,6 +76,8 @@ export const calculateEndDateMoment = async ({ permitId, startDate }) => {
  */
 export const calculateEndDate = async ({ permitId, startDate }) => (await calculateEndDateMoment({ permitId, startDate })).toISOString()
 
+const ADULT_AGE = 17
+
 /**
  * Determine the appropriate age category code for use in a permission number
  * @param birthDate The birth date of the licensee
@@ -86,7 +88,7 @@ const getAgeCategory = (birthDate, issueDate) => {
   const dob = moment(birthDate)
   const issue = moment(issueDate)
   const diff = issue.diff(dob, 'years', true)
-  const seventeenthBirthday = dob.clone().add(17, 'years')
+  const seventeenthBirthday = dob.clone().add(ADULT_AGE, 'years')
 
   if (issue.isBefore(seventeenthBirthday)) {
     return 'J'
