@@ -1,6 +1,9 @@
 {% extends "layout.njk" %}
 
-{% set title = mssgs.rp_cancel_title %}
+{% from "button/macro.njk" import govukButton %}
+{% from "page-title.njk" import pageTitle %}
+
+{% set title = mssgs.rp_cancel_identify_title %}
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% block content %}
@@ -14,7 +17,6 @@
             text: mssgs.continue,
             classes: "govuk-!-margin-top-1"
           }) }}
-
           {{ csrf() }}
         </form>
     </div>
