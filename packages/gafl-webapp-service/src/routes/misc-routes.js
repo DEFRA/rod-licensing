@@ -13,7 +13,8 @@ import {
   OS_TERMS,
   PROCESS_ANALYTICS_PREFERENCES,
   NEW_PRICES,
-  RECURRING_TERMS_CONDITIONS
+  RECURRING_TERMS_CONDITIONS,
+  CANCEL_RP_AUTHENTICATE
 } from '../uri.js'
 
 import {
@@ -32,6 +33,7 @@ import authenticationHandler from '../handlers/authentication-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import analytics, { checkAnalyticsCookiesPage } from '../handlers/analytics-handler.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
+import cancelRPAuthenticationhander from '../handlers/cancel-rp-authentication-handler.js'
 
 const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || false
 
@@ -220,6 +222,11 @@ export default [
         }
       })
     }
+  },
+  {
+    method: 'GET',
+    path: CANCEL_RP_AUTHENTICATE.uri,
+    handler: cancelRPAuthenticationhander
   },
   simpleView(ACCESSIBILITY_STATEMENT),
   simpleView(REFUND_POLICY),
