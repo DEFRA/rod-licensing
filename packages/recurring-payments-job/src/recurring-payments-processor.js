@@ -135,6 +135,7 @@ const preparePayment = (agreementId, transaction) => {
 
 const processRecurringPaymentStatus = async payment => {
   try {
+    throw new Error('Disaster occurs!')
     const {
       state: { status }
     } = await getPaymentStatus(payment.paymentId)
