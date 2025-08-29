@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.13 (2025-08-29)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2203](https://github.com/DEFRA/rod-licensing/pull/2203) Don't cancel RP if checking payment status throws error ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.63.0-rc.12 (2025-08-27)
 
 #### :rocket: Enhancement
