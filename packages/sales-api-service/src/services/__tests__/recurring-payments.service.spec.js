@@ -95,7 +95,6 @@ jest.mock('../../services/paymentjournals/payment-journals.service.js', () => ({
 }))
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
-  ADVANCED_PURCHASE_MAX_DAYS: 30,
   PAYMENT_JOURNAL_STATUS_CODES: {
     InProgress: 'InProgressCode',
     Cancelled: 'CancelledCode',
@@ -456,6 +455,17 @@ describe('recurring payments service', () => {
         '3456'
       ],
       [
+        'starts thirty-one days after issue date - next due on issue date plus one year',
+        '9o8u7yhui89u8i9oiu8i8u7yhu',
+        {
+          startDate: '2024-12-14T00:00:00.000Z',
+          issueDate: '2024-11-12T15:00:45.922Z',
+          endDate: '2025-12-13T23:59:59.999Z'
+        },
+        '2025-11-12T00:00:00.000Z',
+        '4321'
+      ],
+      [
         "issued on 29th Feb '24, starts on 30th March '24 - next due on 28th Feb '25",
         'hy7u8ijhyu78jhyu8iu8hjiujn',
         {
@@ -511,11 +521,11 @@ describe('recurring payments service', () => {
 
     it.each([
       [
-        'start date is thirty one days after issue date',
+        'start date equals issue date',
         {
-          startDate: '2024-12-14T00:00:00.000Z',
-          issueDate: '2024-11-12T15:00:45.922Z',
-          endDate: '2025-12-13T23:59:59.999Z'
+          startDate: '2024-11-11T00:00:00.000Z',
+          issueDate: '2024-11-11T00:00:00.000Z',
+          endDate: '2025-11-10T23:59:59.999Z'
         }
       ],
       [

@@ -10,7 +10,7 @@ import {
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
@@ -26,7 +26,7 @@ export const getRecurringPayments = date => executeQuery(findDueRecurringPayment
 
 const getNextDueDate = (startDate, issueDate, endDate) => {
   const mStart = moment(startDate)
-  if (mStart.isAfter(moment(issueDate)) && mStart.isSameOrBefore(moment(issueDate).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'), 'day')) {
+  if (mStart.isAfter(moment(issueDate))) {
     if (mStart.isSame(moment(issueDate), 'day')) {
       return moment(startDate).add(1, 'year').subtract(10, 'days').startOf('day').toISOString()
     }
