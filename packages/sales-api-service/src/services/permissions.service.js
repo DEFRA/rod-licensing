@@ -95,8 +95,9 @@ const getAgeCategory = (birthDate, issueDate) => {
     return 'J'
   } else if (issue.isSameOrAfter(sixtysixthBirthday)) {
     return 'S'
+  } else {
+    return 'F'
   }
-  return 'F'
 }
 
 /**
