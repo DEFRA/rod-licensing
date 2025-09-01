@@ -1,5 +1,5 @@
 import { Permission, Permit } from '@defra-fish/dynamics-lib'
-import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import { redis } from './ioredis.service.js'
 import moment from 'moment-timezone'
@@ -77,6 +77,7 @@ export const calculateEndDateMoment = async ({ permitId, startDate }) => {
 export const calculateEndDate = async ({ permitId, startDate }) => (await calculateEndDateMoment({ permitId, startDate })).toISOString()
 
 const ADULT_AGE = 17
+const SENIOR_AGE = 66
 
 /**
  * Determine the appropriate age category code for use in a permission number
@@ -87,12 +88,12 @@ const ADULT_AGE = 17
 const getAgeCategory = (birthDate, issueDate) => {
   const dob = moment(birthDate)
   const issue = moment(issueDate)
-  const diff = issue.diff(dob, 'years', true)
   const seventeenthBirthday = dob.clone().add(ADULT_AGE, 'years')
+  const sixtysixthBirthday = dob.clone().add(SENIOR_AGE, 'years')
 
   if (issue.isBefore(seventeenthBirthday)) {
     return 'J'
-  } else if (isSenior(diff)) {
+  } else if (issue.isSameOrAfter(sixtysixthBirthday)) {
     return 'S'
   }
   return 'F'
