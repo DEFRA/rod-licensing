@@ -6,6 +6,8 @@ export default pageRoute(
   CANCEL_RP_IDENTIFY.page,
   CANCEL_RP_IDENTIFY.uri,
   () => {},
-  request => addLanguageCodeToUri(request, CANCEL_RP_AUTHENTICATE.uri),
+  request => {
+    return addLanguageCodeToUri(request, CANCEL_RP_AUTHENTICATE.uri)
+  },
   () => {}
 )

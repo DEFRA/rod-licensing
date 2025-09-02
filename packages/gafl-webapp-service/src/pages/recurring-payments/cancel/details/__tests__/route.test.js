@@ -1,5 +1,6 @@
 import pageRoute from '../../../../../routes/page-route.js'
-import { CANCEL_RP_DETAILS } from '../../../../../uri.js'
+import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../../uri.js'
+import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 
 require('../route.js')
 // eslint-disable-next-line no-unused-vars
@@ -8,7 +9,8 @@ const [[_v, _p, validator, completion, getData]] = pageRoute.mock.calls
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
   ...jest.requireActual('../../../../../uri.js'),
-  CANCEL_RP_DETAILS: { page: Symbol('cancel-rp-details-page'), uri: Symbol('cancel-rp-details-uri') }
+  CANCEL_RP_DETAILS: { page: Symbol('cancel-rp-details-page'), uri: Symbol('cancel-rp-details-uri') },
+  CANCEL_RP_CONFIRM: { uri: Symbol('cancel-rp-confirm-uri') }
 }))
 jest.mock('../../../../../processors/uri-helper.js')
 
@@ -76,5 +78,29 @@ describe('pageRoute receives expected arguments', () => {
         expect.any(Function)
       )
     })
+  })
+})
+
+describe('completion function', () => {
+  beforeEach(jest.clearAllMocks)
+
+  it('calls addLanguageCodeToUri with request object', () => {
+    const sampleRequest = Symbol('sample request')
+    completion(sampleRequest)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, expect.anything())
+  })
+
+  it('calls addLanguageCodeToUri with CANCEL_RP_AUTHENTICATE uri', () => {
+    completion({})
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), CANCEL_RP_CONFIRM.uri)
+  })
+
+  it('returns the value of addLanguageCodeToUri', () => {
+    const expectedCompletionRedirect = Symbol('expected-completion-redirect')
+    addLanguageCodeToUri.mockReturnValueOnce(expectedCompletionRedirect)
+
+    const completionRedirect = completion({})
+
+    expect(completionRedirect).toBe(expectedCompletionRedirect)
   })
 })
