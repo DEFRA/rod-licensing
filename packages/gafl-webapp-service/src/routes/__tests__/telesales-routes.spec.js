@@ -1,4 +1,5 @@
 import { setupEnvironment } from '../../__mocks__/openid-client.js'
+
 jest.mock('@defra-fish/connectors-lib')
 
 let TestUtils = null
@@ -41,5 +42,33 @@ describe('Telesales route handlers', () => {
       url: '/oidc/role-required'
     })
     expect(data.statusCode).toBe(200)
+  })
+})
+
+describe.only('cancellation route journey behaves as expected', () => {
+  beforeEach(jest.clearAllMocks)
+
+  it('adds the cancellation route journey if SHOW_CANCELLATION_JOURNEY is set to true', () => {
+    process.env.SHOW_CANCELLATION_JOURNEY = 'true'
+    jest.isolateModules(() => {
+      const telesalesRoutes = require('../telesales-routes.js')
+      expect(telesalesRoutes).toMatchSnapshot()
+    })
+  })
+
+  it('omits the cancellation route journey if SHOW_CANCELLATION_JOURNEY is set to false', () => {
+    process.env.SHOW_CANCELLATION_JOURNEY = 'false'
+    jest.isolateModules(() => {
+      const telesalesRoutes = require('../telesales-routes.js')
+      expect(telesalesRoutes).toMatchSnapshot()
+    })
+  })
+
+  it('omits the cancellation route journey if SHOW_CANCELLATION_JOURNEY is not present', () => {
+    delete process.env.SHOW_CANCELLATION_JOURNEY
+    jest.isolateModules(() => {
+      const telesalesRoutes = require('../telesales-routes.js')
+      expect(telesalesRoutes).toMatchSnapshot()
+    })
   })
 })

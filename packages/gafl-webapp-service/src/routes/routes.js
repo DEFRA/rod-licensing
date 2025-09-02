@@ -32,11 +32,6 @@ import invalidLink from '../pages/renewals/renewal-inactive/route.js'
 import renewalStartDate from '../pages/renewals/renewal-start-date/route.js'
 import licenceNotFound from '../pages/renewals/licence-not-found/route.js'
 
-import cancelRPIdentify from '../pages/recurring-payments/cancel/identify/route.js'
-import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js'
-import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
-import cancelRPComplete from '../pages/recurring-payments/cancel/complete/route.js'
-
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
 import telesalesRoutes from './telesales-routes.js'
@@ -78,11 +73,7 @@ const routes = [
   ...renewalStartDate,
   ...choosePayment,
   ...setUpRecurring,
-  ...licenceNotFound,
-  ...cancelRPIdentify,
-  ...cancelRPDetails,
-  ...cancelRPConfirm,
-  ...cancelRPComplete
+  ...licenceNotFound
 ]
 
 if (process.env.CHANNEL === 'telesales') {
