@@ -133,7 +133,7 @@ describe('contact-summary > route', () => {
     const rowGenerator = new route.RowGenerator(request, permission)
     const row = rowGenerator.generateAddressRow('GB')
 
-    expect(row.value.text).toBe('14 howecroft court, eastmead lane, bristol, BS9 1HJ, GB')
+    expect(row.value.text).toBe('14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB')
   })
 
   it('should set status.fromSummary to seen', async () => {
