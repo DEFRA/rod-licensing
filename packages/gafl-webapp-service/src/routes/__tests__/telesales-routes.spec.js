@@ -45,7 +45,7 @@ describe('Telesales route handlers', () => {
   })
 })
 
-describe.only('cancellation route journey behaves as expected', () => {
+describe('cancellation route journey behaves as expected', () => {
   beforeEach(jest.clearAllMocks)
 
   it('adds the cancellation route journey if SHOW_CANCELLATION_JOURNEY is set to true', () => {
