@@ -5,7 +5,7 @@ import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js
 import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
 import cancelRPComplete from '../pages/recurring-payments/cancel/complete/route.js'
 
-const routes = [
+const telesalesRoutes = [
   {
     method: ['POST'],
     path: OIDC_SIGNIN.uri,
@@ -32,9 +32,9 @@ const routes = [
 ]
 
 if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
-  routes.push(...cancelRPIdentify)
-  routes.push(...cancelRPDetails)
-  routes.push(...cancelRPConfirm)
-  routes.push(...cancelRPComplete)
+  telesalesRoutes.push(...cancelRPIdentify)
+  telesalesRoutes.push(...cancelRPDetails)
+  telesalesRoutes.push(...cancelRPConfirm)
+  telesalesRoutes.push(...cancelRPComplete)
 }
-export default routes
+export default telesalesRoutes
