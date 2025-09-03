@@ -124,16 +124,61 @@ const getRequestMock = ({
 })
 
 describe('contact-summary > route', () => {
-  it('omits undefined address fields from the output string', () => {
-    const permission = getMockPermission({
-      locality: undefined
+  describe('generateAddressRow', () => {
+    it.each([
+      [
+        'premises',
+        {
+          premises: undefined,
+          street: 'Howecroft Court',
+          locality: 'Eastmead Lane',
+          town: 'Bristol',
+          postcode: 'BS9 1HJ'
+        },
+        'Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB'
+      ],
+      [
+        'street',
+        {
+          premises: '14',
+          street: undefined,
+          locality: 'Eastmead Lane',
+          town: 'Bristol',
+          postcode: 'BS9 1HJ'
+        },
+        '14, Eastmead Lane, Bristol, BS9 1HJ, GB'
+      ],
+      [
+        'locality',
+        {
+          premises: '14',
+          street: 'Howecroft Court',
+          locality: undefined,
+          town: 'Bristol',
+          postcode: 'BS9 1HJ'
+        },
+        '14, Howecroft Court, Bristol, BS9 1HJ, GB'
+      ],
+      [
+        'town',
+        {
+          premises: '14',
+          street: 'Howecroft Court',
+          locality: 'Eastmead Lane',
+          town: undefined,
+          postcode: 'BS9 1HJ'
+        },
+        '14, Howecroft Court, Eastmead Lane, BS9 1HJ, GB'
+      ]
+    ])('omits %s when undefined', (missingField, licenseeOverrides, expectedAddress) => {
+      const permission = getMockPermission(licenseeOverrides)
+      const request = getRequestMock({ permission })
+      const rowGenerator = new route.RowGenerator(request, permission)
+
+      const row = rowGenerator.generateAddressRow('GB')
+
+      expect(row.value.text).toBe(expectedAddress)
     })
-
-    const request = getRequestMock({ permission })
-    const rowGenerator = new route.RowGenerator(request, permission)
-    const row = rowGenerator.generateAddressRow('GB')
-
-    expect(row.value.text).toBe('14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB')
   })
 
   it('should set status.fromSummary to seen', async () => {
