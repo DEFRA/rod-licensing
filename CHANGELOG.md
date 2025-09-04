@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.14 (2025-09-04)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2200](https://github.com/DEFRA/rod-licensing/pull/2200) Junior licence format ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.63.0-rc.13 (2025-08-29)
 
 #### :rocket: Enhancement
