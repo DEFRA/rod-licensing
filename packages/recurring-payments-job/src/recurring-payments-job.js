@@ -23,8 +23,13 @@ if (delay > 0) {
 }
 
 function executeRecurringPaymentsJob () {
-  recurringPaymentsJob.action(processRecurringPayments())
-  airbrake.flush()
+  try {
+    recurringPaymentsJob.action(processRecurringPayments())
+  } catch (e) {
+    console.error(e)
+  } finally {
+    airbrake.flush()
+  }
 }
 
 const shutdown = code => {
