@@ -1,19 +1,22 @@
 import commander from 'commander'
-import { airbrake } from '@defra-fish/connectors-lib'
-import { processRecurringPayments } from '../recurring-payments-processor.js'
+import { execute } from '../recurring-payments-processor.js'
 import fs from 'fs'
 
 jest.useFakeTimers()
-
 jest.mock('../recurring-payments-processor.js')
+/*
+without the following mock, the tests fail on the fs mock, with an error in connectors-lib
+even though connectors-lib isn't used in recurring-payments-job.js anymore. Not got time to
+work out why this is at the moment...
+*/
 jest.mock('@defra-fish/connectors-lib', () => ({
   airbrake: {
     initialise: jest.fn(),
     flush: jest.fn()
   }
 }))
-
 jest.mock('fs')
+
 describe('recurring-payments-job', () => {
   beforeAll(() => {
     fs.readFileSync.mockReturnValue(JSON.stringify({ name: 'recurring-payments-test', version: '1.0.0' }))
@@ -22,81 +25,6 @@ describe('recurring-payments-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     commander.args = ['test']
-  })
-
-  it('initialises airbrake', () => {
-    jest.isolateModules(() => {
-      require('../recurring-payments-job.js')
-      expect(airbrake.initialise).toHaveBeenCalled()
-    })
-  })
-
-  it('flushes airbrake before script ends', () => {
-    jest.isolateModules(() => {
-      require('../recurring-payments-job.js')
-      expect(airbrake.flush).toHaveBeenCalled()
-    })
-  })
-
-  it("doesn't flush airbrake before processRecurringPayments has been called", () => {
-    jest.isolateModules(() => {
-      processRecurringPayments.mockImplementationOnce(() => {
-        expect(airbrake.flush).not.toHaveBeenCalled()
-      })
-      require('../recurring-payments-job.js')
-    })
-  })
-
-  it.each([
-    ['SIGINT', 130],
-    ['SIGTERM', 137]
-  ])('flushes airbrake on %s signal', (signal, code) => {
-    jest.isolateModules(() => {
-      // setup a delay so script doesn't call processRecurringPayments and exit naturally
-      process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '1'
-      const signalCallbacks = {}
-      jest.spyOn(process, 'on')
-      jest.spyOn(process, 'exit')
-      process.on.mockImplementation((signalToken, callback) => {
-        signalCallbacks[signalToken] = callback
-      })
-      process.exit.mockImplementation(() => {
-        // so we don't crash out of the tests!
-      })
-
-      require('../recurring-payments-job.js')
-      signalCallbacks[signal]()
-
-      expect(airbrake.flush).toHaveBeenCalled()
-      process.on.mockRestore()
-      process.exit.mockRestore()
-    })
-  })
-
-  it.each([
-    ['SIGINT', 130],
-    ['SIGTERM', 137]
-  ])('calls process.exit on %s signal with %i code', (signal, code) => {
-    jest.isolateModules(() => {
-      // setup a delay so script doesn't call processRecurringPayments and exit naturally
-      process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '1'
-      const signalCallbacks = {}
-      jest.spyOn(process, 'on')
-      jest.spyOn(process, 'exit')
-      process.on.mockImplementation((signalToken, callback) => {
-        signalCallbacks[signalToken] = callback
-      })
-      process.exit.mockImplementation(() => {
-        // so we don't crash out of the tests!
-      })
-
-      require('../recurring-payments-job.js')
-      signalCallbacks[signal]()
-
-      expect(process.exit).toHaveBeenCalledWith(code)
-      process.on.mockRestore()
-      process.exit.mockRestore()
-    })
   })
 
   it('logs startup details including name and version', () => {
@@ -116,11 +44,11 @@ describe('recurring-payments-job', () => {
     })
   })
 
-  it('calls processRecurringPayments when no delay', () => {
+  it('calls execute when no delay', () => {
     jest.isolateModules(() => {
       process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '0'
       require('../recurring-payments-job.js')
-      expect(processRecurringPayments).toHaveBeenCalled()
+      expect(execute).toHaveBeenCalled()
     })
   })
 
@@ -133,12 +61,12 @@ describe('recurring-payments-job', () => {
     })
   })
 
-  it('calls processRecurringPayments when delay', () => {
+  it('calls execute when delay', () => {
     process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '5'
     jest.isolateModules(() => {
       require('../recurring-payments-job.js')
       jest.advanceTimersByTime(parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY) * 1000)
-      expect(processRecurringPayments).toHaveBeenCalled()
+      expect(execute).toHaveBeenCalled()
     })
   })
 
