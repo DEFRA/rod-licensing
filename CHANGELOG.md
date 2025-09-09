@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.15 (2025-09-09)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2204](https://github.com/DEFRA/rod-licensing/pull/2204) Allow RCP agreements to be created through easy renewal with later date ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.63.0-rc.14 (2025-09-04)
 
 #### :bug: Bug Fix
