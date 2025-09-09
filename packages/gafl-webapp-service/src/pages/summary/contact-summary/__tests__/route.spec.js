@@ -130,9 +130,9 @@ describe('contact-summary > route', () => {
         'premises',
         {
           premises: undefined,
-          street: 'Howecroft Court',
-          locality: 'Eastmead Lane',
-          town: 'Bristol',
+          street: 'howecroft court',
+          locality: 'eastmead lane',
+          town: 'bristol',
           postcode: 'BS9 1HJ'
         },
         'Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB'
@@ -142,8 +142,8 @@ describe('contact-summary > route', () => {
         {
           premises: '14',
           street: undefined,
-          locality: 'Eastmead Lane',
-          town: 'Bristol',
+          locality: 'eastmead lane',
+          town: 'bristol',
           postcode: 'BS9 1HJ'
         },
         '14, Eastmead Lane, Bristol, BS9 1HJ, GB'
@@ -152,9 +152,9 @@ describe('contact-summary > route', () => {
         'locality',
         {
           premises: '14',
-          street: 'Howecroft Court',
+          street: 'howecroft court',
           locality: undefined,
-          town: 'Bristol',
+          town: 'bristol',
           postcode: 'BS9 1HJ'
         },
         '14, Howecroft Court, Bristol, BS9 1HJ, GB'
@@ -163,8 +163,8 @@ describe('contact-summary > route', () => {
         'town',
         {
           premises: '14',
-          street: 'Howecroft Court',
-          locality: 'Eastmead Lane',
+          street: 'howecroft court',
+          locality: 'eastmead lane',
           town: undefined,
           postcode: 'BS9 1HJ'
         },
