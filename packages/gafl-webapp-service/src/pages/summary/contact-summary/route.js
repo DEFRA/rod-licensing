@@ -42,8 +42,11 @@ const CHANGE_CONTACT = 'change-contact'
 const META_TAG_TELEPHONE_NO = '<meta name="format-detection" content="telephone=no">'
 
 function capitalise (str) {
-  if (!str) return undefined
-  else return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase())
+  if (!str) {
+    return undefined
+  } else {
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase())
+  }
 }
 
 export class RowGenerator {
