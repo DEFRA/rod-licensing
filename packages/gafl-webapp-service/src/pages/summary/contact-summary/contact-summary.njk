@@ -15,9 +15,7 @@
         isPageHeading: true
       }
     }) %}
-        <div class="address_list">
-            {{ govukSummaryList({ rows: data.summaryTable }) }}
-        </div>
+    {{ govukSummaryList({ rows: data.summaryTable }) }}
     {% endcall %}
 {% endset -%}
 
