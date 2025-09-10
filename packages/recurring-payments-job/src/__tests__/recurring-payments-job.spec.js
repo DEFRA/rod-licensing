@@ -4,18 +4,12 @@ import fs from 'fs'
 
 jest.useFakeTimers()
 jest.mock('../recurring-payments-processor.js')
-/*
-without the following mock, the tests fail on the fs mock, with an error in connectors-lib
-even though connectors-lib isn't used in recurring-payments-job.js anymore. Not got time to
-work out why this is at the moment...
-*/
-jest.mock('@defra-fish/connectors-lib', () => ({
-  airbrake: {
-    initialise: jest.fn(),
-    flush: jest.fn()
+jest.mock('fs', () => ({
+  readFileSync: jest.fn(),
+  promises: {
+    readFile: jest.fn()
   }
 }))
-jest.mock('fs')
 
 describe('recurring-payments-job', () => {
   beforeAll(() => {
