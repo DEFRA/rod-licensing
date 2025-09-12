@@ -30,7 +30,7 @@ jest.mock('../../../../processors/mapping-constants', () => ({
 
 jest.mock('../../../../processors/refdata-helper.js', () => ({
   countries: {
-    nameFromCode: async () => 'GB'
+    nameFromCode: async () => 'England'
   }
 }))
 
@@ -133,9 +133,10 @@ describe('contact-summary > route', () => {
           street: 'howecroft court',
           locality: 'eastmead lane',
           town: 'bristol',
-          postcode: 'BS9 1HJ'
+          postcode: 'BS9 1HJ',
+          country: 'England'
         },
-        'Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB'
+        'Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, England'
       ],
       [
         'street',
@@ -144,9 +145,10 @@ describe('contact-summary > route', () => {
           street: undefined,
           locality: 'eastmead lane',
           town: 'bristol',
-          postcode: 'BS9 1HJ'
+          postcode: 'BS9 1HJ',
+          country: 'England'
         },
-        '14, Eastmead Lane, Bristol, BS9 1HJ, GB'
+        '14, Eastmead Lane, Bristol, BS9 1HJ, England'
       ],
       [
         'locality',
@@ -155,9 +157,10 @@ describe('contact-summary > route', () => {
           street: 'howecroft court',
           locality: undefined,
           town: 'bristol',
-          postcode: 'BS9 1HJ'
+          postcode: 'BS9 1HJ',
+          country: 'Northern Ireland'
         },
-        '14, Howecroft Court, Bristol, BS9 1HJ, GB'
+        '14, Howecroft Court, Bristol, BS9 1HJ, Northern Ireland'
       ],
       [
         'town',
@@ -166,16 +169,17 @@ describe('contact-summary > route', () => {
           street: 'howecroft court',
           locality: 'eastmead lane',
           town: undefined,
-          postcode: 'BS9 1HJ'
+          postcode: 'BS9 1HJ',
+          country: 'Wales'
         },
-        '14, Howecroft Court, Eastmead Lane, BS9 1HJ, GB'
+        '14, Howecroft Court, Eastmead Lane, BS9 1HJ, Wales'
       ]
     ])('omits %s when undefined', (missingField, licenseeOverrides, expectedAddress) => {
       const permission = getMockPermission(licenseeOverrides)
       const request = getRequestMock({ permission })
       const rowGenerator = new route.RowGenerator(request, permission)
 
-      const row = rowGenerator.generateAddressRow('GB')
+      const row = rowGenerator.generateAddressRow(licenseeOverrides.country)
 
       expect(row.value.text).toBe(expectedAddress)
     })
