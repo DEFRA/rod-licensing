@@ -19,12 +19,20 @@ jest.mock('../../config.js', () => ({
 jest.mock('@defra-fish/connectors-lib', () => ({
   AWS: jest.fn(() => ({
     s3: {
-      getObject: jest.fn(() => ({
-        createReadStream: jest.fn(() => ({}))
-      }))
-    }
+      send: jest.fn()
+    },
+    GetObjectCommand: jest.fn(params => ({ ...params }))
   }))
 }))
+
+const mockStream = new Readable({
+  read() {
+    this.push('test data')
+    this.push(null) // end stream
+  }
+})
+
+s3.send.mockResolvedValueOnce({ Body: mockStream })
 
 describe('s3-to-local', () => {
   beforeEach(() => {
