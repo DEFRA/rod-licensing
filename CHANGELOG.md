@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.17 (2025-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2210](https://github.com/DEFRA/rod-licensing/pull/2210) Country capital letters ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.63.0-rc.16 (2025-09-09)
 
 #### :bug: Bug Fix
