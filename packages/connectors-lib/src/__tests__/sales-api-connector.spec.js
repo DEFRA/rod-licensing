@@ -821,4 +821,44 @@ describe('sales-api-connector', () => {
       await expect(salesApi.retrieveStagedTransaction('id')).rejects.toThrow('Internal Server Error')
     })
   })
+
+  describe('retrieveRecurringPaymentAgreement', () => {
+    describe.each([['id'], ['abc-123']])("Retrieving recurring payment agreement id '%s'", agreementId => {
+      beforeEach(() => {
+        fetch.mockReturnValueOnce({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ agreementId })
+        })
+      })
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.retrieveRecurringPaymentAgreement(agreementId)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/retrieveRecurringPaymentAgreement/${agreementId}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.retrieveRecurringPaymentAgreement(agreementId)
+
+        expect(processedResult).toEqual({ agreementId })
+      })
+    })
+
+    it('throws an error on non-2xx response', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: async () => 'Server Error'
+      })
+
+      await expect(salesApi.retrieveRecurringPaymentAgreement('agreementId')).rejects.toThrow('Internal Server Error')
+    })
+  })
 })

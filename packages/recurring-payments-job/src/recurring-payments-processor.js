@@ -71,7 +71,15 @@ const processRecurringPayment = async record => {
 
 const createNewTransaction = async (referenceNumber, recurringPayment) => {
   const transactionData = await processPermissionData(referenceNumber, recurringPayment)
-  return salesApi.createTransaction(transactionData)
+  const transaction = salesApi.createTransaction(transactionData)
+  const agreementResponse = await salesApi.retrieveRecurringPaymentAgreement(recurringPayment.agreementId)
+  if (agreementResponse.payment_instrument?.card_details?.card_type === 'debit') {
+    transaction.source = 'Debit card'
+  } else {
+    transaction.source = 'Credit card'
+  }
+  transaction.paymentType = 'Gov Pay'
+  return transaction
 }
 
 const takeRecurringPayment = async (agreementId, transaction) => {

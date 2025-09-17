@@ -33,3 +33,7 @@ export const processRPResultRequestParamsSchema = Joi.object({
 export const cancelRecurringPaymentRequestParamsSchema = Joi.object({
   id: Joi.string().required()
 })
+
+export const retrieveRecurringPaymentAgreementRequestParamsSchema = Joi.object({
+  agreementId: Joi.string().required()
+})

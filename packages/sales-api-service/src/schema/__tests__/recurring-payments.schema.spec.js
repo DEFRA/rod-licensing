@@ -2,7 +2,8 @@ import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema,
+  retrieveRecurringPaymentAgreementRequestParamsSchema
 } from '../recurring-payments.schema.js'
 
 jest.mock('../validators/validators.js', () => ({
@@ -180,5 +181,21 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
   it('throws an error if id is not the correct type', async () => {
     const sampleData = { id: 99 }
     expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('retrieveRecurringPaymentAgreementRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    const sampleData = { agreementId: 'abc123' }
+    expect(() => retrieveRecurringPaymentAgreementRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if agreementId missing', async () => {
+    expect(() => retrieveRecurringPaymentAgreementRequestParamsSchema.validateAsync({}).rejects.toThrow())
+  })
+
+  it('throws an error if agreementId is not the correct type', async () => {
+    const sampleData = { agreementId: 99 }
+    expect(() => retrieveRecurringPaymentAgreementRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
   })
 })

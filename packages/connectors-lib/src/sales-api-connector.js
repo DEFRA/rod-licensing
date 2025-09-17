@@ -330,3 +330,13 @@ export const cancelRecurringPayment = async id => {
 export const retrieveStagedTransaction = async id => {
   return exec2xxOrThrow(call(new URL(`/retrieveStagedTransaction/${id}`, urlBase), 'get'))
 }
+
+/**
+ * Retrieve recurring payment agreement details
+ *
+ * @param {string} agreementId
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const retrieveRecurringPaymentAgreement = async agreementId =>
+  exec2xxOrThrow(call(new URL(`/retrieveRecurringPaymentAgreement/${agreementId}`, urlBase), 'get'))

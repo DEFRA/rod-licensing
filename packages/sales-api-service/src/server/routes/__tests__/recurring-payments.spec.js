@@ -1,9 +1,15 @@
 import recurringPayments from '../recurring-payments.js'
-import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '../../../services/recurring-payments.service.js'
+import {
+  getRecurringPayments,
+  processRPResult,
+  cancelRecurringPayment,
+  getRecurringPaymentAgreement
+} from '../../../services/recurring-payments.service.js'
 import {
   dueRecurringPaymentsRequestParamsSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema,
+  retrieveRecurringPaymentAgreementRequestParamsSchema
 } from '../../../schema/recurring-payments.schema.js'
 
 const [
@@ -15,19 +21,24 @@ const [
   },
   {
     options: { handler: crpHandler }
+  },
+  {
+    options: { handler: rrpHandler }
   }
 ] = recurringPayments
 
 jest.mock('../../../services/recurring-payments.service.js', () => ({
   getRecurringPayments: jest.fn(),
   processRPResult: jest.fn(),
-  cancelRecurringPayment: jest.fn()
+  cancelRecurringPayment: jest.fn(),
+  getRecurringPaymentAgreement: jest.fn()
 }))
 
 jest.mock('../../../schema/recurring-payments.schema.js', () => ({
   dueRecurringPaymentsRequestParamsSchema: jest.fn(),
   processRPResultRequestParamsSchema: jest.fn(),
-  cancelRecurringPaymentRequestParamsSchema: jest.fn()
+  cancelRecurringPaymentRequestParamsSchema: jest.fn(),
+  retrieveRecurringPaymentAgreementRequestParamsSchema: jest.fn()
 }))
 
 const getMockRequest = ({
@@ -116,6 +127,28 @@ describe('recurring payments', () => {
       const request = getMockRequest({ id })
       await crpHandler(request, getMockResponseToolkit())
       expect(recurringPayments[2].options.validate.params).toBe(cancelRecurringPaymentRequestParamsSchema)
+    })
+  })
+
+  describe('retrieveRecurringPaymentAgreement', () => {
+    it('handler should return continue response', async () => {
+      const request = getMockRequest({})
+      const responseToolkit = getMockResponseToolkit()
+      expect(await rrpHandler(request, responseToolkit)).toEqual(responseToolkit.continue)
+    })
+
+    it('should call getRecurringPaymentAgreement with agreement id', async () => {
+      const agreementId = Symbol('agreement-id')
+      const request = getMockRequest({ agreementId })
+      await rrpHandler(request, getMockResponseToolkit())
+      expect(getRecurringPaymentAgreement).toHaveBeenCalledWith(agreementId)
+    })
+
+    it('should validate with retrieveRecurringPaymentAgreementRequestParamsSchema', async () => {
+      const agreementId = Symbol('agreement-id')
+      const request = getMockRequest({ agreementId })
+      await rrpHandler(request, getMockResponseToolkit())
+      expect(recurringPayments[3].options.validate.params).toBe(retrieveRecurringPaymentAgreementRequestParamsSchema)
     })
   })
 })
