@@ -681,6 +681,32 @@ describe('recurring-payments-processor', () => {
     })
   })
 
+  it('does not abort when getPaymentStatus rejects for one payment (allSettled at status stage)', async () => {
+    mockTwoDuePayments()
+
+    const id1 = 'pay-1'
+    const id2 = 'pay-2'
+    sendPayment
+      .mockResolvedValueOnce({ payment_id: id1, created_date: date1 })
+      .mockResolvedValueOnce({ payment_id: id2, created_date: date2 })
+
+    getPaymentStatus.mockRejectedValueOnce({ response: { status: 500 } }).mockResolvedValueOnce(getPaymentStatusSuccess())
+
+    salesApi.processRPResult.mockResolvedValueOnce()
+
+    await processRecurringPayments()
+
+    const summary = {
+      statusArgs: getPaymentStatus.mock.calls,
+      rpResultArgs: salesApi.processRPResult.mock.calls
+    }
+
+    expect(summary).toEqual({
+      statusArgs: [[id1], [id2]],
+      rpResultArgs: [['trans-2', id2, date2]]
+    })
+  })
+
   // --- //
 
   it.each([
