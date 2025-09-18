@@ -1,4 +1,13 @@
 
+## v1.63.0-rc.18 (2025-09-18)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2207](https://github.com/DEFRA/rod-licensing/pull/2207) Refactor for Airbrake integration ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.63.0-rc.17 (2025-09-16)
 
 #### :bug: Bug Fix
