@@ -350,6 +350,7 @@
   "identify_title": "Renew your rod fishing licence?",
   "important_info_contact_content_salmon": "We will use this email or mobile number to send a reminder to report a catch return. We may also send other important information, such as changes affecting the licence or the fishing byelaws.",
   "important_info_contact_content_not_salmon": "We may also use this email or mobile number to send important information, such as changes affecting the licence or the fishing byelaws.",
+  "important_info_contact_content_12_months": "We will also use this email or mobile number to send renewal reminders and other important updates, like changes to rod fishing byelaws.",
   "important_info_contact_error_choose_short": "Choose where we should send the fishing licence",
   "important_info_contact_error_choose": "Choose how we should contact the licence holder",
   "important_info_contact_error_email": "Enter an email address in the correct format",
