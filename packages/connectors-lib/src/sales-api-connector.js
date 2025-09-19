@@ -81,6 +81,17 @@ const exec2xxOrNull = async requestPromise => {
 export const createTransaction = async transaction => exec2xxOrThrow(call(new URL('/transactions', urlBase), 'post', transaction))
 
 /**
+ * Update a transaction in the sales API
+ *
+ * @param id the transaction id
+ * @param type the payment type
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const updateTransactionSourceAndPaymentType = async (id, type) =>
+  exec2xxOrThrow(call(new URL(`/transactions/${id}/type`, urlBase), 'patch', { type }))
+
+/**
  * Create new transactions in the sales API in batch mode
  *
  * @param transactionArr the array containing multiple transaction payloads

@@ -35,6 +35,11 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     updatePaymentJournal: jest.fn(),
     retrieveRecurringPaymentAgreement: jest.fn(() => ({
       payment_instrument: { card_details: { card_type: 'debit' } }
+    })),
+    updateTransactionSourceAndPaymentType: jest.fn((id, type) => ({
+      id,
+      paymentType: type,
+      source: 'Gov Pay'
     }))
   }
 }))
@@ -161,9 +166,17 @@ describe('recurring-payments-processor', () => {
       const permissionData = { licensee: { countryCode: 'GB-ENG' } }
       for (let x = 0; x < agreementIds.length; x++) {
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce(permissionData)
-        salesApi.createTransaction.mockReturnValueOnce({
+        salesApi.createTransaction.mockResolvedValueOnce({
           cost: 50,
           id: `transaction-id-${x + 1}`
+        })
+        salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
+          payment_instrument: { card_details: { card_type: 'debit' } }
+        })
+        salesApi.updateTransactionSourceAndPaymentType.mockResolvedValueOnce({
+          id: `transaction-id-${x + 1}`,
+          cost: 50,
+          payment: { source: 'Gov Pay', method: 'Debit card' }
         })
 
         if (x === 1) {
@@ -378,30 +391,35 @@ describe('recurring-payments-processor', () => {
   it.each([
     ['Debit card', 'debit'],
     ['Credit card', 'credit']
-  ])('sets transaction source too %s when agreement has %s card details', async (source, cardType) => {
+  ])('sets transaction payment type too %s when agreement has %s card details', async (type, card) => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment()])
     salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
-    salesApi.createTransaction.mockReturnValueOnce({
+    salesApi.createTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       cost: 50,
       recurringPayment: { agreementId: 'test-agreement-id' }
     })
     salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
-      payment_instrument: { card_details: { card_type: cardType } }
+      payment_instrument: { card_details: { card_type: card } }
+    })
+    salesApi.updateTransactionSourceAndPaymentType.mockResolvedValueOnce({
+      id: 'test-transaction-id',
+      paymentType: type,
+      source: 'Gov Pay'
     })
     sendPayment.mockResolvedValueOnce({ payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00Z' })
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
-    const transaction = salesApi.createTransaction.mock.results[0].value
-    expect(transaction.source).toBe(source)
+    const transaction = await salesApi.updateTransactionSourceAndPaymentType.mock.results[0].value
+    expect(transaction.paymentType).toBe(type)
   })
 
-  it('sets transaction payment type too Gov Pay', async () => {
+  it('sets transaction payment type to Gov Pay', async () => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment()])
     salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
-    salesApi.createTransaction.mockReturnValueOnce({
+    salesApi.createTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       cost: 50,
       recurringPayment: { agreementId: 'test-agreement-id' }
@@ -409,13 +427,18 @@ describe('recurring-payments-processor', () => {
     salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
+    salesApi.updateTransactionSourceAndPaymentType.mockResolvedValueOnce({
+      id: 'test-transaction-id',
+      paymentType: 'Debit card',
+      source: 'Gov Pay'
+    })
     sendPayment.mockResolvedValueOnce({ payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00Z' })
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await processRecurringPayments()
 
-    const transaction = salesApi.createTransaction.mock.results[0].value
-    expect(transaction.paymentType).toBe('Gov Pay')
+    const updatedTransaction = await salesApi.updateTransactionSourceAndPaymentType.mock.results[0].value
+    expect(updatedTransaction.source).toBe('Gov Pay')
   })
 
   it('assigns the correct startDate when licenceStartTime is present', async () => {
@@ -471,9 +494,19 @@ describe('recurring-payments-processor', () => {
       licensee: { countryCode: 'GB-ENG' }
     })
 
-    salesApi.createTransaction.mockReturnValueOnce({
+    salesApi.createTransaction.mockResolvedValueOnce({
       cost: 50,
       id: transactionId
+    })
+
+    salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
+      payment_instrument: { card_details: { card_type: 'debit' } }
+    })
+
+    salesApi.updateTransactionSourceAndPaymentType.mockResolvedValueOnce({
+      id: transactionId,
+      cost: 50,
+      payment: { source: 'Gov Pay', method: 'Debit card' }
     })
 
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
@@ -693,11 +726,18 @@ describe('recurring-payments-processor', () => {
   ])('cancelRecurringPayment is called when payment is %s', async (_status, agreementId, mockStatus) => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
     const id = Symbol('recurring-payment-id')
-    salesApi.createTransaction.mockResolvedValueOnce({
-      recurringPayment: {
-        id
-      }
+
+    salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
+      payment_instrument: { card_details: { card_type: 'debit' } }
     })
+
+    salesApi.updateTransactionSourceAndPaymentType.mockResolvedValueOnce({
+      id: 'test-transaction-id',
+      cost: 50,
+      recurringPayment: { id },
+      payment: { source: 'Gov Pay', method: 'Debit card' }
+    })
+
     const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce(mockStatus)
@@ -710,7 +750,7 @@ describe('recurring-payments-processor', () => {
   it('updatePaymentJournal is called with transaction id and failed status code payment is not succesful and payment journal exists', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const transactionId = 'test-transaction-id'
-    salesApi.createTransaction.mockReturnValueOnce({
+    salesApi.createTransaction.mockResolvedValueOnce({
       cost: 50,
       id: transactionId
     })
@@ -727,7 +767,7 @@ describe('recurring-payments-processor', () => {
   it('updatePaymentJournal is not called when failed status code payment is not succesful but payment journal does not exist', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const transactionId = 'test-transaction-id'
-    salesApi.createTransaction.mockReturnValueOnce({
+    salesApi.createTransaction.mockResolvedValueOnce({
       cost: 50,
       id: transactionId
     })
@@ -831,9 +871,19 @@ describe('recurring-payments-processor', () => {
           licensee: { countryCode: 'GB-ENG' }
         })
 
-        salesApi.createTransaction.mockReturnValueOnce({
+        salesApi.createTransaction.mockResolvedValueOnce({
           cost: i,
           id: permit
+        })
+
+        salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
+          payment_instrument: { card_details: { card_type: 'debit' } }
+        })
+
+        salesApi.updateTransactionSourceAndPaymentType.mockResolvedValueOnce({
+          id: permit,
+          cost: i,
+          payment: { source: 'Gov Pay', method: 'Debit card' }
         })
       })
 
@@ -874,7 +924,7 @@ describe('recurring-payments-processor', () => {
           licensee: { countryCode: 'GB-ENG' }
         })
 
-        salesApi.createTransaction.mockReturnValueOnce({
+        salesApi.createTransaction.mockResolvedValueOnce({
           cost: i,
           id: permit
         })
