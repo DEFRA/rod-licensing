@@ -210,7 +210,7 @@ export default [
         const { id } = request.params
         const { type } = request.payload
         const updatedTransaction = await updateTransactionSourceAndPaymentType(id, type)
-        return h.response(updatedTransaction).code(200)
+        return h.response(updatedTransaction)
       },
       description: 'Update transaction source and payment type',
       notes: 'Update transaction source and payment type',
