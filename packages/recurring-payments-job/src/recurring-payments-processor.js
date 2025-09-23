@@ -1,11 +1,13 @@
 import moment from 'moment-timezone'
 import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { salesApi, airbrake } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
 
 const debug = db('recurring-payments:processor')
 
+const SIGINT_CODE = 130
+const SIGTERM_CODE = 137
 const PAYMENT_STATUS_DELAY = 60000
 const MIN_CLIENT_ERROR = 400
 const MAX_CLIENT_ERROR = 499
@@ -15,18 +17,18 @@ const MAX_SERVER_ERROR = 599
 const isClientError = code => code >= MIN_CLIENT_ERROR && code <= MAX_CLIENT_ERROR
 const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERROR
 
-const fetchDueRecurringPayments = async date => {
+export const execute = async () => {
+  airbrake.initialise()
   try {
-    const duePayments = await salesApi.getDueRecurringPayments(date)
-    debug('Recurring Payments found:', duePayments)
-    return duePayments
-  } catch (error) {
-    console.error('Run aborted. Error fetching due recurring payments:', error)
-    throw error
+    await processRecurringPayments()
+  } catch (e) {
+    console.error(e)
+  } finally {
+    await airbrake.flush()
   }
 }
 
-export const processRecurringPayments = async () => {
+const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() !== 'true') {
     debug('Recurring Payments job disabled')
     return
@@ -50,6 +52,17 @@ export const processRecurringPayments = async () => {
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
   await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+}
+
+const fetchDueRecurringPayments = async date => {
+  try {
+    const duePayments = await salesApi.getDueRecurringPayments(date)
+    debug('Recurring Payments found:', duePayments)
+    return duePayments
+  } catch (error) {
+    console.error('Run aborted. Error fetching due recurring payments:', error)
+    throw error
+  }
 }
 
 const requestPayments = async dueRCPayments => {
@@ -173,3 +186,11 @@ const processRecurringPaymentStatus = async payment => {
     }
   }
 }
+
+const shutdown = code => {
+  airbrake.flush()
+  process.exit(code)
+}
+
+process.on('SIGINT', () => shutdown(SIGINT_CODE))
+process.on('SIGTERM', () => shutdown(SIGTERM_CODE))

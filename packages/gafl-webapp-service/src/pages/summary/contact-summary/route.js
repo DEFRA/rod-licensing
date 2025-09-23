@@ -127,7 +127,7 @@ export class RowGenerator {
       capitalise(licensee.locality),
       capitalise(licensee.town),
       licensee.postcode?.toUpperCase(),
-      countryName?.toUpperCase()
+      countryName
     ]
       .filter(Boolean)
       .join(', ')
