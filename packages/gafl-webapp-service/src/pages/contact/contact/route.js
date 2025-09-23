@@ -57,8 +57,7 @@ const getContent = (permission, messages, twelveMonthLicence) => {
   // TEMP: quick sanity logging during dev
   /* eslint-disable no-console */
   console.debug('licenceLength:', permission.licenceLength, 'twelveMonthLicence:', twelveMonthLicence)
-  console.debug('has i18n key important_info_contact_content_12_months:',
-    Boolean(messages.important_info_contact_content_12_months))
+  console.debug('has i18n key important_info_contact_content_12_months:', Boolean(messages.important_info_contact_content_12_months))
   /* eslint-enable no-console */
 
   if (twelveMonthLicence) {
@@ -69,18 +68,16 @@ const getContent = (permission, messages, twelveMonthLicence) => {
 
     const isSalmon = permission.licenceType === 'Salmon and sea trout'
     return permission.isLicenceForYou
-      ? (isSalmon
-          ? messages.important_info_contact_post_salmon_you
-          : messages.important_info_contact_post_not_salmon_you)
-      : (isSalmon
-          ? messages.important_info_contact_post_salmon_other
-          : messages.important_info_contact_post_not_salmon_other)
+      ? isSalmon
+        ? messages.important_info_contact_post_salmon_you
+        : messages.important_info_contact_post_not_salmon_you
+      : isSalmon
+        ? messages.important_info_contact_post_salmon_other
+        : messages.important_info_contact_post_not_salmon_other
   }
 
   const isSalmon = permission.licenceType === 'Salmon and sea trout'
-  return isSalmon
-    ? messages.important_info_contact_content_salmon
-    : messages.important_info_contact_content_not_salmon
+  return isSalmon ? messages.important_info_contact_content_salmon : messages.important_info_contact_content_not_salmon
 }
 
 const getMobileText = (permission, messages, twelveMonthLicence) =>
