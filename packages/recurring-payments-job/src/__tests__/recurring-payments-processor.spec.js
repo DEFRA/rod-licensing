@@ -485,7 +485,7 @@ describe('recurring-payments-processor', () => {
     sendPayment.mockResolvedValueOnce({ payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00Z' })
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
-    await processRecurringPayments()
+    await execute()
 
     const transaction = await salesApi.updateTransactionSourceAndPaymentType.mock.results[0].value
     expect(transaction.paymentType).toBe(type)
@@ -510,7 +510,7 @@ describe('recurring-payments-processor', () => {
     sendPayment.mockResolvedValueOnce({ payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00Z' })
     getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
-    await processRecurringPayments()
+    await execute()
 
     const updatedTransaction = await salesApi.updateTransactionSourceAndPaymentType.mock.results[0].value
     expect(updatedTransaction.source).toBe('Gov Pay')
