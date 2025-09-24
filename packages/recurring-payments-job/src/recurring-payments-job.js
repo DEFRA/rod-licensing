@@ -28,6 +28,7 @@ try {
     context: { }
   })
   console.log('notified')
+  console.warn('Danger, Will Robinson')
 } catch (e) {
   console.log('error notifying: ', e)
 }
