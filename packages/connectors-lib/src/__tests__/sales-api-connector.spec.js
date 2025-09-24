@@ -136,54 +136,6 @@ describe('sales-api-connector', () => {
     })
   })
 
-  describe('updateTransactionSourceAndPaymentType', () => {
-    it.each([['Debit card'], ['Credit card']])('updates the transaction with payment type "%s"', async type => {
-      const transactionId = 'transsaction-id'
-      const expectedResponse = { id: transactionId, payment: { source: 'Gov Pay', method: type } }
-
-      fetch.mockReturnValueOnce({
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        text: async () => JSON.stringify(expectedResponse)
-      })
-
-      await expect(salesApi.updateTransactionSourceAndPaymentType(transactionId, type)).resolves.toEqual(expectedResponse)
-
-      expect(fetch).toHaveBeenCalledWith(
-        `http://0.0.0.0:4000/transactions/${transactionId}/type`,
-        expect.objectContaining({
-          method: 'patch',
-          body: JSON.stringify({ type })
-        })
-      )
-    })
-
-    it('throws on a non-ok response', async () => {
-      const transactionId = 'transaction-id'
-      const payload = { type: 'Debit card' }
-
-      fetch.mockReturnValueOnce({
-        ok: false,
-        status: 422,
-        statusText: 'Unprocessable Entity',
-        text: async () => JSON.stringify({ error: 'Description' })
-      })
-
-      await expect(salesApi.updateTransactionSourceAndPaymentType(transactionId, payload.type)).rejects.toThrow(
-        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
-      )
-
-      expect(fetch).toHaveBeenCalledWith(
-        `http://0.0.0.0:4000/transactions/${transactionId}/type`,
-        expect.objectContaining({
-          method: 'patch',
-          body: JSON.stringify(payload)
-        })
-      )
-    })
-  })
-
   describe('createTransactions', () => {
     it('creates multiple transactions in batch', async () => {
       const transactions = ['a', 'b']

@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
 import { salesApi, airbrake } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
@@ -86,8 +86,14 @@ const createNewTransaction = async (referenceNumber, recurringPayment) => {
   const transactionData = await processPermissionData(referenceNumber, recurringPayment)
   const transaction = await salesApi.createTransaction(transactionData)
   const agreementResponse = await salesApi.retrieveRecurringPaymentAgreement(recurringPayment.agreementId)
-  const type = agreementResponse.payment_instrument?.card_details?.card_type === 'debit' ? 'Debit card' : 'Credit card'
-  const updatedTransaction = await salesApi.updateTransactionSourceAndPaymentType(transaction.id, type)
+  const updatedTransaction = await salesApi.finaliseTransaction(transaction.id, {
+    payment: {
+      amount: transaction.cost,
+      // timestamp: transaction.paymentStatus.transactionTimestamp,
+      source: TRANSACTION_SOURCE.govPay,
+      method: agreementResponse.payment_instrument?.card_details?.card_type === 'debit' ? 'Debit card' : 'Credit card'
+    }
+  })
 
   return updatedTransaction
 }

@@ -5,8 +5,7 @@ import {
   createTransactions,
   finaliseTransaction,
   processQueue,
-  processDlq,
-  updateTransactionSourceAndPaymentType
+  processDlq
 } from '../../services/transactions/transactions.service.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import {
@@ -198,39 +197,6 @@ export default [
             200: { description: 'Staged transaction retreived' }
           },
           order: 5
-        }
-      }
-    }
-  },
-  {
-    method: 'PATCH',
-    path: '/transactions/{id}/type',
-    options: {
-      handler: async (request, h) => {
-        const { id } = request.params
-        const { type } = request.payload
-        const updatedTransaction = await updateTransactionSourceAndPaymentType(id, type)
-        return h.response(updatedTransaction)
-      },
-      description: 'Update transaction source and payment type',
-      notes: 'Update transaction source and payment type',
-      tags: ['api', 'transactions'],
-      validate: {
-        params: Joi.object({
-          id: Joi.string().required()
-        }),
-        payload: Joi.object({
-          type: Joi.string().valid('Debit card', 'Credit card').required()
-        })
-      },
-      plugins: {
-        'hapi-swagger': {
-          responses: {
-            200: { description: 'Transaction updated', schema: createTransactionResponseSchema },
-            400: { description: 'Invalid request params' },
-            404: { description: 'Transaction not found' }
-          },
-          order: 6
         }
       }
     }
