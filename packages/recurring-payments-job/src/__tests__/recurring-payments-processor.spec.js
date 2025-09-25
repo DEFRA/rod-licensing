@@ -85,7 +85,7 @@ describe('recurring-payments-processor', () => {
   const mockTwoDuePayments = () => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(), getMockDueRecurringPayment()])
 
-    salesApi.preparePermissionDataForRenewal.mockResolvedValue({ licensee: { countryCode: 'GB-ENG' } })
+    salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
 
     salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
   }
