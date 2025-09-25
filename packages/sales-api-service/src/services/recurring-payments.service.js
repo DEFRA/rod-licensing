@@ -1,19 +1,21 @@
 import {
+  dynamicsClient,
   executeQuery,
   findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
-  RecurringPayment,
-  dynamicsClient
+  persist,
+  RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { ADVANCED_PURCHASE_MAX_DAYS, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
+import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -24,7 +26,7 @@ export const getRecurringPayments = date => executeQuery(findDueRecurringPayment
 
 const getNextDueDate = (startDate, issueDate, endDate) => {
   const mStart = moment(startDate)
-  if (mStart.isAfter(moment(issueDate)) && mStart.isSameOrBefore(moment(issueDate).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'), 'day')) {
+  if (mStart.isAfter(moment(issueDate))) {
     if (mStart.isSame(moment(issueDate), 'day')) {
       return moment(startDate).add(1, 'year').subtract(10, 'days').startOf('day').toISOString()
     }
@@ -37,8 +39,8 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
 }
 
 export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
-  if (transactionRecord.agreementId) {
-    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.agreementId)
+  if (transactionRecord.recurringPayment?.agreementId) {
+    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.recurringPayment.agreementId)
     const lastDigitsCardNumbers = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
     return {
@@ -49,7 +51,7 @@ export const generateRecurringPaymentRecord = async (transactionRecord, permissi
           cancelledDate: null,
           cancelledReason: null,
           endDate,
-          agreementId: transactionRecord.agreementId,
+          agreementId: transactionRecord.recurringPayment.agreementId,
           status: 1,
           last_digits_card_number: lastDigitsCardNumbers
         }
@@ -165,9 +167,14 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 export const cancelRecurringPayment = async id => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
-    console.log('RecurringPayment for cancellation: ', recurringPayment)
+    const data = recurringPayment
+    data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, 'Payment Failure')
+    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+    await persist([updatedRecurringPayment])
+    return updatedRecurringPayment
   } else {
-    console.log('No matches found for cancellation')
+    throw new Error('Invalid id provided for recurring payment cancellation')
   }
 }
 

@@ -214,15 +214,17 @@ describe('The govuk-pay-service', () => {
     })
 
     it('should log debug message when response.ok is true', async () => {
+      const expectedLoggedOutput = { success: true, paymentId: 'abc123', bar: Symbol('bar'), baz: Symbol('baz') }
+      const resBody = { card_details: { foo: Symbol('foo') }, card_brand: Symbol('foobarbaz'), ...expectedLoggedOutput }
       const mockResponse = {
         ok: true,
-        json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
+        json: jest.fn().mockResolvedValue(resBody)
       }
       govUkPayApi.createPayment.mockResolvedValue(mockResponse)
 
       await sendPayment(preparedPayment)
 
-      expect(debug).toHaveBeenCalledWith('Successful payment creation response: %o', { success: true, paymentId: 'abc123' })
+      expect(debug).toHaveBeenCalledWith('Successful payment creation response: %o', expectedLoggedOutput)
     })
 
     it('should log error message when response.ok is false', async () => {
@@ -334,15 +336,17 @@ describe('The govuk-pay-service', () => {
     })
 
     it('should log debug message when response.ok is true', async () => {
+      const expectedLoggedOutput = { success: true, paymentId: 'abc123', bar: Symbol('bar'), baz: Symbol('baz') }
+      const resBody = { card_details: { foo: Symbol('foo') }, card_brand: Symbol('foobarbaz'), ...expectedLoggedOutput }
       const mockResponse = {
         ok: true,
-        json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
+        json: jest.fn().mockResolvedValue(resBody)
       }
       govUkPayApi.createRecurringPaymentAgreement.mockResolvedValue(mockResponse)
 
       await sendRecurringPayment(preparedPayment)
 
-      expect(debug).toHaveBeenCalledWith('Successful agreement creation response: %o', { success: true, paymentId: 'abc123' })
+      expect(debug).toHaveBeenCalledWith('Successful agreement creation response: %o', expectedLoggedOutput)
     })
 
     it('should log error message  when response.ok is false', async () => {

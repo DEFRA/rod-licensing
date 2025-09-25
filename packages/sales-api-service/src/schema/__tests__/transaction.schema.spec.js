@@ -1,4 +1,9 @@
-import { createTransactionSchema, createTransactionResponseSchema, finaliseTransactionResponseSchema } from '../transaction.schema.js'
+import {
+  createTransactionSchema,
+  createTransactionResponseSchema,
+  finaliseTransactionResponseSchema,
+  retrieveStagedTransactionParamsSchema
+} from '../transaction.schema.js'
 import { mockTransactionPayload, mockStagedTransactionRecord, mockFinalisedTransactionRecord } from '../../__mocks__/test-data.js'
 
 jest.mock('../validators/validators.js', () => ({
@@ -96,27 +101,42 @@ describe('createTransactionSchema', () => {
     await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 
-  it('validates successfully when an agreementId is supplied', async () => {
+  it('validates successfully when recurring payment detail is supplied', async () => {
     const mockPayload = mockTransactionPayload()
-    mockPayload.agreementId = 't3jl08v2nqqmujrnhs09pmhtjx'
+    mockPayload.recurringPayment = {
+      agreementId: 't3jl08v2nqqmujrnhs09pmhtjx',
+      id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509'
+    }
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
   })
 
-  it('validates successfully when agreementId is omitted', async () => {
+  it('validates successfully when recurring payment detail is omitted', async () => {
     const mockPayload = mockTransactionPayload()
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
+  })
+
+  it('fails validation if agreement id is omitted from recurring payment detail', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.recurringPayment = { id: 'fdc73d20-a0bf-4da6-9a49-2f0a24bd3509' }
+    await expect(() => createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 
   it.each([
-    ['too short string', 'foo'],
-    ['too long string', 'foobarbazfoobarbazfoobarbaz'],
-    ['string containing invalid characters', '!3j@08v2nqqmujrnhs09_mhtjx'],
-    ['null', null],
-    ['numeric', 4567]
-  ])('fails validation when provided with a %s for agreementId', async (_d, agreementId) => {
+    ['agreement id is too long', { agreementId: 'thisistoolongtobeanagreementid' }],
+    ['agreement id is too short', { agreementId: 'tooshorttobeanagreementid' }],
+    ['agreement id contains invalid characters', '!3j@08v2nqqmujrnhs09_mhtjx'],
+    ['agreement id is null', { agreementId: null }],
+    ['agreement id is a numeric', { agreementId: 4567 }],
+    ['id is not a guid', { id: 'not-a-guid' }],
+    ['id is null', { id: null }]
+  ])('fails validation if %s', async (_d, recurringPayment) => {
     const mockPayload = mockTransactionPayload()
-    mockPayload.agreementId = agreementId
-    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
+    mockPayload.recurringPayment = {
+      agreementId: 'jhyu78iujhy7u87y6thu87uyj8',
+      id: '7a0660ec-8535-4357-b925-e598a9358119',
+      ...recurringPayment
+    }
+    await expect(() => createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 })
 
@@ -133,5 +153,34 @@ describe('finaliseTransactionResponseSchema', () => {
     mockRecord.status.messageId = 'test_message_id'
     const result = await finaliseTransactionResponseSchema.validateAsync(mockRecord)
     expect(result).toBeInstanceOf(Object)
+  })
+})
+
+describe('retrieveStagedTransactionParamsSchema', () => {
+  it.each([
+    ['36fb757c-6377-49c5-ab6e-32eb9782fcf0'],
+    ['c290b78d-3bbc-4445-b4dd-b36f6ee044a2'],
+    ['2323a890-b36f-47b1-ab9f-d60e292ac4ae'],
+    ['9c6b79be-28be-4916-aa5c-08520aa1e804']
+  ])('validates successfully when a uuid v4 transactionId is %s', async transactionId => {
+    const sampleData = { id: transactionId }
+    await expect(retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).resolves.not.toThrow()
+  })
+
+  it.each([
+    ['uuid1 string', '5a429f62-871b-11ef-b864-0242ac120002'],
+    ['uuid2 string', '000003e8-871b-21ef-8000-325096b39f47'],
+    ['uuid3 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
+    ['uuid5 string', 'a6edc906-2f9f-5fb2-a373-efac406f0ef2'],
+    ['uuid6 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
+    ['uuid7 string', '01927705-ffac-77b5-89af-c97451b1bbe2'],
+    ['numeric', 4567]
+  ])('fails validation when provided with a %s for transactionId', async (_d, transactionId) => {
+    const sampleData = { id: transactionId }
+    await expect(() => retrieveStagedTransactionParamsSchema.validateAsync(sampleData)).rejects.toThrow()
+  })
+
+  it('throws an error if id missing', async () => {
+    await expect(() => retrieveStagedTransactionParamsSchema.validateAsync({}).rejects.toThrow())
   })
 })

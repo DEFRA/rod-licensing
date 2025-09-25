@@ -1,6 +1,13 @@
 'use strict'
 import poclJob from 'commander'
 import { execute } from './pocl-processor.js'
+import path from 'path'
+import fs from 'fs'
+
+const pkgPath = path.join(process.cwd(), 'package.json')
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+
+console.log('POCL job starting at %s. name: %s. version: %s', new Date().toISOString(), pkg.name, pkg.version)
 
 poclJob
   .command('execute')

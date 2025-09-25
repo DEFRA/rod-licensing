@@ -1,4 +1,175 @@
 
+## v1.63.0-rc.18 (2025-09-18)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2207](https://github.com/DEFRA/rod-licensing/pull/2207) Refactor for Airbrake integration ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.17 (2025-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2210](https://github.com/DEFRA/rod-licensing/pull/2210) Country capital letters ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.16 (2025-09-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2205](https://github.com/DEFRA/rod-licensing/pull/2205) Capitals in address ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.15 (2025-09-09)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2204](https://github.com/DEFRA/rod-licensing/pull/2204) Allow RCP agreements to be created through easy renewal with later date ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.14 (2025-09-04)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2200](https://github.com/DEFRA/rod-licensing/pull/2200) Junior licence format ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.13 (2025-08-29)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2203](https://github.com/DEFRA/rod-licensing/pull/2203) Don't cancel RP if checking payment status throws error ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.12 (2025-08-27)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2198](https://github.com/DEFRA/rod-licensing/pull/2198) Setup Recurring Payments job to log to Errbit ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.11 (2025-08-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`, `sales-api-service`
+  * [#2164](https://github.com/DEFRA/rod-licensing/pull/2164) Add function to cancel recurring payments in Sales API ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.10 (2025-08-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`
+  * [#2194](https://github.com/DEFRA/rod-licensing/pull/2194) Output version of service on startup ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.9 (2025-08-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `payment-mop-up-job`, `recurring-payments-job`
+  * [#2183](https://github.com/DEFRA/rod-licensing/pull/2183) RCP - Clean up from previous jobs ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.8 (2025-08-15)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2192](https://github.com/DEFRA/rod-licensing/pull/2192) Log when GOV.UK Pay cannot find an Agreement ID ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.7 (2025-08-14)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2196](https://github.com/DEFRA/rod-licensing/pull/2196) Don't try to generate RCP record without data ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.6 (2025-08-13)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `payment-mop-up-job`, `sales-api-service`
+  * [#2177](https://github.com/DEFRA/rod-licensing/pull/2177) Recurring payments mop up ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.5 (2025-08-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2193](https://github.com/DEFRA/rod-licensing/pull/2193) Fix bug with creating RPs in Web Sales journey ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.4 (2025-08-08)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#2191](https://github.com/DEFRA/rod-licensing/pull/2191)  Amend RP job with RP id ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.3 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2184](https://github.com/DEFRA/rod-licensing/pull/2184) Incorrect capitalistion of address in contact summary ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.63.0-rc.2 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2189](https://github.com/DEFRA/rod-licensing/pull/2189) Add additional card_details filtering ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.1 (2025-08-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2187](https://github.com/DEFRA/rod-licensing/pull/2187) Make reference number entry box on renewal journey smaller ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.63.0-rc.0 (2025-08-07)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2190](https://github.com/DEFRA/rod-licensing/pull/2190) Fix name of cancelledreasons optionset ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.62.0-rc.10 (2025-07-29)
 

@@ -5,6 +5,7 @@ import {
   findRecurringPaymentsByAgreementId,
   findById,
   Permission,
+  persist,
   RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import {
@@ -48,7 +49,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
     retrieveMultipleRequest: jest.fn(() => ({ value: [] }))
-  }
+  },
+  persist: jest.fn()
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -93,7 +95,6 @@ jest.mock('../../services/paymentjournals/payment-journals.service.js', () => ({
 }))
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
-  ADVANCED_PURCHASE_MAX_DAYS: 30,
   PAYMENT_JOURNAL_STATUS_CODES: {
     InProgress: 'InProgressCode',
     Cancelled: 'CancelledCode',
@@ -392,7 +393,9 @@ describe('recurring payments service', () => {
           ...permission
         }
       ],
-      agreementId,
+      recurringPayment: {
+        agreementId
+      },
       payment: {
         amount: 35.8,
         source: 'Gov Pay',
@@ -452,6 +455,17 @@ describe('recurring payments service', () => {
         '3456'
       ],
       [
+        'starts thirty-one days after issue date - next due on issue date plus one year',
+        '9o8u7yhui89u8i9oiu8i8u7yhu',
+        {
+          startDate: '2024-12-14T00:00:00.000Z',
+          issueDate: '2024-11-12T15:00:45.922Z',
+          endDate: '2025-12-13T23:59:59.999Z'
+        },
+        '2025-11-12T00:00:00.000Z',
+        '4321'
+      ],
+      [
         "issued on 29th Feb '24, starts on 30th March '24 - next due on 28th Feb '25",
         'hy7u8ijhyu78jhyu8iu8hjiujn',
         {
@@ -507,11 +521,11 @@ describe('recurring payments service', () => {
 
     it.each([
       [
-        'start date is thirty one days after issue date',
+        'start date equals issue date',
         {
-          startDate: '2024-12-14T00:00:00.000Z',
-          issueDate: '2024-11-12T15:00:45.922Z',
-          endDate: '2025-12-13T23:59:59.999Z'
+          startDate: '2024-11-11T00:00:00.000Z',
+          issueDate: '2024-11-11T00:00:00.000Z',
+          endDate: '2025-11-10T23:59:59.999Z'
         }
       ],
       [
@@ -526,6 +540,15 @@ describe('recurring payments service', () => {
       const sampleTransaction = createFinalisedSampleTransaction('hyu78ijhyu78ijuhyu78ij9iu6', permission)
 
       await expect(generateRecurringPaymentRecord(sampleTransaction)).rejects.toThrow('Invalid dates provided for permission')
+    })
+
+    it('returns a false flag when recurringPayment is not present', async () => {
+      const sampleTransaction = createFinalisedSampleTransaction()
+      delete sampleTransaction.recurringPayment
+
+      const rpRecord = await generateRecurringPaymentRecord(sampleTransaction)
+
+      expect(rpRecord.payment?.recurring).toBeFalsy()
     })
 
     it('returns a false flag when agreementId is not present', async () => {
@@ -859,28 +882,29 @@ describe('recurring payments service', () => {
 
   describe('cancelRecurringPayment', () => {
     it('should call findById with RecurringPayment and the provided id', async () => {
+      findById.mockReturnValueOnce(getMockRecurringPayment())
       const id = 'abc123'
       await cancelRecurringPayment(id)
       expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
     })
 
-    it('should log a RecurringPayment record when there is one match', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-      const recurringPayment = { entity: getMockRecurringPayment() }
+    it('should call persist with the updated RecurringPayment', async () => {
+      const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
 
+      const cancelledDate = new Date().toISOString().split('T')[0]
+      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
+      const expectedUpdatedRecurringPayment = { ...recurringPayment, cancelledReason, cancelledDate }
+
       await cancelRecurringPayment('id')
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('RecurringPayment for cancellation: ', recurringPayment)
+      expect(persist).toHaveBeenCalledWith([expect.objectContaining(expectedUpdatedRecurringPayment)])
     })
 
-    it('should log no matches when there are no matches', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    it('should raise an error when there are no matches', async () => {
       findById.mockReturnValueOnce(undefined)
 
-      await cancelRecurringPayment('id')
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for cancellation')
+      await expect(cancelRecurringPayment('id')).rejects.toThrow('Invalid id provided for recurring payment cancellation')
     })
   })
 })
