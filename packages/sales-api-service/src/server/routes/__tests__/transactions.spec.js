@@ -9,6 +9,7 @@ jest.mock('../../../services/transactions/transactions.service.js', () => ({
   createTransaction: jest.fn(async () => mockStagedTransactionRecord()),
   createTransactions: jest.fn(async payloads => Array(payloads.length).fill(mockStagedTransactionRecord())),
   finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),
+  updateTransaction: jest.fn(async ({ id, ...payload }) => ({ id, ...payload })),
   processQueue: jest.fn(async () => {}),
   processDlq: jest.fn(async () => {})
 }))
@@ -240,7 +241,7 @@ describe('transaction handler', () => {
   describe('retrieveStagedTransaction', () => {
     const getMockRequest = ({ id = 'abc123' }) => ({ params: { id } })
     const getMockResponseToolkit = () => ({ response: jest.fn() })
-    const retrieveHandler = transactions[transactions.length - 1].options.handler
+    const retrieveHandler = transactions[transactions.length - 2].options.handler
 
     it('handler should return continue response', async () => {
       const request = getMockRequest({})
@@ -260,6 +261,98 @@ describe('transaction handler', () => {
       const request = getMockRequest({ id })
       await retrieveHandler(request, getMockResponseToolkit())
       expect(transactions[5].options.validate.params).toBe(retrieveStagedTransactionParamsSchema)
+    })
+  })
+
+  describe('updateRecurringTransaction', () => {
+    it('updates the transaction with valid payment details', async () => {
+      const transactionId = uuidv4()
+      const payload = {
+        payment: {
+          source: 'Gov Pay',
+          method: 'Debit card'
+        }
+      }
+
+      const result = await server.inject({
+        method: 'PATCH',
+        url: `/recurring-transactions/${transactionId}`,
+        payload
+      })
+
+      expect(result.statusCode).toBe(200)
+      const parsed = JSON.parse(result.payload)
+      expect(parsed).toMatchObject({
+        id: transactionId,
+        payment: payload.payment
+      })
+    })
+
+    it('accepts "Credit card" as a payment method', async () => {
+      const transactionId = uuidv4()
+      const payload = {
+        payment: {
+          source: 'Gov Pay',
+          method: 'Credit card'
+        }
+      }
+
+      const result = await server.inject({
+        method: 'PATCH',
+        url: `/recurring-transactions/${transactionId}`,
+        payload
+      })
+
+      expect(result.statusCode).toBe(200)
+      const parsed = JSON.parse(result.payload)
+      expect(parsed.payment.method).toBe('Credit card')
+    })
+
+    it('throws 422 errors if the payload schema fails validation', async () => {
+      const transactionId = uuidv4()
+      const result = await server.inject({
+        method: 'PATCH',
+        url: `/recurring-transactions/${transactionId}`,
+        payload: {}
+      })
+
+      expect(result).toBeUnprocessableEntityErrorResponse()
+    })
+
+    it('throws 422 errors if payment.source is invalid', async () => {
+      const transactionId = uuidv4()
+      const payload = {
+        payment: {
+          source: 'InvalidSource',
+          method: 'Debit card'
+        }
+      }
+
+      const result = await server.inject({
+        method: 'PATCH',
+        url: `/recurring-transactions/${transactionId}`,
+        payload
+      })
+
+      expect(result).toBeUnprocessableEntityErrorResponse()
+    })
+
+    it('throws 422 errors if payment.method is invalid', async () => {
+      const transactionId = uuidv4()
+      const payload = {
+        payment: {
+          source: 'Gov Pay',
+          method: 'Invalid'
+        }
+      }
+
+      const result = await server.inject({
+        method: 'PATCH',
+        url: `/recurring-transactions/${transactionId}`,
+        payload
+      })
+
+      expect(result).toBeUnprocessableEntityErrorResponse()
     })
   })
 })

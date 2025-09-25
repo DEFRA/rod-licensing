@@ -861,4 +861,63 @@ describe('sales-api-connector', () => {
       await expect(salesApi.retrieveRecurringPaymentAgreement('agreementId')).rejects.toThrow('Internal Server Error')
     })
   })
+
+  describe('updateTransaction', () => {
+    it.each([['Debit card'], ['Credit card']])('updates the transaction with payment method "%s"', async method => {
+      const transactionId = 'transaction-id'
+      const payload = {
+        payment: {
+          source: 'Gov Pay',
+          method
+        }
+      }
+      const expectedResponse = { id: transactionId, ...payload }
+
+      fetch.mockReturnValueOnce({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        text: async () => JSON.stringify(expectedResponse)
+      })
+
+      await expect(salesApi.updateTransaction(transactionId, payload)).resolves.toEqual(expectedResponse)
+
+      expect(fetch).toHaveBeenCalledWith(
+        `http://0.0.0.0:4000/recurring-transactions/${transactionId}`,
+        expect.objectContaining({
+          method: 'patch',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+
+    it('throws on a non-ok response', async () => {
+      const transactionId = 'transaction-id'
+      const payload = {
+        payment: {
+          source: 'Gov Pay',
+          method: 'Debit card'
+        }
+      }
+
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 422,
+        statusText: 'Unprocessable Entity',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
+
+      await expect(salesApi.updateTransaction(transactionId, payload)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+
+      expect(fetch).toHaveBeenCalledWith(
+        `http://0.0.0.0:4000/recurring-transactions/${transactionId}`,
+        expect.objectContaining({
+          method: 'patch',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+  })
 })

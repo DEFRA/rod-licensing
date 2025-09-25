@@ -43,11 +43,9 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     retrieveRecurringPaymentAgreement: jest.fn(() => ({
       payment_instrument: { card_details: { card_type: 'debit' } }
     })),
-    finaliseTransaction: jest.fn(id => ({
+    updateTransaction: jest.fn(id => ({
       id,
       payment: {
-        amount: 5000,
-        timestamp: '2025-01-01T10:00:00.854Z',
         source: 'Gov Pay',
         method: 'Debit card'
       }
@@ -255,12 +253,10 @@ describe('recurring-payments-processor', () => {
         salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
           payment_instrument: { card_details: { card_type: 'debit' } }
         })
-        salesApi.finaliseTransaction.mockResolvedValueOnce({
+        salesApi.updateTransaction.mockResolvedValueOnce({
           id: `transaction-id-${x + 1}`,
           cost: 50,
           payment: {
-            amount: 50,
-            timestamp: '2025-01-01T10:00:00.854Z',
             source: TRANSACTION_SOURCE.govPay,
             method: 'Debit card'
           }
@@ -489,11 +485,9 @@ describe('recurring-payments-processor', () => {
     salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
       payment_instrument: { card_details: { card_type: card } }
     })
-    salesApi.finaliseTransaction.mockResolvedValueOnce({
+    salesApi.updateTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       payment: {
-        amount: 50,
-        timestamp: '2025-01-01T10:00:00.854Z',
         source: TRANSACTION_SOURCE.govPay,
         method: type
       }
@@ -503,7 +497,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    const transaction = await salesApi.finaliseTransaction.mock.results[0].value
+    const transaction = await salesApi.updateTransaction.mock.results[0].value
     expect(transaction.payment.method).toBe(type)
   })
 
@@ -518,11 +512,9 @@ describe('recurring-payments-processor', () => {
     salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
-    salesApi.finaliseTransaction.mockResolvedValueOnce({
+    salesApi.updateTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       payment: {
-        amount: 50,
-        timestamp: '2025-01-01T10:00:00.854Z',
         source: TRANSACTION_SOURCE.govPay,
         method: 'Debit card'
       }
@@ -532,7 +524,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    const updatedTransaction = await salesApi.finaliseTransaction.mock.results[0].value
+    const updatedTransaction = await salesApi.updateTransaction.mock.results[0].value
     console.log(updatedTransaction)
     expect(updatedTransaction.payment.source).toBe(TRANSACTION_SOURCE.govPay)
   })
@@ -599,12 +591,10 @@ describe('recurring-payments-processor', () => {
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
 
-    salesApi.finaliseTransaction.mockResolvedValueOnce({
+    salesApi.updateTransaction.mockResolvedValueOnce({
       id: transactionId,
       cost: 50,
       payment: {
-        amount: 50,
-        timestamp: '2025-01-01T10:00:00.854Z',
         source: TRANSACTION_SOURCE.govPay,
         method: 'Debit card'
       }
@@ -832,13 +822,11 @@ describe('recurring-payments-processor', () => {
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
 
-    salesApi.finaliseTransaction.mockResolvedValueOnce({
+    salesApi.updateTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       cost: 50,
       recurringPayment: { id },
       payment: {
-        amount: 50,
-        timestamp: '2025-01-01T10:00:00.854Z',
         source: TRANSACTION_SOURCE.govPay,
         method: 'Debit card'
       }
@@ -986,12 +974,10 @@ describe('recurring-payments-processor', () => {
           payment_instrument: { card_details: { card_type: 'debit' } }
         })
 
-        salesApi.finaliseTransaction.mockResolvedValueOnce({
+        salesApi.updateTransaction.mockResolvedValueOnce({
           id: permit,
           cost: i,
           payment: {
-            amount: i,
-            timestamp: '2025-01-01T10:00:00.854Z',
             source: TRANSACTION_SOURCE.govPay,
             method: 'Debit card'
           }

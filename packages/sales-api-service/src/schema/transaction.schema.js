@@ -160,3 +160,26 @@ export const finaliseTransactionResponseSchema = Joi.object({
 export const retrieveStagedTransactionParamsSchema = Joi.object({
   id: Joi.string().guid({ version: 'uuidv4' }).required()
 })
+
+/**
+ * Request schema for updating an existing transaction
+ */
+export const updateTransactionRequestSchema = Joi.object({
+  payment: Joi.object({
+    source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
+    method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card')
+  })
+    .required()
+    .label('update-transaction-payment-details')
+}).label('update-transaction-request')
+
+/**
+ * Response schema for updating an existing transaction
+ */
+export const updateTransactionResponseSchema = Joi.object({
+  ...createTransactionResponseSchemaContent,
+  payment: Joi.object({
+    source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
+    method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card')
+  }).required()
+}).label('update-transaction-response')

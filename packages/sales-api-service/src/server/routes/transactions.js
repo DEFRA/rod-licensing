@@ -5,7 +5,8 @@ import {
   createTransactions,
   finaliseTransaction,
   processQueue,
-  processDlq
+  processDlq,
+  updateTransaction
 } from '../../services/transactions/transactions.service.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import {
@@ -15,6 +16,8 @@ import {
   createTransactionBatchResponseSchema,
   finaliseTransactionRequestSchema,
   finaliseTransactionResponseSchema,
+  updateTransactionRequestSchema,
+  updateTransactionResponseSchema,
   retrieveStagedTransactionParamsSchema,
   BATCH_CREATE_MAX_COUNT
 } from '../../schema/transaction.schema.js'
@@ -197,6 +200,33 @@ export default [
             200: { description: 'Staged transaction retreived' }
           },
           order: 5
+        }
+      }
+    }
+  },
+  {
+    method: 'PATCH',
+    path: '/recurring-transactions/{id}',
+    options: {
+      handler: async (request, h) => h.response(await updateTransaction({ id: request.params.id, ...request.payload })).code(200),
+      description: 'Finalise an existing transaction',
+      notes: `
+        Marks an existing transaction as finalised at which point it will become eligible for insertion into Dynamics.
+      `,
+      tags: ['api', 'transactions'],
+      validate: {
+        params: stagingIdSchema,
+        payload: updateTransactionRequestSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Transaction accepted', schema: updateTransactionResponseSchema },
+            400: { description: 'Invalid request params' },
+            404: { description: 'A transaction for the specified identifier was not found' },
+            422: { description: 'The transaction completion payload was invalid' }
+          },
+          order: 6
         }
       }
     }
