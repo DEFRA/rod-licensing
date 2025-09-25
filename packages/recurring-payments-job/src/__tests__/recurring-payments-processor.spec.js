@@ -70,8 +70,25 @@ const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'a
   expanded: { activePermission: { entity: { referenceNumber } } }
 })
 
+const makeSendPaymentResponse = (overrides = {}) => ({
+  payment_id: 'pay-1',
+  created_date: '2025-01-01T00:00:00.000Z',
+  ...overrides
+})
+
 describe('recurring-payments-processor', () => {
   const [{ value: debugLogger }] = db.mock.results
+
+  const date1 = '2025-01-01T00:00:00.000Z'
+  const date2 = '2025-01-01T00:01:00.000Z'
+
+  const mockTwoDuePayments = () => {
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(), getMockDueRecurringPayment()])
+
+    salesApi.preparePermissionDataForRenewal.mockResolvedValue({ licensee: { countryCode: 'GB-ENG' } })
+
+    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -587,6 +604,112 @@ describe('recurring-payments-processor', () => {
 
     expect(debugLogger).toHaveBeenCalledWith(expect.any(String), error)
   })
+
+  // --- //
+
+  it('should log errors from await salesApi.processRPResult', async () => {
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment()])
+    salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 })
+
+    const payment = makeSendPaymentResponse()
+    sendPayment.mockResolvedValueOnce(payment)
+
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+    salesApi.processRPResult.mockRejectedValueOnce(new Error('boom'))
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    await execute()
+
+    expect(errorSpy).toHaveBeenCalledWith('Failed to process Recurring Payment for trans-1', expect.any(Error))
+  })
+
+  it('continues when one sendPayment rejects (Promise.allSettled check)', async () => {
+    mockTwoDuePayments()
+
+    const paymentIdForSecond = 'test-payment-second'
+
+    sendPayment.mockRejectedValueOnce(new Error('gateway down')).mockResolvedValueOnce({
+      payment_id: paymentIdForSecond,
+      agreementId: 'agr-2',
+      created_date: date1
+    })
+
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+    salesApi.processRPResult.mockResolvedValueOnce()
+
+    await execute()
+
+    const summary = {
+      statusArgs: getPaymentStatus.mock.calls,
+      rpResultArgs: salesApi.processRPResult.mock.calls
+    }
+
+    expect(summary).toEqual({
+      statusArgs: [[paymentIdForSecond]],
+      rpResultArgs: [['trans-2', paymentIdForSecond, date1]]
+    })
+  })
+
+  it('continues when processRPResult rejects for one payment', async () => {
+    mockTwoDuePayments()
+
+    const paymentId1 = 'pay-1'
+    const paymentId2 = 'pay-2'
+
+    sendPayment
+      .mockResolvedValueOnce({ payment_id: paymentId1, agreementId: 'agr-1', created_date: date1 })
+      .mockResolvedValueOnce({ payment_id: paymentId2, agreementId: 'agr-2', created_date: date2 })
+
+    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess()).mockResolvedValueOnce(getPaymentStatusSuccess())
+
+    salesApi.processRPResult.mockRejectedValueOnce(new Error('boom')).mockResolvedValueOnce()
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+    await execute()
+
+    const errorSummary = {
+      rpResultArgs: salesApi.processRPResult.mock.calls,
+      firstError: errorSpy.mock.calls[0]
+    }
+
+    expect(errorSummary).toEqual({
+      rpResultArgs: [
+        ['trans-1', paymentId1, date1],
+        ['trans-2', paymentId2, date2]
+      ],
+      firstError: ['Failed to process Recurring Payment for trans-1', expect.any(Error)]
+    })
+  })
+
+  it('does not abort when getPaymentStatus rejects for one payment (allSettled at status stage)', async () => {
+    mockTwoDuePayments()
+
+    const id1 = 'pay-1'
+    const id2 = 'pay-2'
+    sendPayment
+      .mockResolvedValueOnce({ payment_id: id1, created_date: date1 })
+      .mockResolvedValueOnce({ payment_id: id2, created_date: date2 })
+
+    getPaymentStatus.mockRejectedValueOnce({ response: { status: 500 } }).mockResolvedValueOnce(getPaymentStatusSuccess())
+
+    salesApi.processRPResult.mockResolvedValueOnce()
+
+    await execute()
+
+    const summary = {
+      statusArgs: getPaymentStatus.mock.calls,
+      rpResultArgs: salesApi.processRPResult.mock.calls
+    }
+
+    expect(summary).toEqual({
+      statusArgs: [[id1], [id2]],
+      rpResultArgs: [['trans-2', id2, date2]]
+    })
+  })
+
+  // --- //
 
   it.each([
     [400, 'Failed to fetch status for payment test-payment-id, error 400'],
