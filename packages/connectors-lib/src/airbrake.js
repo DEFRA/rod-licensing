@@ -27,10 +27,12 @@ export const initialise = () => {
     // Proxy the console.warn and console.error methods, notifying airbrake/errbit asynchronously
     const nativeConsoleMethods = {}
     ;['warn', 'error'].forEach(method => {
+      console.log(`replacing console.${method} function`)
       nativeConsoleMethods[method] = console[method].bind(console)
       console[method] = (...args) => {
         const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
         const request = args.find(arg => Object.prototype.hasOwnProperty.call(arg, 'headers'))
+        console.log(`notifying airbrake for console.${method}`, INSPECT_OPTS)
         airbrake.notify({
           error,
           params: { consoleInvocationDetails: { method, arguments: { ...args.map(arg => inspect(arg, INSPECT_OPTS)) } } },
