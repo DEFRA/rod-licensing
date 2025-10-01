@@ -37,11 +37,11 @@
   "dependencies": {
     "@defra-fish/connectors-lib": "1.63.0",
     "@defra-fish/dynamics-lib": "1.63.0",
-    "commander": "^7.2.0",
-    "debug": "^4.3.3",
-    "merge2": "^1.4.1",
-    "moment": "^2.29.1",
-    "openpgp": "^5.0.0-1",
-    "pluralize": "^8.0.0"
+    "commander": "7.2.0",
+    "debug": "4.3.3",
+    "merge2": "1.4.1",
+    "moment": "2.29.1",
+    "openpgp": "5.0.0-1",
+    "pluralize": "8.0.0"
   }
 }
