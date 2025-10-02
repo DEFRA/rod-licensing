@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.63.0-debug-airbrake-failure",
+  "version": "1.63.0-debug-airbrake-failure-2",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
