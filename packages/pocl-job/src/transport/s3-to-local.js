@@ -18,7 +18,7 @@ export async function s3ToLocal (s3Key) {
   const { Body } = await s3.send(
     new GetObjectCommand({
       Bucket: config.s3.bucket,
-      Key: s3Key,
+      Key: s3Key
     })
   )
   await pipeline(Body, localWriteStream)
