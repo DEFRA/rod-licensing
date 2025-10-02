@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.0 (2025-10-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2212](https://github.com/DEFRA/rod-licensing/pull/2212) Add missing reminder content to contact page on junior journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.63.0-rc.18 (2025-09-18)
 
