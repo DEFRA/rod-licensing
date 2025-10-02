@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.1 (2025-10-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2201](https://github.com/DEFRA/rod-licensing/pull/2201) Create cancellation journey ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.64.0-rc.0 (2025-10-02)
 
 #### :rocket: Enhancement
