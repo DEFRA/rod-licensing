@@ -16,6 +16,7 @@ export const reset = () => {
  */
 export const initialise = () => {
   if (!airbrake && process.env.AIRBRAKE_PROJECT_KEY && process.env.AIRBRAKE_HOST) {
+    console.log('creating new Notifier', process.env.AIRBRAKE_PROJECT_KEY, process.env.AIRBRAKE_HOST, process.env.NODE_ENV)
     airbrake = new Notifier({
       projectId: 1,
       projectKey: process.env.AIRBRAKE_PROJECT_KEY,

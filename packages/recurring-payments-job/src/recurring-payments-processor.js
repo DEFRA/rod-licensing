@@ -19,6 +19,12 @@ const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERR
 
 export const execute = async () => {
   airbrake.initialise()
+
+  try {
+    console.warn('Danger, Will Robinson')
+  } catch (e) {
+    console.log('error notifying: ', e)
+  }
   try {
     console.log('processing RPs')
     await processRecurringPayments()
