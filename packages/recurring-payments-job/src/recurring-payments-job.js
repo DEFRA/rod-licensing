@@ -3,8 +3,6 @@ import recurringPaymentsJob from 'commander'
 import { execute } from './recurring-payments-processor.js'
 import path from 'path'
 import fs from 'fs'
-import { Notifier } from '@airbrake/node'
-import { formatWithOptions, inspect } from 'util'
 const pkgPath = path.join(process.cwd(), 'package.json')
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
