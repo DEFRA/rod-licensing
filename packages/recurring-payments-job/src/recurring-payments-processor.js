@@ -21,19 +21,10 @@ export const execute = async () => {
   airbrake.initialise()
 
   try {
-    console.warn('Danger, Will Robinson')
-  } catch (e) {
-    console.log('error notifying: ', e)
-  }
-  try {
-    console.log('processing RPs')
     await processRecurringPayments()
-    console.log('RPs processed')
   } catch (e) {
-    console.log('oh no!')
     console.error(e)
   } finally {
-    console.log('flush!')
     await airbrake.flush()
   }
 }
@@ -80,7 +71,7 @@ const requestPayments = async dueRCPayments => {
   const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
   const failures = paymentRequestResults.filter(prr => prr.status === 'rejected').map(f => f.reason)
   if (failures.length) {
-    debug('Error requesting payments:', ...failures)
+    console.error('Error requesting payments:', ...failures)
   }
   return payments
 }
@@ -183,11 +174,11 @@ const processRecurringPaymentStatus = async payment => {
     const status = error.response?.status
 
     if (isClientError(status)) {
-      debug(`Failed to fetch status for payment ${payment.paymentId}, error ${status}`)
+      console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${status}`)
     } else if (isServerError(status)) {
-      debug(`Payment status API error for ${payment.paymentId}, error ${status}`)
+      console.error(`Payment status API error for ${payment.paymentId}, error ${status}`)
     } else {
-      debug(`Unexpected error fetching payment status for ${payment.paymentId}.`)
+      console.error(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
   }
 }
