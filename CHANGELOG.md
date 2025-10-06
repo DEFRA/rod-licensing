@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.2 (2025-10-06)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2215](https://github.com/DEFRA/rod-licensing/pull/2215) Recurring payment job should handle errors from await salesApi.processRPResult() ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.64.0-rc.1 (2025-10-02)
 
 #### :rocket: Enhancement
