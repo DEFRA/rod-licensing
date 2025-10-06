@@ -8,9 +8,9 @@ export const sendPayment = async preparedPayment => {
   if (!response.ok) {
     throw new Error(`Unexpected response from GOV.UK Pay API. 
       Status: ${response.status}, 
-      Response: ${await response.json()}
+      Response: ${JSON.stringify(await response.json())}
       Transaction ID: ${preparedPayment.id}
-      Payload: ${preparedPayment}
+      Payload: ${JSON.stringify(preparedPayment)}
     `)
   }
   return response.json()
