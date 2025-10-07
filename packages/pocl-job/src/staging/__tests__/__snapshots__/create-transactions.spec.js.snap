@@ -36,7 +36,7 @@ Object {
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
-      "amount": 93.1,
+      "amount": 90.4,
       "channelId": "21995X",
       "method": "Stamps",
       "source": "Post Office Sales",
