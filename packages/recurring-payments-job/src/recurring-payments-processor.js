@@ -63,7 +63,9 @@ const processRecurringPayments = async () => {
 
 const fetchDueRecurringPayments = async date => {
   try {
+    console.warn('RCP: Stage 1.1')
     const duePayments = await salesApi.getDueRecurringPayments(date)
+    console.warn('RCP: Stage 1.2')
     debug('Recurring Payments found:', duePayments)
     return duePayments
   } catch (error) {
