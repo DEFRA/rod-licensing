@@ -41,19 +41,24 @@ const processRecurringPayments = async () => {
     throw new Error('Run aborted, Gov.UK Pay health endpoint is reporting problems.')
   }
 
+  console.warn('RCP: Stage 1')
   debug('Recurring Payments job enabled')
   const date = new Date().toISOString().split('T')[0]
 
   const dueRCPayments = await fetchDueRecurringPayments(date)
+  console.warn('RCP: Stage 2')
   if (dueRCPayments.length === 0) {
     return
   }
 
   const payments = await requestPayments(dueRCPayments)
+  console.warn('RCP: Stage 3')
 
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+  console.warn('RCP: Stage 4')
 
   await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+  console.warn('RCP: Stage 5')
 }
 
 const fetchDueRecurringPayments = async date => {
@@ -69,24 +74,10 @@ const fetchDueRecurringPayments = async date => {
 }
 
 const requestPayments = async dueRCPayments => {
-  console.log('a')
-  let paymentRequestResults
-  try {
-    paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
-    console.log('b')
-  } catch (e) {
-    console.log('8')
-    console.error(e)
-    throw e
-  }
-  console.log('c')
-  // const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
+  const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
   const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
-  console.log('d')
   const failures = paymentRequestResults.filter(prr => prr.status === 'rejected').map(f => f.reason)
-  console.log('e', payments.length, failures.length)
   if (failures.length) {
-    console.log('7')
     console.error('Error requesting payments:', ...failures)
   }
   return payments
@@ -191,13 +182,10 @@ const processRecurringPaymentStatus = async payment => {
     const status = error.response?.status
 
     if (isClientError(status)) {
-      console.log('2')
       console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${status}`)
     } else if (isServerError(status)) {
-      console.log('3')
       console.error(`Payment status API error for ${payment.paymentId}, error ${status}`)
     } else {
-      console.log('4')
       console.error(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
   }
