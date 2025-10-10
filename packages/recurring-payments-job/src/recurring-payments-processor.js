@@ -61,9 +61,7 @@ const fetchDueRecurringPayments = async date => {
     console.warn('fetchDueRecurringPayments 1')
     salesApi.doPreciselyNothing()
     console.warn('fetchDueRecurringPayments 2')
-    await fetch('http://www.google.com', {
-      method: 'get'
-    })
+    await fetch('https://www.google.com', { method: 'get' })
     console.warn('fetchDueRecurringPayments 3')
     await fetch(new URL('/poclValidationErrors', 'https://fsh-dev-bes.aws-int.defra.cloud:4000/'), {
       'get',
