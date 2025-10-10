@@ -16,9 +16,12 @@ const MAX_SERVER_ERROR = 599
 
 const isClientError = code => code >= MIN_CLIENT_ERROR && code <= MAX_CLIENT_ERROR
 const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERROR
+const originalConsoleError = console.error
 
 export const execute = async () => {
+  console.log('Execute 1) Using original console.error - ', console.error === originalConsoleError)
   airbrake.initialise()
+  console.log('Execute 2) Using original console.error - ', console.error === originalConsoleError)
 
   try {
     await processRecurringPayments()
@@ -64,8 +67,12 @@ const processRecurringPayments = async () => {
 const fetchDueRecurringPayments = async date => {
   try {
     console.warn('RCP: Stage 1.1')
+    const modifiedConsoleError = console.error
     const duePayments = await salesApi.getDueRecurringPayments(date)
     console.warn('RCP: Stage 1.2')
+    console.log('fetchDueRecurringPayments) using original console.error - ', console.error === originalConsoleError)
+    console.log('fetchDueRecurringPayments) using modified console.error - ', console.error === modifiedConsoleError)
+
     debug('Recurring Payments found:', duePayments)
     return duePayments
   } catch (error) {
