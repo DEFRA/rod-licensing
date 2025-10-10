@@ -64,7 +64,7 @@ const fetchDueRecurringPayments = async date => {
     await fetch('https://www.google.com', { method: 'get' })
     console.warn('fetchDueRecurringPayments 3')
     await fetch(new URL('/poclValidationErrors', 'https://fsh-dev-bes.aws-int.defra.cloud:4000/'), {
-      'get',
+      method: 'get',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       timeout: 20000
     })
