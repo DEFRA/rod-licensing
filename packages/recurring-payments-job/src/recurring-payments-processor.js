@@ -16,17 +16,13 @@ const MAX_SERVER_ERROR = 599
 
 const isClientError = code => code >= MIN_CLIENT_ERROR && code <= MAX_CLIENT_ERROR
 const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERROR
-const originalConsoleError = console.error
 
 export const execute = async () => {
-  console.log('Execute 1) Using original console.error - ', console.error === originalConsoleError)
   airbrake.initialise()
-  console.log('Execute 2) Using original console.error - ', console.error === originalConsoleError)
 
   try {
     await processRecurringPayments()
   } catch (e) {
-    console.log('5')
     console.error(e)
   } finally {
     await airbrake.flush()
@@ -44,39 +40,30 @@ const processRecurringPayments = async () => {
     throw new Error('Run aborted, Gov.UK Pay health endpoint is reporting problems.')
   }
 
-  console.warn('RCP: Stage 1')
   debug('Recurring Payments job enabled')
   const date = new Date().toISOString().split('T')[0]
 
   const dueRCPayments = await fetchDueRecurringPayments(date)
-  console.warn('RCP: Stage 2')
   if (dueRCPayments.length === 0) {
     return
   }
 
   const payments = await requestPayments(dueRCPayments)
-  console.warn('RCP: Stage 3')
 
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
-  console.warn('RCP: Stage 4')
 
   await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
-  console.warn('RCP: Stage 5')
 }
 
 const fetchDueRecurringPayments = async date => {
   try {
-    console.warn('RCP: Stage 1.1')
-    const modifiedConsoleError = console.error
+    console.warn('this will make it to Airbrake')
     const duePayments = await salesApi.getDueRecurringPayments(date)
-    console.warn('RCP: Stage 1.2')
-    console.log('fetchDueRecurringPayments) using original console.error - ', console.error === originalConsoleError)
-    console.log('fetchDueRecurringPayments) using modified console.error - ', console.error === modifiedConsoleError)
+    console.warn('this will not make it to Airbrake')
 
     debug('Recurring Payments found:', duePayments)
     return duePayments
   } catch (error) {
-    console.log('6')
     console.error('Run aborted. Error fetching due recurring payments:', error)
     throw error
   }
@@ -176,7 +163,6 @@ const processRecurringPaymentStatus = async payment => {
       debug(`Processed Recurring Payment for ${payment.transaction.id}`)
     }
     if (status === PAYMENT_STATUS.Failure || status === PAYMENT_STATUS.Error) {
-      console.log('1')
       console.error(
         `Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`
       )
