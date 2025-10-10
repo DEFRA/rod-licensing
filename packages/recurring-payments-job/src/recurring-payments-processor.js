@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { salesApi, airbrake } from '@defra-fish/connectors-lib'
+import { salesApi, airbrake, govUkPayApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
 
@@ -57,9 +57,13 @@ const processRecurringPayments = async () => {
 
 const fetchDueRecurringPayments = async date => {
   try {
-    console.warn('this will make it to Airbrake')
+    console.warn('fetchDueRecurringPayments 1')
+    await govUkPayApi.isGovPayUp()
+    console.warn('fetchDueRecurringPayments 2')
+    await salesApi.getPoclValidationErrorsForProcessing()
+    console.warn('fetchDueRecurringPayments 3')
     const duePayments = await salesApi.getDueRecurringPayments(date)
-    console.warn('this will not make it to Airbrake')
+    console.warn('fetchDueRecurringPayments 4')
 
     debug('Recurring Payments found:', duePayments)
     return duePayments
