@@ -3,6 +3,7 @@ import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from
 import { salesApi, airbrake, govUkPayApi } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
+import fetch from 'node-fetch'
 
 const debug = db('recurring-payments:processor')
 
@@ -60,9 +61,15 @@ const fetchDueRecurringPayments = async date => {
     console.warn('fetchDueRecurringPayments 1')
     salesApi.doPreciselyNothing()
     console.warn('fetchDueRecurringPayments 2')
-    salesApi.doPreciselyNothing()
+    await fetch('http://www.google.com', {
+      method: 'get'
+    })
     console.warn('fetchDueRecurringPayments 3')
-    salesApi.doPreciselyNothing()
+    await fetch(new URL('/poclValidationErrors', 'https://fsh-dev-bes.aws-int.defra.cloud:4000/'), {
+      'get',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      timeout: 20000
+    })
     console.warn('fetchDueRecurringPayments 4')
     const duePayments = await salesApi.getDueRecurringPayments(date)
     console.warn('fetchDueRecurringPayments 5')
