@@ -58,12 +58,14 @@ const processRecurringPayments = async () => {
 const fetchDueRecurringPayments = async date => {
   try {
     console.warn('fetchDueRecurringPayments 1')
-    await govUkPayApi.isGovPayUp()
+    salesApi.doPreciselyNothing()
     console.warn('fetchDueRecurringPayments 2')
-    await salesApi.getPoclValidationErrorsForProcessing()
+    salesApi.doPreciselyNothing()
     console.warn('fetchDueRecurringPayments 3')
-    const duePayments = await salesApi.getDueRecurringPayments(date)
+    salesApi.doPreciselyNothing()
     console.warn('fetchDueRecurringPayments 4')
+    const duePayments = await salesApi.getDueRecurringPayments(date)
+    console.warn('fetchDueRecurringPayments 5')
 
     debug('Recurring Payments found:', duePayments)
     return duePayments
