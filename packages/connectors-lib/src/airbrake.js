@@ -22,7 +22,10 @@ export const initialise = () => {
       projectKey: process.env.AIRBRAKE_PROJECT_KEY,
       host: process.env.AIRBRAKE_HOST,
       environment: process.env.NODE_ENV,
-      performanceStats: false
+      performanceStats: false,
+      instrumentation: {
+        fetch: false
+      }
     })
 
     // Proxy the console.warn and console.error methods, notifying airbrake/errbit asynchronously
