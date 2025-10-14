@@ -4,12 +4,157 @@
 {% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.rp_cancel_identify_title %}
+
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
+
+{%
+    set errorMap = {
+        'referenceNumber' : {
+            'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
+            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' }
+        },
+        'postcode': {
+            'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },
+            'string.pattern.base': { ref: '#postcode', text: mssgs.identify_error_pattern_postcode }
+        },
+        'full-date': {
+            'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error }
+        },
+        'day-and-month': {
+            'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day_and_month }
+        },
+        'day-and-year': {
+            'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day_and_year }
+        },
+        'month-and-year': {
+            'object.missing': { ref: '#date-of-birth-month', text: mssgs.dob_error_missing_month_and_year }
+        },
+        'day': {
+            'any.required': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day }
+        },
+        'month': {
+            'any.required': { ref: '#date-of-birth-month', text: mssgs.dob_error_missing_month }
+        },
+        'year': {
+            'any.required': { ref: '#date-of-birth-year', text: mssgs.dob_error_missing_year }
+        },
+        'non-numeric': {
+            'number.base': { ref: '#date-of-birth-day', text: mssgs.dob_error_non_numeric }
+        },
+        'invalid-date': {
+            'any.custom': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
+        },
+        'date-range': {
+            'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_min },
+            'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
+        }
+    }
+%}
+
+{% set dateInputItems = [
+    {
+      label: mssgs.date_day,
+      name: "day",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isDayError else "govuk-input--width-2",
+      value: payload['date-of-birth-day'],
+      attributes: { maxlength : 2 }
+    },
+    {
+      label: mssgs.date_month,
+      name: "month",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isMonthError else "govuk-input--width-2",
+      value: payload['date-of-birth-month'],
+      attributes: { maxlength : 2 }
+    },
+    {
+      label: mssgs.date_year,
+      name: "year",
+      classes: "govuk-input--width-4 govuk-input--error" if data.isYearError else "govuk-input--width-4",
+      value: payload['date-of-birth-year'],
+      attributes: { maxlength : 4 }
+    }
+  ]
+%}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
+          {% call govukFieldset({
+              describedBy: "ref-hint date-of-birth-hint postcode-hint",
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                <p class="govuk-body-m">{{ mssgs.cancel_rp_identify_body }}</p>
+
+                <div id="ref-rw" class="govuk-body-m">
+                    {{ govukInput({
+                      id: "ref",
+                      name: "referenceNumber",
+                      type: "text",
+                      classes: "govuk-input--width-10",
+                      errorMessage: { text: mssgs.identify_error_empty } if error['referenceNumber'],
+                      label: {
+                        text: mssgs.identify_label_last_six,
+                        classes: "govuk-!-font-weight-bold"
+                      },
+                      hint: {
+                          text: mssgs.identify_label_last_six_hint
+                      },
+                      attributes: {
+                        spellcheck: "false",
+                        maxlength: "6"
+                      },
+                      value: data.referenceNumber if data.referenceNumber else payload.referenceNumber
+                    }) }}
+                </div>
+
+                <div id="ref-ro" class="govuk-body-m initially-hidden">
+                    <span class="govuk-!-font-weight-bold">{{ mssgs.identify_label_licence_ending }}</span>
+                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }}
+                        &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.change_licence_number }}</a>
+                    </span>
+                </div>
+
+                {{ govukDateInput({
+                  id: "date-of-birth",
+                  namePrefix: "date-of-birth",
+                  items: dateInputItems,
+                  fieldset: {
+                      legend: {
+                            text: mssgs.licence_summary_dob,
+                            isPageHeading: false,
+                            classes: "govuk-!-font-weight-bold govuk-label"
+                      }
+                  },
+                  errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
+                  hint: {
+                    text: mssgs.enter_dob_example
+                  }
+                }) }}
+
+                {{ govukInput({
+                  label: {
+                    text: mssgs.address_entry_content_postcode,
+                    classes: "govuk-!-font-weight-bold"
+                  },
+                  id: "postcode",
+                  name: "postcode",
+                  hint: { text: mssgs.address_lookup_postcode_hint },
+                  value: payload['postcode'],
+                  autocomplete: 'postal-code',
+                  classes: "govuk-input--width-10",
+                  attributes: { maxlength: 10 },
+                  errorMessage: { text: mssgs.enter_postcode } if error['postcode']
+                }) }}
+
+            {% endcall %}
+
           {{ govukButton({
             attributes: { id: 'continue' },
             preventDoubleClick: true,
@@ -19,6 +164,34 @@
           }) }}
           {{ csrf() }}
         </form>
+
+        <div>
+            <h2 class="govuk-heading-s">{{ mssgs.identify_subheading_problem }}</h2>
+            <p class="govuk-body">{{ mssgs.identify_problem_body }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.identify_problem_link }}</a></p>
+        </div>
+
     </div>
 </div>
+{% endblock %}
+
+{% block bodyEnd %}
+    <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
+    <script nonce="{{nonce}}" type="module">
+        import { initAll } from '/public/javascript/govuk-frontend-min.js'
+        initAll()
+    </script>
+    <script nonce={{nonce}}>(function () {
+        if ({{ true if data.referenceNumber else false }} && !'{{ error.referenceNumber }}') {
+            document.getElementById("ref-ro").style.display = "block"
+            document.getElementById("ref-rw").style.display = "none"
+         } else {
+            document.getElementById("ref-ro").style.display = "none"
+            document.getElementById("ref-rw").style.display = "block"
+        }
+        document.getElementById("change").addEventListener("click", function () {
+            document.getElementById("ref-ro").style.display = "none"
+            document.getElementById("ref-rw").style.display = "block"
+            document.getElementById("ref").focus()
+        })
+    })()</script>
 {% endblock %}
