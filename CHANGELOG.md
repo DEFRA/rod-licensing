@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.3 (2025-10-14)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `pocl-job`
+  * [#2209](https://github.com/DEFRA/rod-licensing/pull/2209) Upgrade pocl job to use AWS SDK v3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.64.0-rc.2 (2025-10-06)
 
 #### :rocket: Enhancement
