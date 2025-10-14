@@ -58,7 +58,7 @@ const processRecurringPayments = async () => {
 
 const fetchDueRecurringPayments = async date => {
   try {
-    const promisesPromises
+    const promisesPromises = []
     promisesPromises.push(console.warn('fetchDueRecurringPayments 1'))
     salesApi.doPreciselyNothing()
     promisesPromises.push(console.warn('fetchDueRecurringPayments 2'))
