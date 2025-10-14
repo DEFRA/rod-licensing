@@ -33,11 +33,11 @@ export const initialise = () => {
     ;['warn', 'error'].forEach(method => {
       console.log(`replacing console.${method} function`)
       nativeConsoleMethods[method] = console[method].bind(console)
-      console[method] = (...args) => {
+      console[method] = async (...args) => {
         const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
         const request = args.find(arg => Object.prototype.hasOwnProperty.call(arg, 'headers'))
         console.log(`notifying airbrake for console.${method}`, INSPECT_OPTS)
-        const res = airbrake.notify({
+        const res = await airbrake.notify({
           error,
           params: { consoleInvocationDetails: { method, arguments: { ...args.map(arg => inspect(arg, INSPECT_OPTS)) } } },
           environment: {
@@ -50,7 +50,7 @@ export const initialise = () => {
             ...(request?.headers?.['user-agent'] && { userAgent: request?.headers?.['user-agent'] })
           }
         })
-        console.log(`Notify result: ${JSON.stringify(res)}`)
+        console.log(`Notify result: ${JSON.stringify(res)}`, res.id, res.url, res.error)
         nativeConsoleMethods[method](...args)
       }
     })
