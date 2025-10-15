@@ -3,8 +3,8 @@ import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { dateOfBirthValidator, getDateErrorFlags } from '../../../schema/validators/validators.js'
+import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
+import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 export const getData = async request => {
   const permission = await request.cache().helpers.status.getCurrentPermission()
