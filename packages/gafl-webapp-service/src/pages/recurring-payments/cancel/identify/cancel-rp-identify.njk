@@ -10,12 +10,12 @@
 {%
     set errorMap = {
         'referenceNumber' : {
-            'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
-            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' }
+            'string.empty': { text: mssgs.cancel_rp_identify_ref_number, ref: '#ref' },
+            'string.pattern.base': { text: mssgs.cancel_rp_identify_ref_pattern, ref: '#ref' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },
-            'string.pattern.base': { ref: '#postcode', text: mssgs.identify_error_pattern_postcode }
+            'string.empty': { ref: '#postcode', text: mssgs.cancel_rp_identify_postcode_error },
+            'string.pattern.base': { ref: '#postcode', text: mssgs.cancel_rp_identify_postcode_pattern }
         },
         'full-date': {
             'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error }
@@ -81,6 +81,7 @@
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
+          <span class="govuk-caption-l"> {{ mssgs.cancel_rp_identify_caption }}</span>
           {% call govukFieldset({
               describedBy: "ref-hint date-of-birth-hint postcode-hint",
               legend: {
@@ -89,7 +90,6 @@
                 isPageHeading: true
               }
             }) %}
-
                 <p class="govuk-body-m">{{ mssgs.cancel_rp_identify_body }}</p>
 
                 <div id="ref-rw" class="govuk-body-m">
@@ -98,13 +98,13 @@
                       name: "referenceNumber",
                       type: "text",
                       classes: "govuk-input--width-10",
-                      errorMessage: { text: mssgs.identify_error_empty } if error['referenceNumber'],
+                      errorMessage: { text: mssgs.cancel_rp_identify_ref_number_error } if error['referenceNumber'],
                       label: {
-                        text: mssgs.identify_label_last_six,
+                        text: mssgs.cancel_rp_identify_ref_number,
                         classes: "govuk-!-font-weight-bold"
                       },
                       hint: {
-                          text: mssgs.identify_label_last_six_hint
+                          text: mssgs.cancel_rp_identify_ref_number_hint
                       },
                       attributes: {
                         spellcheck: "false",
@@ -127,30 +127,30 @@
                   items: dateInputItems,
                   fieldset: {
                       legend: {
-                            text: mssgs.licence_summary_dob,
+                            text: mssgs.cancel_rp_identify_dob,
                             isPageHeading: false,
                             classes: "govuk-!-font-weight-bold govuk-label"
                       }
                   },
                   errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
                   hint: {
-                    text: mssgs.enter_dob_example
+                    text: mssgs.canceL_rp_identify_dob_hint
                   }
                 }) }}
 
                 {{ govukInput({
                   label: {
-                    text: mssgs.address_entry_content_postcode,
+                    text: mssgs.cancel_rp_identify_postcode,
                     classes: "govuk-!-font-weight-bold"
                   },
                   id: "postcode",
                   name: "postcode",
-                  hint: { text: mssgs.address_lookup_postcode_hint },
+                  hint: { text: mssgs.cancel_rp_identify_postcode_hint },
                   value: payload['postcode'],
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-10",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: mssgs.enter_postcode } if error['postcode']
+                  errorMessage: { text: mssgs.cancel_rp_identify_postcode_error } if error['postcode']
                 }) }}
 
             {% endcall %}
@@ -164,12 +164,6 @@
           }) }}
           {{ csrf() }}
         </form>
-
-        <div>
-            <h2 class="govuk-heading-s">{{ mssgs.identify_subheading_problem }}</h2>
-            <p class="govuk-body">{{ mssgs.identify_problem_body }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.identify_problem_link }}</a></p>
-        </div>
-
     </div>
 </div>
 {% endblock %}
