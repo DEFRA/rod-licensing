@@ -1,4 +1,4 @@
-import { CANCEL_RP_AUTHENTICATE, CANCEL_RP_IDENTIFY, NEW_TRANSACTION } from '../../../../uri.js'
+import { CANCEL_RP_AUTHENTICATE, CANCEL_RP_IDENTIFY } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
@@ -22,9 +22,6 @@ export const getData = async request => {
 
   const pageData = {
     referenceNumber: permission.referenceNumber,
-    uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    },
     ...getDateErrorFlags(page?.error)
   }
 
