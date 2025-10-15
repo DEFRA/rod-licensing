@@ -50,4 +50,10 @@ export const validator = payload => {
   )
 }
 
-export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, CANCEL_RP_AUTHENTICATE.uri), getData)
+export default pageRoute(
+  IDENTIFY.page,
+  IDENTIFY.uri,
+  validator,
+  request => addLanguageCodeToUri(request, CANCEL_RP_AUTHENTICATE.uri),
+  getData
+)
