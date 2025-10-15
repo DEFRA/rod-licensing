@@ -6,19 +6,38 @@
 {% set title = mssgs.rp_cancel_details_title %}
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
+{% set licenseDetailsSummary %}
+    {% call govukFieldset({
+      legend: {
+        text: title,
+        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+        isPageHeading: true
+      }
+    }) %}
+    {{ govukSummaryList({
+      classes: 'licence-summary-list',
+      rows: data.licenceSummaryRows
+    }) }}
+    {% endcall %}
+{% endset -%}
+
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="post" class="govuk-!-margin-bottom-6">
-          {{ govukButton({
-            attributes: { id: 'continue' },
-            preventDoubleClick: true,
-            name: "continue",
-            text: mssgs.continue,
-            classes: "govuk-!-margin-top-1"
-          }) }}
-          {{ csrf() }}
+        <form method="post">
+            {{ licenseDetailsSummary | trim | safe }}
+
+            {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: mssgs.confirm_continue,
+                classes: "govuk-!-margin-top-5"
+            }) }}
+
+            {{ csrf() }}
         </form>
+
     </div>
 </div>
 {% endblock %}
