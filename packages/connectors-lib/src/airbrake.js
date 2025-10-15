@@ -25,7 +25,8 @@ export const initialise = () => {
       performanceStats: false,
       instrumentation: {
         fetch: false
-      }
+      },
+      errorNotifications: true
     })
 
     // Proxy the console.warn and console.error methods, notifying airbrake/errbit asynchronously
