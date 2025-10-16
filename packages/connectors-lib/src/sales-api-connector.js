@@ -108,8 +108,8 @@ export const finaliseTransaction = async (id, payload) => exec2xxOrThrow(call(ne
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const updateTransaction = async (id, payload) =>
-  exec2xxOrThrow(call(new URL(`/recurring-transactions/${id}`, urlBase), 'patch', payload))
+export const updateRecurringTransaction = async (id, payload) =>
+  exec2xxOrThrow(call(new URL(`/update-recurring-transactions/${id}`, urlBase), 'patch', payload))
 
 /**
  * Retrieve the details of a transaction file.  Returns null if not found.
