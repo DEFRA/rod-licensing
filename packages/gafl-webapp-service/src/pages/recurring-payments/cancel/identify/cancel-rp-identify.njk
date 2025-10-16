@@ -1,7 +1,11 @@
 {% extends "layout.njk" %}
 
+{% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "page-title.njk" import pageTitle %}
+{% from "date-input/macro.njk" import govukDateInput %}
+{% from "input/macro.njk" import govukInput %}
+{% from "error-summary.njk" import errorSummary %}
 
 {% set title = mssgs.rp_cancel_identify_title %}
 
@@ -10,7 +14,7 @@
 {%
     set errorMap = {
         'referenceNumber' : {
-            'string.empty': { text: mssgs.cancel_rp_identify_ref_number, ref: '#ref' },
+            'string.empty': { text: mssgs.cancel_rp_identify_ref_number_error, ref: '#ref' },
             'string.pattern.base': { text: mssgs.cancel_rp_identify_ref_pattern, ref: '#ref' }
         },
         'postcode': {
@@ -81,45 +85,38 @@
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
-          <span class="govuk-caption-l"> {{ mssgs.cancel_rp_identify_caption }}</span>
           {% call govukFieldset({
-              describedBy: "ref-hint date-of-birth-hint postcode-hint",
-              legend: {
-                text: title,
-                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-                isPageHeading: true
-              }
-            }) %}
+  describedBy: "ref-hint date-of-birth-hint postcode-hint",
+  legend: {
+    html: '
+      <span class="govuk-caption-l">' ~ mssgs.cancel_rp_identify_caption ~ '</span>
+      ' ~ title,
+    classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+    isPageHeading: true
+  }
+}) %}
+
                 <p class="govuk-body-m">{{ mssgs.cancel_rp_identify_body }}</p>
 
-                <div id="ref-rw" class="govuk-body-m">
-                    {{ govukInput({
-                      id: "ref",
-                      name: "referenceNumber",
-                      type: "text",
-                      classes: "govuk-input--width-10",
-                      errorMessage: { text: mssgs.cancel_rp_identify_ref_number_error } if error['referenceNumber'],
-                      label: {
-                        text: mssgs.cancel_rp_identify_ref_number,
-                        classes: "govuk-!-font-weight-bold"
-                      },
-                      hint: {
-                          text: mssgs.cancel_rp_identify_ref_number_hint
-                      },
-                      attributes: {
-                        spellcheck: "false",
-                        maxlength: "6"
-                      },
-                      value: data.referenceNumber if data.referenceNumber else payload.referenceNumber
-                    }) }}
-                </div>
-
-                <div id="ref-ro" class="govuk-body-m initially-hidden">
-                    <span class="govuk-!-font-weight-bold">{{ mssgs.identify_label_licence_ending }}</span>
-                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }}
-                        &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.change_licence_number }}</a>
-                    </span>
-                </div>
+                  {{ govukInput({
+                    id: "ref",
+                    name: "referenceNumber",
+                    type: "text",
+                    classes: "govuk-input--width-10",
+                    errorMessage: { text: mssgs.cancel_rp_identify_ref_number_error } if error['referenceNumber'],
+                    label: {
+                      text: mssgs.cancel_rp_identify_ref_number,
+                      classes: "govuk-!-font-weight-bold"
+                    },
+                    hint: {
+                        text: mssgs.cancel_rp_identify_ref_number_hint
+                    },
+                    attributes: {
+                      spellcheck: "false",
+                      maxlength: "6"
+                    },
+                    value: payload.referenceNumber
+                  }) }}
 
                 {{ govukDateInput({
                   id: "date-of-birth",
@@ -134,7 +131,7 @@
                   },
                   errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
                   hint: {
-                    text: mssgs.canceL_rp_identify_dob_hint
+                    text: mssgs.cancel_rp_identify_dob_hint
                   }
                 }) }}
 
@@ -169,23 +166,8 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
-    <script nonce="{{nonce}}" type="module">
-        import { initAll } from '/public/javascript/govuk-frontend-min.js'
-        initAll()
-    </script>
-    <script nonce={{nonce}}>(function () {
-        if ({{ true if data.referenceNumber else false }} && !'{{ error.referenceNumber }}') {
-            document.getElementById("ref-ro").style.display = "block"
-            document.getElementById("ref-rw").style.display = "none"
-         } else {
-            document.getElementById("ref-ro").style.display = "none"
-            document.getElementById("ref-rw").style.display = "block"
-        }
-        document.getElementById("change").addEventListener("click", function () {
-            document.getElementById("ref-ro").style.display = "none"
-            document.getElementById("ref-rw").style.display = "block"
-            document.getElementById("ref").focus()
-        })
-    })()</script>
+<script type="module" nonce="{{ nonce }}">
+  import { initAll } from '/public/javascript/govuk-frontend-min.js'
+  initAll()
+</script>
 {% endblock %}
