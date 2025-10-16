@@ -38,8 +38,8 @@
   "dependencies": {
     "@defra-fish/business-rules-lib": "1.64.0-rc.3",
     "@defra-fish/connectors-lib": "1.64.0-rc.3",
-    "commander": "^7.2.0",
-    "debug": "^4.3.3",
-    "moment-timezone": "^0.5.34"
+    "commander": "7.2.0",
+    "debug": "4.3.3",
+    "moment-timezone": "0.5.34"
   }
 }
