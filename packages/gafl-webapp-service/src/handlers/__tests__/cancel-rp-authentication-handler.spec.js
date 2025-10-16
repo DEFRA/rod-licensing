@@ -56,12 +56,12 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Successful authentication', () => {
-    let req, h, result
+    let request, h, result
     beforeEach(async () => {
       salesApi.authenticate.mockResolvedValueOnce({ permission: { id: 'perm-id' } })
-      req = getRequest()
+      request = getRequest()
       h = getH()
-      result = await handler(req, h)
+      result = await handler(request, h)
     })
 
     it('returns the redirect result', () => {
@@ -73,19 +73,19 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('marks status as authorised', () => {
-      expect(req.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith({ authentication: { authorised: true } })
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith({ authentication: { authorised: true } })
     })
   })
 
   describe('Unsuccessful authentication', () => {
-    let req, h, errorCaught
+    let request, h, errorCaught
     beforeEach(async () => {
       salesApi.authenticate.mockResolvedValueOnce(null)
       addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
-      req = getRequest()
+      request = getRequest()
       h = getH()
       try {
-        await handler(req, h)
+        await handler(request, h)
       } catch (e) {
         errorCaught = e
       }
@@ -96,7 +96,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('sets page cache error and preserves payload', () => {
-      expect(req.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
+      expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
         CANCEL_RP_IDENTIFY.page,
         expect.objectContaining({
           payload: expect.any(Object),
@@ -106,13 +106,13 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('marks status as unauthorised', () => {
-      expect(req.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
       )
     })
 
     it('builds language-aware redirect to identify', () => {
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(req, CANCEL_RP_IDENTIFY.uri)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, CANCEL_RP_IDENTIFY.uri)
     })
   })
 })
