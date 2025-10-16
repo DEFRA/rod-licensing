@@ -148,7 +148,7 @@
   "cancel_rp_identify_ref_number_error": "Enter the last 6 characters of your licence number",
   "cancel_rp_identify_ref_pattern": "The last six characters of your licence number don’t look right. Check and enter again",
   "cancel_rp_identify_dob": "Date of birth",
-  "canceL_rp_identify_dob_hint": "For example, 31 3 1980",
+  "cancel_rp_identify_dob_hint": "For example, 31 3 1980",
   "cancel_rp_identify_postcode": "Postcode",
   "cancel_rp_identify_postcode_hint": "For example, WA4 1AB",
   "cancel_rp_identify_postcode_error": "Enter a postcode",
