@@ -9,7 +9,6 @@ import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/vali
 export const getData = async request => {
   const permission = await request.cache().helpers.status.getCurrentPermission()
   const page = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
-  const mssgs = request.i18n.getCatalog()
 
   if (permission.referenceNumber) {
     const validatePermissionNumber = validation.permission
@@ -23,8 +22,7 @@ export const getData = async request => {
 
   const pageData = {
     referenceNumber: permission.referenceNumber,
-    ...getDateErrorFlags(page?.error),
-    mssgs
+    ...getDateErrorFlags(page?.error)
   }
 
   if (page?.error) {
