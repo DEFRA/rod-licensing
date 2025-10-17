@@ -19,7 +19,6 @@ const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERR
 
 export const execute = async () => {
   airbrake.initialise()
-
   try {
     await processRecurringPayments()
   } catch (e) {
@@ -58,7 +57,6 @@ const processRecurringPayments = async () => {
 const fetchDueRecurringPayments = async date => {
   try {
     const duePayments = await salesApi.getDueRecurringPayments(date)
-
     debug('Recurring Payments found:', duePayments)
     return duePayments
   } catch (error) {
