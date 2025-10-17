@@ -59,19 +59,9 @@ const processRecurringPayments = async () => {
 const fetchDueRecurringPayments = async date => {
   try {
     const promisesPromises = []
-    promisesPromises.push(console.warn('fetchDueRecurringPayments 1'))
-    salesApi.doPreciselyNothing()
-    promisesPromises.push(console.warn('fetchDueRecurringPayments 2'))
-    await fetch('https://www.google.com', { method: 'get' })
-    promisesPromises.push(console.warn('fetchDueRecurringPayments 3'))
-    await fetch(new URL('/poclValidationErrors', 'https://fsh-dev-bes.aws-int.defra.cloud:4000/'), {
-      method: 'get',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      timeout: 20000
-    })
-    promisesPromises.push(console.warn('fetchDueRecurringPayments 4'))
+    promisesPromises.push(console.warn('fetching due recurring payments'))
     const duePayments = await salesApi.getDueRecurringPayments(date)
-    promisesPromises.push(console.warn('fetchDueRecurringPayments 5'))
+    promisesPromises.push(console.warn('fetched due recurring payments'))
     await Promise.allSettled(promisesPromises)
 
     debug('Recurring Payments found:', duePayments)
