@@ -25,19 +25,15 @@ export const initialise = () => {
       errorNotifications: true,
       remoteConfig: false
     })
-    console.log(`created new Notifier with error notifications set ${airbrake._opt.errorNotifications ? 'on' : 'off'}`)
 
     // Proxy the console.warn and console.error methods, notifying airbrake/errbit asynchronously
     const nativeConsoleMethods = {}
     ;['warn', 'error'].forEach(method => {
-      console.log(`replacing console.${method} function`)
       nativeConsoleMethods[method] = console[method].bind(console)
       console[method] = async (...args) => {
         const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
         const request = args.find(arg => Object.prototype.hasOwnProperty.call(arg, 'headers'))
-        console.log(`notifying airbrake for console.${method}, error notifications is ${airbrake._opt.errorNotifications ? 'on' : 'off'}`, INSPECT_OPTS)
-        airbrake._opt.errorNotifications = true
-        const res = await airbrake.notify({
+        airbrake.notify({
           error,
           params: { consoleInvocationDetails: { method, arguments: { ...args.map(arg => inspect(arg, INSPECT_OPTS)) } } },
           environment: {
@@ -50,7 +46,6 @@ export const initialise = () => {
             ...(request?.headers?.['user-agent'] && { userAgent: request?.headers?.['user-agent'] })
           }
         })
-        console.log(`Notify result: ${JSON.stringify(res)}`, res.id, res.url, res.error)
         nativeConsoleMethods[method](...args)
       }
     })

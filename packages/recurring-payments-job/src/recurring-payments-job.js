@@ -8,17 +8,13 @@ const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
 console.log('Recurring payments job starting at %s. name: %s. version: %s', new Date().toISOString(), pkg.name, pkg.version)
 
-const delay = 0// parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY || '0', 10)
+const delay = parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY || '0', 10)
 if (delay > 0) {
   setTimeout(() => {
-    console.log('executing RP job')
     executeRecurringPaymentsJob()
-    console.log('RP job executed')
   }, delay * 1000)
 } else {
-  console.log('executing RP job')
   executeRecurringPaymentsJob()
-  console.log('RP job executed')
 }
 
 function executeRecurringPaymentsJob () {

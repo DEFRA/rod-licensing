@@ -1,9 +1,8 @@
 import moment from 'moment-timezone'
 import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { salesApi, airbrake, govUkPayApi } from '@defra-fish/connectors-lib'
+import { salesApi, airbrake } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
-import fetch from 'node-fetch'
 
 const debug = db('recurring-payments:processor')
 
@@ -58,11 +57,7 @@ const processRecurringPayments = async () => {
 
 const fetchDueRecurringPayments = async date => {
   try {
-    const promisesPromises = []
-    promisesPromises.push(console.warn('fetching due recurring payments'))
     const duePayments = await salesApi.getDueRecurringPayments(date)
-    promisesPromises.push(console.warn('fetched due recurring payments'))
-    await Promise.allSettled(promisesPromises)
 
     debug('Recurring Payments found:', duePayments)
     return duePayments
