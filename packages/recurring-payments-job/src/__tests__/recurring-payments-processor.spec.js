@@ -70,6 +70,7 @@ const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'a
   expanded: { activePermission: { entity: { referenceNumber } } }
 })
 
+// eslint-disable-next-line camelcase
 const getMockSendPaymentResponse = ({ payment_id = 'pay-1', agreementId = 'agr-1', created_date = '2025-01-01T00:00:00.000Z' } = {}) => ({
   payment_id,
   agreementId,
