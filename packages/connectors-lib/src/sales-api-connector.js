@@ -71,8 +71,6 @@ const exec2xxOrNull = async requestPromise => {
   return (response.ok && response.body) || null
 }
 
-export const doPreciselyNothing = () => {}
-
 /**
  * Create a new transaction in the sales API
  *

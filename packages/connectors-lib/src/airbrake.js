@@ -30,7 +30,7 @@ export const initialise = () => {
     const nativeConsoleMethods = {}
     ;['warn', 'error'].forEach(method => {
       nativeConsoleMethods[method] = console[method].bind(console)
-      console[method] = async (...args) => {
+      console[method] = (...args) => {
         const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
         const request = args.find(arg => Object.prototype.hasOwnProperty.call(arg, 'headers'))
         airbrake.notify({
