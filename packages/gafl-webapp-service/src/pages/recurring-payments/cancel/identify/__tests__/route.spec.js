@@ -29,7 +29,11 @@ describe('cancel recurring payment identify route', () => {
             getCurrentPermission: pageGet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => [],
+        getLocales: () => []
+      }
     })
 
     it('passes correct page name when getting page cache', async () => {
