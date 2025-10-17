@@ -1,15 +1,157 @@
 {% extends "layout.njk" %}
 
+{% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "page-title.njk" import pageTitle %}
+{% from "date-input/macro.njk" import govukDateInput %}
+{% from "input/macro.njk" import govukInput %}
+{% from "error-summary.njk" import errorSummary %}
 
 {% set title = mssgs.rp_cancel_identify_title %}
+
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
+
+{%
+    set errorMap = {
+        'referenceNumber' : {
+            'string.empty': { text: mssgs.cancel_rp_identify_ref_number_error, ref: '#ref' },
+            'string.pattern.base': { text: mssgs.cancel_rp_identify_ref_pattern, ref: '#ref' }
+        },
+        'postcode': {
+            'string.empty': { ref: '#postcode', text: mssgs.cancel_rp_identify_postcode_error },
+            'string.pattern.base': { ref: '#postcode', text: mssgs.cancel_rp_identify_postcode_pattern }
+        },
+        'full-date': {
+            'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error }
+        },
+        'day-and-month': {
+            'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day_and_month }
+        },
+        'day-and-year': {
+            'object.missing': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day_and_year }
+        },
+        'month-and-year': {
+            'object.missing': { ref: '#date-of-birth-month', text: mssgs.dob_error_missing_month_and_year }
+        },
+        'day': {
+            'any.required': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day }
+        },
+        'month': {
+            'any.required': { ref: '#date-of-birth-month', text: mssgs.dob_error_missing_month }
+        },
+        'year': {
+            'any.required': { ref: '#date-of-birth-year', text: mssgs.dob_error_missing_year }
+        },
+        'non-numeric': {
+            'number.base': { ref: '#date-of-birth-day', text: mssgs.dob_error_non_numeric }
+        },
+        'invalid-date': {
+            'any.custom': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
+        },
+        'date-range': {
+            'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_min },
+            'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
+        }
+    }
+%}
+
+{% set dateInputItems = [
+    {
+      label: mssgs.date_day,
+      name: "day",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isDayError else "govuk-input--width-2",
+      value: payload['date-of-birth-day'],
+      attributes: { maxlength : 2 }
+    },
+    {
+      label: mssgs.date_month,
+      name: "month",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isMonthError else "govuk-input--width-2",
+      value: payload['date-of-birth-month'],
+      attributes: { maxlength : 2 }
+    },
+    {
+      label: mssgs.date_year,
+      name: "year",
+      classes: "govuk-input--width-4 govuk-input--error" if data.isYearError else "govuk-input--width-4",
+      value: payload['date-of-birth-year'],
+      attributes: { maxlength : 4 }
+    }
+  ]
+%}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
+          {% call govukFieldset({
+  describedBy: "ref-hint date-of-birth-hint postcode-hint",
+  legend: {
+    html: '
+      <span class="govuk-caption-l">' ~ mssgs.cancel_rp_identify_caption ~ '</span>
+      ' ~ title,
+    classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+    isPageHeading: true
+  }
+}) %}
+
+                <p class="govuk-body-m">{{ mssgs.cancel_rp_identify_body }}</p>
+
+                  {{ govukInput({
+                    id: "ref",
+                    name: "referenceNumber",
+                    type: "text",
+                    classes: "govuk-input--width-10",
+                    errorMessage: { text: mssgs.cancel_rp_identify_ref_number_error } if error['referenceNumber'],
+                    label: {
+                      text: mssgs.cancel_rp_identify_ref_number,
+                      classes: "govuk-!-font-weight-bold"
+                    },
+                    hint: {
+                        text: mssgs.cancel_rp_identify_ref_number_hint
+                    },
+                    attributes: {
+                      spellcheck: "false",
+                      maxlength: "6"
+                    },
+                    value: payload.referenceNumber
+                  }) }}
+
+                {{ govukDateInput({
+                  id: "date-of-birth",
+                  namePrefix: "date-of-birth",
+                  items: dateInputItems,
+                  fieldset: {
+                      legend: {
+                            text: mssgs.cancel_rp_identify_dob,
+                            isPageHeading: false,
+                            classes: "govuk-!-font-weight-bold govuk-label"
+                      }
+                  },
+                  errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
+                  hint: {
+                    text: mssgs.cancel_rp_identify_dob_hint
+                  }
+                }) }}
+
+                {{ govukInput({
+                  label: {
+                    text: mssgs.cancel_rp_identify_postcode,
+                    classes: "govuk-!-font-weight-bold"
+                  },
+                  id: "postcode",
+                  name: "postcode",
+                  hint: { text: mssgs.cancel_rp_identify_postcode_hint },
+                  value: payload['postcode'],
+                  autocomplete: 'postal-code',
+                  classes: "govuk-input--width-10",
+                  attributes: { maxlength: 10 },
+                  errorMessage: { text: mssgs.cancel_rp_identify_postcode_error } if error['postcode']
+                }) }}
+
+            {% endcall %}
+
           {{ govukButton({
             attributes: { id: 'continue' },
             preventDoubleClick: true,
@@ -21,4 +163,11 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block bodyEnd %}
+<script type="module" nonce="{{ nonce }}">
+  import { initAll } from '/public/javascript/govuk-frontend-min.js'
+  initAll()
+</script>
 {% endblock %}
