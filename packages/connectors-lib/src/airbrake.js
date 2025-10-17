@@ -22,10 +22,8 @@ export const initialise = () => {
       host: process.env.AIRBRAKE_HOST,
       environment: process.env.NODE_ENV,
       performanceStats: false,
-      instrumentation: {
-        fetch: false
-      },
-      errorNotifications: true
+      errorNotifications: true,
+      remoteConfig: false
     })
     console.log(`created new Notifier with error notifications set ${airbrake._opt.errorNotifications ? 'on' : 'off'}`)
 
@@ -38,7 +36,7 @@ export const initialise = () => {
         const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
         const request = args.find(arg => Object.prototype.hasOwnProperty.call(arg, 'headers'))
         console.log(`notifying airbrake for console.${method}, error notifications is ${airbrake._opt.errorNotifications ? 'on' : 'off'}`, INSPECT_OPTS)
-        airbrake._opt.errorNotifications
+        airbrake._opt.errorNotifications = true
         const res = await airbrake.notify({
           error,
           params: { consoleInvocationDetails: { method, arguments: { ...args.map(arg => inspect(arg, INSPECT_OPTS)) } } },
