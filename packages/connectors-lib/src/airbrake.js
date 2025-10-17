@@ -16,7 +16,6 @@ export const reset = () => {
  */
 export const initialise = () => {
   if (!airbrake && process.env.AIRBRAKE_PROJECT_KEY && process.env.AIRBRAKE_HOST) {
-    console.log('creating new Notifier', process.env.AIRBRAKE_PROJECT_KEY, process.env.AIRBRAKE_HOST, process.env.NODE_ENV)
     airbrake = new Notifier({
       projectId: 1,
       projectKey: process.env.AIRBRAKE_PROJECT_KEY,
@@ -28,6 +27,7 @@ export const initialise = () => {
       },
       errorNotifications: true
     })
+    console.log(`created new Notifier with error notifications set ${airbrake._opt.errorNotifications ? 'on' : 'off'}`)
 
     // Proxy the console.warn and console.error methods, notifying airbrake/errbit asynchronously
     const nativeConsoleMethods = {}
@@ -37,7 +37,8 @@ export const initialise = () => {
       console[method] = async (...args) => {
         const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
         const request = args.find(arg => Object.prototype.hasOwnProperty.call(arg, 'headers'))
-        console.log(`notifying airbrake for console.${method}`, INSPECT_OPTS)
+        console.log(`notifying airbrake for console.${method}, error notifications is ${airbrake._opt.errorNotifications ? 'on' : 'off'}`, INSPECT_OPTS)
+        airbrake._opt.errorNotifications
         const res = await airbrake.notify({
           error,
           params: { consoleInvocationDetails: { method, arguments: { ...args.map(arg => inspect(arg, INSPECT_OPTS)) } } },
