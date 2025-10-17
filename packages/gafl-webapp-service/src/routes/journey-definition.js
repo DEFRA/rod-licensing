@@ -29,7 +29,11 @@ import {
   RENEWAL_START_DATE,
   CHOOSE_PAYMENT,
   SET_UP_PAYMENT,
-  LICENCE_NOT_FOUND
+  LICENCE_NOT_FOUND,
+  CANCEL_RP_IDENTIFY,
+  CANCEL_RP_DETAILS,
+  CANCEL_RP_CONFIRM,
+  CANCEL_RP_COMPLETE
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -426,5 +430,31 @@ export default [
   {
     current: RENEWAL_START_DATE,
     backLink: LICENCE_SUMMARY.uri
+  },
+
+  // cancel RP journey
+  {
+    current: CANCEL_RP_IDENTIFY,
+    next: {
+      [CommonResults.OK]: {
+        page: CANCEL_RP_DETAILS
+      }
+    }
+  },
+  {
+    current: CANCEL_RP_DETAILS,
+    next: {
+      [CommonResults.OK]: {
+        page: CANCEL_RP_CONFIRM
+      }
+    }
+  },
+  {
+    current: CANCEL_RP_CONFIRM,
+    next: {
+      [CommonResults.OK]: {
+        page: CANCEL_RP_COMPLETE
+      }
+    }
   }
 ]

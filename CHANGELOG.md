@@ -1,4 +1,42 @@
 
+
+## v1.64.0-rc.3 (2025-10-14)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `pocl-job`
+  * [#2209](https://github.com/DEFRA/rod-licensing/pull/2209) Upgrade pocl job to use AWS SDK v3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.2 (2025-10-06)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2215](https://github.com/DEFRA/rod-licensing/pull/2215) Recurring payment job should handle errors from await salesApi.processRPResult() ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.64.0-rc.1 (2025-10-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2201](https://github.com/DEFRA/rod-licensing/pull/2201) Create cancellation journey ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.64.0-rc.0 (2025-10-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2212](https://github.com/DEFRA/rod-licensing/pull/2212) Add missing reminder content to contact page on junior journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
 ## v1.63.0-rc.18 (2025-09-18)
 
 #### :bug: Bug Fix
