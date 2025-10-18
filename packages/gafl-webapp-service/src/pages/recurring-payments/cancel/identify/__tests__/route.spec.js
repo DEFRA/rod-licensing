@@ -136,9 +136,9 @@ describe('cancel recurring payment identify route', () => {
     })
 
     it('passes payload to dateOfBirthValidator', () => {
-      const payload = getMockPayload()
-      validator(payload)
-      expect(dateOfBirthValidator).toHaveBeenCalledWith(payload)
+      const p = getMockPayload()
+      validator(p)
+      expect(dateOfBirthValidator).toHaveBeenCalledWith(p)
     })
   })
 })

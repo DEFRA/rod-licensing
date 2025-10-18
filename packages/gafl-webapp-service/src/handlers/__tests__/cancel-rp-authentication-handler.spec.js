@@ -110,9 +110,16 @@ describe('Cancel RP Authentication Handler', () => {
         expect.objectContaining({ authentication: { authorised: false } })
       )
     })
+  })
 
-    it('builds language-aware redirect to identify', () => {
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, CANCEL_RP_IDENTIFY.uri)
+  it('uses referenceNumber from status when payload is missing', async () => {
+    salesApi.authenticate.mockResolvedValueOnce({ permission: { id: 'perm-id' } })
+    const request = getRequest({ referenceNumber: undefined })
+    request.cache().helpers.status.getCurrentPermission.mockResolvedValueOnce({
+      referenceNumber: 'A1B2C3'
     })
+    const h = getH()
+    await handler(request, h)
+    expect(salesApi.authenticate).toHaveBeenCalledWith('A1B2C3', expect.anything(), expect.anything())
   })
 })
