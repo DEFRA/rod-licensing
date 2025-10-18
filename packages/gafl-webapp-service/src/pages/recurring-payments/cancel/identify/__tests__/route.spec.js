@@ -18,6 +18,9 @@ jest.mock('../../../../../processors/uri-helper.js')
 jest.mock('../../../../../schema/validators/validators.js')
 
 describe('cancel recurring payment identify route', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   describe('getData', () => {
     const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
       cache: () => ({
@@ -25,7 +28,8 @@ describe('cancel recurring payment identify route', () => {
           status: {
             getCurrentPermission: () => ({
               referenceNumber
-            })
+            }),
+            setCurrentPermission: jest.fn()
           },
           page: {
             getCurrentPermission: pageGet
@@ -54,17 +58,8 @@ describe('cancel recurring payment identify route', () => {
         .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
         .mockReturnValue({ validate: () => ({ error: true }) })
 
-      const request = {
-        cache: () => ({
-          helpers: {
-            status: {
-              getCurrentPermission: () => ({ referenceNumber: 'BAD123' }),
-              setCurrentPermission: jest.fn()
-            },
-            page: { getCurrentPermission: async () => ({}) }
-          }
-        })
-      }
+      const request = getMockRequest('BAD123')
+      request.cache().helpers.status.setCurrentPermission = jest.fn()
 
       await expect(getData(request)).rejects.toBeInstanceOf(GetDataRedirect)
       spy.mockRestore()
@@ -151,7 +146,7 @@ describe('cancel recurring payment identify route', () => {
       dateOfBirthValidator.mockImplementationOnce(() => {
         throw expectedError
       })
-      expect(() => validator(getMockPayload)).toThrow(expectedError)
+      expect(() => validator(getMockPayload())).toThrow(expectedError)
     })
 
     it('passes if dateOfBirthValidator succeeds', () => {
