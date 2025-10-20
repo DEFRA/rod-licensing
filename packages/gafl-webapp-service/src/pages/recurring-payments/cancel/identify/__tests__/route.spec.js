@@ -3,6 +3,8 @@ import { CANCEL_RP_IDENTIFY } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 import { getData, validator } from '../route.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../../../schema/validators/validators.js'
+import { validation } from '@defra-fish/business-rules-lib'
+import GetDataRedirect from '../../../../../handlers/get-data-redirect.js'
 
 require('../route.js')
 
@@ -16,6 +18,9 @@ jest.mock('../../../../../processors/uri-helper.js')
 jest.mock('../../../../../schema/validators/validators.js')
 
 describe('cancel recurring payment identify route', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   describe('getData', () => {
     const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
       cache: () => ({
@@ -23,13 +28,18 @@ describe('cancel recurring payment identify route', () => {
           status: {
             getCurrentPermission: () => ({
               referenceNumber
-            })
+            }),
+            setCurrentPermission: jest.fn()
           },
           page: {
             getCurrentPermission: pageGet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => [],
+        getLocales: () => []
+      }
     })
 
     it('passes correct page name when getting page cache', async () => {
@@ -41,6 +51,18 @@ describe('cancel recurring payment identify route', () => {
     it.each([['09F6VF'], ['013AH6'], ['LK563F']])('returns referenceNumber when permission includes %s', async referenceNumber => {
       const result = await getData(getMockRequest(referenceNumber))
       expect(result.referenceNumber).toEqual(referenceNumber)
+    })
+
+    it('throws redirect when permission number fails validation', async () => {
+      const spy = jest
+        .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
+        .mockReturnValue({ validate: () => ({ error: true }) })
+
+      const request = getMockRequest('BAD123')
+      request.cache().helpers.status.setCurrentPermission = jest.fn()
+
+      await expect(getData(request)).rejects.toBeInstanceOf(GetDataRedirect)
+      spy.mockRestore()
     })
 
     it('adds return value of getErrorFlags to the page data', async () => {
@@ -124,7 +146,7 @@ describe('cancel recurring payment identify route', () => {
       dateOfBirthValidator.mockImplementationOnce(() => {
         throw expectedError
       })
-      expect(() => validator(getMockPayload)).toThrow(expectedError)
+      expect(() => validator(getMockPayload())).toThrow(expectedError)
     })
 
     it('passes if dateOfBirthValidator succeeds', () => {
@@ -132,9 +154,9 @@ describe('cancel recurring payment identify route', () => {
     })
 
     it('passes payload to dateOfBirthValidator', () => {
-      const payload = getMockPayload()
-      validator(payload)
-      expect(dateOfBirthValidator).toHaveBeenCalledWith(payload)
+      const p = getMockPayload()
+      validator(p)
+      expect(dateOfBirthValidator).toHaveBeenCalledWith(p)
     })
   })
 })

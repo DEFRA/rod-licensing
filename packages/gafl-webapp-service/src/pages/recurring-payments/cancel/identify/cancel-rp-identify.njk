@@ -82,19 +82,23 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
-        <form method="post" class="govuk-!-margin-bottom-6">
-          {% call govukFieldset({
-  describedBy: "ref-hint date-of-birth-hint postcode-hint",
-  legend: {
-    html: '
-      <span class="govuk-caption-l">' ~ mssgs.cancel_rp_identify_caption ~ '</span>
-      ' ~ title,
-    classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-    isPageHeading: true
-  }
-}) %}
+  <div class="govuk-grid-column-two-thirds">
+    {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+    <form method="post" class="govuk-!-margin-bottom-6">
+
+      {% set legendHtml %}
+        <span class="govuk-caption-l">{{ mssgs.cancel_rp_identify_caption }}</span>
+        {{ title }}
+      {% endset %}
+
+      {% call govukFieldset({
+        describedBy: "ref-hint date-of-birth-hint postcode-hint",
+        legend: {
+          html: legendHtml,
+          classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+          isPageHeading: true
+        }
+      }) %}
 
                 <p class="govuk-body-m">{{ mssgs.cancel_rp_identify_body }}</p>
 

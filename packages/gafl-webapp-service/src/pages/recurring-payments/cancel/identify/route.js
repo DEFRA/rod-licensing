@@ -34,13 +34,13 @@ export const getData = async request => {
   return pageData
 }
 
-export const validator = payload => {
-  dateOfBirthValidator(payload)
+export const validator = p => {
+  dateOfBirthValidator(p)
 
   Joi.assert(
     {
-      postcode: payload.postcode,
-      referenceNumber: payload.referenceNumber
+      postcode: p.postcode,
+      referenceNumber: p.referenceNumber
     },
     Joi.object({
       referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
