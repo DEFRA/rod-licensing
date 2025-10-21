@@ -5,7 +5,8 @@ import {
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
   persist,
-  RecurringPayment
+  RecurringPayment,
+  findByExample
 } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
@@ -181,4 +182,17 @@ export const cancelRecurringPayment = async id => {
 const determineRecurringPaymentName = (transactionRecord, contact) => {
   const [dueYear] = transactionRecord.payment.recurring.nextDueDate.split('-')
   return [contact.firstName, contact.lastName, dueYear].join(' ')
+}
+
+
+export const getRecurringPaymentFromExample = async (permissionId) => {
+  const exampleRecurringPayment = new RecurringPayment()
+  exampleRecurringPayment.activePermission = permissionId
+  const recurringPayments = await findByExample(exampleRecurringPayment)
+  const recurringPayment = recurringPayments.find(
+    rp => rp.status === 0 && !rp.cancelledDate
+  )
+  console.log(recurringPayments)
+  console.log(recurringPayment)
+  return recurringPayment
 }

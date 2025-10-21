@@ -821,4 +821,44 @@ describe('sales-api-connector', () => {
       await expect(salesApi.retrieveStagedTransaction('id')).rejects.toThrow('Internal Server Error')
     })
   })
+
+    describe('getRecurringPaymentFromExample', () => {
+    describe.each([['id'], ['abc-123']])("Getting recurring payment from permission id '%s'", id => {
+      beforeEach(() => {
+        fetch.mockReturnValueOnce({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ id })
+        })
+      })
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.getRecurringPaymentFromExample(id)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/getRecurringPaymentFromExample/${id}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.getRecurringPaymentFromExample(id)
+
+        expect(processedResult).toEqual({ id })
+      })
+    })
+
+    it('throws an error on non-2xx response', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: async () => 'Server Error'
+      })
+
+      await expect(salesApi.getRecurringPaymentFromExample('id')).rejects.toThrow('Internal Server Error')
+    })
+  })
 })

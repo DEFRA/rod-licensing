@@ -2,6 +2,8 @@
 
 {% from "button/macro.njk" import govukButton %}
 {% from "page-title.njk" import pageTitle %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "summary-list/macro.njk" import govukSummaryList %}
 
 {% set title = mssgs.rp_cancel_details_title %}
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
@@ -16,7 +18,7 @@
     }) %}
     {{ govukSummaryList({
       classes: 'licence-summary-list',
-      rows: data.licenceSummaryRows
+      rows: data.summaryTable
     }) }}
     {% endcall %}
 {% endset -%}
