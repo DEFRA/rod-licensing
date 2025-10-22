@@ -821,4 +821,20 @@ describe('sales-api-connector', () => {
       await expect(salesApi.retrieveStagedTransaction('id')).rejects.toThrow('Internal Server Error')
     })
   })
+
+  describe('rcp authentication', () => {
+    it('retrieves all items using .getAll()', async () => {
+      const expectedResponse = { foo: 'bar' }
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/authenticate/rcp/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+        {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        }
+      )
+    })
+  })
 })

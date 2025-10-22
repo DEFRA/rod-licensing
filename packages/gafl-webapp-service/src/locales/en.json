@@ -788,7 +788,7 @@
   "rp_cancel_complete_title": "Cancel your recurring card payment agreement - complete",
   "rp_cancel_confirm_title": "Cancel your recurring card payment agreement - confirm",
   "rp_cancel_details_title": "Cancel your recurring card payment agreement - details",
-  "rp_cancel_identify_title": "Cancel your recurring card payment agreement - identify",
+  "rp_cancel_identify_title": "Enter your details",
   "save_changes": "Save changes",
   "server_error_title_suffix": " - GOV.UK",
   "server_error_bulletpoint_1": "If you have requested an email or text notification, this should be delivered in 3 hours if a payment has been taken.",

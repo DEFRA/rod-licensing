@@ -58,7 +58,10 @@ describe('Cancel RP Authentication Handler', () => {
   describe('Successful authentication', () => {
     let request, h, result
     beforeEach(async () => {
-      salesApi.authenticate.mockResolvedValueOnce({ permission: { id: 'perm-id' } })
+      salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
+        permission: { id: 'perm-id' },
+        recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
+      })
       request = getRequest()
       h = getH()
       result = await handler(request, h)
@@ -77,10 +80,10 @@ describe('Cancel RP Authentication Handler', () => {
     })
   })
 
-  describe('Unsuccessful authentication', () => {
+  describe('Unsuccessful authentication - no match', () => {
     let request, h, errorCaught
     beforeEach(async () => {
-      salesApi.authenticate.mockResolvedValueOnce(null)
+      salesApi.authenticateRecurringPayment.mockResolvedValueOnce(null)
       addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
       request = getRequest()
       h = getH()
@@ -112,14 +115,93 @@ describe('Cancel RP Authentication Handler', () => {
     })
   })
 
+  describe('Unsuccessful authentication - no recurring payment agreement', () => {
+    let request, h, errorCaught
+    beforeEach(async () => {
+      salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
+        permission: { id: 'perm-id' },
+        recurringPayment: null
+      })
+      addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
+      request = getRequest()
+      h = getH()
+      try {
+        await handler(request, h)
+      } catch (e) {
+        errorCaught = e
+      }
+    })
+
+    it('throws GetDataRedirect', () => {
+      expect(errorCaught).toBeInstanceOf(GetDataRedirect)
+    })
+
+    it('sets page cache error for no RCP setup', () => {
+      expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
+        CANCEL_RP_IDENTIFY.page,
+        expect.objectContaining({
+          payload: expect.any(Object),
+          error: { recurringPayment: 'not-set-up' }
+        })
+      )
+    })
+
+    it('marks status as unauthorised', () => {
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({ authentication: { authorised: false } })
+      )
+    })
+  })
+
+  describe('Unsuccessful authentication - RCP cancelled', () => {
+    let request, h, errorCaught
+    beforeEach(async () => {
+      salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
+        permission: { id: 'perm-id' },
+        recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' }
+      })
+      addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
+      request = getRequest()
+      h = getH()
+      try {
+        await handler(request, h)
+      } catch (e) {
+        errorCaught = e
+      }
+    })
+
+    it('throws GetDataRedirect', () => {
+      expect(errorCaught).toBeInstanceOf(GetDataRedirect)
+    })
+
+    it('sets page cache error for RCP cancelled', () => {
+      expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
+        CANCEL_RP_IDENTIFY.page,
+        expect.objectContaining({
+          payload: expect.any(Object),
+          error: { recurringPayment: 'rcp-cancelled' }
+        })
+      )
+    })
+
+    it('marks status as unauthorised', () => {
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({ authentication: { authorised: false } })
+      )
+    })
+  })
+
   it('uses referenceNumber from status when payload is missing', async () => {
-    salesApi.authenticate.mockResolvedValueOnce({ permission: { id: 'perm-id' } })
+    salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
+      permission: { id: 'perm-id' },
+      recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
+    })
     const request = getRequest({ referenceNumber: undefined })
     request.cache().helpers.status.getCurrentPermission.mockResolvedValueOnce({
       referenceNumber: 'A1B2C3'
     })
     const h = getH()
     await handler(request, h)
-    expect(salesApi.authenticate).toHaveBeenCalledWith('A1B2C3', expect.anything(), expect.anything())
+    expect(salesApi.authenticateRecurringPayment).toHaveBeenCalledWith('A1B2C3', expect.anything(), expect.anything())
   })
 })
