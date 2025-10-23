@@ -96,6 +96,7 @@ export const layoutContextAmalgamation = (request, h) => {
         accessibility: `${ACCESSIBILITY_STATEMENT.uri}${queryString}`,
         privacy: `${PRIVACY_POLICY.uri}${queryString}`,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
+        rcpFeedback: process.env.RCP_FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
         clear: `${NEW_TRANSACTION.uri}${queryString}`,
         newPrices: `${NEW_PRICES.uri}${queryString}`,
         queryParams: request.query
