@@ -30,12 +30,12 @@ export default [
       handler: async (request, h) => {
         const { licenseeBirthDate, licenseePostcode } = request.query
         const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
-        
+
         if (contacts.length > 0) {
           const contactIds = contacts.map(contact => contact.entity.id)
           const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
           const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
-          
+
           if (results.length === 1) {
             let concessionProofs = []
 
