@@ -10,9 +10,9 @@ import {
   permissionForContacts,
   concessionsByIds,
   executeQuery,
-  contactForLicenseeNoReference,
-  findNewestExistingRecurringPaymentInCrm
+  contactForLicenseeNoReference
 } from '@defra-fish/dynamics-lib'
+import { findLinkedRecurringPayment } from '../../services/recurring-payments.service.js'
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'
 
@@ -106,18 +106,7 @@ export default [
               concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
             }
 
-            const { agreementId } = results[0].expanded.transaction.entity
-            if (!agreementId) {
-              throw Boom.unauthorized('No recurring payment agreement set up')
-            }
-
-            const recurringPayment = await findNewestExistingRecurringPaymentInCrm(agreementId)
-            if (!recurringPayment) {
-              throw Boom.unauthorized('No recurring payment agreement set up')
-            }
-            if (recurringPayment.entity.status === 1 || recurringPayment.entity.cancelledDate) {
-              throw Boom.unauthorized('Recurring payment agreement has been cancelled')
-            }
+            const recurringPayment = await findLinkedRecurringPayment(results[0].entity.id)
 
             return h
               .response({
@@ -130,7 +119,7 @@ export default [
                   })),
                   permit: results[0].expanded.permit.entity.toJSON()
                 },
-                recurringPayment: recurringPayment ? recurringPayment.toJSON() : null
+                recurringPayment
               })
               .code(200)
           } else if (results.length === 0) {

@@ -2,9 +2,9 @@ import initialiseServer from '../../server.js'
 import {
   contactForLicenseeNoReference,
   executeQuery,
-  permissionForContacts,
-  findNewestExistingRecurringPaymentInCrm
+  permissionForContacts
 } from '@defra-fish/dynamics-lib'
+import { findLinkedRecurringPayment } from '../../../services/recurring-payments.service.js'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
@@ -17,8 +17,11 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   contactForLicenseeNoReference: jest.fn(),
   executeQuery: jest.fn(),
-  permissionForContacts: jest.fn(),
-  findNewestExistingRecurringPaymentInCrm: jest.fn()
+  permissionForContacts: jest.fn()
+}))
+
+jest.mock('../../../services/recurring-payments.service.js', () => ({
+  findLinkedRecurringPayment: jest.fn()
 }))
 
 let server = null
@@ -213,13 +216,12 @@ describe('authenticate handler', () => {
           expanded: {
             licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
             concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
-            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} },
-            transaction: { entity: { agreementId: 'AG123' } }
+            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
           }
         }
       ])
       executeQuery.mockResolvedValueOnce([{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }])
-      findNewestExistingRecurringPaymentInCrm.mockResolvedValueOnce({
+      findLinkedRecurringPayment.mockResolvedValueOnce({
         entity: { id: 'recurring-payment-id-1', status: 0, cancelledDate: null },
         toJSON: () => ({ id: 'recurring-payment-id-1', status: 0, cancelledDate: null })
       })
@@ -242,26 +244,26 @@ describe('authenticate handler', () => {
       })
     })
 
-    it('should call findNewestExistingRecurringPaymentInCrm with agreement id', async () => {
+    it('should call findLinkedRecurringPayment with permission id', async () => {
+      const permission = MOCK_EXISTING_PERMISSION_ENTITY
       executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
         {
-          entity: MOCK_EXISTING_PERMISSION_ENTITY,
+          entity: permission,
           expanded: {
             licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
             concessionProofs: [],
-            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} },
-            transaction: { entity: { agreementId: 'AG123' } }
+            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
           }
         }
       ])
 
-      findNewestExistingRecurringPaymentInCrm.mockResolvedValueOnce({
+      findLinkedRecurringPayment.mockResolvedValueOnce({
         entity: { id: 'recurring-payment-id-1', status: 0, cancelledDate: null },
         toJSON: () => ({ id: 'recurring-payment-id-1', status: 0, cancelledDate: null })
       })
 
       await server.inject({ method: 'GET', url: baseUrl })
-      expect(findNewestExistingRecurringPaymentInCrm).toHaveBeenCalledWith('AG123')
+      expect(findLinkedRecurringPayment).toHaveBeenCalledWith(permission.id)
     })
 
     it('throws 500 errors if more than one result was found for the query', async () => {
@@ -309,74 +311,6 @@ describe('authenticate handler', () => {
       })
     })
 
-    it('throws 401 when no recurring payment agreement set up', async () => {
-      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
-        {
-          entity: MOCK_EXISTING_PERMISSION_ENTITY,
-          expanded: {
-            licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-            concessionProofs: [],
-            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} },
-            transaction: { entity: {} }
-          }
-        }
-      ])
-      const result = await server.inject({ method: 'GET', url: baseUrl })
-      expect(result.statusCode).toBe(401)
-      expect(JSON.parse(result.payload)).toMatchObject({
-        error: 'Unauthorized',
-        message: 'No recurring payment agreement set up'
-      })
-    })
-
-    it('throws 401 when recurring payment status = 1', async () => {
-      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
-        {
-          entity: MOCK_EXISTING_PERMISSION_ENTITY,
-          expanded: {
-            licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-            concessionProofs: [],
-            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} },
-            transaction: { entity: { agreementId: 'AG123' } }
-          }
-        }
-      ])
-      findNewestExistingRecurringPaymentInCrm.mockResolvedValueOnce({
-        entity: { id: 'recurring-payment-id-1', status: 1 },
-        toJSON: () => ({ id: 'recurring-payment-id-1', status: 1 })
-      })
-      const result = await server.inject({ method: 'GET', url: baseUrl })
-      expect(result.statusCode).toBe(401)
-      expect(JSON.parse(result.payload)).toMatchObject({
-        error: 'Unauthorized',
-        message: 'Recurring payment agreement has been cancelled'
-      })
-    })
-
-    it('throws 401 when recurring payment cancelledDate is set', async () => {
-      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
-        {
-          entity: MOCK_EXISTING_PERMISSION_ENTITY,
-          expanded: {
-            licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-            concessionProofs: [],
-            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} },
-            transaction: { entity: { agreementId: 'AG123' } }
-          }
-        }
-      ])
-      findNewestExistingRecurringPaymentInCrm.mockResolvedValueOnce({
-        entity: { id: 'recurring-payment-id-1', status: 0, cancelledDate: '2024-01-01' },
-        toJSON: () => ({ id: 'recurring-payment-id-1', status: 0, cancelledDate: '2024-01-01' })
-      })
-      const result = await server.inject({ method: 'GET', url: baseUrl })
-      expect(result.statusCode).toBe(401)
-      expect(JSON.parse(result.payload)).toMatchObject({
-        error: 'Unauthorized',
-        message: 'Recurring payment agreement has been cancelled'
-      })
-    })
-
     describe('if no concessions are returned', () => {
       beforeEach(() => {
         executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }])
@@ -386,12 +320,11 @@ describe('authenticate handler', () => {
             expanded: {
               licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
               concessionProofs: [],
-              permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} },
-              transaction: { entity: { agreementId: 'AG123' } }
+              permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
             }
           }
         ])
-        findNewestExistingRecurringPaymentInCrm.mockResolvedValueOnce({
+        findLinkedRecurringPayment.mockResolvedValueOnce({
           entity: { id: 'recurring-payment-id-1', status: 0, cancelledDate: null },
           toJSON: () => ({ id: 'recurring-payment-id-1', status: 0, cancelledDate: null })
         })
