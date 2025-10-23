@@ -9,6 +9,9 @@ import {
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 
+import db from 'debug'
+jest.mock('debug')
+
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   contactForLicenseeNoReference: jest.fn(),
@@ -353,6 +356,37 @@ describe('authenticate handler', () => {
           recurringPayment: expect.objectContaining({ id: 'recurring-payment-id-1', status: 0 })
         })
       })
+    })
+  })
+
+  describe('executeWithErrorLog', () => {
+    let logSpy, executeWithErrorLog
+
+    beforeEach(async () => {
+      jest.resetModules()
+
+      logSpy = jest.fn()
+      jest.doMock('debug', () => jest.fn(() => logSpy))
+
+      jest.doMock('@defra-fish/dynamics-lib', () => {
+        const actual = jest.requireActual('@defra-fish/dynamics-lib')
+        return {
+          ...actual,
+          executeQuery: jest.fn().mockRejectedValue(new Error('oopsie'))
+        }
+      })
+
+      const { _test_ } = await import('../authenticate.js')
+      ;({ executeWithErrorLog } = _test_)
+    })
+
+    it('rejects when executeQuery fails', async () => {
+      await expect(executeWithErrorLog({ filter: 'query filter test' })).rejects.toThrow()
+    })
+
+    it('logs the filter on failure', async () => {
+      await executeWithErrorLog({ filter: 'query filter test' }).catch(() => {})
+      expect(logSpy).toHaveBeenCalledWith('Error executing query with filter query filter test')
     })
   })
 })

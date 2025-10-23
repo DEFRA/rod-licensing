@@ -151,3 +151,5 @@ export default [
     }
   }
 ]
+
+export const _test_ = { executeWithErrorLog }
