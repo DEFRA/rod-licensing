@@ -152,4 +152,4 @@ export default [
   }
 ]
 
-export const _test_ = { executeWithErrorLog }
+export const errorLogTest = { executeWithErrorLog }

@@ -375,8 +375,8 @@ describe('authenticate handler', () => {
         }
       })
 
-      const { _test_ } = await import('../authenticate.js')
-      ;({ executeWithErrorLog } = _test_)
+      const { errorLogTest } = await import('../authenticate.js')
+      ;({ executeWithErrorLog } = errorLogTest)
     })
 
     it('rejects when executeQuery fails', async () => {
