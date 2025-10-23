@@ -42,18 +42,18 @@ export default async (request, h) => {
       authentication: { authorised: false }
     })
     return h.redirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
-  } else {
-    if (authenticationResult.recurringPayment.status === 1 || authenticationResult.recurringPayment.cancelledDate) {
-      await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, {
-        payload,
-        error: { recurringPayment: 'rcp-cancelled' }
-      })
-      await request.cache().helpers.status.setCurrentPermission({
-        referenceNumber,
-        authentication: { authorised: false }
-      })
-      return h.redirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
-    }
+  }
+
+  if (authenticationResult.recurringPayment?.status === 1 || authenticationResult.recurringPayment?.cancelledDate) {
+    await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, {
+      payload,
+      error: { recurringPayment: 'rcp-cancelled' }
+    })
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: { authorised: false }
+    })
+    return h.redirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
   }
 
   await setUpCacheFromAuthenticationResult(request, authenticationResult)
