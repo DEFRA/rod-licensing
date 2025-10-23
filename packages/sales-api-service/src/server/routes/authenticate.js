@@ -11,6 +11,8 @@ import { findLinkedRecurringPayment } from '../../services/recurring-payments.se
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'
 
+const statusOk = 200
+
 const executeWithErrorLog = async query => {
   try {
     return await executeQuery(query)
@@ -28,16 +30,20 @@ export default [
       handler: async (request, h) => {
         const { licenseeBirthDate, licenseePostcode } = request.query
         const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
+        
         if (contacts.length > 0) {
           const contactIds = contacts.map(contact => contact.entity.id)
           const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
           const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
+          
           if (results.length === 1) {
             let concessionProofs = []
+
             if (results[0].expanded.concessionProofs.length > 0) {
               const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
               concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
             }
+
             return h
               .response({
                 permission: {
@@ -50,7 +56,7 @@ export default [
                   permit: results[0].expanded.permit.entity.toJSON()
                 }
               })
-              .code(200)
+              .code(statusOk)
           } else if (results.length === 0) {
             throw Boom.unauthorized(failAuthenticate)
           } else {
@@ -116,7 +122,7 @@ export default [
                 },
                 recurringPayment
               })
-              .code(200)
+              .code(statusOk)
           } else if (results.length === 0) {
             throw Boom.unauthorized(failAuthenticate)
           } else {
