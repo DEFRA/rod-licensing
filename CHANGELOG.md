@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.6 (2025-10-23)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2223](https://github.com/DEFRA/rod-licensing/pull/2223) Fix issues alerting errors to Errbit ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.64.0-rc.5 (2025-10-23)
 
 #### :rocket: Enhancement
