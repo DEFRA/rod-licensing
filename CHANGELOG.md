@@ -1,4 +1,15 @@
 
+## v1.64.0-rc.5 (2025-10-23)
+
+#### :rocket: Enhancement
+* [#2224](https://github.com/DEFRA/rod-licensing/pull/2224) Update npm deployment process ([@irisfaraway](https://github.com/irisfaraway))
+
+#### :bug: Bug Fix
+* [#2226](https://github.com/DEFRA/rod-licensing/pull/2226) Revert "Update npm deployment process (#2224)" ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.64.0-rc.3 (2025-10-14)
 
