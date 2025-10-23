@@ -22,7 +22,7 @@ const executeWithErrorLog = async query => {
   }
 }
 
-const getAuthenticatedPermission = async (request) => {
+const getAuthenticatedPermission = async request => {
   const { licenseeBirthDate, licenseePostcode } = request.query
   const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
 
