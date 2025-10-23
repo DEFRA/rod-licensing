@@ -9,7 +9,6 @@ import {
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 
-import db from 'debug'
 jest.mock('debug')
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
