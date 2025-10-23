@@ -80,14 +80,14 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no match', () => {
-    let request, h, response
+    let request, h
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce(null)
       addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
       request = getRequest()
       h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
-      response = await handler(request, h)
+      await handler(request, h)
     })
 
     it('redirects to the decorated identify URI', () => {
@@ -112,7 +112,7 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no recurring payment agreement', () => {
-    let request, h, response
+    let request, h
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
         permission: { id: 'perm-id' },
@@ -122,7 +122,7 @@ describe('Cancel RP Authentication Handler', () => {
       request = getRequest()
       h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
-      response = await handler(request, h)
+      await handler(request, h)
     })
 
     it('redirects to the decorated identify URI', () => {
@@ -147,7 +147,7 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - RCP cancelled', () => {
-    let request, h, response
+    let request, h
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
         permission: { id: 'perm-id' },
@@ -157,7 +157,7 @@ describe('Cancel RP Authentication Handler', () => {
       request = getRequest()
       h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
-      response = await handler(request, h)
+      await handler(request, h)
     })
 
     it('redirects to the decorated identify URI', () => {
