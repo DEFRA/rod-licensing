@@ -137,9 +137,17 @@
     {% else %}
         <div class="govuk-phase-banner">
             <p class="govuk-phase-banner__content">
-                <span class="govuk-phase-banner__text no-print">
-                    {{ mssgs.feedback_link_prefix }} <a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank" >{{ mssgs.feedback_link_text }}</a> {{ mssgs.feedback_link_suffix }}
-                </span>
+
+                {% if RCP %}
+                  <span class="govuk-phase-banner__text no-print">
+                      {{ mssgs.feedback_link_prefix }} <a class="govuk-link" href="{{ _uri.rcpFeedback }}" rel="noreferrer noopener" target="_blank" >{{ mssgs.feedback_link_text }}</a> {{ mssgs.feedback_link_suffix }}
+                  </span>
+
+                {% else %}
+                  <span class="govuk-phase-banner__text no-print">
+                      {{ mssgs.feedback_link_prefix }} <a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank" >{{ mssgs.feedback_link_text }}</a> {{ mssgs.feedback_link_suffix }}
+                  </span>
+
             </p>
         </div>
         {% if SHOW_WELSH_CONTENT %}
