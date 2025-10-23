@@ -822,43 +822,19 @@ describe('sales-api-connector', () => {
     })
   })
 
-    describe('getRecurringPaymentFromExample', () => {
-    describe.each([['id'], ['abc-123']])("Getting recurring payment from permission id '%s'", id => {
-      beforeEach(() => {
-        fetch.mockReturnValueOnce({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          text: async () => JSON.stringify({ id })
-        })
-      })
-
-      it('calls the endpoint with the correct parameters', async () => {
-        await salesApi.getRecurringPaymentFromExample(id)
-
-        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/getRecurringPaymentFromExample/${id}`, {
+  describe('rcp authentication', () => {
+    it('retrieves all items using .getAll()', async () => {
+      const expectedResponse = { foo: 'bar' }
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/authenticate/rcp/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+        {
           method: 'get',
           headers: expect.any(Object),
           timeout: 20000
-        })
-      })
-
-      it('returns the expected response data', async () => {
-        const processedResult = await salesApi.getRecurringPaymentFromExample(id)
-
-        expect(processedResult).toEqual({ id })
-      })
-    })
-
-    it('throws an error on non-2xx response', async () => {
-      fetch.mockReturnValueOnce({
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-        text: async () => 'Server Error'
-      })
-
-      await expect(salesApi.getRecurringPaymentFromExample('id')).rejects.toThrow('Internal Server Error')
+        }
+      )
     })
   })
 })

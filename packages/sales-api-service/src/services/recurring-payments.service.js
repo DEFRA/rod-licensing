@@ -6,7 +6,8 @@ import {
   findRecurringPaymentsByAgreementId,
   persist,
   RecurringPayment,
-  findByExample
+  findRecurringPaymentByPermissionId,
+  retrieveGlobalOptionSets
 } from '@defra-fish/dynamics-lib'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
@@ -184,15 +185,13 @@ const determineRecurringPaymentName = (transactionRecord, contact) => {
   return [contact.firstName, contact.lastName, dueYear].join(' ')
 }
 
-
-export const getRecurringPaymentFromExample = async (permissionId) => {
-  const exampleRecurringPayment = new RecurringPayment()
-  exampleRecurringPayment.activePermission = permissionId
-  const recurringPayments = await findByExample(exampleRecurringPayment)
-  const recurringPayment = recurringPayments.find(
-    rp => rp.status === 0 && !rp.cancelledDate
-  )
-  console.log(recurringPayments)
-  console.log(recurringPayment)
-  return recurringPayment
+export const findLinkedRecurringPayment = async permissionId => {
+  const query = findRecurringPaymentByPermissionId(permissionId)
+  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  if (response.value.length) {
+    const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
+    const definition = await retrieveGlobalOptionSets().cached()
+    return RecurringPayment.fromResponse(rcpResponseData, definition)
+  }
+  return false
 }
