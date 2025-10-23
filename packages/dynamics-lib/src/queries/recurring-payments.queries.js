@@ -53,7 +53,6 @@ export const findRecurringPaymentByPermissionId = permissionId => {
   const { activePermission } = RecurringPayment.definition.relationships
   const filter = `_defra_activepermission_value eq ${permissionId} and ${RecurringPayment.definition.defaultFilter}`
 
-
   return new PredefinedQuery({
     root: RecurringPayment,
     filter,

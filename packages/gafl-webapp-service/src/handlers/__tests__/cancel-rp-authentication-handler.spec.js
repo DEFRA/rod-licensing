@@ -2,7 +2,6 @@ import handler from '../cancel-rp-authentication-handler'
 import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
-import GetDataRedirect from '../../handlers/get-data-redirect.js'
 
 jest.mock('../../processors/uri-helper.js')
 jest.mock('@defra-fish/connectors-lib')
@@ -81,23 +80,19 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no match', () => {
-    let request, h, errorCaught, response
+    let request, h, response
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce(null)
       addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
       request = getRequest()
       h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
-      try {
-        response = await handler(request, h)
-      } catch (e) {
-        errorCaught = e
-      }
+      response = await handler(request, h)
     })
 
-  it('redirects to the decorated identify URI', () => {
-    expect(h.redirect).toHaveBeenCalledWith('decorated-identify-uri')
-  })
+    it('redirects to the decorated identify URI', () => {
+      expect(h.redirect).toHaveBeenCalledWith('decorated-identify-uri')
+    })
 
     it('sets page cache error and preserves payload', () => {
       expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
@@ -117,7 +112,7 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no recurring payment agreement', () => {
-    let request, h, errorCaught, response
+    let request, h, response
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
         permission: { id: 'perm-id' },
@@ -127,11 +122,7 @@ describe('Cancel RP Authentication Handler', () => {
       request = getRequest()
       h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
-      try {
-        response = await handler(request, h)
-      } catch (e) {
-        errorCaught = e
-      }
+      response = await handler(request, h)
     })
 
     it('redirects to the decorated identify URI', () => {
@@ -156,7 +147,7 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - RCP cancelled', () => {
-    let request, h, errorCaught, response
+    let request, h, response
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
         permission: { id: 'perm-id' },
@@ -166,11 +157,7 @@ describe('Cancel RP Authentication Handler', () => {
       request = getRequest()
       h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
-      try {
-        response = await handler(request, h)
-      } catch (e) {
-        errorCaught = e
-      }
+      response = await handler(request, h)
     })
 
     it('redirects to the decorated identify URI', () => {
