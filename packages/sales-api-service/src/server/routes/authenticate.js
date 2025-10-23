@@ -6,12 +6,7 @@ import {
   rcpAuthenticateRenewalResponseSchema
 } from '../../schema/authenticate.schema.js'
 import db from 'debug'
-import {
-  permissionForContacts,
-  concessionsByIds,
-  executeQuery,
-  contactForLicenseeNoReference
-} from '@defra-fish/dynamics-lib'
+import { permissionForContacts, concessionsByIds, executeQuery, contactForLicenseeNoReference } from '@defra-fish/dynamics-lib'
 import { findLinkedRecurringPayment } from '../../services/recurring-payments.service.js'
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'

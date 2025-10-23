@@ -1,4 +1,8 @@
-import { findDueRecurringPayments, findRecurringPaymentsByAgreementId, findRecurringPaymentByPermissionId } from '../recurring-payments.queries.js'
+import {
+  findDueRecurringPayments,
+  findRecurringPaymentsByAgreementId,
+  findRecurringPaymentByPermissionId
+} from '../recurring-payments.queries.js'
 
 describe('Recurring Payment Queries', () => {
   describe('findDueRecurringPayments', () => {
