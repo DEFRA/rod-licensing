@@ -42,7 +42,7 @@ export const rcpAuthenticateRenewalResponseSchema = Joi.object({
     nextDueDate: Joi.date().required(),
     cancelledDate: Joi.date().allow(null),
     cancelledReason: Joi.string().allow(null),
-    endDate: Joi.date().allow(null),
+    endDate: Joi.date().required(),
     lastDigitsCardNumbers: Joi.string().required()
   }).optional()
 }).label('rcp-authenticate-renewal-response')

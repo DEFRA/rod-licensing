@@ -133,7 +133,21 @@
                             classes: "govuk-!-font-weight-bold govuk-label"
                       }
                   },
-                  errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
+                  errorMessage: ({
+                    text: errorMap[data.error.errorKey][data.error.errorValue].text }
+                    if data.error and data.error.errorKey in [
+                      'full-date',
+                      'day-and-month',
+                      'day-and-year',
+                      'month-and-year',
+                      'day',
+                      'month',
+                      'year',
+                      'non-numeric',
+                      'invalid-date',
+                      'date-range'
+                    ]
+                  ),
                   hint: {
                     text: mssgs.cancel_rp_identify_dob_hint
                   }

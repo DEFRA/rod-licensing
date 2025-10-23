@@ -697,7 +697,7 @@ describe('recurring payments service', () => {
       const mockTransaction = getMockTransaction(transactionId)
       const permission = {
         issueDate: fakeNow,
-        dataSource: 'recurringPayment',
+        dataSource: 'RCP',
         licensee: {
           firstName: 'Brenin',
           lastName: 'Pysgotwr',
