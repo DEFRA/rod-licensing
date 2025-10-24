@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.8 (2025-10-24)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#2216](https://github.com/DEFRA/rod-licensing/pull/2216) RP not updating CRM connectors lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.64.0-rc.7 (2025-10-24)
 
 #### :rocket: Enhancement
