@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.7 (2025-10-24)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2220](https://github.com/DEFRA/rod-licensing/pull/2220) Remove rcp variables ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.64.0-rc.6 (2025-10-23)
 
 #### :bug: Bug Fix
