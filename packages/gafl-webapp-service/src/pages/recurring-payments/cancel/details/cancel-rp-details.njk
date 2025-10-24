@@ -4,24 +4,47 @@
 {% from "page-title.njk" import pageTitle %}
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "details/macro.njk" import govukDetails %}
 
 {% set title = mssgs.rp_cancel_details_title %}
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% set licenseDetailsSummary %}
-    {% call govukFieldset({
-      legend: {
-        text: title,
-        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-        isPageHeading: true
-      }
-    }) %}
+  {% set legendHtml %}
+    <span class="govuk-caption-l">{{ mssgs.cancel_rp_identify_caption }}</span>
+    {{ title }}
+  {% endset %}
+
+  {% call govukFieldset({
+    legend: {
+      html: legendHtml,
+      classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+      isPageHeading: true
+    }
+  }) %}
     {{ govukSummaryList({
       classes: 'licence-summary-list',
       rows: data.summaryTable
     }) }}
-    {% endcall %}
+  {% endcall %}
 {% endset -%}
+
+{% set detailsHtml %}
+  <p class="govuk-body">
+    {{ mssgs.refund_bulletpoint_1_2 }}
+  </p>
+  <p class="govuk-body">
+    {{ mssgs.refund_bulletpoint_1_3 }}
+  </p>
+  <p class="govuk-body">
+    {{ mssgs.refund_bulletpoint_1_4 }}
+  </p>
+  <p class="govuk-body govuk-!-margin-bottom-0">
+    <a class="govuk-link" href="https://www.gov.uk/call-charges" target="_blank" rel="noreferrer noopener">
+      {{ mssgs.refund_bulletpoint_1_5 }}
+    </a>
+  </p>
+{% endset %}
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -35,6 +58,11 @@
                 name: "continue",
                 text: mssgs.confirm_continue,
                 classes: "govuk-!-margin-top-5"
+            }) }}
+
+            {{ govukDetails({
+              summaryText: mssgs.rp_cancel_details_summary_title,
+              html: detailsHtml
             }) }}
 
             {{ csrf() }}
