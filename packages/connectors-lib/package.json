@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.63.0-rc.18",
+  "version": "1.64.0-rc.8",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
@@ -34,16 +34,16 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@airbrake/node": "^2.1.7",
-    "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/client-s3": "^3.0.0",
-    "@aws-sdk/client-secrets-manager": "^3.0.0",
-    "@aws-sdk/client-sqs": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0",
-    "debug": "^4.3.3",
-    "http-status-codes": "^2.3.0",
-    "ioredis": "^4.28.5",
-    "node-fetch": "^2.7.0",
-    "redlock": "^4.2.0"
+    "@airbrake/node": "2.1.7",
+    "@aws-sdk/client-dynamodb": "3.777.0",
+    "@aws-sdk/client-s3": "3.779.0",
+    "@aws-sdk/client-secrets-manager": "3.777.0",
+    "@aws-sdk/client-sqs": "3.777.0",
+    "@aws-sdk/lib-dynamodb": "3.778.0",
+    "debug": "4.3.3",
+    "http-status-codes": "2.3.0",
+    "ioredis": "4.28.5",
+    "node-fetch": "2.7.0",
+    "redlock": "4.2.0"
   }
 }

@@ -862,7 +862,7 @@ describe('sales-api-connector', () => {
     })
   })
 
-  describe('updateTransaction', () => {
+  describe('updateRecurringTransaction', () => {
     it.each([['Debit card'], ['Credit card']])('updates the transaction with payment method "%s"', async method => {
       const transactionId = 'transaction-id'
       const payload = {
@@ -880,10 +880,10 @@ describe('sales-api-connector', () => {
         text: async () => JSON.stringify(expectedResponse)
       })
 
-      await expect(salesApi.updateTransaction(transactionId, payload)).resolves.toEqual(expectedResponse)
+      await expect(salesApi.updateRecurringTransaction(transactionId, payload)).resolves.toEqual(expectedResponse)
 
       expect(fetch).toHaveBeenCalledWith(
-        `http://0.0.0.0:4000/recurring-transactions/${transactionId}`,
+        `http://0.0.0.0:4000/update-recurring-transactions/${transactionId}`,
         expect.objectContaining({
           method: 'patch',
           body: JSON.stringify(payload)
@@ -907,12 +907,12 @@ describe('sales-api-connector', () => {
         text: async () => JSON.stringify({ error: 'Description' })
       })
 
-      await expect(salesApi.updateTransaction(transactionId, payload)).rejects.toThrow(
+      await expect(salesApi.updateRecurringTransaction(transactionId, payload)).rejects.toThrow(
         /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
       )
 
       expect(fetch).toHaveBeenCalledWith(
-        `http://0.0.0.0:4000/recurring-transactions/${transactionId}`,
+        `http://0.0.0.0:4000/update-recurring-transactions/${transactionId}`,
         expect.objectContaining({
           method: 'patch',
           body: JSON.stringify(payload)

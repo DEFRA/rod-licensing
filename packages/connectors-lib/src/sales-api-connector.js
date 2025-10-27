@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import querystring from 'querystring'
+import querystring from 'node:querystring'
 import db from 'debug'
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 20000
@@ -27,7 +27,7 @@ export const call = async (url, method = 'get', payload = null) => {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: response.status !== 204 ? await parseResponseBody(response) : undefined
+    body: response.status === 204 ? undefined : await parseResponseBody(response)
   }
   debug(
     'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',
@@ -108,8 +108,8 @@ export const finaliseTransaction = async (id, payload) => exec2xxOrThrow(call(ne
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const updateTransaction = async (id, payload) =>
-  exec2xxOrThrow(call(new URL(`/recurring-transactions/${id}`, urlBase), 'patch', payload))
+export const updateRecurringTransaction = async (id, payload) =>
+  exec2xxOrThrow(call(new URL(`/update-recurring-transactions/${id}`, urlBase), 'patch', payload))
 
 /**
  * Retrieve the details of a transaction file.  Returns null if not found.

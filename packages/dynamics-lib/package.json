@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/dynamics-lib",
-  "version": "1.63.0-rc.18",
+  "version": "1.64.0-rc.8",
   "description": "Framework to support integration with dynamics",
   "type": "module",
   "engines": {
@@ -33,14 +33,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "cache-manager": "^3.6.0",
-    "cache-manager-ioredis": "^2.1.0",
-    "debug": "^4.3.3",
+    "cache-manager": "3.6.0",
+    "cache-manager-ioredis": "2.1.0",
+    "debug": "4.3.3",
     "dynamics-web-api": "1.7.3",
-    "joi": "^17.6.0",
-    "moment": "^2.29.1",
-    "pluralize": "^8.0.0",
-    "simple-oauth2": "^4.3.0",
-    "uuid": "^8.3.2"
+    "joi": "17.6.0",
+    "moment": "2.29.1",
+    "pluralize": "8.0.0",
+    "simple-oauth2": "4.3.0",
+    "uuid": "8.3.2"
   }
 }
