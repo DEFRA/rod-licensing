@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.10 (2025-10-27)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2232](https://github.com/DEFRA/rod-licensing/pull/2232) Revert two commits ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.64.0-rc.8 (2025-10-24)
 
 #### :bug: Bug Fix
