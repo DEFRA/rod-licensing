@@ -1,0 +1,27 @@
+{% extends "layout.njk" %}
+{% extends "standard-form.njk" %}
+
+{% set title = mssgs.licence_not_found_title %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">{{ mssgs.licence_not_found_title }}</h1>
+    <p class="govuk-body">
+      {{ mssgs.licence_not_found_body_1 }}
+      <a class="govuk-link" href="/buy/renew/identify">{{ mssgs.licence_not_found_body_previous_page }}</a>{{ mssgs.full_stop }}
+    </p>
+    <p class="govuk-body">
+      {{ mssgs.licence_not_found_rp_body_1}}
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li> {{ mssgs.licence_not_found_rp_bullet_point_1 }} <a href="mailto:enquiries@environment-agency.gov.uk"> {{ mssgs.licence_not_found_body_ea_link }}
+        </a> {{ mssgs.licence_not_found_rp_bullet_point_1_2 }} </li>
+
+        <li> {{ mssgs.licence_not_found_rp_bullet_point_2 }} <a href="https://www.gov.uk/call-charges" target="_blank" rel="noopener"> {{ mssgs.licence_not_found_body_call_charges_link }}
+        </a>{{ mssgs.full_stop }} </li>
+      </ul>
+    
+  </div>
+</div>
+{% endblock %}
