@@ -45,7 +45,7 @@ jobs:
     needs: tests
     if: ${{ github.event_name == 'push' }}
     permissions:
-      contents: read
+      contents: write # Required to push new release to the remote
       id-token: write # Required for OIDC trusted publishing
     steps:
       - name: Checkout repository
