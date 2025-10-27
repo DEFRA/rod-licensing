@@ -1,4 +1,12 @@
 
+## v1.64.0-rc.9 (2025-10-27)
+
+#### :bug: Bug Fix
+* [#2231](https://github.com/DEFRA/rod-licensing/pull/2231) Remove superfluous npm config for new OIDC auth ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.64.0-rc.8 (2025-10-24)
 
 #### :bug: Bug Fix
