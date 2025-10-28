@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.11 (2025-10-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2230](https://github.com/DEFRA/rod-licensing/pull/2230) Fix incorrect links in Accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.64.0-rc.10 (2025-10-27)
 
 #### :bug: Bug Fix
