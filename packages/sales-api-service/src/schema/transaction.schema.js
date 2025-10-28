@@ -8,6 +8,7 @@ import { MAX_PERMISSIONS_PER_TRANSACTION, POCL_TRANSACTION_SOURCES } from '@defr
 import { v4 as uuidv4 } from 'uuid'
 
 const AGREEMENT_ID_LENGTH = 26
+const PAYMENT_TYPE = 'Debit card'
 
 /**
  * Maximum number of items that can be created in a batch - limited by DynamoDB max batch size
@@ -111,7 +112,7 @@ const finaliseTransactionRequestSchemaContent = {
       .example(new Date().toISOString()),
     source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
     channelId: Joi.string().trim().optional().description('Channel specific identifier'),
-    method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
+    method: buildJoiOptionSetValidator('defra_paymenttype', PAYMENT_TYPE),
     recurring: Joi.object({
       name: Joi.string().required().description('The default name associated with the recurring payment').example(uuidv4()),
       nextDueDate: Joi.string()
@@ -167,7 +168,7 @@ export const retrieveStagedTransactionParamsSchema = Joi.object({
 export const updateRecurringTransactionRequestSchema = Joi.object({
   payment: Joi.object({
     source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
-    method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card')
+    method: buildJoiOptionSetValidator('defra_paymenttype', PAYMENT_TYPE)
   })
     .required()
     .label('update-transaction-payment-details')
@@ -180,6 +181,6 @@ export const updateRecurringTransactionResponseSchema = Joi.object({
   ...createTransactionResponseSchemaContent,
   payment: Joi.object({
     source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
-    method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card')
+    method: buildJoiOptionSetValidator('defra_paymenttype', PAYMENT_TYPE)
   }).required()
 }).label('update-transaction-response')
