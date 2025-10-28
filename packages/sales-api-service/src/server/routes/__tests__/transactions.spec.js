@@ -9,7 +9,7 @@ jest.mock('../../../services/transactions/transactions.service.js', () => ({
   createTransaction: jest.fn(async () => mockStagedTransactionRecord()),
   createTransactions: jest.fn(async payloads => Array(payloads.length).fill(mockStagedTransactionRecord())),
   finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),
-  updateTransaction: jest.fn(async ({ id, ...payload }) => ({ id, ...payload })),
+  updateRecurringTransaction: jest.fn(async ({ id, ...payload }) => ({ id, ...payload })),
   processQueue: jest.fn(async () => {}),
   processDlq: jest.fn(async () => {})
 }))
@@ -276,7 +276,7 @@ describe('transaction handler', () => {
 
       const result = await server.inject({
         method: 'PATCH',
-        url: `/recurring-transactions/${transactionId}`,
+        url: `/update-recurring-transactions/${transactionId}`,
         payload
       })
 
@@ -299,7 +299,7 @@ describe('transaction handler', () => {
 
       const result = await server.inject({
         method: 'PATCH',
-        url: `/recurring-transactions/${transactionId}`,
+        url: `/update-recurring-transactions/${transactionId}`,
         payload
       })
 
@@ -312,7 +312,7 @@ describe('transaction handler', () => {
       const transactionId = uuidv4()
       const result = await server.inject({
         method: 'PATCH',
-        url: `/recurring-transactions/${transactionId}`,
+        url: `/update-recurring-transactions/${transactionId}`,
         payload: {}
       })
 
@@ -330,7 +330,7 @@ describe('transaction handler', () => {
 
       const result = await server.inject({
         method: 'PATCH',
-        url: `/recurring-transactions/${transactionId}`,
+        url: `/update-recurring-transactions/${transactionId}`,
         payload
       })
 
@@ -348,7 +348,7 @@ describe('transaction handler', () => {
 
       const result = await server.inject({
         method: 'PATCH',
-        url: `/recurring-transactions/${transactionId}`,
+        url: `/update-recurring-transactions/${transactionId}`,
         payload
       })
 

@@ -1,4 +1,4 @@
-import { updateTransaction } from '../update-transaction.js'
+import { updateRecurringTransaction } from '../update-recurring-transaction.js'
 import { AWS } from '@defra-fish/connectors-lib'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 
@@ -16,7 +16,7 @@ jest.mock('@defra-fish/connectors-lib', () => {
   }
 })
 
-describe('updateTransaction', () => {
+describe('updateRecurringTransaction', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
@@ -39,7 +39,7 @@ describe('updateTransaction', () => {
       Attributes: { id, ...payload }
     })
 
-    const result = await updateTransaction({ id, ...payload })
+    const result = await updateRecurringTransaction({ id, ...payload })
 
     expect(result).toEqual({ id, ...payload })
     expect(docClient.createUpdateExpression).toHaveBeenCalledWith(payload)
@@ -53,9 +53,9 @@ describe('updateTransaction', () => {
     })
   })
 
-  it('propagates errors from DynamoDB', async () => {
+  it('throws error from DynamoDB', async () => {
     docClient.update.mockRejectedValueOnce(new Error('Dynamo error'))
 
-    await expect(updateTransaction({ id: 'bad-id', payment: {} })).rejects.toThrow('Dynamo error')
+    await expect(updateRecurringTransaction({ id: 'bad-id', payment: {} })).rejects.toThrow('Dynamo error')
   })
 })

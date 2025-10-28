@@ -6,7 +6,7 @@ import {
   finaliseTransaction,
   processQueue,
   processDlq,
-  updateTransaction
+  updateRecurringTransaction
 } from '../../services/transactions/transactions.service.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import {
@@ -16,8 +16,8 @@ import {
   createTransactionBatchResponseSchema,
   finaliseTransactionRequestSchema,
   finaliseTransactionResponseSchema,
-  updateTransactionRequestSchema,
-  updateTransactionResponseSchema,
+  updateRecurringTransactionRequestSchema,
+  updateRecurringTransactionResponseSchema,
   retrieveStagedTransactionParamsSchema,
   BATCH_CREATE_MAX_COUNT
 } from '../../schema/transaction.schema.js'
@@ -206,9 +206,9 @@ export default [
   },
   {
     method: 'PATCH',
-    path: '/recurring-transactions/{id}',
+    path: '/update-recurring-transactions/{id}',
     options: {
-      handler: async (request, h) => h.response(await updateTransaction({ id: request.params.id, ...request.payload })).code(200),
+      handler: async (request, h) => h.response(await updateRecurringTransaction({ id: request.params.id, ...request.payload })).code(200),
       description: 'Finalise an existing transaction',
       notes: `
         Marks an existing transaction as finalised at which point it will become eligible for insertion into Dynamics.
@@ -216,12 +216,12 @@ export default [
       tags: ['api', 'transactions'],
       validate: {
         params: stagingIdSchema,
-        payload: updateTransactionRequestSchema
+        payload: updateRecurringTransactionRequestSchema
       },
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { description: 'Transaction accepted', schema: updateTransactionResponseSchema },
+            200: { description: 'Transaction accepted', schema: updateRecurringTransactionResponseSchema },
             400: { description: 'Invalid request params' },
             404: { description: 'A transaction for the specified identifier was not found' },
             422: { description: 'The transaction completion payload was invalid' }

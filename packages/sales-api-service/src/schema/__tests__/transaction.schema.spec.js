@@ -3,8 +3,8 @@ import {
   createTransactionResponseSchema,
   finaliseTransactionResponseSchema,
   retrieveStagedTransactionParamsSchema,
-  updateTransactionRequestSchema,
-  updateTransactionResponseSchema
+  updateRecurringTransactionRequestSchema,
+  updateRecurringTransactionResponseSchema
 } from '../transaction.schema.js'
 import { mockTransactionPayload, mockStagedTransactionRecord, mockFinalisedTransactionRecord } from '../../__mocks__/test-data.js'
 
@@ -187,7 +187,7 @@ describe('retrieveStagedTransactionParamsSchema', () => {
   })
 })
 
-describe('updateTransactionRequestSchema', () => {
+describe('updateRecurringTransactionRequestSchema', () => {
   it('validates successfully with a valid payment object', async () => {
     const sample = {
       payment: {
@@ -195,7 +195,7 @@ describe('updateTransactionRequestSchema', () => {
         method: 'Debit card'
       }
     }
-    const result = await updateTransactionRequestSchema.validateAsync(sample)
+    const result = await updateRecurringTransactionRequestSchema.validateAsync(sample)
     expect(result).toEqual(sample)
   })
 
@@ -206,7 +206,7 @@ describe('updateTransactionRequestSchema', () => {
         method: 'SomeOtherMethod'
       }
     }
-    await expect(updateTransactionRequestSchema.validateAsync(sample)).rejects.toThrow()
+    await expect(updateRecurringTransactionRequestSchema.validateAsync(sample)).rejects.toThrow()
   })
 
   it('fails when payment.source is invalid', async () => {
@@ -216,11 +216,11 @@ describe('updateTransactionRequestSchema', () => {
         method: 'Debit card'
       }
     }
-    await expect(updateTransactionRequestSchema.validateAsync(sample)).rejects.toThrow()
+    await expect(updateRecurringTransactionRequestSchema.validateAsync(sample)).rejects.toThrow()
   })
 })
 
-describe('updateTransactionResponseSchema', () => {
+describe('updateRecurringTransactionResponseSchema', () => {
   it('validates successfully with a transaction containing payment', async () => {
     const mockRecord = mockStagedTransactionRecord()
     mockRecord.payment = {
@@ -228,25 +228,25 @@ describe('updateTransactionResponseSchema', () => {
       method: 'Debit card'
     }
 
-    const result = await updateTransactionResponseSchema.validateAsync(mockRecord)
+    const result = await updateRecurringTransactionResponseSchema.validateAsync(mockRecord)
     expect(result).toBeInstanceOf(Object)
   })
 
   it('fails when payment is missing', async () => {
     const mockRecord = mockStagedTransactionRecord()
     delete mockRecord.payment
-    await expect(updateTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow('"payment" is required')
+    await expect(updateRecurringTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow('"payment" is required')
   })
 
   it('fails when payment.method is invalid', async () => {
     const mockRecord = mockStagedTransactionRecord()
     mockRecord.payment = { source: 'Gov Pay', method: 'SomethingElse' }
-    await expect(updateTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow()
+    await expect(updateRecurringTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow()
   })
 
   it('fails when payment.source is invalid', async () => {
     const mockRecord = mockStagedTransactionRecord()
     mockRecord.payment = { source: 'SomethingElse', method: 'Debit card' }
-    await expect(updateTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow()
+    await expect(updateRecurringTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow()
   })
 })

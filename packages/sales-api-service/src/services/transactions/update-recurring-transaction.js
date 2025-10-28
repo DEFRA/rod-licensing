@@ -4,7 +4,7 @@ import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
 
-export async function updateTransaction ({ id, ...payload }) {
+export async function updateRecurringTransaction ({ id, ...payload }) {
   debug('Updating transaction %s', id)
 
   const { Attributes: updatedRecord } = await docClient.update({

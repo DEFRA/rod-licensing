@@ -164,7 +164,7 @@ export const retrieveStagedTransactionParamsSchema = Joi.object({
 /**
  * Request schema for updating an existing transaction
  */
-export const updateTransactionRequestSchema = Joi.object({
+export const updateRecurringTransactionRequestSchema = Joi.object({
   payment: Joi.object({
     source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
     method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card')
@@ -176,7 +176,7 @@ export const updateTransactionRequestSchema = Joi.object({
 /**
  * Response schema for updating an existing transaction
  */
-export const updateTransactionResponseSchema = Joi.object({
+export const updateRecurringTransactionResponseSchema = Joi.object({
   ...createTransactionResponseSchemaContent,
   payment: Joi.object({
     source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
