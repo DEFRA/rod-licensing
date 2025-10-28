@@ -55,14 +55,15 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Successful authentication', () => {
-    let request, h, result
+    let result
+    const request = getRequest()
+    const h = getH()
+
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce({
         permission: { id: 'perm-id' },
         recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
       })
-      request = getRequest()
-      h = getH()
       result = await handler(request, h)
     })
 
@@ -80,12 +81,13 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no match', () => {
-    let request, h
+    let request
+    const h = getH()
+
     beforeEach(async () => {
       salesApi.authenticateRecurringPayment.mockResolvedValueOnce(null)
       addLanguageCodeToUri.mockReturnValueOnce('decorated-identify-uri')
       request = getRequest()
-      h = getH()
       h.redirect = jest.fn().mockReturnValue('redirect-response')
       await handler(request, h)
     })
