@@ -16,7 +16,7 @@ echo "Executing deployment - BRANCH=${BRANCH}, COMMIT_MESSAGE=${COMMIT_MESSAGE},
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
-npm i -g semver lerna lerna-changelog 
+npm i -g semver lerna lerna-changelog
 
 echo "Checking out target branch"
 git fetch --unshallow
