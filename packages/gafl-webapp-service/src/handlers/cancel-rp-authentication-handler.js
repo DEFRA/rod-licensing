@@ -5,7 +5,6 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
 import Joi from 'joi'
 
-// --- PURE: returns the data needed to update cache + where to redirect
 const buildAuthFailure = (referenceNumber, payload, error) => ({
   page: {
     page: CANCEL_RP_IDENTIFY.page,
@@ -18,7 +17,6 @@ const buildAuthFailure = (referenceNumber, payload, error) => ({
   redirectPath: CANCEL_RP_IDENTIFY.uri
 })
 
-// --- IMPURE: applies the updates and performs the redirect
 const applyAuthFailure = async (request, h, failure) => {
   await request.cache().helpers.page.setCurrentPermission(failure.page.page, failure.page.data)
   await request.cache().helpers.status.setCurrentPermission(failure.status)
