@@ -967,7 +967,7 @@ describe('recurring-payments-processor', () => {
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
 
-    salesApi.updateRecurringTransaction.mockResolvedValueOnce({
+    salesApi.createTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       cost: 50,
       recurringPayment: { id },
