@@ -19,6 +19,10 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   },
   TRANSACTION_SOURCE: {
     govPay: 'Pay Gov'
+  },
+  PAYMENT_TYPE: {
+    debit: 'Card debit',
+    credit: 'Card credit'
   }
 }))
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -967,7 +971,7 @@ describe('recurring-payments-processor', () => {
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
 
-    salesApi.createTransaction.mockResolvedValueOnce({
+    salesApi.updateRecurringTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       cost: 50,
       recurringPayment: { id },
