@@ -43,7 +43,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     retrieveRecurringPaymentAgreement: jest.fn(() => ({
       payment_instrument: { card_details: { card_type: 'debit' } }
     })),
-    updateTransaction: jest.fn(id => ({
+    updateRecurringTransaction: jest.fn(id => ({
       id,
       payment: {
         source: 'Gov Pay',
@@ -261,7 +261,7 @@ describe('recurring-payments-processor', () => {
         salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
           payment_instrument: { card_details: { card_type: 'debit' } }
         })
-        salesApi.updateTransaction.mockResolvedValueOnce({
+        salesApi.updateRecurringTransaction.mockResolvedValueOnce({
           id: `transaction-id-${x + 1}`,
           cost: 50,
           payment: {
@@ -494,7 +494,7 @@ describe('recurring-payments-processor', () => {
     salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
       payment_instrument: { card_details: { card_type: card } }
     })
-    salesApi.updateTransaction.mockResolvedValueOnce({
+    salesApi.updateRecurringTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       payment: {
         source: TRANSACTION_SOURCE.govPay,
@@ -506,7 +506,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    const transaction = await salesApi.updateTransaction.mock.results[0].value
+    const transaction = await salesApi.updateRecurringTransaction.mock.results[0].value
     expect(transaction.payment.method).toBe(type)
   })
 
@@ -521,7 +521,7 @@ describe('recurring-payments-processor', () => {
     salesApi.retrieveRecurringPaymentAgreement.mockResolvedValueOnce({
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
-    salesApi.updateTransaction.mockResolvedValueOnce({
+    salesApi.updateRecurringTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       payment: {
         source: TRANSACTION_SOURCE.govPay,
@@ -533,7 +533,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    const updatedTransaction = await salesApi.updateTransaction.mock.results[0].value
+    const updatedTransaction = await salesApi.updateRecurringTransaction.mock.results[0].value
     console.log(updatedTransaction)
     expect(updatedTransaction.payment.source).toBe(TRANSACTION_SOURCE.govPay)
   })
@@ -600,7 +600,7 @@ describe('recurring-payments-processor', () => {
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
 
-    salesApi.updateTransaction.mockResolvedValueOnce({
+    salesApi.updateRecurringTransaction.mockResolvedValueOnce({
       id: transactionId,
       cost: 50,
       payment: {
@@ -967,7 +967,7 @@ describe('recurring-payments-processor', () => {
       payment_instrument: { card_details: { card_type: 'debit' } }
     })
 
-    salesApi.updateTransaction.mockResolvedValueOnce({
+    salesApi.updateRecurringTransaction.mockResolvedValueOnce({
       id: 'test-transaction-id',
       cost: 50,
       recurringPayment: { id },
@@ -1119,7 +1119,7 @@ describe('recurring-payments-processor', () => {
           payment_instrument: { card_details: { card_type: 'debit' } }
         })
 
-        salesApi.updateTransaction.mockResolvedValueOnce({
+        salesApi.updateRecurringTransaction.mockResolvedValueOnce({
           id: permit,
           cost: i,
           payment: {
