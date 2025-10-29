@@ -281,6 +281,27 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
   )
 
 /**
+ * Support for cancelling recurring payment authentication
+ * @param referenceNumber
+ * @param birthDate
+ * @param postcode
+ * @returns {Promise<*>}
+ */
+export const authenticateRecurringPayment = async (referenceNumber, birthDate, postcode) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `/authenticate/rcp/${referenceNumber}?${querystring.stringify({
+          licenseeBirthDate: birthDate,
+          licenseePostcode: postcode
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )
+
+/**
  * Helper to check if an HTTP status code is classed as a system error
  *
  * @param {number} statusCode the HTTP status code to test
