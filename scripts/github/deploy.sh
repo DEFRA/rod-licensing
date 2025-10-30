@@ -16,7 +16,7 @@ echo "Executing deployment - BRANCH=${BRANCH}, COMMIT_MESSAGE=${COMMIT_MESSAGE},
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
-npm i -g semver lerna lerna-changelog 
+npm i -g semver lerna lerna-changelog
 
 echo "Checking out target branch"
 git fetch --unshallow
@@ -82,7 +82,7 @@ git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
 echo "Publishing latest packages to npm"
-lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc --no-verify-access
+lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
 if [ "${BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
