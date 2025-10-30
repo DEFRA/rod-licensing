@@ -47,7 +47,7 @@ export const GOVUK_PAY_ERROR_STATUS_CODES = {
  * @type {{telesales: string, govPay: string}}
  */
 export const TRANSACTION_SOURCE = { govPay: 'Gov Pay', telesales: 'Telesales' }
-export const PAYMENT_TYPE = { debit: 'Debit card', credit: 'Credit card' }
+export const PAYMENT_TYPE = { debit: 'Debit card' }
 
 /**
  * Data sources associated with POCL transactions

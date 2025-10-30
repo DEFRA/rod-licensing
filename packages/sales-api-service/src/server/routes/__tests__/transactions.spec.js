@@ -240,7 +240,7 @@ describe('transaction handler', () => {
   describe('retrieveStagedTransaction', () => {
     const getMockRequest = ({ id = 'abc123' }) => ({ params: { id } })
     const getMockResponseToolkit = () => ({ response: jest.fn() })
-    const retrieveHandler = transactions[transactions.length - 2].options.handler
+    const retrieveHandler = transactions[transactions.length - 1].options.handler
 
     it('handler should return continue response', async () => {
       const request = getMockRequest({})

@@ -21,8 +21,7 @@ const [
 jest.mock('../../../services/recurring-payments.service.js', () => ({
   getRecurringPayments: jest.fn(),
   processRPResult: jest.fn(),
-  cancelRecurringPayment: jest.fn(),
-  getRecurringPaymentAgreement: jest.fn()
+  cancelRecurringPayment: jest.fn()
 }))
 
 jest.mock('../../../schema/recurring-payments.schema.js', () => ({

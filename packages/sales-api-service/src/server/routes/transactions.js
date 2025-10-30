@@ -25,9 +25,6 @@ const stagingIdSchema = Joi.object({
   id: Joi.string().trim().guid().min(1).required().description('the staging identifier')
 }).label('finalise-transaction-request-parameters')
 
-const TRANSACTION_DESCRIPTION_404_ERROR = 'A transaction for the specified identifier was not found'
-const HTTP_OK = 200
-
 export default [
   {
     method: 'POST',
@@ -78,7 +75,7 @@ export default [
           })
         }
         const responses = request.payload.map((p, i) => responsesByIndex[i])
-        return h.response(responses).code(HTTP_OK)
+        return h.response(responses).code(200)
       },
       description: 'Create a batch of new transactions',
       notes: `
@@ -106,7 +103,7 @@ export default [
     method: 'PATCH',
     path: '/transactions/{id}',
     options: {
-      handler: async (request, h) => h.response(await finaliseTransaction({ id: request.params.id, ...request.payload })).code(HTTP_OK),
+      handler: async (request, h) => h.response(await finaliseTransaction({ id: request.params.id, ...request.payload })).code(200),
       description: 'Finalise an existing transaction',
       notes: `
         Marks an existing transaction as finalised at which point it will become eligible for insertion into Dynamics.
@@ -121,7 +118,7 @@ export default [
           responses: {
             200: { description: 'Transaction accepted', schema: finaliseTransactionResponseSchema },
             400: { description: 'Invalid request params' },
-            404: { description: TRANSACTION_DESCRIPTION_404_ERROR },
+            404: { description: 'A transaction for the specified identifier was not found' },
             402: { description: 'The payment amount did not match the cost of the transaction' },
             409: { description: 'The transaction does not support recurring payments but an instruction was supplied' },
             410: {
@@ -150,7 +147,7 @@ export default [
         'hapi-swagger': {
           responses: {
             204: { description: 'Transaction message processed' },
-            404: { description: TRANSACTION_DESCRIPTION_404_ERROR },
+            404: { description: 'A transaction for the specified identifier was not found' },
             422: { description: 'The transaction queue processing payload was invalid' }
           },
           order: 3

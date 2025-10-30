@@ -241,7 +241,7 @@ describe('recurring-payments-processor', () => {
       const permissionData = { licensee: { countryCode: 'GB-ENG' } }
       for (let x = 0; x < agreementIds.length; x++) {
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce(permissionData)
-        salesApi.createTransaction.mockResolvedValueOnce({
+        salesApi.createTransaction.mockReturnValueOnce({
           cost: 50,
           id: `transaction-id-${x + 1}`
         })
@@ -867,12 +867,11 @@ describe('recurring-payments-processor', () => {
   ])('cancelRecurringPayment is called when payment is %s', async (_status, agreementId, mockStatus) => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
     const id = Symbol('recurring-payment-id')
-
     salesApi.createTransaction.mockResolvedValueOnce({
-      id,
-      cost: 50
+      reecurringPayment: {
+        id,
+      }
     })
-
     const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)
     getPaymentStatus.mockResolvedValueOnce(mockStatus)
