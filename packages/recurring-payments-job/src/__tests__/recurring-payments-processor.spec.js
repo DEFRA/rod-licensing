@@ -36,7 +36,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
     processRPResult: jest.fn(),
-    updatePaymentJournal: jest.fn(),
+    updatePaymentJournal: jest.fn()
   }
 }))
 
@@ -513,7 +513,6 @@ describe('recurring-payments-processor', () => {
       cost: 50,
       id: transactionId
     })
-
 
     const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
     sendPayment.mockResolvedValueOnce(mockPaymentResponse)

@@ -7,8 +7,7 @@ import {
 import {
   getRecurringPayments,
   processRPResult,
-  cancelRecurringPayment,
-  getRecurringPaymentAgreement
+  cancelRecurringPayment
 } from '../../services/recurring-payments.service.js'
 
 const SWAGGER_TAGS = ['api', 'recurring-payments']

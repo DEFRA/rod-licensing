@@ -2,8 +2,7 @@ import recurringPayments from '../recurring-payments.js'
 import {
   getRecurringPayments,
   processRPResult,
-  cancelRecurringPayment,
-  getRecurringPaymentAgreement
+  cancelRecurringPayment
 } from '../../../services/recurring-payments.service.js'
 import {
   dueRecurringPaymentsRequestParamsSchema,
@@ -20,9 +19,6 @@ const [
   },
   {
     options: { handler: crpHandler }
-  },
-  {
-    options: { handler: rrpHandler }
   }
 ] = recurringPayments
 
