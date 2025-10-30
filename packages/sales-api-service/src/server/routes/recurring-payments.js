@@ -4,11 +4,7 @@ import {
   processRPResultRequestParamsSchema,
   cancelRecurringPaymentRequestParamsSchema
 } from '../../schema/recurring-payments.schema.js'
-import {
-  getRecurringPayments,
-  processRPResult,
-  cancelRecurringPayment
-} from '../../services/recurring-payments.service.js'
+import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '../../services/recurring-payments.service.js'
 
 const SWAGGER_TAGS = ['api', 'recurring-payments']
 

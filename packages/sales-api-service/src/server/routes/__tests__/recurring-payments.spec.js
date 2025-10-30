@@ -1,9 +1,5 @@
 import recurringPayments from '../recurring-payments.js'
-import {
-  getRecurringPayments,
-  processRPResult,
-  cancelRecurringPayment
-} from '../../../services/recurring-payments.service.js'
+import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '../../../services/recurring-payments.service.js'
 import {
   dueRecurringPaymentsRequestParamsSchema,
   processRPResultRequestParamsSchema,
