@@ -869,7 +869,7 @@ describe('recurring-payments-processor', () => {
     const id = Symbol('recurring-payment-id')
     salesApi.createTransaction.mockResolvedValueOnce({
       reecurringPayment: {
-        id,
+        id
       }
     })
     const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
