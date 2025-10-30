@@ -868,7 +868,7 @@ describe('recurring-payments-processor', () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
     const id = Symbol('recurring-payment-id')
     salesApi.createTransaction.mockResolvedValueOnce({
-      reecurringPayment: {
+      recurringPayment: {
         id
       }
     })
