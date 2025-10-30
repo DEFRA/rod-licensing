@@ -2,8 +2,7 @@ import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema,
-  retrieveRecurringPaymentAgreementRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema
 } from '../../schema/recurring-payments.schema.js'
 import {
   getRecurringPayments,
@@ -83,30 +82,6 @@ export default [
             200: { description: 'Recurring payment cancelled' }
           },
           order: 3
-        }
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/retrieveRecurringPaymentAgreement/{agreementId}',
-    options: {
-      handler: async (request, h) => {
-        const { agreementId } = request.params
-        const result = await getRecurringPaymentAgreement(agreementId)
-        return h.response(result)
-      },
-      description: 'Retrieve a recurring payment agreement',
-      tags: SWAGGER_TAGS,
-      validate: {
-        params: retrieveRecurringPaymentAgreementRequestParamsSchema
-      },
-      plugins: {
-        'hapi-swagger': {
-          responses: {
-            200: { description: 'Recurring payment agreement retrieved' }
-          },
-          order: 4
         }
       }
     }

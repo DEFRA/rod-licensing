@@ -8,8 +8,7 @@ import {
 import {
   dueRecurringPaymentsRequestParamsSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema,
-  retrieveRecurringPaymentAgreementRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema
 } from '../../../schema/recurring-payments.schema.js'
 
 const [
@@ -37,8 +36,7 @@ jest.mock('../../../services/recurring-payments.service.js', () => ({
 jest.mock('../../../schema/recurring-payments.schema.js', () => ({
   dueRecurringPaymentsRequestParamsSchema: jest.fn(),
   processRPResultRequestParamsSchema: jest.fn(),
-  cancelRecurringPaymentRequestParamsSchema: jest.fn(),
-  retrieveRecurringPaymentAgreementRequestParamsSchema: jest.fn()
+  cancelRecurringPaymentRequestParamsSchema: jest.fn()
 }))
 
 const getMockRequest = ({
@@ -127,28 +125,6 @@ describe('recurring payments', () => {
       const request = getMockRequest({ id })
       await crpHandler(request, getMockResponseToolkit())
       expect(recurringPayments[2].options.validate.params).toBe(cancelRecurringPaymentRequestParamsSchema)
-    })
-  })
-
-  describe('retrieveRecurringPaymentAgreement', () => {
-    it('handler should return continue response', async () => {
-      const request = getMockRequest({})
-      const responseToolkit = getMockResponseToolkit()
-      expect(await rrpHandler(request, responseToolkit)).toEqual(responseToolkit.continue)
-    })
-
-    it('should call getRecurringPaymentAgreement with agreement id', async () => {
-      const agreementId = Symbol('agreement-id')
-      const request = getMockRequest({ agreementId })
-      await rrpHandler(request, getMockResponseToolkit())
-      expect(getRecurringPaymentAgreement).toHaveBeenCalledWith(agreementId)
-    })
-
-    it('should validate with retrieveRecurringPaymentAgreementRequestParamsSchema', async () => {
-      const agreementId = Symbol('agreement-id')
-      const request = getMockRequest({ agreementId })
-      await rrpHandler(request, getMockResponseToolkit())
-      expect(recurringPayments[3].options.validate.params).toBe(retrieveRecurringPaymentAgreementRequestParamsSchema)
     })
   })
 })

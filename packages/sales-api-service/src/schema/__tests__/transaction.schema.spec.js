@@ -2,9 +2,7 @@ import {
   createTransactionSchema,
   createTransactionResponseSchema,
   finaliseTransactionResponseSchema,
-  retrieveStagedTransactionParamsSchema,
-  updateRecurringTransactionRequestSchema,
-  updateRecurringTransactionResponseSchema
+  retrieveStagedTransactionParamsSchema
 } from '../transaction.schema.js'
 import { mockTransactionPayload, mockStagedTransactionRecord, mockFinalisedTransactionRecord } from '../../__mocks__/test-data.js'
 
@@ -184,69 +182,5 @@ describe('retrieveStagedTransactionParamsSchema', () => {
 
   it('throws an error if id missing', async () => {
     await expect(() => retrieveStagedTransactionParamsSchema.validateAsync({}).rejects.toThrow())
-  })
-})
-
-describe('updateRecurringTransactionRequestSchema', () => {
-  it('validates successfully with a valid payment object', async () => {
-    const sample = {
-      payment: {
-        source: 'Gov Pay',
-        method: 'Debit card'
-      }
-    }
-    const result = await updateRecurringTransactionRequestSchema.validateAsync(sample)
-    expect(result).toEqual(sample)
-  })
-
-  it('fails when payment.method is invalid', async () => {
-    const sample = {
-      payment: {
-        source: 'Gov Pay',
-        method: 'SomeOtherMethod'
-      }
-    }
-    await expect(updateRecurringTransactionRequestSchema.validateAsync(sample)).rejects.toThrow()
-  })
-
-  it('fails when payment.source is invalid', async () => {
-    const sample = {
-      payment: {
-        source: 'SomeOtherSource',
-        method: 'Debit card'
-      }
-    }
-    await expect(updateRecurringTransactionRequestSchema.validateAsync(sample)).rejects.toThrow()
-  })
-})
-
-describe('updateRecurringTransactionResponseSchema', () => {
-  it('validates successfully with a transaction containing payment', async () => {
-    const mockRecord = mockStagedTransactionRecord()
-    mockRecord.payment = {
-      source: 'Gov Pay',
-      method: 'Debit card'
-    }
-
-    const result = await updateRecurringTransactionResponseSchema.validateAsync(mockRecord)
-    expect(result).toBeInstanceOf(Object)
-  })
-
-  it('fails when payment is missing', async () => {
-    const mockRecord = mockStagedTransactionRecord()
-    delete mockRecord.payment
-    await expect(updateRecurringTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow('"payment" is required')
-  })
-
-  it('fails when payment.method is invalid', async () => {
-    const mockRecord = mockStagedTransactionRecord()
-    mockRecord.payment = { source: 'Gov Pay', method: 'SomethingElse' }
-    await expect(updateRecurringTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow()
-  })
-
-  it('fails when payment.source is invalid', async () => {
-    const mockRecord = mockStagedTransactionRecord()
-    mockRecord.payment = { source: 'SomethingElse', method: 'Debit card' }
-    await expect(updateRecurringTransactionResponseSchema.validateAsync(mockRecord)).rejects.toThrow()
   })
 })
