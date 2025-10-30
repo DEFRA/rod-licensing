@@ -1,4 +1,12 @@
 
+## v1.64.0-rc.12 (2025-10-30)
+
+#### :bug: Bug Fix
+* [#2238](https://github.com/DEFRA/rod-licensing/pull/2238) Update NPM and use OIDC for auth ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.64.0-rc.11 (2025-10-28)
 
 #### :bug: Bug Fix
