@@ -5,9 +5,6 @@
 set -e
 trap 'exit 1' INT
 
-echo "NPM version check"
-npm -v
-
 if [[ "${COMMIT_MESSAGE}" =~ ^(SEMVER-MAJOR) ]]; then
   RELEASE_TYPE="major"
 elif [[ "${COMMIT_MESSAGE}" =~ ^(SEMVER-PATCH|patch|hotfix) ]]; then
