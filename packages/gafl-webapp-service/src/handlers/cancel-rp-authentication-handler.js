@@ -23,7 +23,7 @@ const applyAuthFailure = async (request, h, failure) => {
   return h.redirect(addLanguageCodeToUri(request, failure.redirectPath))
 }
 
-export default async (request, h) => {
+const cancelRpAuthenticationHandler = async (request, h) => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
   const permission = await request.cache().helpers.status.getCurrentPermission()
 
@@ -56,3 +56,5 @@ export default async (request, h) => {
 
   return h.redirectWithLanguageCode(CANCEL_RP_DETAILS.uri)
 }
+
+export default cancelRpAuthenticationHandler
