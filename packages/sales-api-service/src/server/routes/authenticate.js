@@ -8,9 +8,10 @@ import {
 import db from 'debug'
 import { permissionForContacts, concessionsByIds, executeQuery, contactForLicenseeNoReference } from '@defra-fish/dynamics-lib'
 import { findLinkedRecurringPayment } from '../../services/recurring-payments.service.js'
-import { StatusCodes } from 'http-status-codes'
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'
+
+const HTTP_OK = 200
 
 const executeWithErrorLog = async query => {
   try {
@@ -67,7 +68,7 @@ export default [
     options: {
       handler: async (request, h) => {
         const { permission } = await getAuthenticatedPermission(request)
-        return h.response({ permission }).code(StatusCodes.OK)
+        return h.response({ permission }).code(HTTP_OK)
       },
       description: 'Authenticate a licensee by checking the licence number corresponds with the provided contact details',
       notes: `
@@ -96,7 +97,7 @@ export default [
       handler: async (request, h) => {
         const { permission, permissionId } = await getAuthenticatedPermission(request)
         const recurringPayment = await findLinkedRecurringPayment(permissionId)
-        return h.response({ permission, recurringPayment }).code(StatusCodes.OK)
+        return h.response({ permission, recurringPayment }).code(HTTP_OK)
       },
       description:
         'Authenticate a licensee by checking the licence number corresponds with the provided contact details. Checking agreement id exists and recurring payment is active and not cancelled',
