@@ -49,7 +49,7 @@ const getSampleResponseTooklkit = () => ({
   redirectWithLanguageCode: jest.fn().mockReturnValue('redirected')
 })
 
-const runHandler = async ({ salesApiResponse, decoratedIdentifyUri } = {}) => {
+const invokeHandlerWithMocks = async ({ salesApiResponse, decoratedIdentifyUri } = {}) => {
   if (typeof salesApiResponse !== 'undefined') {
     salesApi.authenticateRecurringPayment.mockResolvedValueOnce(salesApiResponse)
   }
@@ -72,7 +72,7 @@ describe('Cancel RP Authentication Handler', () => {
 
   describe('Successful authentication', () => {
     it('returns the redirect result', async () => {
-      const { result } = await runHandler({
+      const { result } = await invokeHandlerWithMocks({
         salesApiResponse: {
           permission: { id: 'perm-id' },
           recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
@@ -82,7 +82,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('redirects to details', async () => {
-      const { h } = await runHandler({
+      const { h } = await invokeHandlerWithMocks({
         salesApiResponse: {
           permission: { id: 'perm-id' },
           recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
@@ -92,7 +92,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('marks status as authorised', async () => {
-      const { request } = await runHandler({
+      const { request } = await invokeHandlerWithMocks({
         salesApiResponse: {
           permission: { id: 'perm-id' },
           recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
@@ -104,12 +104,12 @@ describe('Cancel RP Authentication Handler', () => {
 
   describe('Unsuccessful authentication - no match', () => {
     it('redirects to the decorated identify URI', async () => {
-      const { h } = await runHandler({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
+      const { h } = await invokeHandlerWithMocks({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
       expect(h.redirect).toHaveBeenCalledWith('decorated-identify-uri')
     })
 
     it('sets page cache error and preserves payload', async () => {
-      const { request } = await runHandler({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
+      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
       expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
         CANCEL_RP_IDENTIFY.page,
         expect.objectContaining({
@@ -120,7 +120,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('marks status as unauthorised', async () => {
-      const { request } = await runHandler({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
+      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
       )
@@ -129,7 +129,7 @@ describe('Cancel RP Authentication Handler', () => {
 
   describe('Unsuccessful authentication - no recurring payment agreement', () => {
     it('redirects to the decorated identify URI', async () => {
-      const { h } = await runHandler({
+      const { h } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
@@ -137,7 +137,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('sets page cache error for no RCP setup', async () => {
-      const { request } = await runHandler({
+      const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
@@ -151,7 +151,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('marks status as unauthorised', async () => {
-      const { request } = await runHandler({
+      const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
@@ -163,7 +163,7 @@ describe('Cancel RP Authentication Handler', () => {
 
   describe('Unsuccessful authentication - RCP cancelled', () => {
     it('redirects to the decorated identify URI', async () => {
-      const { h } = await runHandler({
+      const { h } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
@@ -171,7 +171,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('sets page cache error for RCP cancelled', async () => {
-      const { request } = await runHandler({
+      const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
@@ -185,7 +185,7 @@ describe('Cancel RP Authentication Handler', () => {
     })
 
     it('marks status as unauthorised', async () => {
-      const { request } = await runHandler({
+      const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
