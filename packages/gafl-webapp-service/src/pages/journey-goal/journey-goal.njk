@@ -1,0 +1,52 @@
+{% extends "standard-form.njk" %}
+
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = mssgs.journey_goal_title %}
+{% set errorMsg = mssgs.journey_goal_error %}
+
+{% set instructions %}
+  <p class="govuk-body-m">{% mssgs.journey_goal_you_will_need %}</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>{% mssgs.journey_goal_instructions_req_1 %}</li>
+    <li>{% mssgs.journey_goal_instructions_req_2 %}</li>
+    <li>{% mssgs.journey_goal_instructions_req_3 %}</li>
+  </ul>
+{% endset - %}
+
+{% block pageContent %}
+  {{ govukRadios({
+    idPrefix: 'journey-goal',
+    name: "journey-goal",
+    items: [
+      {
+        "id": "selector-buy-licence",
+        value: "buy-licence",
+        text: mssgs.journey_goal_get_new_licence,
+        checked: payload['journey-goal'] === 'buy-licence'
+      },
+      {
+        "id": "selector-renew-licence",
+        value: "renew-licence",
+        text: mssgs.journey_goal_renew_existing_licence,
+        checked: payload['journey-goal'] === 'renew-licence',
+        hint: {
+          text: mssgs.journey_goal_renew_existing_licence_proviso
+        },
+        conditional: {
+          html: instructions
+        }
+      },
+      {
+        "id": "selector-cancel-recurring-payment",
+        value: "cancel-recurring-payment",
+        text: mssgs.journey_goal_cancel_recurring_payment,
+        checked: payload['journey-goal'] === 'cancel-recurring-payment',
+        conditional: {
+          html: instructions
+        }
+      }
+    ],
+    errorMessage: { text: errorMsg } if error['journey-goal']
+  }) }}
+{% endblock %}
