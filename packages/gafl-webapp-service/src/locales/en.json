@@ -785,6 +785,7 @@
   "rp_licence_already_cancelled_body_2_2": " or call 03708 506 506 (8am to 6pm, Monday to Friday, except public holidays)",
   "rp_licence_already_cancelled_body_3_1": "Go back",
   "rp_licence_already_cancelled_body_3_2": " to cancel the recurring card payment for a different licence.",
+  "rp_cancel_already_cancelled_title": "Already cancelled - Cancel your recurring card payment ",
   "save_changes": "Save changes",
   "server_error_title_suffix": " - GOV.UK",
   "server_error_bulletpoint_1": "If you have requested an email or text notification, this should be delivered in 3 hours if a payment has been taken.",
