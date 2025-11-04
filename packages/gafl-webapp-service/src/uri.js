@@ -67,6 +67,7 @@ export const CANCEL_RP_AUTHENTICATE = { uri: '/buy/cancel-recurring-payment/auth
 export const CANCEL_RP_DETAILS = { uri: '/buy/cancel-recurring-payment/details', page: 'cancel-rp-details' }
 export const CANCEL_RP_CONFIRM = { uri: '/buy/cancel-recurring-payment/confirm', page: 'cancel-rp-confirm' }
 export const CANCEL_RP_COMPLETE = { uri: '/buy/cancel-recurring-payment/complete', page: 'cancel-rp-complete' }
+export const RP_ALREADY_CANCELLED = { uri: '/buy/cancel-recurring-payment/already-cancelled', page: 'rp-already-cancelled' }
 
 /**
  * These are informational static pages
