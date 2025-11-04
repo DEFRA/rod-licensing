@@ -2,6 +2,7 @@
 {% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.rp_cancel_already_cancelled_title %}
+{% block pageTitle %}{{ pageTitle(title, mssgs) }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
