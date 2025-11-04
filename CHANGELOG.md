@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.14 (2025-11-04)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `sales-api-service`
+  * [#2211](https://github.com/DEFRA/rod-licensing/pull/2211) RCP job not updating fields in CRM ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.64.0-rc.13 (2025-10-30)
 
 #### :bug: Bug Fix
