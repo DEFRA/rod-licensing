@@ -8,9 +8,9 @@ import {
 import db from 'debug'
 import { permissionForContacts, concessionsByIds, executeQuery, contactForLicenseeNoReference } from '@defra-fish/dynamics-lib'
 import { findLinkedRecurringPayment } from '../../services/recurring-payments.service.js'
+
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'
-
 const HTTP_OK = 200
 
 const executeWithErrorLog = async query => {
@@ -26,38 +26,39 @@ const getAuthenticatedPermission = async request => {
   const { licenseeBirthDate, licenseePostcode } = request.query
   const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
 
-  if (contacts.length > 0) {
-    const contactIds = contacts.map(contact => contact.entity.id)
-    const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
-    const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
-
-    if (results.length === 1) {
-      let concessionProofs = []
-
-      if (results[0].expanded.concessionProofs.length > 0) {
-        const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
-        concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
-      }
-
-      return {
-        permission: {
-          ...results[0].entity.toJSON(),
-          licensee: results[0].expanded.licensee.entity.toJSON(),
-          concessions: concessionProofs.map(c => ({
-            id: c.expanded.concession.entity.id,
-            proof: c.entity.toJSON()
-          })),
-          permit: results[0].expanded.permit.entity.toJSON()
-        },
-        permissionId: results[0].entity.id
-      }
-    } else if (results.length === 0) {
-      throw Boom.unauthorized(failAuthenticate)
-    } else {
-      throw new Error('Unable to authenticate, non-unique results for query')
-    }
-  } else {
+  if (!contacts.length) {
     throw Boom.unauthorized(failAuthenticate)
+  }
+
+  const contactIds = contacts.map(contact => contact.entity.id)
+  const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
+  const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
+
+  if (results.length === 0) {
+    throw Boom.unauthorized(failAuthenticate)
+  }
+
+  if (results.length > 1) {
+    throw new Error('Unable to authenticate, non-unique results for query')
+  }
+
+  const [matched] = results
+  const concessionProofEntities = matched.expanded.concessionProofs
+
+  const concessionProofs =
+    concessionProofEntities.length > 0 ? await executeWithErrorLog(concessionsByIds(concessionProofEntities.map(f => f.entity.id))) : []
+
+  return {
+    permission: {
+      ...matched.entity.toJSON(),
+      licensee: matched.expanded.licensee.entity.toJSON(),
+      concessions: concessionProofs.map(c => ({
+        id: c.expanded.concession.entity.id,
+        proof: c.entity.toJSON()
+      })),
+      permit: matched.expanded.permit.entity.toJSON()
+    },
+    permissionId: matched.entity.id
   }
 }
 
