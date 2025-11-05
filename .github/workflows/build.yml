@@ -55,8 +55,8 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v4
         with:
-         node-version: 20.19.5
-         registry-url: 'https://registry.npmjs.org'
+          node-version: 20.19.5
+          registry-url: 'https://registry.npmjs.org'
       - name: Upgrade npm
         run: npm install -g npm@11.5.1
       - name: Install dependencies
