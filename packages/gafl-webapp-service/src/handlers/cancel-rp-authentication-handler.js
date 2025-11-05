@@ -36,16 +36,18 @@ const cancelRpAuthenticationHandler = async (request, h) => {
 
   const authenticationResult = await salesApi.authenticateRecurringPayment(referenceNumber, dateOfBirth, postcode)
 
+  const failures = error => applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, error))
+
   if (!authenticationResult) {
-    return applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, { referenceNumber: 'not-found' }))
+    return failures({ referenceNumber: 'not-found' })
   }
 
   if (!authenticationResult.recurringPayment) {
-    return applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, { recurringPayment: 'not-set-up' }))
+    return failures({ recurringPayment: 'not-set-up' })
   }
 
   if (authenticationResult.recurringPayment?.status === 1 || authenticationResult.recurringPayment?.cancelledDate) {
-    return applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, { recurringPayment: 'rcp-cancelled' }))
+    return failures({ recurringPayment: 'rcp-cancelled' })
   }
 
   await setUpCacheFromAuthenticationResult(request, authenticationResult)

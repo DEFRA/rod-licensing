@@ -20,21 +20,21 @@ export const authenticateRenewalRequestQuerySchema = Joi.object({
 }).label('authenticate-renewal-request-query')
 
 export const authenticateRenewalResponseSchema = Joi.object({
-  permission: {
+  permission: Joi.object({
     ...finalisedPermissionSchemaContent,
     licensee: contactResponseSchema,
     concessions: concessionProofSchema,
     permit: permitSchema
-  }
+  })
 }).label('authenticate-renewal-response')
 
 export const rcpAuthenticateRenewalResponseSchema = Joi.object({
-  permission: {
+  permission: Joi.object({
     ...finalisedPermissionSchemaContent,
     licensee: contactResponseSchema,
     concessions: concessionProofSchema,
     permit: permitSchema
-  },
+  }),
   recurringPayment: Joi.object({
     id: Joi.string().uuid().required(),
     agreementId: Joi.string().required(),

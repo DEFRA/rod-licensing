@@ -65,6 +65,11 @@ const invokeHandlerWithMocks = async ({ salesApiResponse, decoratedIdentifyUri }
   return { request, h, result }
 }
 
+const mockSuccessResponse = () => ({
+  permission: { id: 'perm-id' },
+  recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
+})
+
 describe('Cancel RP Authentication Handler', () => {
   beforeEach(() => {
     jest.resetAllMocks()
@@ -73,30 +78,21 @@ describe('Cancel RP Authentication Handler', () => {
   describe('Successful authentication', () => {
     it('returns the redirect result', async () => {
       const { result } = await invokeHandlerWithMocks({
-        salesApiResponse: {
-          permission: { id: 'perm-id' },
-          recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
-        }
+        salesApiResponse: mockSuccessResponse()
       })
       expect(result).toBe('redirected')
     })
 
     it('redirects to details', async () => {
       const { h } = await invokeHandlerWithMocks({
-        salesApiResponse: {
-          permission: { id: 'perm-id' },
-          recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
-        }
+        salesApiResponse: mockSuccessResponse()
       })
       expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_DETAILS.uri)
     })
 
     it('marks status as authorised', async () => {
       const { request } = await invokeHandlerWithMocks({
-        salesApiResponse: {
-          permission: { id: 'perm-id' },
-          recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
-        }
+        salesApiResponse: mockSuccessResponse()
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith({ authentication: { authorised: true } })
     })

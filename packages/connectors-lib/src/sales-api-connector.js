@@ -287,7 +287,7 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
  * @param postcode
  * @returns {Promise<*>}
  */
-export const authenticateRecurringPayment = async (referenceNumber, birthDate, postcode) =>
+export const authenticateRecurringPayment = (referenceNumber, birthDate, postcode) =>
   exec2xxOrNull(
     call(
       new URL(
