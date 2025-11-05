@@ -70,3 +70,4 @@ jobs:
         env:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          HUSKY: 0
