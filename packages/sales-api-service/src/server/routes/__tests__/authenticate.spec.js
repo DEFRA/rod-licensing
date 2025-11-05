@@ -7,6 +7,13 @@ import {
   MOCK_CONCESSION_PROOF_ENTITY,
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
+import authenticate from '../authenticate.js'
+
+const [
+  {
+    options: { handler }
+  }
+] = authenticate
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -189,5 +196,42 @@ describe('authenticate handler', () => {
         statusCode: 400
       })
     })
+  })
+
+  it('changes reference number to uppercase', async () => {
+    const sampleQueryReferenceNumber = 'abc123'
+    const sampleResultReferenceNumber = sampleQueryReferenceNumber.toUpperCase()
+    const makeMockEntity = (obj = {}) => ({
+      ...obj,
+      toJSON: () => obj
+    })
+    executeQuery.mockReturnValueOnce([{ entity: { id: 'hgk-999' } }]).mockReturnValueOnce([
+      {
+        entity: makeMockEntity({
+          referenceNumber: sampleResultReferenceNumber
+        }),
+        expanded: {
+          concessionProofs: [],
+          licensee: { entity: makeMockEntity() },
+          permit: { entity: makeMockEntity() }
+        }
+      }
+    ])
+    const mockRequest = {
+      query: { licenseeBirthDate: '', licenseePostcode: '' },
+      params: { referenceNumber: sampleQueryReferenceNumber }
+    }
+    const mockResponseToolkit = { response: jest.fn(() => ({ code: () => {} })) }
+
+    await handler(mockRequest, mockResponseToolkit)
+
+    console.log('result', JSON.stringify(mockResponseToolkit.response.mock.calls))
+    expect(mockResponseToolkit.response).toHaveBeenCalledWith(
+      expect.objectContaining({
+        permission: expect.objectContaining({
+          referenceNumber: sampleResultReferenceNumber
+        })
+      })
+    )
   })
 })

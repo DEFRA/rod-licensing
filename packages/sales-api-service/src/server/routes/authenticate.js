@@ -29,7 +29,7 @@ export default [
         if (contacts.length > 0) {
           const contactIds = contacts.map(contact => contact.entity.id)
           const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
-          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
+          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
           if (results.length === 1) {
             let concessionProofs = []
             if (results[0].expanded.concessionProofs.length > 0) {
