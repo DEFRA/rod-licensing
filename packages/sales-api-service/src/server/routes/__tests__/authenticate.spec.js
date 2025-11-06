@@ -225,7 +225,6 @@ describe('authenticate handler', () => {
 
     await handler(mockRequest, mockResponseToolkit)
 
-    console.log('result', JSON.stringify(mockResponseToolkit.response.mock.calls))
     expect(mockResponseToolkit.response).toHaveBeenCalledWith(
       expect.objectContaining({
         permission: expect.objectContaining({
