@@ -1,4 +1,3 @@
-Must provide GITHUB_AUTH
 
 ## v1.64.0-rc.16 (2025-11-06)
 
