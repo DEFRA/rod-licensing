@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.16 (2025-11-06)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2244](https://github.com/DEFRA/rod-licensing/pull/2244) Allow lowercase chars in licence number when renewing ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.64.0-rc.14 (2025-11-04)
 
