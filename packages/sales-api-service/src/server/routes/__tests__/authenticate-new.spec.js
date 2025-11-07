@@ -7,7 +7,7 @@ describe('executeWithErrorLog', () => {
   it('throws error', async () => {
     const debug = jest.fn()
     db.mockReturnValueOnce(debug)
-    executeQuery.mockImplementation(() => {
+    executeQuery.mockImplementationOnce(() => {
       throw new Error()
     })
     contactForLicenseeNoReference.mockReturnValueOnce({ filter: 'query filter test' })

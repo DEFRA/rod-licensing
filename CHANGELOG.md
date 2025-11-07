@@ -1,4 +1,33 @@
 
+
+## v1.64.0-rc.16 (2025-11-06)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2244](https://github.com/DEFRA/rod-licensing/pull/2244) Allow lowercase chars in licence number when renewing ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.64.0-rc.14 (2025-11-04)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `sales-api-service`
+  * [#2211](https://github.com/DEFRA/rod-licensing/pull/2211) RCP job not updating fields in CRM ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.13 (2025-10-30)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2239](https://github.com/DEFRA/rod-licensing/pull/2239) Revert two commits ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.64.0-rc.11 (2025-10-28)
 
 #### :bug: Bug Fix

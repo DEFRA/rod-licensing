@@ -138,8 +138,8 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
       status: { id: TRANSACTION_STATUS.FINALISED },
       payment: {
         amount: transactionRecord.cost,
-        method: TRANSACTION_SOURCE.govPay,
-        source: PAYMENT_TYPE.debit,
+        method: PAYMENT_TYPE.debit,
+        source: TRANSACTION_SOURCE.govPay,
         timestamp: new Date().toISOString()
       }
     }),

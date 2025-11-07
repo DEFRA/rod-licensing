@@ -725,8 +725,8 @@ describe('recurring payments service', () => {
         status: expect.objectContaining({ id: TRANSACTION_STATUS.FINALISED }),
         payment: expect.objectContaining({
           amount: mockTransaction.cost,
-          method: TRANSACTION_SOURCE.govPay,
-          source: PAYMENT_TYPE.debit,
+          source: TRANSACTION_SOURCE.govPay,
+          method: PAYMENT_TYPE.debit,
           timestamp: fakeNow
         })
       })

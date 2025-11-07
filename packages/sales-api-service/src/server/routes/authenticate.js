@@ -68,8 +68,39 @@ export default [
     path: '/authenticate/renewal/{referenceNumber}',
     options: {
       handler: async (request, h) => {
-        const { permission } = await getAuthenticatedPermission(request)
-        return h.response({ permission }).code(HTTP_OK)
+        const { licenseeBirthDate, licenseePostcode } = request.query
+        const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
+        if (contacts.length > 0) {
+          const contactIds = contacts.map(contact => contact.entity.id)
+          const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
+          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
+          if (results.length === 1) {
+            let concessionProofs = []
+            if (results[0].expanded.concessionProofs.length > 0) {
+              const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
+              concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
+            }
+            return h
+              .response({
+                permission: {
+                  ...results[0].entity.toJSON(),
+                  licensee: results[0].expanded.licensee.entity.toJSON(),
+                  concessions: concessionProofs.map(c => ({
+                    id: c.expanded.concession.entity.id,
+                    proof: c.entity.toJSON()
+                  })),
+                  permit: results[0].expanded.permit.entity.toJSON()
+                }
+              })
+              .code(200)
+          } else if (results.length === 0) {
+            throw Boom.unauthorized(failAuthenticate)
+          } else {
+            throw new Error('Unable to authenticate, non-unique results for query')
+          }
+        } else {
+          throw Boom.unauthorized(failAuthenticate)
+        }
       },
       description: 'Authenticate a licensee by checking the licence number corresponds with the provided contact details',
       notes: `
