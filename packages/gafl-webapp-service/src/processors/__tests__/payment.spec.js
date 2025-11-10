@@ -11,9 +11,17 @@ jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 
-const createRequest = (opts = {}, catalog = {}) => ({
+// test helper
+const createRequest = (opts = {}, englishCatalog = {}, welshCatalog = {}) => ({
   i18n: {
-    getCatalog: () => catalog
+    getCatalog: lang => {
+      if (lang === 'en') {
+        return englishCatalog
+      }
+      if (lang === 'cy') {
+        return welshCatalog
+      }
+    }
   },
   headers: opts.headers || { 'x-forwarded-proto': 'https' },
   info: { host: opts.host || 'localhost:1234' },
@@ -123,6 +131,20 @@ describe('preparePayment', () => {
     addLanguageCodeToUri.mockReturnValue(decoratedUrl)
     const result = preparePayment(createRequest(), createTransaction())
     expect(result.language).toEqual(expectedLanguageCode)
+  })
+
+  it('when journey is Welsh, the payment description still uses the English catalog', () => {
+    const englishCatalog = { lang: 'en' }
+    const welshCatalog = { lang: 'cy' }
+
+    addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed?lang=cy')
+
+    const request = createRequest({}, englishCatalog, welshCatalog)
+    const transaction = createTransaction()
+
+    preparePayment(request, transaction)
+
+    expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(transaction.permissions[0], englishCatalog)
   })
 
   describe('provides the correct description', () => {
@@ -262,5 +284,23 @@ describe('prepareRecurringPaymentAgreement', () => {
 
     const result = await prepareRecurringPaymentAgreement(request, transaction)
     expect(debug).toHaveBeenCalledWith('Creating prepared recurring payment agreement %o', result)
+  })
+
+  it('when the recurring-payment journey is Welsh, the agreement description still uses the English catalog', async () => {
+    const englishCatalog = {
+      lang: 'en',
+      recurring_payment_description: 'The recurring card payment for your rod fishing licence'
+    }
+    const welshCatalog = {
+      lang: 'cy',
+      recurring_payment_description: 'Y taliad cerdyn sy’n ailadrodd ar gyfer eich trwydded bysgota â gwialen'
+    }
+
+    const request = createRequest({}, englishCatalog, welshCatalog)
+    const transaction = createTransaction()
+
+    const result = await prepareRecurringPaymentAgreement(request, transaction)
+
+    expect(result.description).toBe(englishCatalog.recurring_payment_description)
   })
 })

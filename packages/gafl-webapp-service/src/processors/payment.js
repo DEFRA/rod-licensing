@@ -21,14 +21,14 @@ export const preparePayment = (request, transaction) => {
   const uri = addLanguageCodeToUri(request, AGREED.uri)
   const url = new URL(uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
 
+  const englishCatalog = request?.i18n?.getCatalog?.('en')
+
   const result = {
     return_url: url.href,
     amount: Math.round(transaction.cost * 100),
     reference: transaction.id,
     description:
-      transaction.permissions.length === 1
-        ? licenceTypeAndLengthDisplay(transaction.permissions[0], request.i18n.getCatalog())
-        : 'Multiple permits',
+      transaction.permissions.length === 1 ? licenceTypeAndLengthDisplay(transaction.permissions[0], englishCatalog) : 'Multiple permits',
     delayed_capture: false,
     moto: process.env.CHANNEL === 'telesales',
     language: /\?.*lang=cy.*$/.test(url.search) ? 'cy' : 'en'
@@ -60,10 +60,12 @@ export const preparePayment = (request, transaction) => {
 
 export const prepareRecurringPaymentAgreement = async (request, transaction) => {
   debug('Preparing recurring payment %s', JSON.stringify(transaction, undefined, '\t'))
+  const englishCatalog = request?.i18n?.getCatalog?.('en')
+
   // The recurring card payment agreement for your rod fishing licence
   const result = {
     reference: transaction.id,
-    description: request.i18n.getCatalog().recurring_payment_description
+    description: englishCatalog.recurring_payment_description
   }
   debug('Creating prepared recurring payment agreement %o', result)
   return result
