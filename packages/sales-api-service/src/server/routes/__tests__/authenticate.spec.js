@@ -8,6 +8,7 @@ import {
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 import authenticate from '../authenticate.js'
+import { findLinkedRecurringPayment } from '../../../services/recurring-payments.service.js'
 
 const [
   {
@@ -22,6 +23,10 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   permissionForContacts: jest.fn()
 }))
 
+jest.mock('../../../services/recurring-payments.service.js', () => ({
+  findLinkedRecurringPayment: jest.fn()
+}))
+
 let server = null
 
 describe('authenticate handler', () => {
@@ -31,6 +36,10 @@ describe('authenticate handler', () => {
 
   afterAll(async () => {
     await server.stop()
+  })
+
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   describe('authenticateRenewal', () => {
@@ -151,6 +160,7 @@ describe('authenticate handler', () => {
         statusCode: 500
       })
       expect(consoleErrorSpy).toHaveBeenCalled()
+      consoleErrorSpy.mockRestore()
     })
 
     it('throws 401 errors if the renewal could not be authenticated', async () => {
@@ -194,6 +204,196 @@ describe('authenticate handler', () => {
         error: 'Bad Request',
         message: 'Invalid query: "licenseeBirthDate" is required',
         statusCode: 400
+      })
+    })
+  })
+
+  describe('authenticateRecurringPayment', () => {
+    const baseUrl = '/authenticate/rcp/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+
+    it('authenticates a recurring payment request and returns recurringPayment', async () => {
+      executeQuery
+        .mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }])
+        .mockResolvedValueOnce([
+          {
+            entity: MOCK_EXISTING_PERMISSION_ENTITY,
+            expanded: {
+              licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+              concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
+              permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+            }
+          }
+        ])
+        .mockResolvedValueOnce([{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }])
+
+      findLinkedRecurringPayment.mockResolvedValueOnce({
+        id: 'rcp-123',
+        status: 1
+      })
+
+      const result = await server.inject({ method: 'GET', url: baseUrl })
+      const body = JSON.parse(result.payload)
+
+      expect({
+        statusCode: result.statusCode,
+        body
+      }).toMatchObject({
+        statusCode: 200,
+        body: {
+          permission: expect.objectContaining({
+            ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
+            licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+            concessions: [
+              {
+                id: MOCK_CONCESSION.id,
+                proof: MOCK_CONCESSION_PROOF_ENTITY.toJSON()
+              }
+            ],
+            permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+          }),
+          recurringPayment: expect.objectContaining({ id: 'rcp-123', status: 1 })
+        }
+      })
+    })
+
+    it('calls findLinkedRecurringPayment with permission id', async () => {
+      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
+        {
+          entity: MOCK_EXISTING_PERMISSION_ENTITY,
+          expanded: {
+            licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+            concessionProofs: [],
+            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+          }
+        }
+      ])
+
+      findLinkedRecurringPayment.mockResolvedValueOnce({ id: 'rcp-123' })
+
+      await server.inject({ method: 'GET', url: baseUrl })
+
+      expect(findLinkedRecurringPayment).toHaveBeenCalledWith(MOCK_EXISTING_PERMISSION_ENTITY.id)
+    })
+
+    it('returns 401 when no contacts found', async () => {
+      executeQuery.mockResolvedValueOnce([])
+
+      const result = await server.inject({ method: 'GET', url: baseUrl })
+      const body = JSON.parse(result.payload)
+
+      expect({
+        statusCode: result.statusCode,
+        body
+      }).toMatchObject({
+        statusCode: 401,
+        body: {
+          error: 'Unauthorized',
+          message: 'The licensee could not be authenticated'
+        }
+      })
+    })
+
+    it('returns 401 when no permissions match', async () => {
+      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([])
+
+      const result = await server.inject({ method: 'GET', url: baseUrl })
+      const body = JSON.parse(result.payload)
+
+      expect({
+        statusCode: result.statusCode,
+        body
+      }).toMatchObject({
+        statusCode: 401,
+        body: {
+          error: 'Unauthorized',
+          message: 'The licensee could not be authenticated'
+        }
+      })
+    })
+
+    it('returns 500 when multiple permissions match', async () => {
+      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
+        {
+          entity: { id: 'p1', referenceNumber: 'CD379B' },
+          expanded: { concessionProofs: [], licensee: { entity: {}, expanded: {} }, permit: { entity: {}, expanded: {} } }
+        },
+        {
+          entity: { id: 'p2', referenceNumber: 'CD379B' },
+          expanded: { concessionProofs: [], licensee: { entity: {}, expanded: {} }, permit: { entity: {}, expanded: {} } }
+        }
+      ])
+
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+
+      const result = await server.inject({ method: 'GET', url: baseUrl })
+      const body = JSON.parse(result.payload)
+
+      expect({
+        statusCode: result.statusCode,
+        body
+      }).toMatchObject({
+        statusCode: 500,
+        body: {
+          error: 'Internal Server Error',
+          message: 'Unable to authenticate, non-unique results for query'
+        }
+      })
+      expect(consoleErrorSpy).toHaveBeenCalled()
+      consoleErrorSpy.mockRestore()
+    })
+
+    it('returns 400 when query params are missing', async () => {
+      const result = await server.inject({ method: 'GET', url: '/authenticate/rcp/CD379B?' })
+      const body = JSON.parse(result.payload)
+
+      expect({
+        statusCode: result.statusCode,
+        body
+      }).toMatchObject({
+        statusCode: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'Invalid query: "licenseeBirthDate" is required'
+        }
+      })
+    })
+
+    describe('if no concessions are returned', () => {
+      it('returns permission and recurringPayment without concessions', async () => {
+        executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
+          {
+            entity: MOCK_EXISTING_PERMISSION_ENTITY,
+            expanded: {
+              licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+              concessionProofs: [],
+              permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+            }
+          }
+        ])
+
+        findLinkedRecurringPayment.mockResolvedValueOnce({
+          id: 'rcp-789',
+          status: 1
+        })
+
+        const result = await server.inject({ method: 'GET', url: baseUrl })
+        const body = JSON.parse(result.payload)
+
+        expect({
+          statusCode: result.statusCode,
+          body
+        }).toMatchObject({
+          statusCode: 200,
+          body: {
+            permission: expect.objectContaining({
+              ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
+              licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+              concessions: [],
+              permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+            }),
+            recurringPayment: expect.objectContaining({ id: 'rcp-789', status: 1 })
+          }
+        })
       })
     })
   })
