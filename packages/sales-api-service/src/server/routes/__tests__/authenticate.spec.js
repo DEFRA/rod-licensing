@@ -1,6 +1,5 @@
 import initialiseServer from '../../server.js'
 import { contactForLicenseeNoReference, executeQuery, permissionForContacts } from '@defra-fish/dynamics-lib'
-import { findLinkedRecurringPayment } from '../../../services/recurring-payments.service.js'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
@@ -9,6 +8,7 @@ import {
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 import authenticate from '../authenticate.js'
+import { findLinkedRecurringPayment } from '../../../services/recurring-payments.service.js'
 
 const [
   {

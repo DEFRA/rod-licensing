@@ -70,19 +70,16 @@ export default [
       handler: async (request, h) => {
         const { licenseeBirthDate, licenseePostcode } = request.query
         const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
-
         if (contacts.length > 0) {
           const contactIds = contacts.map(contact => contact.entity.id)
           const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
           const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
           if (results.length === 1) {
             let concessionProofs = []
-
             if (results[0].expanded.concessionProofs.length > 0) {
               const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
               concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
             }
-
             return h
               .response({
                 permission: {
