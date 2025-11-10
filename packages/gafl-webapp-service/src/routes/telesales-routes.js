@@ -33,10 +33,12 @@ const telesalesRoutes = [
 ]
 
 if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
-  telesalesRoutes.push(...cancelRPIdentify)
-  telesalesRoutes.push(...cancelRPDetails)
-  telesalesRoutes.push(...cancelRPConfirm)
-  telesalesRoutes.push(...cancelRPComplete)
-  telesalesRoutes.push(...cancelRPAgreementNotFound)
+  telesalesRoutes.push(
+    ...cancelRPIdentify,
+    ...cancelRPDetails,
+    ...cancelRPConfirm,
+    ...cancelRPComplete,
+    ...cancelRPAgreementNotFound
+  )
 }
 export default telesalesRoutes
