@@ -21,6 +21,7 @@ describe('cancel recurring payment identify route', () => {
   afterEach(() => {
     jest.restoreAllMocks()
   })
+
   describe('getData', () => {
     const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
       cache: () => ({
@@ -57,10 +58,8 @@ describe('cancel recurring payment identify route', () => {
       const spy = jest
         .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
         .mockReturnValue({ validate: () => ({ error: true }) })
-
       const request = getMockRequest('BAD123')
       request.cache().helpers.status.setCurrentPermission = jest.fn()
-
       await expect(getData(request)).rejects.toBeInstanceOf(GetDataRedirect)
       spy.mockRestore()
     })
@@ -110,26 +109,29 @@ describe('cancel recurring payment identify route', () => {
   })
 
   describe('page route next', () => {
-    const nextPage = pageRoute.mock.calls[0][3]
-    beforeEach(jest.clearAllMocks)
+    const getNextPage = () => pageRoute.mock.calls[0][3]
 
     it('passes a function', () => {
+      const nextPage = getNextPage()
       expect(typeof nextPage).toBe('function')
     })
 
     it('calls addLanguageCodeToUri', () => {
+      const nextPage = getNextPage()
       nextPage()
       expect(addLanguageCodeToUri).toHaveBeenCalled()
     })
 
     it('passes request to addLanguageCodeToUri', () => {
       const request = Symbol('request')
+      const nextPage = getNextPage()
       nextPage(request)
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
     })
 
     it('returns result of addLanguageCodeToUri', () => {
       const expectedResult = Symbol('add language code to uri')
+      const nextPage = getNextPage()
       addLanguageCodeToUri.mockReturnValueOnce(expectedResult)
       expect(nextPage()).toBe(expectedResult)
     })
@@ -157,6 +159,16 @@ describe('cancel recurring payment identify route', () => {
       const p = getMockPayload()
       validator(p)
       expect(dateOfBirthValidator).toHaveBeenCalledWith(p)
+    })
+
+    it('fails if permission number is invalid', () => {
+      jest.spyOn(validation.permission, 'permissionNumberUniqueComponentValidator').mockReturnValue({ validate: () => ({ error: 'bad' }) })
+      expect(() => validator({ referenceNumber: 'BAD', postcode: 'AA1 1AA' })).toThrow()
+    })
+
+    it('fails if postcode is invalid', () => {
+      jest.spyOn(validation.contact, 'createOverseasPostcodeValidator').mockReturnValue({ validate: () => ({ error: 'bad' }) })
+      expect(() => validator({ referenceNumber: 'ABC123', postcode: 'ZZZ' })).toThrow()
     })
   })
 })

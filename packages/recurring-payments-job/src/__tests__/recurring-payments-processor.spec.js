@@ -70,6 +70,7 @@ const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'a
   expanded: { activePermission: { entity: { referenceNumber } } }
 })
 
+// eslint-disable-next-line camelcase
 const getMockSendPaymentResponse = ({ payment_id = 'pay-1', agreementId = 'agr-1', created_date = '2025-01-01T00:00:00.000Z' } = {}) => ({
   payment_id,
   agreementId,
@@ -215,7 +216,8 @@ describe('recurring-payments-processor', () => {
   })
 
   describe('When payment request throws an error...', () => {
-    it('debug is called with error message', async () => {
+    it('console.error is called with error message', async () => {
+      jest.spyOn(console, 'error')
       salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
       const oopsie = new Error('payment gate down')
       sendPayment.mockRejectedValueOnce(oopsie)
@@ -224,7 +226,7 @@ describe('recurring-payments-processor', () => {
         await execute()
       } catch {}
 
-      expect(debugLogger).toHaveBeenCalledWith(expect.any(String), oopsie)
+      expect(console.error).toHaveBeenCalledWith(expect.any(String), oopsie)
     })
 
     it('prepares and sends all payment requests, even if some fail', async () => {
@@ -283,6 +285,7 @@ describe('recurring-payments-processor', () => {
     })
 
     it('logs an error for every failure', async () => {
+      jest.spyOn(console, 'error')
       const errors = [new Error('error 1'), new Error('error 2'), new Error('error 3')]
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
         getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: 'a1' }),
@@ -299,7 +302,7 @@ describe('recurring-payments-processor', () => {
 
       await execute()
 
-      expect(debugLogger).toHaveBeenCalledWith(expect.any(String), ...errors)
+      expect(console.error).toHaveBeenCalledWith(expect.any(String), ...errors)
     })
   })
 
@@ -583,6 +586,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('logs an error if createTransaction fails', async () => {
+    jest.spyOn(console, 'error')
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const error = new Error('Wuh-oh!')
     salesApi.createTransaction.mockImplementationOnce(() => {
@@ -591,7 +595,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    expect(debugLogger).toHaveBeenCalledWith(expect.any(String), error)
+    expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
   })
 
   // --- //
@@ -735,6 +739,7 @@ describe('recurring-payments-processor', () => {
     [512, 'Payment status API error for test-payment-id, error 512'],
     [599, 'Payment status API error for test-payment-id, error 599']
   ])('logs the correct message when getPaymentStatus rejects with HTTP %i', async (statusCode, expectedMessage) => {
+    jest.spyOn(console, 'error')
     const mockPaymentId = 'test-payment-id'
     const mockResponse = [
       { entity: { agreementId: 'agreement-1' }, expanded: { activePermission: { entity: { referenceNumber: 'ref-1' } } } }
@@ -752,10 +757,11 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    expect(debugLogger).toHaveBeenCalledWith(expectedMessage)
+    expect(console.error).toHaveBeenCalledWith(expectedMessage)
   })
 
   it('logs the generic unexpected-error message and still rejects', async () => {
+    jest.spyOn(console, 'error')
     const mockPaymentId = 'test-payment-id'
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
@@ -770,7 +776,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    expect(debugLogger).toHaveBeenCalledWith(`Unexpected error fetching payment status for ${mockPaymentId}.`)
+    expect(console.error).toHaveBeenCalledWith(`Unexpected error fetching payment status for ${mockPaymentId}.`)
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {

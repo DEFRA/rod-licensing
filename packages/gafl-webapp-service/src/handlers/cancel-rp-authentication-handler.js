@@ -5,7 +5,25 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
 import Joi from 'joi'
 
-export default async (request, h) => {
+const buildAuthFailure = (referenceNumber, payload, error) => ({
+  page: {
+    page: CANCEL_RP_IDENTIFY.page,
+    data: { payload, error }
+  },
+  status: {
+    referenceNumber,
+    authentication: { authorised: false }
+  },
+  redirectPath: CANCEL_RP_IDENTIFY.uri
+})
+
+const applyAuthFailure = async (request, h, failure) => {
+  await request.cache().helpers.page.setCurrentPermission(failure.page.page, failure.page.data)
+  await request.cache().helpers.status.setCurrentPermission(failure.status)
+  return h.redirect(addLanguageCodeToUri(request, failure.redirectPath))
+}
+
+const cancelRpAuthenticationHandler = async (request, h) => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
   const permission = await request.cache().helpers.status.getCurrentPermission()
 
@@ -18,42 +36,18 @@ export default async (request, h) => {
 
   const authenticationResult = await salesApi.authenticateRecurringPayment(referenceNumber, dateOfBirth, postcode)
 
-  // no match
+  const failures = error => applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, error))
+
   if (!authenticationResult) {
-    await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, {
-      payload,
-      error: { referenceNumber: 'not-found' }
-    })
-    await request.cache().helpers.status.setCurrentPermission({
-      referenceNumber,
-      authentication: { authorised: false }
-    })
-    return h.redirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
+    return failures({ referenceNumber: 'not-found' })
   }
 
-  // no rcp agreement - REDIRECT TO BE UPDATED
   if (!authenticationResult.recurringPayment) {
-    await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, {
-      payload,
-      error: { recurringPayment: 'not-set-up' }
-    })
-    await request.cache().helpers.status.setCurrentPermission({
-      referenceNumber,
-      authentication: { authorised: false }
-    })
-    return h.redirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
-  } else {
-    if (authenticationResult.recurringPayment.status === 1 || authenticationResult.recurringPayment.cancelledDate) {
-      await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, {
-        payload,
-        error: { recurringPayment: 'rcp-cancelled' }
-      })
-      await request.cache().helpers.status.setCurrentPermission({
-        referenceNumber,
-        authentication: { authorised: false }
-      })
-      return h.redirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
-    }
+    return failures({ recurringPayment: 'not-set-up' })
+  }
+
+  if (authenticationResult.recurringPayment?.status === 1 || authenticationResult.recurringPayment?.cancelledDate) {
+    return failures({ recurringPayment: 'rcp-cancelled' })
   }
 
   await setUpCacheFromAuthenticationResult(request, authenticationResult)
@@ -64,3 +58,5 @@ export default async (request, h) => {
 
   return h.redirectWithLanguageCode(CANCEL_RP_DETAILS.uri)
 }
+
+export default cancelRpAuthenticationHandler

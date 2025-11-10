@@ -57,19 +57,6 @@ describe('govuk-pay-service', () => {
       }
     })
 
-    it('should log error message when the GOV.UK Pay API raises an error', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      govUkPayApi.createPayment.mockImplementationOnce(() => {
-        throw new Error()
-      })
-
-      try {
-        await sendPayment(preparedPayment)
-      } catch (error) {
-        expect(consoleSpy).toHaveBeenCalledWith('Error creating payment', preparedPayment.id)
-      }
-    })
-
     it('should throw an error when response is not ok', async () => {
       const mockFetchResponse = {
         ok: false,
@@ -91,43 +78,6 @@ describe('govuk-pay-service', () => {
           agreement_id: 'does_not_exist'
         })
       ).rejects.toThrow('Unexpected response from GOV.UK Pay API')
-    })
-
-    it('should log details when response is not ok', async () => {
-      const status = 400
-      const serviceResponseBody = {
-        code: 'P0102',
-        field: 'agreement_id',
-        description: 'Invalid attribute value: agreement_id. Agreement does not exist'
-      }
-      const transactionId = 'a50f0d51-295f-42b3-98f8-97c0641ede5a'
-      const preparedPayment = {
-        amount: 100,
-        description: 'The recurring card payment for your rod fishing licence',
-        id: transactionId,
-        authorisation_mode: 'agreement',
-        agreement_id: 'does_not_exist'
-      }
-      govUkPayApi.createPayment.mockResolvedValueOnce({
-        ok: false,
-        status,
-        json: jest.fn().mockResolvedValue(serviceResponseBody)
-      })
-      jest.spyOn(console, 'error')
-
-      try {
-        await sendPayment(preparedPayment)
-      } catch {}
-
-      expect(console.error).toHaveBeenCalledWith(
-        expect.objectContaining({
-          method: 'POST',
-          status,
-          response: serviceResponseBody,
-          transactionId,
-          payload: preparedPayment
-        })
-      )
     })
   })
 

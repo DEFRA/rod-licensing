@@ -8,10 +8,10 @@ import {
 import db from 'debug'
 import { permissionForContacts, concessionsByIds, executeQuery, contactForLicenseeNoReference } from '@defra-fish/dynamics-lib'
 import { findLinkedRecurringPayment } from '../../services/recurring-payments.service.js'
+
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'
-
-const statusOk = 200
+const HTTP_OK = 200
 
 const executeWithErrorLog = async query => {
   try {
@@ -19,6 +19,46 @@ const executeWithErrorLog = async query => {
   } catch (e) {
     debug(`Error executing query with filter ${query.filter}`)
     throw e
+  }
+}
+
+const getAuthenticatedPermission = async request => {
+  const { licenseeBirthDate, licenseePostcode } = request.query
+  const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
+
+  if (!contacts.length) {
+    throw Boom.unauthorized(failAuthenticate)
+  }
+
+  const contactIds = contacts.map(contact => contact.entity.id)
+  const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
+  const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
+
+  if (results.length === 0) {
+    throw Boom.unauthorized(failAuthenticate)
+  }
+
+  if (results.length > 1) {
+    throw new Error('Unable to authenticate, non-unique results for query')
+  }
+
+  const [matched] = results
+  const concessionProofEntities = matched.expanded.concessionProofs
+
+  const concessionProofs =
+    concessionProofEntities.length > 0 ? await executeWithErrorLog(concessionsByIds(concessionProofEntities.map(f => f.entity.id))) : []
+
+  return {
+    permission: {
+      ...matched.entity.toJSON(),
+      licensee: matched.expanded.licensee.entity.toJSON(),
+      concessions: concessionProofs.map(c => ({
+        id: c.expanded.concession.entity.id,
+        proof: c.entity.toJSON()
+      })),
+      permit: matched.expanded.permit.entity.toJSON()
+    },
+    permissionId: matched.entity.id
   }
 }
 
@@ -34,8 +74,7 @@ export default [
         if (contacts.length > 0) {
           const contactIds = contacts.map(contact => contact.entity.id)
           const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
-          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
-
+          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
           if (results.length === 1) {
             let concessionProofs = []
 
@@ -56,7 +95,7 @@ export default [
                   permit: results[0].expanded.permit.entity.toJSON()
                 }
               })
-              .code(statusOk)
+              .code(HTTP_OK)
           } else if (results.length === 0) {
             throw Boom.unauthorized(failAuthenticate)
           } else {
@@ -91,46 +130,9 @@ export default [
     path: '/authenticate/rcp/{referenceNumber}',
     options: {
       handler: async (request, h) => {
-        const { licenseeBirthDate, licenseePostcode } = request.query
-        const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
-
-        if (contacts.length > 0) {
-          const contactIds = contacts.map(contact => contact.entity.id)
-          const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
-          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
-
-          if (results.length === 1) {
-            let concessionProofs = []
-
-            if (results[0].expanded.concessionProofs.length > 0) {
-              const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
-              concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
-            }
-
-            const recurringPayment = await findLinkedRecurringPayment(results[0].entity.id)
-
-            return h
-              .response({
-                permission: {
-                  ...results[0].entity.toJSON(),
-                  licensee: results[0].expanded.licensee.entity.toJSON(),
-                  concessions: concessionProofs.map(c => ({
-                    id: c.expanded.concession.entity.id,
-                    proof: c.entity.toJSON()
-                  })),
-                  permit: results[0].expanded.permit.entity.toJSON()
-                },
-                recurringPayment
-              })
-              .code(statusOk)
-          } else if (results.length === 0) {
-            throw Boom.unauthorized(failAuthenticate)
-          } else {
-            throw new Error('Unable to authenticate, non-unique results for query')
-          }
-        } else {
-          throw Boom.unauthorized(failAuthenticate)
-        }
+        const { permission, permissionId } = await getAuthenticatedPermission(request)
+        const recurringPayment = await findLinkedRecurringPayment(permissionId)
+        return h.response({ permission, recurringPayment }).code(HTTP_OK)
       },
       description:
         'Authenticate a licensee by checking the licence number corresponds with the provided contact details. Checking agreement id exists and recurring payment is active and not cancelled',

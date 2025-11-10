@@ -725,8 +725,8 @@ describe('recurring payments service', () => {
         status: expect.objectContaining({ id: TRANSACTION_STATUS.FINALISED }),
         payment: expect.objectContaining({
           amount: mockTransaction.cost,
-          method: TRANSACTION_SOURCE.govPay,
-          source: PAYMENT_TYPE.debit,
+          source: TRANSACTION_SOURCE.govPay,
+          method: PAYMENT_TYPE.debit,
           timestamp: fakeNow
         })
       })
@@ -895,7 +895,7 @@ describe('recurring payments service', () => {
     })
 
     it('should call persist with the updated RecurringPayment', async () => {
-      retrieveGlobalOptionSets.mockReturnValue({
+      retrieveGlobalOptionSets.mockReturnValueOnce({
         cached: jest.fn().mockResolvedValue({
           defra_cancelledreasons: {
             options: {
@@ -929,6 +929,14 @@ describe('recurring payments service', () => {
   })
 
   describe('findLinkedRecurringPayment', () => {
+    const arrangeLinkedRcpSuccess = mockResponse => {
+      jest.spyOn(RecurringPayment, 'fromResponse')
+      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce(mockResponse)
+      retrieveGlobalOptionSets.mockReturnValueOnce({
+        cached: jest.fn().mockResolvedValue({ definition: 'mock-def' })
+      })
+    }
+
     it('passes permission id to findRecurringPaymentByPermissionId', async () => {
       const permissionId = Symbol('permission-id')
       await findLinkedRecurringPayment(permissionId)
@@ -942,14 +950,15 @@ describe('recurring payments service', () => {
       expect(dynamicsClient.retrieveMultipleRequest).toHaveBeenCalledWith(retrieveRequest)
     })
 
-    it('returns a RecurringPayment', async () => {
-      jest.spyOn(RecurringPayment, 'fromResponse')
-      const mockResponse = getMockResponse()
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce(mockResponse)
-      retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
-
-      const recurringPayment = await findLinkedRecurringPayment('abc123')
+    it('calls RecurringPayment.fromResponse with response and definitions', async () => {
+      arrangeLinkedRcpSuccess(getMockResponse())
+      await findLinkedRecurringPayment('abc123')
       expect(RecurringPayment.fromResponse).toHaveBeenCalledWith(expect.any(Object), expect.anything())
+    })
+
+    it('returns the RecurringPayment produced by fromResponse', async () => {
+      arrangeLinkedRcpSuccess(getMockResponse())
+      const recurringPayment = await findLinkedRecurringPayment('abc123')
       expect(RecurringPayment.fromResponse.mock.results[0].value).toBe(recurringPayment)
     })
 
