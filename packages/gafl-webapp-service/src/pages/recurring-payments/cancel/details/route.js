@@ -24,7 +24,7 @@ export const getData = async request => {
 export default pageRoute(
   CANCEL_RP_DETAILS.page,
   CANCEL_RP_DETAILS.uri,
-  null,
+  () => {},
   request => addLanguageCodeToUri(request, CANCEL_RP_CONFIRM.uri),
   getData
 )

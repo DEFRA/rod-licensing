@@ -26,7 +26,7 @@ describe('route', () => {
         expect(pageRoute).toHaveBeenCalledWith(
           CANCEL_RP_DETAILS.page,
           CANCEL_RP_DETAILS.uri,
-          null,
+          expect.any(Function),
           expect.any(Function),
           expect.any(Function)
         )

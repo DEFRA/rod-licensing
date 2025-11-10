@@ -63,7 +63,7 @@ Object {
       "options": Object {
         "validate": Object {
           "failAction": [Function],
-          "payload": null,
+          "payload": [Function],
         },
       },
       "path": "/buy/cancel-recurring-payment/details",
