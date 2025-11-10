@@ -1,31 +1,37 @@
-import { contactForLicenseeNoReference, executeQuery } from '@defra-fish/dynamics-lib'
-import db from 'debug'
-jest.mock('@defra-fish/dynamics-lib')
-jest.mock('debug')
+import '@defra-fish/dynamics-lib'
 
 describe('executeWithErrorLog', () => {
-  it('throws error', async () => {
-    const debug = jest.fn()
-    db.mockReturnValueOnce(debug)
-    executeQuery.mockImplementationOnce(() => {
-      throw new Error()
+  it('logs the filter when executeQuery fails via the handler', async () => {
+    jest.resetModules()
+
+    const debugSpy = jest.fn()
+    jest.doMock('debug', () => jest.fn(() => debugSpy))
+
+    jest.doMock('@defra-fish/dynamics-lib', () => {
+      const actual = jest.requireActual('@defra-fish/dynamics-lib')
+      return {
+        ...actual,
+        executeQuery: jest.fn().mockRejectedValueOnce(new Error('boom')),
+        contactForLicenseeNoReference: jest.fn(() => ({ filter: 'query filter test' })),
+        permissionForContacts: jest.fn(() => [])
+      }
     })
-    contactForLicenseeNoReference.mockReturnValueOnce({ filter: 'query filter test' })
-    const authenticate = require('../authenticate.js').default
+
+    const authenticate = (await import('../authenticate.js')).default
     const [
       {
         options: { handler }
       }
     ] = authenticate
-    const mockRequest = {
+
+    const request = {
       query: { licenseeBirthDate: '', licenseePostcode: '' },
       params: { referenceNumber: '' }
     }
+    const h = { response: () => ({ code: () => {} }) }
 
-    try {
-      await handler(mockRequest)
-    } catch {}
+    await handler(request, h).catch(() => {})
 
-    expect(debug).toHaveBeenCalledWith('Error executing query with filter query filter test')
+    expect(debugSpy).toHaveBeenCalledWith('Error executing query with filter query filter test')
   })
 })
