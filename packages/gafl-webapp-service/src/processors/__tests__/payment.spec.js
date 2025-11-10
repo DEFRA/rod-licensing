@@ -11,7 +11,6 @@ jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 
-// test helper
 const createRequest = (opts = {}, englishCatalog = {}, welshCatalog = {}) => ({
   i18n: {
     getCatalog: lang => {
