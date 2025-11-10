@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.18 (2025-11-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2247](https://github.com/DEFRA/rod-licensing/pull/2247) RP journey cancellation page 1 - Identify ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.64.0-rc.16 (2025-11-06)
 
