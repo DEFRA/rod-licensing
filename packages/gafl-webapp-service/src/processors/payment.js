@@ -60,12 +60,12 @@ export const preparePayment = (request, transaction) => {
 
 export const prepareRecurringPaymentAgreement = async (request, transaction) => {
   debug('Preparing recurring payment %s', JSON.stringify(transaction, undefined, '\t'))
-  const englishCatalog = request?.i18n?.getCatalog?.('en')
+  const catalog = request.i18n.getCatalog('en') || request.i18n.getCatalog()
 
   // The recurring card payment agreement for your rod fishing licence
   const result = {
     reference: transaction.id,
-    description: englishCatalog.recurring_payment_description
+    description: catalog.recurring_payment_description
   }
   debug('Creating prepared recurring payment agreement %o', result)
   return result
