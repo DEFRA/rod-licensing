@@ -30,6 +30,7 @@ To run from this directory:
 | GOV_PAY_APIKEY                    | GOV pay access identifier                                        |    no    | Yes                                                       |                               |
 | GOV_PAY_REQUEST_TIMEOUT_MS        | Timeout in milliseconds for API requests                         |    no    | Yes                                                       |                               |
 | FEEDBACK_URI                      | Location of feedback survey                                      |    no    | #                                                         |                               |
+| RCP_FEEDBACK_URI                  | Location of recurring card payments feedback survey              |    no    | #                                                         |                               |
 | ANALYTICS_PRIMARY_PROPERTY        | Analytics ID for tracking inc ecommerce                          |    no    |                                                           |                               |
 | ANALYTICS_PROPERTY_API            | Analytics property API key for linking Analytics.google property |    no    |                                                           |                               |
 | SERVICE_PAGE                      | GOV.UK service page                                              |    no    | https://www.gov.uk/fishing-licences/buy-a-fishing-licence |                               |
