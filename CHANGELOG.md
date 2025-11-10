@@ -1,4 +1,78 @@
 
+## v1.64.0-rc.18 (2025-11-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2247](https://github.com/DEFRA/rod-licensing/pull/2247) RP journey cancellation page 1 - Identify ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.64.0-rc.16 (2025-11-06)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2244](https://github.com/DEFRA/rod-licensing/pull/2244) Allow lowercase chars in licence number when renewing ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.64.0-rc.14 (2025-11-04)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `sales-api-service`
+  * [#2211](https://github.com/DEFRA/rod-licensing/pull/2211) RCP job not updating fields in CRM ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.13 (2025-10-30)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2239](https://github.com/DEFRA/rod-licensing/pull/2239) Revert two commits ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.64.0-rc.11 (2025-10-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2230](https://github.com/DEFRA/rod-licensing/pull/2230) Fix incorrect links in Accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.64.0-rc.10 (2025-10-27)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2232](https://github.com/DEFRA/rod-licensing/pull/2232) Revert two commits ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.64.0-rc.8 (2025-10-24)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#2216](https://github.com/DEFRA/rod-licensing/pull/2216) RP not updating CRM connectors lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.7 (2025-10-24)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2220](https://github.com/DEFRA/rod-licensing/pull/2220) Remove rcp variables ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.64.0-rc.6 (2025-10-23)
 
 #### :bug: Bug Fix
