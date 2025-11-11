@@ -1,4 +1,12 @@
 
+## v1.64.0-rc.19 (2025-11-11)
+
+#### :bug: Bug Fix
+* [#2249](https://github.com/DEFRA/rod-licensing/pull/2249) Use Node 20.19.5 and NPM 11.5.1 for Actions builds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.64.0-rc.18 (2025-11-10)
 
 #### :rocket: Enhancement
