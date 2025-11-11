@@ -94,9 +94,7 @@ describe('route', () => {
 
     it('returns request.i18n.getCatalog()', async () => {
       const permission = {
-        licensee: {
-          id: 'permission-id'
-        },
+        referenceNumber: 'abc123',
         recurringPayment: {
           endDate: '01-01-2026',
           name: 'John Smith',
@@ -123,9 +121,7 @@ describe('route', () => {
 
     it('returns summaryTable with expected data', async () => {
       const permission = {
-        licensee: {
-          id: 'permission-id'
-        },
+        referenceNumber: 'abc123',
         recurringPayment: {
           endDate: '01-01-2026',
           name: 'John Smith',
@@ -151,7 +147,7 @@ describe('route', () => {
         { key: { text: mssgs.rp_cancel_details_licence_holder }, value: { text: 'John Smith' } },
         { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: 'Salmon and sea trout' } },
         { key: { text: mssgs.rp_cancel_details_payment_card }, value: { text: 1234 } },
-        { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: 'permission-id' } },
+        { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: 'abc123' } },
         { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: '01-01-2026' } }
       ])
     })

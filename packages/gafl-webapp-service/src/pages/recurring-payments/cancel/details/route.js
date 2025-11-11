@@ -7,7 +7,7 @@ const getLicenseeDetailsSummaryRows = (permission, mssgs) => [
   { key: { text: mssgs.rp_cancel_details_licence_holder }, value: { text: permission.recurringPayment.name } },
   { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: licenceTypeDisplay(permission, mssgs) } },
   { key: { text: mssgs.rp_cancel_details_payment_card }, value: { text: permission.recurringPayment.lastDigitsCardNumbers } },
-  { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: permission.licensee.id } },
+  { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: permission.referenceNumber } },
   { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: permission.recurringPayment.endDate } }
 ]
 
