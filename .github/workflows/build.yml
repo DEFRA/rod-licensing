@@ -15,7 +15,12 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     env:
+      TOKEN_URL: ${{ ACTIONS_ID_TOKEN_REQUEST_URL }}
       TZ: Europe/London
+    permissions:
+      contents: write
+      id-token: write
+      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -31,7 +36,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Temporary testing
-        run: echo $ACTIONS_ID_TOKEN_REQUEST_URL
+        run: |
+          echo $ACTIONS_ID_TOKEN_REQUEST_URL
+          echo process.env['ACTIONS_ID_TOKEN_REQUEST_URL']
+          echo ${{ ACTIONS_ID_TOKEN_REQUEST_URL }}
       - name: Run tests
         run: npm run test
       - name: Fix code coverage paths
