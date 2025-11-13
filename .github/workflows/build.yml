@@ -15,7 +15,6 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     env:
-      TOKEN_URL: ${{ ACTIONS_ID_TOKEN_REQUEST_URL }}
       TZ: Europe/London
     permissions:
       contents: write
