@@ -37,7 +37,6 @@ jobs:
       - name: Temporary testing
         run: |
           echo $ACTIONS_ID_TOKEN_REQUEST_URL
-          echo process.env['ACTIONS_ID_TOKEN_REQUEST_URL']
           echo ${{ ACTIONS_ID_TOKEN_REQUEST_URL }}
       - name: Run tests
         run: npm run test
