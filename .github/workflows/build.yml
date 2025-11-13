@@ -38,6 +38,7 @@ jobs:
         run: . ./scripts/github/temp.sh
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
       - name: Run tests
         run: npm run test
       - name: Fix code coverage paths
@@ -76,8 +77,8 @@ jobs:
       - name: Run versioning script
         run: . ./scripts/github/deploy.sh
         env:
-          ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: $ACTIONS_ID_TOKEN_REQUEST_TOKEN
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
           # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
