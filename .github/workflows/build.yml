@@ -35,7 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Temporary testing
-        run: echo $ACTIONS_ID_TOKEN_REQUEST_URL
+        run: . ./scripts/github/temp.sh
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL
       - name: Run tests
         run: npm run test
       - name: Fix code coverage paths
