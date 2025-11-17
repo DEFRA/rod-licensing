@@ -1,15 +1,7 @@
 export const setUpRecurringPaymentCache = async (request, recurringPayment) => {
   if (!recurringPayment) return
 
-  const {
-    agreementId,
-    lastDigitsCardNumber,
-    status,
-    cancelledDate,
-    cancelledReason,
-    endDate,
-    nextDueDate
-  } = recurringPayment
+  const { agreementId, lastDigitsCardNumber, status, cancelledDate, cancelledReason, endDate, nextDueDate } = recurringPayment
 
   await request.cache().helpers.status.setCurrentPermission({
     recurringPayment: {
