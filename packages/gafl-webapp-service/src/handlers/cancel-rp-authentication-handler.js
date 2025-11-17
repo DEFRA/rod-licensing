@@ -26,7 +26,7 @@ const applyAuthFailure = async (request, h, failure) => {
 const cancelRpAuthenticationHandler = async (request, h) => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
   const permission = await request.cache().helpers.status.getCurrentPermission()
-  
+
   const referenceNumber = payload.referenceNumber || permission.referenceNumber
 
   const dateOfBirth = await validation.contact

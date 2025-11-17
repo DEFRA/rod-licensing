@@ -3,7 +3,7 @@ export const setUpRecurringPaymentCache = async (request, recurringPayment) => {
 
   const {
     agreementId,
-    last_digits_card_number,
+    lastDigitsCardNumber,
     status,
     cancelledDate,
     cancelledReason,
@@ -14,7 +14,7 @@ export const setUpRecurringPaymentCache = async (request, recurringPayment) => {
   await request.cache().helpers.status.setCurrentPermission({
     recurringPayment: {
       agreementId,
-      lastDigitsCardNumber: last_digits_card_number,
+      lastDigitsCardNumber,
       status,
       cancelledDate,
       cancelledReason,
