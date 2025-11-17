@@ -67,7 +67,7 @@ packages/
 - [payment-mop-up-job](packages/payment-mop-up-job/README.md)
   > Handles reconciliation of incomplete sales
 - [pocl-job](packages/pocl-job/README.md)
-  > Handles processing of post-office counter sales
+  > Handles processing of Post Office counter sales
 - [fulfilment-job](packages/fulfilment-job/README.md)
   > Handles processing of licence fulfilment requirements
 - [recurring-payments-job](packages/recurring-payments-job/README.md)
