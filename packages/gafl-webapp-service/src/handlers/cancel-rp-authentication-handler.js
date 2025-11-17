@@ -2,7 +2,7 @@ import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../src/uri.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
-import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
+import { setUpCancelRpCacheFromAuthenticationResult } from '../processors/recurring-payments-write-cache.js'
 import Joi from 'joi'
 
 const buildAuthFailure = (referenceNumber, payload, error) => ({
@@ -26,7 +26,7 @@ const applyAuthFailure = async (request, h, failure) => {
 const cancelRpAuthenticationHandler = async (request, h) => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
   const permission = await request.cache().helpers.status.getCurrentPermission()
-
+  
   const referenceNumber = payload.referenceNumber || permission.referenceNumber
 
   const dateOfBirth = await validation.contact
@@ -38,20 +38,14 @@ const cancelRpAuthenticationHandler = async (request, h) => {
 
   const failures = error => applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, error))
 
-  if (!authenticationResult) {
-    return failures({ referenceNumber: 'not-found' })
-  }
-
-  if (!authenticationResult.recurringPayment) {
-    return failures({ recurringPayment: 'not-set-up' })
-  }
-
-  if (authenticationResult.recurringPayment?.status === 1 || authenticationResult.recurringPayment?.cancelledDate) {
+  if (!authenticationResult) return failures({ referenceNumber: 'not-found' })
+  if (!authenticationResult.recurringPayment) return failures({ recurringPayment: 'not-set-up' })
+  if (authenticationResult.recurringPayment.status === 1 || authenticationResult.recurringPayment.cancelledDate) {
     return failures({ recurringPayment: 'rcp-cancelled' })
   }
 
-  await setUpCacheFromAuthenticationResult(request, authenticationResult)
-  await setUpPayloads(request)
+  await setUpCancelRpCacheFromAuthenticationResult(request, authenticationResult)
+
   await request.cache().helpers.status.setCurrentPermission({
     authentication: { authorised: true }
   })
