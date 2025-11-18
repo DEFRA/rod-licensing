@@ -92,7 +92,7 @@ export default [
                   permit: results[0].expanded.permit.entity.toJSON()
                 }
               })
-              .code(200)
+              .code(HTTP_OK)
           } else if (results.length === 0) {
             throw Boom.unauthorized(failAuthenticate)
           } else {

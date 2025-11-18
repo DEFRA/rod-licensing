@@ -32,7 +32,7 @@ describe('renewals-write-cache', () => {
   })
 
   describe('setUpCacheFromAuthenticationResult', () => {
-    const getAuthenticationResult = (overrides = {}) => ({
+    const getAuthenticationResult = (overrides = {}, recurringPayment = undefined) => ({
       permission: {
         referenceNumber: 'abc',
         licensee: {
@@ -78,10 +78,21 @@ describe('renewals-write-cache', () => {
         },
         isLicenceForYou: true,
         ...overrides
-      }
+      },
+      ...(recurringPayment ? { recurringPayment } : {})
     })
 
     beforeEach(jest.clearAllMocks)
+
+    it('should set the reference number as same as authentication result', async () => {
+      const setTransactionCache = jest.fn()
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
+      expect(setTransactionCache).toHaveBeenCalledWith(
+        expect.objectContaining({
+          referenceNumber: 'abc'
+        })
+      )
+    })
 
     it('should set licence length to 12M, as only 12 month licences can be renewed', async () => {
       const setTransactionCache = jest.fn()
@@ -338,6 +349,41 @@ describe('renewals-write-cache', () => {
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
           isLicenceForYou: true
+        })
+      )
+    })
+
+    it('should set recurring payment value if is recurring payment', async () => {
+      const setTransactionCache = jest.fn()
+      const recurringPayment = {
+        id: '3e663c2b-f68e-f011-b4cc-7c1e52fb54a7',
+        name: 'Negativetwelve Test',
+        status: 0,
+        nextDueDate: '2026-09-01T00:00:00.000Z',
+        cancelledDate: null,
+        cancelledReason: null,
+        endDate: '2026-09-10T22:59:59.000Z',
+        agreementId: 'bbp3fmp92e0flk4gkapeh3o68i',
+        publicId: 'hbuUs/sQBZSmb1vgLowJIOu6cEAlPOzWSJ243Sjj9CY=',
+        lastDigitsCardNumbers: '1111'
+      }
+      const mockPermissionAuthResult = getAuthenticationResult({}, recurringPayment)
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockPermissionAuthResult)
+      expect(setTransactionCache).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recurringPayment
+        })
+      )
+    })
+
+    it('recurring payment should be null if is not a recurring payment', async () => {
+      const setTransactionCache = jest.fn()
+      const recurringPayment = undefined
+      const mockPermissionAuthResult = getAuthenticationResult({}, recurringPayment)
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockPermissionAuthResult)
+      expect(setTransactionCache).toHaveBeenCalledWith(
+        expect.not.objectContaining({
+          recurringPayment: expect.anything()
         })
       )
     })

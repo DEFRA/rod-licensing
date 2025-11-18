@@ -70,6 +70,12 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
     }
   })
 
+  permission.referenceNumber = authenticationResult.permission.referenceNumber
+
+  if (authenticationResult.recurringPayment) {
+    permission.recurringPayment = authenticationResult.recurringPayment
+  }
+
   const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
 
   // Add appropriate age concessions
