@@ -75,21 +75,19 @@ export default [
           const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
           const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
           if (results.length === 1) {
-            let concessionProofs = []
-            if (results[0].expanded.concessionProofs.length > 0) {
-              const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
-              concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
-            }
+            const [permission] = results
+            const concessionIds = permission.expanded.concessionProofs.map(f => f.entity.id)
+            const concessionProofs = permission.expanded.concessionProofs.length ? await executeWithErrorLog(concessionsByIds(concessionIds)) : []
             return h
               .response({
                 permission: {
-                  ...results[0].entity.toJSON(),
-                  licensee: results[0].expanded.licensee.entity.toJSON(),
+                  ...permission.entity.toJSON(),
+                  licensee: permission.expanded.licensee.entity.toJSON(),
                   concessions: concessionProofs.map(c => ({
                     id: c.expanded.concession.entity.id,
                     proof: c.entity.toJSON()
                   })),
-                  permit: results[0].expanded.permit.entity.toJSON()
+                  permit: permission.expanded.permit.entity.toJSON()
                 }
               })
               .code(200)
