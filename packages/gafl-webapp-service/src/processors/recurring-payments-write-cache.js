@@ -1,31 +1,16 @@
-export const setUpRecurringPaymentCache = async (request, recurringPayment) => {
-  if (!recurringPayment) return
-
-  const { agreementId, lastDigitsCardNumber, status, cancelledDate, cancelledReason, endDate, nextDueDate } = recurringPayment
-
-  await request.cache().helpers.status.setCurrentPermission({
-    recurringPayment: {
-      agreementId,
-      lastDigitsCardNumber,
-      status,
-      cancelledDate,
-      cancelledReason,
-      endDate,
-      nextDueDate
-    }
-  })
-}
-
-export const setUpCancelRpCacheFromAuthenticationResult = async (request, authenticationResult) => {
+export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, authenticationResult) => {
   const { permission, recurringPayment } = authenticationResult
+  const { referenceNumber, endDate, licensee, permit } = permission
 
-  await request.cache().helpers.status.setCurrentPermission({
-    referenceNumber: permission.referenceNumber,
-    permissionSummary: {
-      referenceNumber: permission.referenceNumber,
-      endDate: permission.endDate
+  await request.cache().helpers.transaction.setCurrentPermission({
+    permission: {
+      referenceNumber,
+      endDate,
+      licensee: { name: licensee.name },
+      permit: { description: permit.description }
+    },
+    recurringPayment: {
+      lastDigitsCardNumber: recurringPayment.lastDigitsCardNumber
     }
   })
-
-  await setUpRecurringPaymentCache(request, recurringPayment)
 }

@@ -2,7 +2,7 @@ import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../src/uri.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
-import { setUpCancelRpCacheFromAuthenticationResult } from '../processors/recurring-payments-write-cache.js'
+import { setupCancelRecurringPaymentCacheFromAuthResult } from '../processors/recurring-payments-write-cache.js'
 import Joi from 'joi'
 
 const buildAuthFailure = (referenceNumber, payload, error) => ({
@@ -23,7 +23,7 @@ const applyAuthFailure = async (request, h, failure) => {
   return h.redirect(addLanguageCodeToUri(request, failure.redirectPath))
 }
 
-const cancelRpAuthenticationHandler = async (request, h) => {
+export default async (request, h) => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
   const permission = await request.cache().helpers.status.getCurrentPermission()
 
@@ -40,11 +40,11 @@ const cancelRpAuthenticationHandler = async (request, h) => {
 
   if (!authenticationResult) return failures({ referenceNumber: 'not-found' })
   if (!authenticationResult.recurringPayment) return failures({ recurringPayment: 'not-set-up' })
-  if (authenticationResult.recurringPayment.status === 1 || authenticationResult.recurringPayment.cancelledDate) {
+  if (authenticationResult.recurringPayment.cancelledDate) {
     return failures({ recurringPayment: 'rcp-cancelled' })
   }
 
-  await setUpCancelRpCacheFromAuthenticationResult(request, authenticationResult)
+  await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)
 
   await request.cache().helpers.status.setCurrentPermission({
     authentication: { authorised: true }
@@ -52,5 +52,3 @@ const cancelRpAuthenticationHandler = async (request, h) => {
 
   return h.redirectWithLanguageCode(CANCEL_RP_DETAILS.uri)
 }
-
-export default cancelRpAuthenticationHandler
