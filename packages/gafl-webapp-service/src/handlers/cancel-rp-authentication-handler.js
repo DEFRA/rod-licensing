@@ -38,8 +38,12 @@ export default async (request, h) => {
 
   const failures = error => applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, error))
 
-  if (!authenticationResult) return failures({ referenceNumber: 'not-found' })
-  if (!authenticationResult.recurringPayment) return failures({ recurringPayment: 'not-set-up' })
+  if (!authenticationResult) {
+    return failures({ referenceNumber: 'not-found' })
+  }
+  if (!authenticationResult.recurringPayment) {
+    return failures({ recurringPayment: 'not-set-up' })
+  }
   if (authenticationResult.recurringPayment.cancelledDate) {
     return failures({ recurringPayment: 'rcp-cancelled' })
   }
