@@ -204,7 +204,7 @@ describe('Cancel RP Authentication Handler', () => {
       recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
     })
     const request = getSampleRequest({ referenceNumber: undefined })
-    request.cache().helpers.status.getCurrentPermission.mockReturnValue({
+    request.cache().helpers.status.getCurrentPermission.mockReturnValueOnce({
       referenceNumber: 'A1B2C3'
     })
     const h = getSampleResponseTooklkit()
