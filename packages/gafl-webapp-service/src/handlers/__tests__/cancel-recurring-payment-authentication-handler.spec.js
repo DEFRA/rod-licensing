@@ -1,4 +1,4 @@
-import handler from '../cancel-rp-authentication-handler'
+import handler from '../cancel-recurring-payment-authentication-handler'
 import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
