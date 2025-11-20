@@ -6,11 +6,11 @@ export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, au
     permission: {
       referenceNumber,
       endDate,
-      licensee: { name: licensee.name },
+      licensee: { firstName: licensee.firstName, lastName: licensee.lastName },
       permit: { description: permit.description }
     },
     recurringPayment: {
-      lastDigitsCardNumber: recurringPayment.lastDigitsCardNumber
+      lastDigitsCardNumbers: recurringPayment.lastDigitsCardNumbers
     }
   })
 }

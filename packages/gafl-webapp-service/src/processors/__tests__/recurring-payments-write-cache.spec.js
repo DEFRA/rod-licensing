@@ -5,9 +5,9 @@ describe('setUpCancelRpCacheFromAuthenticationResult', () => {
     const defaults = {
       referenceNumber: '23270624-2WC3FSD-ABNCY4',
       endDate: '2024-12-31',
-      licensee: { name: 'Brenin Pysgotwr' },
+      licensee: { firstName: 'Brenin', lastName: 'Pysgotwr' },
       permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
-      recurringPayment: { lastDigitsCardNumber: '5678' }
+      recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
 
     return {
@@ -44,7 +44,7 @@ describe('setUpCancelRpCacheFromAuthenticationResult', () => {
     it.each([
       ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
       ['endDate', '2024-12-31'],
-      ['licensee', { name: 'John Bull' }],
+      ['licensee', { firstName: 'John', lastName: 'Bull' }],
       ['permit', { description: 'Coarse 12 month 2 Rod Licence (Full)' }]
     ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
@@ -88,14 +88,14 @@ describe('setUpCancelRpCacheFromAuthenticationResult', () => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
 
-      const authResult = getSampleAuthResult({ recurringPayment: { lastDigitsCardNumber: '1234' } })
+      const authResult = getSampleAuthResult({ recurringPayment: { lastDigitsCardNumbers: '1234' } })
 
       await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
 
       expect(setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({
           recurringPayment: expect.objectContaining({
-            lastDigitsCardNumber: '1234'
+            lastDigitsCardNumbers: '1234'
           })
         })
       )
