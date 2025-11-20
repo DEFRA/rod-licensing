@@ -1,6 +1,6 @@
 import { setupCancelRecurringPaymentCacheFromAuthResult } from '../recurring-payments-write-cache.js'
 
-describe('setUpCancelRpCacheFromAuthenticationResult', () => {
+describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
   const getSampleAuthResult = overrides => {
     const defaults = {
       referenceNumber: '23270624-2WC3FSD-ABNCY4',
