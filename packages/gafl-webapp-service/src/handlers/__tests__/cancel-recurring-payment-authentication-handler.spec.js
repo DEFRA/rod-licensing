@@ -1,4 +1,4 @@
-import handler from '../cancel-rp-authentication-handler'
+import handler from '../cancel-recurring-payment-authentication-handler'
 import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -21,28 +21,35 @@ jest.mock('../../uri.js', () => ({
   CANCEL_RP_IDENTIFY: { page: 'cancel-rp-identify page', uri: Symbol('cancel-rp-identify-uri') },
   CANCEL_RP_DETAILS: { uri: Symbol('cancel-rp-details-uri') }
 }))
+jest.mock('../../processors/recurring-payments-write-cache.js')
 
 const getSampleRequest = (payloadOverride = {}) => {
-  const page = {
-    getCurrentPermission: jest.fn().mockResolvedValue({
-      payload: {
-        referenceNumber: 'ABC123',
-        'date-of-birth-day': '01',
-        'date-of-birth-month': '01',
-        'date-of-birth-year': '1970',
-        postcode: 'AA1 1AA',
-        ...payloadOverride
+  const getCurrentPermission = jest.fn(async () => ({}))
+  const setCurrentPermission = jest.fn()
+
+  return {
+    cache: () => ({
+      helpers: {
+        page: {
+          getCurrentPermission: jest.fn(async () => ({
+            payload: {
+              referenceNumber: 'ABC123',
+              'date-of-birth-day': '01',
+              'date-of-birth-month': '01',
+              'date-of-birth-year': '1970',
+              postcode: 'AA1 1AA',
+              ...payloadOverride
+            }
+          })),
+          setCurrentPermission
+        },
+        status: {
+          getCurrentPermission,
+          setCurrentPermission
+        }
       }
-    }),
-    setCurrentPermission: jest.fn()
+    })
   }
-  const status = {
-    getCurrentPermission: jest.fn().mockResolvedValue({}),
-    setCurrentPermission: jest.fn()
-  }
-  const helpers = { page, status }
-  const cache = () => ({ helpers })
-  return { cache }
 }
 
 const getSampleResponseTooklkit = () => ({
@@ -197,7 +204,7 @@ describe('Cancel RP Authentication Handler', () => {
       recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
     })
     const request = getSampleRequest({ referenceNumber: undefined })
-    request.cache().helpers.status.getCurrentPermission.mockResolvedValueOnce({
+    request.cache().helpers.status.getCurrentPermission.mockReturnValueOnce({
       referenceNumber: 'A1B2C3'
     })
     const h = getSampleResponseTooklkit()

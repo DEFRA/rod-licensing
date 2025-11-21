@@ -7,7 +7,7 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 export const getData = async request => {
-  const permission = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const page = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
 
   if (permission.referenceNumber) {
@@ -15,7 +15,7 @@ export const getData = async request => {
       .permissionNumberUniqueComponentValidator(Joi)
       .validate(permission.referenceNumber)
     if (validatePermissionNumber.error) {
-      await request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
+      await request.cache().helpers.transaction.setCurrentPermission({ referenceNumber: null })
       throw new GetDataRedirect(addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri))
     }
   }
