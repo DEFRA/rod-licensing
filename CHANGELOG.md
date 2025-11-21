@@ -1,4 +1,13 @@
 
+## v1.64.0-rc.21 (2025-11-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2255](https://github.com/DEFRA/rod-licensing/pull/2255) Cancel RP Identify Cache ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.64.0-rc.19 (2025-11-11)
 
