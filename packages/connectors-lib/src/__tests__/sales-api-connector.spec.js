@@ -822,3 +822,37 @@ describe('sales-api-connector', () => {
     })
   })
 })
+
+describe('rcp authentication', () => {
+  it('returns parsed JSON with successful fetch', async () => {
+    const expectedResponse = { woo: 'hoo' }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    const response = await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(response).toEqual(expectedResponse)
+  })
+
+  it('calls fetch with the RCP authenticate URL and query params', async () => {
+    const expectedResponse = { woo: 'hoo' }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(fetch).toHaveBeenCalledWith(
+      'http://0.0.0.0:4000/authenticate/rcp/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+      {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      }
+    )
+  })
+
+  it('returns null when the sales API responds with a non-2xx status', async () => {
+    fetch.mockReturnValueOnce({
+      ok: false,
+      status: 400,
+      statusText: 'Bad Request',
+      text: async () => 'Bad Request'
+    })
+    const response = await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(response).toBeNull()
+  })
+})

@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import querystring from 'querystring'
+import querystring from 'node:querystring'
 import db from 'debug'
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 20000
@@ -27,7 +27,7 @@ export const call = async (url, method = 'get', payload = null) => {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: response.status !== 204 ? await parseResponseBody(response) : undefined
+    body: response.status === 204 ? undefined : await parseResponseBody(response)
   }
   debug(
     'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',
@@ -260,6 +260,27 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
     call(
       new URL(
         `/authenticate/renewal/${referenceNumber}?${querystring.stringify({
+          licenseeBirthDate: birthDate,
+          licenseePostcode: postcode
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )
+
+/**
+ * Support for cancelling recurring payment authentication
+ * @param referenceNumber
+ * @param birthDate
+ * @param postcode
+ * @returns {Promise<*>}
+ */
+export const authenticateRecurringPayment = (referenceNumber, birthDate, postcode) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `/authenticate/rcp/${referenceNumber}?${querystring.stringify({
           licenseeBirthDate: birthDate,
           licenseePostcode: postcode
         })}`,
