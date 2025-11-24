@@ -33,7 +33,7 @@ import authenticationHandler from '../handlers/authentication-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import analytics, { checkAnalyticsCookiesPage } from '../handlers/analytics-handler.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
-import cancelRPAuthenticationhander from '../handlers/cancel-rp-authentication-handler.js'
+import cancelRPAuthenticationhander from '../handlers/cancel-recurring-payment-authentication-handler.js'
 
 const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || false
 
