@@ -1,12 +1,7 @@
 import pageRoute from '../../../../../routes/page-route.js'
 import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
-import { licenceTypeDisplay } from '../../../../../processors/licence-type-display.js'
 import { getData } from '../route.js'
-
-jest.mock('../../../../../processors/licence-type-display.js', () => ({
-  licenceTypeDisplay: jest.fn()
-}))
 
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
@@ -74,11 +69,11 @@ describe('route', () => {
     rp_cancel_details_licence_valid_until: 'Valid until'
   })
 
-  const createMockRequest = ({ permission, catalog = getSampleCatalog() } = {}) => ({
+  const createMockRequest = ({ currentPermission, catalog = getSampleCatalog() } = {}) => ({
     cache: () => ({
       helpers: {
         transaction: {
-          getCurrentPermission: jest.fn().mockResolvedValue(permission)
+          getCurrentPermission: jest.fn().mockResolvedValue(currentPermission)
         }
       }
     }),
@@ -93,11 +88,19 @@ describe('route', () => {
     })
 
     it('returns request.i18n.getCatalog()', async () => {
-      const permission = {
-        referenceNumber: 'abc123',
-        recurringPayment: {
+      const currentPermission = {
+        permission: {
+          licensee: {
+            firstName: 'John',
+            lastName: 'Smith'
+          },
+          permit: {
+            description: 'Salmon and sea trout'
+          },
           endDate: '01-01-2026',
-          name: 'John Smith',
+          referenceNumber: 'abc123'
+        },
+        recurringPayment: {
           lastDigitsCardNumbers: 1234
         }
       }
@@ -110,9 +113,7 @@ describe('route', () => {
         rp_cancel_details_licence_valid_until: 'Test valid until'
       }
 
-      licenceTypeDisplay.mockReturnValue('Salmon and sea trout')
-
-      const mockRequest = createMockRequest({ permission, catalog: mssgs })
+      const mockRequest = createMockRequest({ currentPermission, catalog: mssgs })
 
       const result = await getData(mockRequest)
 
@@ -120,11 +121,19 @@ describe('route', () => {
     })
 
     it('returns summaryTable with expected data', async () => {
-      const permission = {
-        referenceNumber: 'abc123',
-        recurringPayment: {
+      const currentPermission = {
+        permission: {
+          licensee: {
+            firstName: 'John',
+            lastName: 'Smith'
+          },
+          permit: {
+            description: 'Salmon and sea trout'
+          },
           endDate: '01-01-2026',
-          name: 'John Smith',
+          referenceNumber: 'abc123'
+        },
+        recurringPayment: {
           lastDigitsCardNumbers: 1234
         }
       }
@@ -137,9 +146,7 @@ describe('route', () => {
         rp_cancel_details_licence_valid_until: 'Valid until'
       }
 
-      licenceTypeDisplay.mockReturnValue('Salmon and sea trout')
-
-      const mockRequest = createMockRequest({ permission, catalog: mssgs })
+      const mockRequest = createMockRequest({ currentPermission, catalog: mssgs })
 
       const result = await getData(mockRequest)
 
