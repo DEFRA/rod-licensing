@@ -26,7 +26,7 @@ describe('cancel recurring payment identify route', () => {
     const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
       cache: () => ({
         helpers: {
-          status: {
+          transaction: {
             getCurrentPermission: () => ({
               referenceNumber
             }),
@@ -59,7 +59,7 @@ describe('cancel recurring payment identify route', () => {
         .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
         .mockReturnValue({ validate: () => ({ error: true }) })
       const request = getMockRequest('BAD123')
-      request.cache().helpers.status.setCurrentPermission = jest.fn()
+      request.cache().helpers.transaction.setCurrentPermission = jest.fn()
       await expect(getData(request)).rejects.toBeInstanceOf(GetDataRedirect)
       spy.mockRestore()
     })

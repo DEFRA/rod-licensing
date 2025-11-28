@@ -32,7 +32,7 @@ const getAuthenticatedPermission = async request => {
 
   const contactIds = contacts.map(contact => contact.entity.id)
   const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
-  const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber))
+  const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
 
   if (results.length === 0) {
     throw Boom.unauthorized(failAuthenticate)
@@ -42,23 +42,20 @@ const getAuthenticatedPermission = async request => {
     throw new Error('Unable to authenticate, non-unique results for query')
   }
 
-  const [matched] = results
-  const concessionProofEntities = matched.expanded.concessionProofs
-
-  const concessionProofs =
-    concessionProofEntities.length > 0 ? await executeWithErrorLog(concessionsByIds(concessionProofEntities.map(f => f.entity.id))) : []
+  const [permission] = results
+  const concessionIds = permission.expanded.concessionProofs.map(f => f.entity.id)
+  const concessionProofs = permission.expanded.concessionProofs.length ? await executeWithErrorLog(concessionsByIds(concessionIds)) : []
 
   return {
     permission: {
-      ...matched.entity.toJSON(),
-      licensee: matched.expanded.licensee.entity.toJSON(),
+      ...permission.entity.toJSON(),
+      licensee: permission.expanded.licensee.entity.toJSON(),
       concessions: concessionProofs.map(c => ({
         id: c.expanded.concession.entity.id,
         proof: c.entity.toJSON()
       })),
-      permit: matched.expanded.permit.entity.toJSON()
-    },
-    permissionId: matched.entity.id
+      permit: permission.expanded.permit.entity.toJSON()
+    }
   }
 }
 
@@ -68,39 +65,8 @@ export default [
     path: '/authenticate/renewal/{referenceNumber}',
     options: {
       handler: async (request, h) => {
-        const { licenseeBirthDate, licenseePostcode } = request.query
-        const contacts = await executeWithErrorLog(contactForLicenseeNoReference(licenseeBirthDate, licenseePostcode))
-        if (contacts.length > 0) {
-          const contactIds = contacts.map(contact => contact.entity.id)
-          const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
-          const results = permissions.filter(p => p.entity.referenceNumber.endsWith(request.params.referenceNumber.toUpperCase()))
-          if (results.length === 1) {
-            let concessionProofs = []
-            if (results[0].expanded.concessionProofs.length > 0) {
-              const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
-              concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
-            }
-            return h
-              .response({
-                permission: {
-                  ...results[0].entity.toJSON(),
-                  licensee: results[0].expanded.licensee.entity.toJSON(),
-                  concessions: concessionProofs.map(c => ({
-                    id: c.expanded.concession.entity.id,
-                    proof: c.entity.toJSON()
-                  })),
-                  permit: results[0].expanded.permit.entity.toJSON()
-                }
-              })
-              .code(HTTP_OK)
-          } else if (results.length === 0) {
-            throw Boom.unauthorized(failAuthenticate)
-          } else {
-            throw new Error('Unable to authenticate, non-unique results for query')
-          }
-        } else {
-          throw Boom.unauthorized(failAuthenticate)
-        }
+        const permissionData = await getAuthenticatedPermission(request)
+        return h.response(permissionData).code(HTTP_OK)
       },
       description: 'Authenticate a licensee by checking the licence number corresponds with the provided contact details',
       notes: `
@@ -127,8 +93,8 @@ export default [
     path: '/authenticate/rcp/{referenceNumber}',
     options: {
       handler: async (request, h) => {
-        const { permission, permissionId } = await getAuthenticatedPermission(request)
-        const recurringPayment = await findLinkedRecurringPayment(permissionId)
+        const { permission } = await getAuthenticatedPermission(request)
+        const recurringPayment = await findLinkedRecurringPayment(permission.id)
         return h.response({ permission, recurringPayment }).code(HTTP_OK)
       },
       description:
