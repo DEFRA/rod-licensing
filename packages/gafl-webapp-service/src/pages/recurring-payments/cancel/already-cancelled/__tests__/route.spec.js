@@ -6,7 +6,7 @@ jest.mock('../../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../../uri.js', () => ({
   CANCEL_RP_ALREADY_CANCELLED: {
     page: Symbol('cancel-rp-already-cancelled page'),
-    uri: Symbol('cancel-rp-already-cancelled uri')
+    uri: Symbol('already-cancelled uri')
   }
 }))
 
