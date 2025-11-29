@@ -74,11 +74,6 @@ const routes = [
   ...choosePayment,
   ...setUpRecurring,
   ...licenceNotFound
-  // ...cancelRPIdentify,
-  // ...cancelRPDetails,
-  // ...cancelRPConfirm,
-  // ...cancelRPComplete,
-  // ...cancelRPLicenceNotFound
 ]
 
 if (process.env.CHANNEL === 'telesales') {
