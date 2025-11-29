@@ -1,4 +1,4 @@
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../src/uri.js'
+import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_ALREADY_CANCELLED } from '../../src/uri.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
@@ -45,7 +45,12 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
     return failures({ recurringPayment: 'not-set-up' })
   }
   if (authenticationResult.recurringPayment.cancelledDate) {
-    return failures({ recurringPayment: 'rcp-cancelled' })
+    await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: { authorised: false }
+    })
+    return h.redirectWithLanguageCode(CANCEL_RP_ALREADY_CANCELLED.uri)
   }
 
   await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)

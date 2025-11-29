@@ -33,7 +33,8 @@ import {
   CANCEL_RP_IDENTIFY,
   CANCEL_RP_DETAILS,
   CANCEL_RP_CONFIRM,
-  CANCEL_RP_COMPLETE
+  CANCEL_RP_COMPLETE,
+  CANCEL_RP_ALREADY_CANCELLED
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -440,6 +441,10 @@ export default [
         page: CANCEL_RP_DETAILS
       }
     }
+  },
+  {
+    current: CANCEL_RP_ALREADY_CANCELLED,
+    backLink: CANCEL_RP_IDENTIFY.uri
   },
   {
     current: CANCEL_RP_DETAILS,
