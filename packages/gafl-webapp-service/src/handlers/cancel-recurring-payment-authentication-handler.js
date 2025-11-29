@@ -12,7 +12,7 @@ const buildAuthFailure = (referenceNumber, payload, error) => ({
   },
   status: {
     referenceNumber,
-    authentication: { authorised: false }
+    authentication: { authorized: false }
   },
   redirectPath: CANCEL_RP_IDENTIFY.uri
 })
@@ -41,7 +41,12 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   if (!authenticationResult) {
     payload.referenceNumber = referenceNumber
     await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, { payload })
-    await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorised: false } })
+
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: { authorized: false }
+    })
+
     return h.redirectWithLanguageCode(LICENCE_NOT_FOUND_RP.uri)
   }
   if (!authenticationResult.recurringPayment) {
@@ -54,7 +59,7 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)
 
   await request.cache().helpers.status.setCurrentPermission({
-    authentication: { authorised: true }
+    authentication: { authorized: true }
   })
 
   return h.redirectWithLanguageCode(CANCEL_RP_DETAILS.uri)

@@ -98,11 +98,11 @@ describe('Cancel RP Authentication Handler', () => {
       expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_DETAILS.uri)
     })
 
-    it('marks status as authorised', async () => {
+    it('marks status as authorized', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: mockSuccessResponse()
       })
-      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith({ authentication: { authorised: true } })
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith({ authentication: { authorized: true } })
     })
   })
 
@@ -122,10 +122,10 @@ describe('Cancel RP Authentication Handler', () => {
       )
     })
 
-    it('marks status as unauthorised', async () => {
+    it('marks status as unauthorized', async () => {
       const { request } = await invokeHandlerWithMocks({ salesApiResponse: null })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
-        expect.objectContaining({ authentication: { authorised: false } })
+        expect.objectContaining({ authentication: { authorized: false } })
       )
     })
   })
@@ -153,13 +153,13 @@ describe('Cancel RP Authentication Handler', () => {
       )
     })
 
-    it('marks status as unauthorised', async () => {
+    it('marks status as unauthorized', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
-        expect.objectContaining({ authentication: { authorised: false } })
+        expect.objectContaining({ authentication: { authorized: false } })
       )
     })
   })
@@ -187,13 +187,13 @@ describe('Cancel RP Authentication Handler', () => {
       )
     })
 
-    it('marks status as unauthorised', async () => {
+    it('marks status as unauthorized', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } },
         decoratedIdentifyUri: 'decorated-identify-uri'
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
-        expect.objectContaining({ authentication: { authorised: false } })
+        expect.objectContaining({ authentication: { authorized: false } })
       )
     })
   })
