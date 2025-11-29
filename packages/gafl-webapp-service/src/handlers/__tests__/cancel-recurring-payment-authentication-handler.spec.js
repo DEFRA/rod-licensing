@@ -2,6 +2,7 @@ import handler from '../cancel-recurring-payment-authentication-handler'
 import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_ALREADY_CANCELLED } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
+import { setupCancelRecurringPaymentCacheFromAuthResult } from '../../processors/recurring-payments-write-cache.js'
 
 jest.mock('../../processors/uri-helper.js')
 jest.mock('@defra-fish/connectors-lib')
@@ -170,17 +171,18 @@ describe('Cancel RP Authentication Handler', () => {
       const { h } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
       })
-      expect(h.redirect).toHaveBeenCalledWith('CANCEL_RP_ALREADY_CANCELLED.uri')
+      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_ALREADY_CANCELLED.uri)
     })
 
     it('sets page cache error for RCP cancelled', async () => {
       const { request } = await invokeHandlerWithMocks({
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } },
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
       })
-      expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
-        CANCEL_RP_IDENTIFY.page,
+      expect(setupCancelRecurringPaymentCacheFromAuthResult).toHaveBeenCalledWith(
+        request,
         expect.objectContaining({
-          payload: expect.any(Object)
+          permission: expect.any(Object),
+          recurringPayment: expect.objectContaining({ id: 'rcp-id', cancelledDate: '2024-01-01' })
         })
       )
     })
@@ -188,7 +190,6 @@ describe('Cancel RP Authentication Handler', () => {
     it('marks status as unauthorised', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
-        // decoratedIdentifyUri: 'decorated-identify-uri'
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
