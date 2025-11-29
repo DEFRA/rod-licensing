@@ -5,8 +5,8 @@ import '../route.js'
 jest.mock('../../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../../uri.js', () => ({
   CANCEL_RP_ALREADY_CANCELLED: {
-    page: Symbol('rp-already-cancelled page'),
-    uri: Symbol('rp-already-cancelled uri')
+    page: Symbol('cancel-rp-already-cancelled page'),
+    uri: Symbol('cancel-rp-already-cancelled uri')
   }
 }))
 
