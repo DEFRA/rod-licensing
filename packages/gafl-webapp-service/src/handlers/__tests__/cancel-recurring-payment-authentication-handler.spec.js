@@ -1,5 +1,5 @@
 import handler from '../cancel-recurring-payment-authentication-handler'
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../uri.js'
+import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, LICENCE_NOT_FOUND_RP } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
@@ -19,7 +19,8 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
 }))
 jest.mock('../../uri.js', () => ({
   CANCEL_RP_IDENTIFY: { page: 'cancel-rp-identify page', uri: Symbol('cancel-rp-identify-uri') },
-  CANCEL_RP_DETAILS: { uri: Symbol('cancel-rp-details-uri') }
+  CANCEL_RP_DETAILS: { uri: Symbol('cancel-rp-details-uri') },
+  LICENCE_NOT_FOUND_RP: { uri: Symbol('licence-not-found-rp-uri') }
 }))
 jest.mock('../../processors/recurring-payments-write-cache.js')
 
@@ -106,24 +107,23 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no match', () => {
-    it('redirects to the decorated identify URI', async () => {
-      const { h } = await invokeHandlerWithMocks({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
-      expect(h.redirect).toHaveBeenCalledWith('decorated-identify-uri')
+    it('redirects to LICENCE_NOT_FOUND_RP when no authenticationResult', async () => {
+      const { h } = await invokeHandlerWithMocks({ salesApiResponse: null })
+      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(LICENCE_NOT_FOUND_RP.uri)
     })
 
     it('sets page cache error and preserves payload', async () => {
-      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
+      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null })
       expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
         CANCEL_RP_IDENTIFY.page,
         expect.objectContaining({
-          payload: expect.any(Object),
-          error: { referenceNumber: 'not-found' }
+          payload: expect.any(Object)
         })
       )
     })
 
     it('marks status as unauthorised', async () => {
-      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null, decoratedIdentifyUri: 'decorated-identify-uri' })
+      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
       )
