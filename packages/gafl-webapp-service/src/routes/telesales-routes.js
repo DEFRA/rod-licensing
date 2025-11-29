@@ -1,9 +1,10 @@
 import { OIDC_SIGNIN, OIDC_ACCOUNT_DISABLED, OIDC_ROLE_REQUIRED, CONTROLLER } from '../uri.js'
 import { signIn } from '../handlers/oidc-handler.js'
-import cancelRPIdentify from '../pages/recurring-payments/cancel/identify/route.js'
-import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js'
-import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
-import cancelRPComplete from '../pages/recurring-payments/cancel/complete/route.js'
+// import cancelRPIdentify from '../pages/recurring-payments/cancel/identify/route.js'
+// import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js'
+// import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
+// import cancelRPComplete from '../pages/recurring-payments/cancel/complete/route.js'
+// import cancelRPLicenceNotFound from '../pages/recurring-payments/cancel/licence-not-found/route.js'
 
 const telesalesRoutes = [
   {
@@ -31,10 +32,11 @@ const telesalesRoutes = [
   }
 ]
 
-if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
-  telesalesRoutes.push(...cancelRPIdentify)
-  telesalesRoutes.push(...cancelRPDetails)
-  telesalesRoutes.push(...cancelRPConfirm)
-  telesalesRoutes.push(...cancelRPComplete)
-}
+// if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
+//   telesalesRoutes.push(...cancelRPIdentify)
+//   telesalesRoutes.push(...cancelRPDetails)
+//   telesalesRoutes.push(...cancelRPConfirm)
+//   telesalesRoutes.push(...cancelRPComplete)
+//   telesalesRoutes.push(...cancelRPLicenceNotFound)
+// }
 export default telesalesRoutes

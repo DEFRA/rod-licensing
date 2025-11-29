@@ -62,11 +62,15 @@ export const ERROR_TESTING = { uri: '/buy/throw-error' }
 export const CHOOSE_PAYMENT = { uri: '/buy/choose-payment', page: 'choose-payment' }
 export const SET_UP_PAYMENT = { uri: '/buy/set-up-recurring-card-payment', page: 'set-up-payment' }
 
+/**
+ * Recurring payments cancellation pages
+ */
 export const CANCEL_RP_IDENTIFY = { uri: '/buy/cancel-recurring-payment/identify', page: 'cancel-rp-identify' }
 export const CANCEL_RP_AUTHENTICATE = { uri: '/buy/cancel-recurring-payment/authenticate' }
 export const CANCEL_RP_DETAILS = { uri: '/buy/cancel-recurring-payment/details', page: 'cancel-rp-details' }
 export const CANCEL_RP_CONFIRM = { uri: '/buy/cancel-recurring-payment/confirm', page: 'cancel-rp-confirm' }
 export const CANCEL_RP_COMPLETE = { uri: '/buy/cancel-recurring-payment/complete', page: 'cancel-rp-complete' }
+export const LICENCE_NOT_FOUND_RP = { uri: '/buy/cancel-recurring-payment/licence-not-found', page: 'licence-not-found-rp' }
 
 /**
  * These are informational static pages
