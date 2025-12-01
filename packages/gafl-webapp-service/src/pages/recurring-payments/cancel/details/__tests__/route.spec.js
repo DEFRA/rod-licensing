@@ -15,7 +15,7 @@ describe('route', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('pageRoute receives expected arguments', () => {
-    it('should call the pageRoute with date-of-birth, /buy/date-of-birth, dateOfBirthValidator and nextPage', async () => {
+    it('should call the pageRoute with cancel-rp-details, /buy/cancel-recurring-payment/details, dateOfBirthValidator, nextPage and getData', async () => {
       jest.isolateModules(() => {
         require('../route.js')
         expect(pageRoute).toHaveBeenCalledWith(
