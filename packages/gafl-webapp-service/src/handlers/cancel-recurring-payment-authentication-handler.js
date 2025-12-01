@@ -1,14 +1,13 @@
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../src/uri.js'
-import { addLanguageCodeToUri } from '../processors/uri-helper.js'
+import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_AGREEMENT_NOT_FOUND } from '../../src/uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 import { setupCancelRecurringPaymentCacheFromAuthResult } from '../processors/recurring-payments-write-cache.js'
 import Joi from 'joi'
 
-const applyAuthFailure = async (pageData, statusData, redirectUri, request, h) => {
+const applyAuthFailure = async (request, h, { pageData, redirectUri, statusData }) => {
   await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, pageData)
   await request.cache().helpers.status.setCurrentPermission(statusData)
-  return h.redirect(addLanguageCodeToUri(request, redirectUri))
+  return h.redirectWithLanguageCode(redirectUri)
 }
 
 const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
@@ -24,18 +23,22 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
 
   const authenticationResult = await salesApi.authenticateRecurringPayment(referenceNumber, dateOfBirth, postcode)
 
-  const pageData = { payload }
-  const statusData = { referenceNumber, authentication: { authorised: false } }
+  const context = {
+    pageData: { payload },
+    statusData: { referenceNumber, authentication: { authorised: false } },
+    redirectUri: CANCEL_RP_IDENTIFY.uri
+  }
 
   if (!authenticationResult) {
-    pageData.error = { referenceNumber: 'not-found' }
+    context.pageData.error = { referenceNumber: 'not-found' }
   } else if (!authenticationResult.recurringPayment) {
-    pageData.error = { recurringPayment: 'not-set-up' }
+    context.pageData.error = { recurringPayment: 'not-set-up' }
+    context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
   } else if (authenticationResult.recurringPayment.cancelledDate) {
-    pageData.error = { recurringPayment: 'rcp-cancelled' }
+    context.pageData.error = { recurringPayment: 'rcp-cancelled' }
   }
-  if (pageData.error) {
-    return applyAuthFailure(pageData, statusData, CANCEL_RP_IDENTIFY.page, request, h)
+  if (context.pageData.error) {
+    return applyAuthFailure(request, h, context)
   }
 
   await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)
