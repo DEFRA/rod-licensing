@@ -52,8 +52,8 @@ const getSampleRequest = (payloadOverride = {}) => {
   }
 }
 
-const getSampleResponseTooklkit = () => ({
-  redirectWithLanguageCode: jest.fn().mockReturnValue('redirected')
+const getSampleResponseToolkit = () => ({
+  redirectWithLanguageCode: jest.fn(() => 'redirected')
 })
 
 const invokeHandlerWithMocks = async ({ salesApiResponse, decoratedIdentifyUri } = {}) => {
@@ -64,7 +64,7 @@ const invokeHandlerWithMocks = async ({ salesApiResponse, decoratedIdentifyUri }
     addLanguageCodeToUri.mockReturnValueOnce(decoratedIdentifyUri)
   }
   const request = getSampleRequest()
-  const h = getSampleResponseTooklkit()
+  const h = getSampleResponseToolkit()
   if (decoratedIdentifyUri) {
     h.redirect = jest.fn().mockReturnValue('redirect-response')
   }
@@ -207,7 +207,7 @@ describe('Cancel RP Authentication Handler', () => {
     request.cache().helpers.status.getCurrentPermission.mockReturnValueOnce({
       referenceNumber: 'A1B2C3'
     })
-    const h = getSampleResponseTooklkit()
+    const h = getSampleResponseToolkit()
     await handler(request, h)
     expect(salesApi.authenticateRecurringPayment).toHaveBeenCalledWith('A1B2C3', expect.anything(), expect.anything())
   })
