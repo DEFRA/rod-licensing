@@ -1,9 +1,7 @@
 {% extends "layout.njk" %}
-
-{% from "page-title.njk" import pageTitle %}
+{% extends "standard-form.njk" %}
 
 {% set title = mssgs.rp_cancel_no_agreement_found_title %}
-{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
