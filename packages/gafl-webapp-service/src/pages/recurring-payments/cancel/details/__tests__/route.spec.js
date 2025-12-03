@@ -69,7 +69,24 @@ describe('route', () => {
     rp_cancel_details_licence_valid_until: 'Valid until'
   })
 
-  const createMockRequest = ({ currentPermission, catalog = getSampleCatalog() } = {}) => ({
+  const getSamplePermission = () => ({
+    permission: {
+      licensee: {
+        firstName: 'John',
+        lastName: 'Smith'
+      },
+      permit: {
+        description: 'Salmon and sea trout'
+      },
+      endDate: '01-01-2026',
+      referenceNumber: 'abc123'
+    },
+    recurringPayment: {
+      lastDigitsCardNumbers: 1234
+    }
+  })
+
+  const createMockRequest = ({ currentPermission = getSamplePermission(), catalog = getSampleCatalog() } = {}) => ({
     cache: () => ({
       helpers: {
         transaction: {
@@ -88,32 +105,8 @@ describe('route', () => {
     })
 
     it('returns request.i18n.getCatalog()', async () => {
-      const currentPermission = {
-        permission: {
-          licensee: {
-            firstName: 'John',
-            lastName: 'Smith'
-          },
-          permit: {
-            description: 'Salmon and sea trout'
-          },
-          endDate: '01-01-2026',
-          referenceNumber: 'abc123'
-        },
-        recurringPayment: {
-          lastDigitsCardNumbers: 1234
-        }
-      }
-
-      const mssgs = {
-        rp_cancel_details_licence_holder: 'Test licence holder',
-        rp_cancel_details_licence_type: 'Test licence type',
-        rp_cancel_details_payment_card: 'Test payment card',
-        rp_cancel_details_last_purchased: 'Test last purchased',
-        rp_cancel_details_licence_valid_until: 'Test valid until'
-      }
-
-      const mockRequest = createMockRequest({ currentPermission, catalog: mssgs })
+      const mssgs = getSampleCatalog()
+      const mockRequest = createMockRequest({ catalog: mssgs })
 
       const result = await getData(mockRequest)
 
@@ -121,32 +114,8 @@ describe('route', () => {
     })
 
     it('returns summaryTable with expected data', async () => {
-      const currentPermission = {
-        permission: {
-          licensee: {
-            firstName: 'John',
-            lastName: 'Smith'
-          },
-          permit: {
-            description: 'Salmon and sea trout'
-          },
-          endDate: '01-01-2026',
-          referenceNumber: 'abc123'
-        },
-        recurringPayment: {
-          lastDigitsCardNumbers: 1234
-        }
-      }
-
-      const mssgs = {
-        rp_cancel_details_licence_holder: 'Licence holder',
-        rp_cancel_details_licence_type: 'Licence type',
-        rp_cancel_details_payment_card: 'Payment card',
-        rp_cancel_details_last_purchased: 'Last purchased',
-        rp_cancel_details_licence_valid_until: 'Valid until'
-      }
-
-      const mockRequest = createMockRequest({ currentPermission, catalog: mssgs })
+      const mssgs = getSampleCatalog()
+      const mockRequest = createMockRequest({ catalog: mssgs })
 
       const result = await getData(mockRequest)
 
