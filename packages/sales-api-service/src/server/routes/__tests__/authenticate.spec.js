@@ -43,7 +43,7 @@ describe('authenticate handler', () => {
   })
 
   describe('authenticateRenewal', () => {
-    const baseUrl = '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+    const baseUrl = '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB123CD'
 
     it('authenticates a renewal request', async () => {
       executeQuery.mockResolvedValueOnce([
