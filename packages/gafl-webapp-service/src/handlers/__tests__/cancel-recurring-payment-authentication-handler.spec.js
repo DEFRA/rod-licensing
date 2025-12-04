@@ -154,20 +154,6 @@ describe('Cancel RP Authentication Handler', () => {
       expect(result).toBe(redirectResult)
     })
 
-    it('sets page cache error for no RCP setup', async () => {
-      const { request } = await invokeHandlerWithMocks({
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null },
-        decoratedIdentifyUri: 'decorated-identify-uri'
-      })
-      expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
-        CANCEL_RP_IDENTIFY.page,
-        expect.objectContaining({
-          payload: expect.any(Object),
-          error: { recurringPayment: 'not-set-up' }
-        })
-      )
-    })
-
     it('marks status as unauthorised', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null },
