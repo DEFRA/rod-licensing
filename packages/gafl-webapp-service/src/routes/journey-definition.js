@@ -448,7 +448,8 @@ export default [
       [CommonResults.OK]: {
         page: CANCEL_RP_CONFIRM
       }
-    }
+    },
+    backLink: CANCEL_RP_IDENTIFY.uri
   },
   {
     current: CANCEL_RP_CONFIRM,
