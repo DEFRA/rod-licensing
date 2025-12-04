@@ -81,14 +81,14 @@ describe('getData function', () => {
   }
 
   it('calls addLanguageCodeToUri with request object', async () => {
-    const req = mockRequest()
-    await getData(req)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(req, expect.anything())
+    const request = mockRequest()
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
   })
 
   it('calls addLanguageCodeToUri with CANCEL_RP_IDENTIFY uri', async () => {
-    const req = mockRequest()
-    await getData(req)
+    const request = mockRequest()
+    await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), CANCEL_RP_IDENTIFY.uri)
   })
 
