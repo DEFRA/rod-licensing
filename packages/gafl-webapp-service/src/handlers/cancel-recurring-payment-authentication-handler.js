@@ -29,18 +29,15 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
     redirectUri: CANCEL_RP_IDENTIFY.uri
   }
 
-  switch (true) {
-    case !authenticationResult:
-      context.pageData.error = { referenceNumber: 'not-found' }
-      break
-    case !authenticationResult.recurringPayment:
-      context.pageData.errorRedirect = true
-      context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
-      break
-    case !!authenticationResult.recurringPayment.cancelledDate:
-      context.pageData.error = { recurringPayment: 'rcp-cancelled' }
-      break
-  }
+  if (!authenticationResult) {
+    context.pageData.error = { referenceNumber: 'not-found' }
+  } else if (!authenticationResult.recurringPayment) {
+    context.pageData.errorRedirect = true
+    context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
+  } else if (authenticationResult.recurringPayment.cancelledDate) {
+    context.pageData.error = { recurringPayment: 'rcp-cancelled' }
+  } else {}
+
   if (context.pageData.error || context.pageData.errorRedirect) {
     return applyAuthFailure(request, h, context)
   }
