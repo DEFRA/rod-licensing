@@ -1,4 +1,4 @@
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS } from '../../src/uri.js'
+import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, LICENCE_NOT_FOUND_RP } from '../../src/uri.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
@@ -12,7 +12,7 @@ const buildAuthFailure = (referenceNumber, payload, error) => ({
   },
   status: {
     referenceNumber,
-    authentication: { authorised: false }
+    authentication: { authorized: false }
   },
   redirectPath: CANCEL_RP_IDENTIFY.uri
 })
@@ -39,7 +39,15 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   const failures = error => applyAuthFailure(request, h, buildAuthFailure(referenceNumber, payload, error))
 
   if (!authenticationResult) {
-    return failures({ referenceNumber: 'not-found' })
+    payload.referenceNumber = referenceNumber
+    await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, { payload })
+
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: { authorized: false }
+    })
+
+    return h.redirectWithLanguageCode(LICENCE_NOT_FOUND_RP.uri)
   }
   if (!authenticationResult.recurringPayment) {
     return failures({ recurringPayment: 'not-set-up' })
@@ -51,7 +59,7 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)
 
   await request.cache().helpers.status.setCurrentPermission({
-    authentication: { authorised: true }
+    authentication: { authorized: true }
   })
 
   return h.redirectWithLanguageCode(CANCEL_RP_DETAILS.uri)
