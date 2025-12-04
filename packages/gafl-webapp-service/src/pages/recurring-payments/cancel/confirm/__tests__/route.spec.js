@@ -60,13 +60,11 @@ describe('completion function', () => {
 describe('getData function', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    moment.mockReturnValue({ format: jest.fn().mockReturnValue('18th November, 2025') })
+    moment.mockReturnValue({ format: jest.fn(() => '18th November, 2025') })
   })
 
   const mockRequest = () => {
-    const getCurrentPermission = jest.fn().mockResolvedValue({
-      recurringPayment: { endDate: '2025-02-15' }
-    })
+    const getCurrentPermission = jest.fn(() => ({ recurringPayment: { endDate: '2025-02-15' } }))
 
     return {
       locale: 'en',
