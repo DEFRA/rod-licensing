@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.1 (2025-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2261](https://github.com/DEFRA/rod-licensing/pull/2261) Cancellation journey page 3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.65.0-rc.0 (2025-12-03)
 
 #### :rocket: Enhancement
