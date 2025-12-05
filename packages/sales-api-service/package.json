@@ -45,7 +45,7 @@
     "debug": "4.3.3",
     "dot-prop": "6.0.1",
     "hapi-and-healthy": "7.0.7",
-    "hapi-swagger": "14.2.5",
+    "hapi-swagger": "17.3.2",
     "ioredis": "4.28.5",
     "joi": "17.6.0",
     "moment": "2.29.1",
