@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.2 (2025-12-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2233](https://github.com/DEFRA/rod-licensing/pull/2233) RCP Cancellation - no RCP agreement ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.1 (2025-12-04)
 
 #### :rocket: Enhancement
