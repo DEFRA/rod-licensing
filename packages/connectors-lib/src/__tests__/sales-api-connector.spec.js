@@ -821,103 +821,38 @@ describe('sales-api-connector', () => {
       await expect(salesApi.retrieveStagedTransaction('id')).rejects.toThrow('Internal Server Error')
     })
   })
+})
 
-  describe('retrieveRecurringPaymentAgreement', () => {
-    describe.each([['id'], ['abc-123']])("Retrieving recurring payment agreement id '%s'", agreementId => {
-      beforeEach(() => {
-        fetch.mockReturnValueOnce({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          text: async () => JSON.stringify({ agreementId })
-        })
-      })
-
-      it('calls the endpoint with the correct parameters', async () => {
-        await salesApi.retrieveRecurringPaymentAgreement(agreementId)
-
-        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/retrieveRecurringPaymentAgreement/${agreementId}`, {
-          method: 'get',
-          headers: expect.any(Object),
-          timeout: 20000
-        })
-      })
-
-      it('returns the expected response data', async () => {
-        const processedResult = await salesApi.retrieveRecurringPaymentAgreement(agreementId)
-
-        expect(processedResult).toEqual({ agreementId })
-      })
-    })
-
-    it('throws an error on non-2xx response', async () => {
-      fetch.mockReturnValueOnce({
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-        text: async () => 'Server Error'
-      })
-
-      await expect(salesApi.retrieveRecurringPaymentAgreement('agreementId')).rejects.toThrow('Internal Server Error')
-    })
+describe('rcp authentication', () => {
+  it('returns parsed JSON with successful fetch', async () => {
+    const expectedResponse = { woo: 'hoo' }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    const response = await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(response).toEqual(expectedResponse)
   })
 
-  describe('updateRecurringTransaction', () => {
-    it.each([['Debit card'], ['Credit card']])('updates the transaction with payment method "%s"', async method => {
-      const transactionId = 'transaction-id'
-      const payload = {
-        payment: {
-          source: 'Gov Pay',
-          method
-        }
+  it('calls fetch with the RCP authenticate URL and query params', async () => {
+    const expectedResponse = { woo: 'hoo' }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(fetch).toHaveBeenCalledWith(
+      'http://0.0.0.0:4000/authenticate/rcp/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+      {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
       }
-      const expectedResponse = { id: transactionId, ...payload }
+    )
+  })
 
-      fetch.mockReturnValueOnce({
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        text: async () => JSON.stringify(expectedResponse)
-      })
-
-      await expect(salesApi.updateRecurringTransaction(transactionId, payload)).resolves.toEqual(expectedResponse)
-
-      expect(fetch).toHaveBeenCalledWith(
-        `http://0.0.0.0:4000/update-recurring-transactions/${transactionId}`,
-        expect.objectContaining({
-          method: 'patch',
-          body: JSON.stringify(payload)
-        })
-      )
+  it('returns null when the sales API responds with a non-2xx status', async () => {
+    fetch.mockReturnValueOnce({
+      ok: false,
+      status: 400,
+      statusText: 'Bad Request',
+      text: async () => 'Bad Request'
     })
-
-    it('throws on a non-ok response', async () => {
-      const transactionId = 'transaction-id'
-      const payload = {
-        payment: {
-          source: 'Gov Pay',
-          method: 'Debit card'
-        }
-      }
-
-      fetch.mockReturnValueOnce({
-        ok: false,
-        status: 422,
-        statusText: 'Unprocessable Entity',
-        text: async () => JSON.stringify({ error: 'Description' })
-      })
-
-      await expect(salesApi.updateRecurringTransaction(transactionId, payload)).rejects.toThrow(
-        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
-      )
-
-      expect(fetch).toHaveBeenCalledWith(
-        `http://0.0.0.0:4000/update-recurring-transactions/${transactionId}`,
-        expect.objectContaining({
-          method: 'patch',
-          body: JSON.stringify(payload)
-        })
-      )
-    })
+    const response = await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(response).toBeNull()
   })
 })

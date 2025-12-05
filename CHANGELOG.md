@@ -1,4 +1,78 @@
 
+## v1.65.0-rc.1 (2025-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2261](https://github.com/DEFRA/rod-licensing/pull/2261) Cancellation journey page 3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.65.0-rc.0 (2025-12-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2221](https://github.com/DEFRA/rod-licensing/pull/2221) Cancellation confirm details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.64.0-rc.22 (2025-11-21)
+
+#### :bug: Bug Fix
+* [#2254](https://github.com/DEFRA/rod-licensing/pull/2254) Fix code duplication false positive ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.64.0-rc.21 (2025-11-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2255](https://github.com/DEFRA/rod-licensing/pull/2255) Cancel RP Identify Cache ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.64.0-rc.19 (2025-11-11)
+
+#### :bug: Bug Fix
+* [#2249](https://github.com/DEFRA/rod-licensing/pull/2249) Use Node 20.19.5 and NPM 11.5.1 for Actions builds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.64.0-rc.18 (2025-11-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2247](https://github.com/DEFRA/rod-licensing/pull/2247) RP journey cancellation page 1 - Identify ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.64.0-rc.16 (2025-11-06)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2244](https://github.com/DEFRA/rod-licensing/pull/2244) Allow lowercase chars in licence number when renewing ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.64.0-rc.14 (2025-11-04)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `sales-api-service`
+  * [#2211](https://github.com/DEFRA/rod-licensing/pull/2211) RCP job not updating fields in CRM ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.64.0-rc.13 (2025-10-30)
 
 #### :bug: Bug Fix

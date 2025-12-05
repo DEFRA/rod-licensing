@@ -101,17 +101,6 @@ export const createTransactions = async transactionArr =>
 export const finaliseTransaction = async (id, payload) => exec2xxOrThrow(call(new URL(`/transactions/${id}`, urlBase), 'patch', payload))
 
 /**
- * Update a transaction in the sales API
- *
- * @param id the transaction id to finalise
- * @param payload the update-transaction payload to supply on the request
- * @returns {Promise<*>}
- * @throws on a non-2xx response
- */
-export const updateRecurringTransaction = async (id, payload) =>
-  exec2xxOrThrow(call(new URL(`/update-recurring-transactions/${id}`, urlBase), 'patch', payload))
-
-/**
  * Retrieve the details of a transaction file.  Returns null if not found.
  *
  * @param filename the name of the transaction file record to retrieve
@@ -281,6 +270,27 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
   )
 
 /**
+ * Support for cancelling recurring payment authentication
+ * @param referenceNumber
+ * @param birthDate
+ * @param postcode
+ * @returns {Promise<*>}
+ */
+export const authenticateRecurringPayment = (referenceNumber, birthDate, postcode) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `/authenticate/rcp/${referenceNumber}?${querystring.stringify({
+          licenseeBirthDate: birthDate,
+          licenseePostcode: postcode
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )
+
+/**
  * Helper to check if an HTTP status code is classed as a system error
  *
  * @param {number} statusCode the HTTP status code to test
@@ -341,13 +351,3 @@ export const cancelRecurringPayment = async id => {
 export const retrieveStagedTransaction = async id => {
   return exec2xxOrThrow(call(new URL(`/retrieveStagedTransaction/${id}`, urlBase), 'get'))
 }
-
-/**
- * Retrieve recurring payment agreement details
- *
- * @param {string} agreementId
- * @returns {Promise<*>}
- * @throws on a non-2xx response
- */
-export const retrieveRecurringPaymentAgreement = async agreementId =>
-  exec2xxOrThrow(call(new URL(`/retrieveRecurringPaymentAgreement/${agreementId}`, urlBase), 'get'))
