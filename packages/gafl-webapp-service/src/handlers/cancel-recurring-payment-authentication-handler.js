@@ -35,7 +35,7 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
   } else if (authenticationResult.recurringPayment.cancelledDate) {
-    context.pageData.error = { recurringPayment: 'rcp-cancelled' }
+    context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_ALREADY_CANCELLED.uri
   }
 
