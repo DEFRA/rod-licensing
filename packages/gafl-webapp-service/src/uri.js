@@ -63,7 +63,7 @@ export const CHOOSE_PAYMENT = { uri: '/buy/choose-payment', page: 'choose-paymen
 export const SET_UP_PAYMENT = { uri: '/buy/set-up-recurring-card-payment', page: 'set-up-payment' }
 
 /**
- * Recurring Payments Cancellation
+ * Recurring payments cancellation pages
  */
 export const CANCEL_RP_IDENTIFY = { uri: '/buy/cancel-recurring-payment/identify', page: 'cancel-rp-identify' }
 export const CANCEL_RP_AUTHENTICATE = { uri: '/buy/cancel-recurring-payment/authenticate' }
