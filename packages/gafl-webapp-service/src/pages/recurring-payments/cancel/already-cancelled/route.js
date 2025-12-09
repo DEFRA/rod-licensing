@@ -1,12 +1,18 @@
-import { CANCEL_RP_ALREADY_CANCELLED, CANCEL_RP_IDENTIFY } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { CANCEL_RP_ALREADY_CANCELLED, CANCEL_RP_IDENTIFY } from '../../../../uri.js'
+import { cacheDateFormat, dateDisplayFormat } from '../../../../processors/date-and-time-display.js'
+import moment from 'moment-timezone'
 
 const getData = async request => {
   const {
-    payload: { referenceNumber }
+    payload: { referenceNumber, endDate }
   } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
+  const endDateString = moment(endDate, cacheDateFormat).tz(SERVICE_LOCAL_TIME).format(dateDisplayFormat)
+
   return {
-    referenceNumber
+    referenceNumber,
+    endDate: endDateString
   }
 }
 

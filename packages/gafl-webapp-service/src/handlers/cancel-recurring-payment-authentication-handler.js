@@ -2,6 +2,8 @@ import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_AGREEMENT_NOT_FOUND, C
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 import { setupCancelRecurringPaymentCacheFromAuthResult } from '../processors/recurring-payments-write-cache.js'
+import { cacheDateFormat } from '../../src/processors/date-and-time-display.js'
+import moment from 'moment-timezone'
 import Joi from 'joi'
 
 const applyAuthFailure = async (request, h, { pageData, redirectUri, statusData }) => {
@@ -37,6 +39,10 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   } else if (authenticationResult.recurringPayment.cancelledDate) {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_ALREADY_CANCELLED.uri
+    context.pageData.payload = {
+      ...context.pageData.payload,
+      endDate: moment(authenticationResult.recurringPayment.endDate).format(cacheDateFormat)
+    }
   }
 
   if (context.pageData.error || context.pageData.errorRedirect) {
