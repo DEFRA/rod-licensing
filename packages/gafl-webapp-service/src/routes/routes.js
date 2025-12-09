@@ -41,13 +41,6 @@ import errorTestRoutes from './error-test-routes.js'
 import choosePayment from '../pages/recurring-payments/choose-payment/route.js'
 import setUpRecurring from '../pages/recurring-payments/set-up-payment/route.js'
 
-import cancelRPIdentify from '../pages/recurring-payments/cancel/identify/route.js'
-import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js'
-import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
-import cancelRPComplete from '../pages/recurring-payments/cancel/complete/route.js'
-import cancelRPAgreementNotFound from '../pages/recurring-payments/cancel/agreement-not-found/route.js'
-import cancelRPAlreadyCancelled from '../pages/recurring-payments/cancel/already-cancelled/route.js'
-
 const routes = [
   ...staticAssets,
   ...miscRoutes,
@@ -80,13 +73,7 @@ const routes = [
   ...renewalStartDate,
   ...choosePayment,
   ...setUpRecurring,
-  ...licenceNotFound,
-  ...cancelRPIdentify,
-  ...cancelRPDetails,
-  ...cancelRPConfirm,
-  ...cancelRPComplete,
-  ...cancelRPAgreementNotFound,
-  ...cancelRPAlreadyCancelled
+  ...licenceNotFound
 ]
 
 if (process.env.CHANNEL === 'telesales') {
