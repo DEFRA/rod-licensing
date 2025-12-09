@@ -3,6 +3,7 @@ import { CANCEL_RP_ALREADY_CANCELLED, CANCEL_RP_IDENTIFY } from '../../../../../
 
 require('../route.js')
 
+// eslint-disable-next-line no-unused-vars
 const [[_view, _path, _validator, _completion, getData]] = pageRoute.mock.calls
 
 jest.mock('../../../../../routes/page-route.js', () => jest.fn())
