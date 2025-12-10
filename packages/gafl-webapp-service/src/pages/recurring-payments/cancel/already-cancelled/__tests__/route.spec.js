@@ -17,11 +17,11 @@ jest.mock('../../../../../uri.js', () => ({
 }))
 jest.mock('../../../../../processors/uri-helper.js')
 
-const getSampleRequest = (referenceNumber = 'RP0310') => ({
+const getSampleRequest = () => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
-        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber } }))
+        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber: 'RP0310', endDate: '2025:10:03:03:33:33' } }))
       }
     }
   }))
@@ -80,7 +80,7 @@ describe('pageRoute receives expected arguments', () => {
     })
   })
 
-  it('passes a function to get the page data', () => {
+  it('passes getData to pageRoute', () => {
     jest.isolateModules(() => {
       require('../route.js')
       expect(pageRoute).toHaveBeenCalledWith(
@@ -88,7 +88,7 @@ describe('pageRoute receives expected arguments', () => {
         expect.anything(),
         expect.anything(),
         expect.anything(),
-        expect.any(Function)
+        getData
       )
     })
   })
@@ -102,12 +102,22 @@ describe('getData', () => {
     expect(pageCache.helpers.page.getCurrentPermission).toHaveBeenCalledWith(CANCEL_RP_IDENTIFY.page)
   })
 
-  it('passes reference number from CANCEL_RP_IDENTIFY page data', async () => {
+  it('passes reference number from CANCEL_RP_IDENTIFY ', async () => {
     const referenceNumber = 'RP0310'
     expect(await getData(getSampleRequest(referenceNumber))).toEqual(
       expect.objectContaining({
         referenceNumber
       })
     )
+  })
+
+  it('transforms end date to display format', async () => {
+    const endDate = '2025-10-03T03:33:33.000Z'
+    const request = getSampleRequest()
+    request.cache().helpers.page.getCurrentPermission.mockResolvedValueOnce({
+      payload: { referenceNumber: 'RP0310', endDate }
+    })
+    const data = await getData(request)
+    expect(data.endDate).toEqual('3 October 2025')
   })
 })

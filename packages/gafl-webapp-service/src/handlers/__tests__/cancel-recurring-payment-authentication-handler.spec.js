@@ -185,7 +185,7 @@ describe('Cancel RP Authentication Handler', () => {
       expect(result).toBe(redirectResult)
     })
 
-    it('sets page cache error for RCP cancelled', async () => {
+    it('sets page cache for RCP already cancelled', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
       })
