@@ -83,13 +83,7 @@ describe('pageRoute receives expected arguments', () => {
   it('passes getData to pageRoute', () => {
     jest.isolateModules(() => {
       require('../route.js')
-      expect(pageRoute).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.anything(),
-        expect.anything(),
-        expect.anything(),
-        getData
-      )
+      expect(pageRoute).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.anything(), expect.anything(), getData)
     })
   })
 })
