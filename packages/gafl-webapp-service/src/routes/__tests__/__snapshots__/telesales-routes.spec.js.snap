@@ -39,6 +39,22 @@ Object {
     Object {
       "handler": [Function],
       "method": "GET",
+      "path": "/buy/journey-goal",
+    },
+    Object {
+      "handler": [Function],
+      "method": "POST",
+      "options": Object {
+        "validate": Object {
+          "failAction": [Function],
+          "payload": [Function],
+        },
+      },
+      "path": "/buy/journey-goal",
+    },
+    Object {
+      "handler": [Function],
+      "method": "GET",
       "path": "/buy/cancel-recurring-payment/identify",
     },
     Object {
@@ -140,6 +156,22 @@ Object {
       },
       "path": "/oidc/role-required",
     },
+    Object {
+      "handler": [Function],
+      "method": "GET",
+      "path": "/buy/journey-goal",
+    },
+    Object {
+      "handler": [Function],
+      "method": "POST",
+      "options": Object {
+        "validate": Object {
+          "failAction": [Function],
+          "payload": [Function],
+        },
+      },
+      "path": "/buy/journey-goal",
+    },
   ],
 }
 `;
@@ -179,6 +211,22 @@ Object {
         "auth": false,
       },
       "path": "/oidc/role-required",
+    },
+    Object {
+      "handler": [Function],
+      "method": "GET",
+      "path": "/buy/journey-goal",
+    },
+    Object {
+      "handler": [Function],
+      "method": "POST",
+      "options": Object {
+        "validate": Object {
+          "failAction": [Function],
+          "payload": [Function],
+        },
+      },
+      "path": "/buy/journey-goal",
     },
   ],
 }

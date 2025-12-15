@@ -68,6 +68,8 @@ export const CANCEL_RP_DETAILS = { uri: '/buy/cancel-recurring-payment/details',
 export const CANCEL_RP_CONFIRM = { uri: '/buy/cancel-recurring-payment/confirm', page: 'cancel-rp-confirm' }
 export const CANCEL_RP_COMPLETE = { uri: '/buy/cancel-recurring-payment/complete', page: 'cancel-rp-complete' }
 
+export const JOURNEY_GOAL = { uri: '/buy/journey-goal', page: 'journey-goal' }
+
 /**
  * These are informational static pages
  */

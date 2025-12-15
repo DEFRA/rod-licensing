@@ -33,7 +33,8 @@ import {
   CANCEL_RP_IDENTIFY,
   CANCEL_RP_DETAILS,
   CANCEL_RP_CONFIRM,
-  CANCEL_RP_COMPLETE
+  CANCEL_RP_COMPLETE,
+  JOURNEY_GOAL
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -42,7 +43,34 @@ import { licenceToStartResults } from '../pages/licence-details/licence-to-start
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
+import { journeyGoalResults } from '../pages/journey-goal/result-function.js'
 import { isPhysical } from '../processors/licence-type-display.js'
+
+const getJourneyStart = () => {
+  if (process.env.CHANNEL === 'telesales') {
+    return [
+      {
+        current: { page: 'start' },
+        next: {
+          [CommonResults.OK]: {
+            page: JOURNEY_GOAL
+          }
+        }
+      }
+    ]
+  }
+
+  return [
+    {
+      current: { page: 'start' },
+      next: {
+        [CommonResults.OK]: {
+          page: LICENCE_FOR
+        }
+      }
+    }
+  ]
+}
 
 /**
  * The structure of each atom is as follows
@@ -51,13 +79,22 @@ import { isPhysical } from '../processors/licence-type-display.js'
  * backLink - the location the back link, a uri literal, a function of the current status of a function of the status and transaction
  */
 export default [
+  ...getJourneyStart(),
+
   {
-    current: { page: 'start' },
+    current: JOURNEY_GOAL,
     next: {
-      [CommonResults.OK]: {
+      [journeyGoalResults.CANCEL_RECURRING_PAYMENT]: {
+        page: CANCEL_RP_IDENTIFY
+      },
+      [journeyGoalResults.RENEW_PERMISSION]: {
+        page: IDENTIFY
+      },
+      [journeyGoalResults.PURCHASE_PERMISSION]: {
         page: LICENCE_FOR
       }
-    }
+    },
+    backLink: () => null
   },
 
   {
@@ -70,7 +107,15 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+    backLink: s => {
+      if (s.fromSummary) {
+        return LICENCE_SUMMARY.uri
+      }
+      if (process.env.CHANNEL === 'telesales') {
+        return JOURNEY_GOAL.uri
+      }
+      return null
+    }
   },
 
   {

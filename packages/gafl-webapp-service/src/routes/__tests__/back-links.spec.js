@@ -17,19 +17,50 @@ import {
   CONTACT,
   NEWSLETTER,
   CHOOSE_PAYMENT,
-  TERMS_AND_CONDITIONS
+  TERMS_AND_CONDITIONS,
+  JOURNEY_GOAL
 } from '../../uri.js'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../constants.js'
 import { isPhysical } from '../../processors/licence-type-display.js'
 jest.mock('../../processors/licence-type-display.js')
 
+describe('The journey-goal page', () => {
+  it('has no back-link', () => {
+    jest.isolateModules(() => {
+      process.env.CHANNEL = 'telesales'
+      const isolatedJourneyDefinition = require('../journey-definition.js').default
+      const isolatedJourneyGoal = isolatedJourneyDefinition.find(n => n.current.page === JOURNEY_GOAL.page)
+      expect(isolatedJourneyGoal.backLink({})).not.toBeTruthy()
+      delete process.env.CHANNEL
+    })
+  })
+})
+
 describe('The licence-for page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_FOR.page)
-  it('has no back-link on initial viewing', () => {
+  it('has no back-link on initial viewing in websales journey', () => {
     expect(n.backLink({})).not.toBeTruthy()
   })
   it('has a back-link to the license summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to the journey-goal page in telesales journey', () => {
+    jest.isolateModules(() => {
+      process.env.CHANNEL = 'telesales'
+      const isolatedJourneyDefinition = require('../journey-definition.js').default
+      const isolatedJourneyGoal = isolatedJourneyDefinition.find(n => n.current.page === LICENCE_FOR.page)
+      expect(isolatedJourneyGoal.backLink({})).toBe(JOURNEY_GOAL.uri)
+      delete process.env.CHANNEL
+    })
+  })
+  it('has a back-link to the licence summary in telesales journey if the summary is seen', () => {
+    jest.isolateModules(() => {
+      process.env.CHANNEL = 'telesales'
+      const isolatedJourneyDefinition = require('../journey-definition.js').default
+      const isolatedJourneyGoal = isolatedJourneyDefinition.find(n => n.current.page === LICENCE_FOR.page)
+      expect(isolatedJourneyGoal.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+      delete process.env.CHANNEL
+    })
   })
 })
 
