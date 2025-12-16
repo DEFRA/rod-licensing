@@ -48,6 +48,7 @@ import { isPhysical } from '../processors/licence-type-display.js'
 
 const getJourneyStart = () => {
   if (process.env.CHANNEL === 'telesales') {
+    console.log('telesales journey goal start page')
     return [
       {
         current: { page: 'start' },
@@ -59,7 +60,7 @@ const getJourneyStart = () => {
       }
     ]
   }
-
+  console.log('normal journey start page')
   return [
     {
       current: { page: 'start' },
