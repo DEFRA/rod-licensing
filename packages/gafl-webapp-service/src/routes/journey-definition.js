@@ -48,7 +48,6 @@ import { isPhysical } from '../processors/licence-type-display.js'
 
 const getJourneyStart = () => {
   if (process.env.CHANNEL === 'telesales') {
-    console.log('telesales journey goal start page')
     return [
       {
         current: { page: 'start' },
@@ -60,7 +59,6 @@ const getJourneyStart = () => {
       }
     ]
   }
-  console.log('normal journey start page')
   return [
     {
       current: { page: 'start' },
@@ -464,9 +462,9 @@ export default [
       [CommonResults.OK]: {
         page: LICENCE_SUMMARY
       }
-    }
+    },
+    ...(process.env.CHANNEL === 'telesales' ? { backLink: JOURNEY_GOAL.uri } : {})
   },
-
   {
     current: LICENCE_NOT_FOUND,
     backLink: IDENTIFY.uri
@@ -485,7 +483,8 @@ export default [
       [CommonResults.OK]: {
         page: CANCEL_RP_DETAILS
       }
-    }
+    },
+    ...(process.env.CHANNEL === 'telesales' ? { backLink: JOURNEY_GOAL.uri } : {})
   },
   {
     current: CANCEL_RP_DETAILS,
