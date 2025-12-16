@@ -127,7 +127,7 @@ Object {
       "options": Object {
         "validate": Object {
           "failAction": [Function],
-          "payload": null,
+          "payload": undefined,
         },
       },
       "path": "/buy/cancel-recurring-payment/licence-not-found",
