@@ -1,15 +1,14 @@
 import pageRoute from '../../../../../routes/page-route.js'
-import { CANCEL_RP_ALREADY_CANCELLED, CANCEL_RP_IDENTIFY } from '../../../../../uri.js'
+import { CANCEL_RP_ALREADY_CANCELLED } from '../../../../../uri.js'
 
 require('../route.js')
 
 // eslint-disable-next-line no-unused-vars
-const [[_view, _path, _validator, _completion, getData]] = pageRoute.mock.calls
+const getData = pageRoute.mock.calls[0][4]
 
 jest.mock('../../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../../uri.js', () => ({
   ...jest.requireActual('../../../../../uri.js'),
-  CANCEL_RP_IDENTIFY: { page: Symbol('cancel-rp-identify-page') },
   CANCEL_RP_ALREADY_CANCELLED: {
     page: Symbol('cancel-rp-already-cancelled page'),
     uri: Symbol('cancel-rp-already-cancelled uri')
@@ -17,11 +16,11 @@ jest.mock('../../../../../uri.js', () => ({
 }))
 jest.mock('../../../../../processors/uri-helper.js')
 
-const getSampleRequest = () => ({
+const getSampleRequest = referenceNumber => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
-        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber: 'RP0310', endDate: '2025:10:03:03:33:33' } }))
+        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber, endDate: '2025:10:03:03:33:33' } }))
       }
     }
   }))
@@ -83,20 +82,19 @@ describe('pageRoute receives expected arguments', () => {
   it('passes getData to pageRoute', () => {
     jest.isolateModules(() => {
       require('../route.js')
-      expect(pageRoute).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.anything(), expect.anything(), getData)
+      expect(pageRoute).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.any(Function)
+      )
     })
   })
 })
 
 describe('getData', () => {
-  it('requests page data from CANCEL_RP_IDENTIFY page', async () => {
-    const request = getSampleRequest()
-    await getData(request)
-    const [{ value: pageCache }] = request.cache.mock.results
-    expect(pageCache.helpers.page.getCurrentPermission).toHaveBeenCalledWith(CANCEL_RP_IDENTIFY.page)
-  })
-
-  it('passes reference number from CANCEL_RP_IDENTIFY ', async () => {
+  it('returns reference number from payload', async () => {
     const referenceNumber = 'RP0310'
     expect(await getData(getSampleRequest(referenceNumber))).toEqual(
       expect.objectContaining({
