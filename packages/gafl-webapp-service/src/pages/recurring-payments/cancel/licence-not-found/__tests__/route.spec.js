@@ -12,10 +12,10 @@ jest.mock('../../../../../uri.js', () => ({
 
 describe('CANCEL_RP_LICENCE_NOT_FOUND route', () => {
   it('passes CANCEL_RP_LICENCE_NOT_FOUND.page as the first argument to pageRoute', () => {
-    expect(pageRoute.mock.calls[0][0]).toBe(CANCEL_RP_LICENCE_NOT_FOUND.page)
+    expect(pageRoute).toHaveBeenCalledWith(CANCEL_RP_LICENCE_NOT_FOUND.page, expect.anything())
   })
 
   it('passes CANCEL_RP_LICENCE_NOT_FOUND.uri as the second argument to pageRoute', () => {
-    expect(pageRoute.mock.calls[0][1]).toBe(CANCEL_RP_LICENCE_NOT_FOUND.uri)
+    expect(pageRoute).toHaveBeenCalledWith(expect.anything(), CANCEL_RP_LICENCE_NOT_FOUND.uri)
   })
 })
