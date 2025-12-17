@@ -3,7 +3,7 @@ import { JOURNEY_GOAL } from '../../uri.js'
 import { nextPage } from '../../routes/next-page.js'
 import { journeyGoalResults } from './result-function.js'
 
-const getData = async request => ({
+const getData = async () => ({
   journeyGoals: journeyGoalResults
 })
 

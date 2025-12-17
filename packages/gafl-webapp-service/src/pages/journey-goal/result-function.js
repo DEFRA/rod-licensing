@@ -4,7 +4,7 @@ export const journeyGoalResults = Object.freeze({
   CANCEL_RECURRING_PAYMENT: 'cancel-recurring-payment'
 })
 
-export default async request => {
+const journeyGoalResult = async request => {
   switch (request.payload['journey-goal']) {
     case 'purchase-permission':
       return journeyGoalResults.PURCHASE_PERMISSION
@@ -17,3 +17,5 @@ export default async request => {
       return journeyGoalResults.PURCHASE_PERMISSION
   }
 }
+
+export default journeyGoalResult
