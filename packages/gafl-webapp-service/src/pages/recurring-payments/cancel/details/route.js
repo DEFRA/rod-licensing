@@ -1,16 +1,24 @@
 import pageRoute from '../../../../routes/page-route.js'
 import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import moment from 'moment-timezone'
+import { cacheDateFormat } from '../../../../processors/date-and-time-display.js'
 
-const getLicenseeDetailsSummaryRows = (currentPermission, mssgs) => [
+const getLicenseeDetailsSummaryRows = (currentPermission, mssgs, locale) => [
   {
     key: { text: mssgs.rp_cancel_details_licence_holder },
     value: { text: `${currentPermission.permission.licensee.firstName} ${currentPermission.permission.licensee.lastName}` }
   },
   { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: currentPermission.permission.permit.description } },
-  { key: { text: mssgs.rp_cancel_details_payment_card }, value: { text: currentPermission.recurringPayment.lastDigitsCardNumbers } },
+  {
+    key: { text: mssgs.rp_cancel_details_payment_card },
+    value: { text: `**** **** **** ${currentPermission.recurringPayment.lastDigitsCardNumbers}` }
+  },
   { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: currentPermission.permission.referenceNumber } },
-  { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: currentPermission.permission.endDate } }
+  {
+    key: { text: mssgs.rp_cancel_details_licence_valid_until },
+    value: { text: moment(currentPermission.permission.endDate, cacheDateFormat, locale).format('Do MMMM, YYYY') }
+  }
 ]
 
 export const getData = async request => {
@@ -19,7 +27,7 @@ export const getData = async request => {
 
   return {
     mssgs,
-    summaryTable: getLicenseeDetailsSummaryRows(currentPermission, mssgs)
+    summaryTable: getLicenseeDetailsSummaryRows(currentPermission, mssgs, request.locale)
   }
 }
 

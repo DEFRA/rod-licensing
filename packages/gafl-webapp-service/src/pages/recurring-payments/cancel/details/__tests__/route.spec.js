@@ -2,6 +2,8 @@ import pageRoute from '../../../../../routes/page-route.js'
 import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
+import moment from 'moment-timezone'
+import { cacheDateFormat } from '../../../../../processors/date-and-time-display.js'
 
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
@@ -10,6 +12,14 @@ jest.mock('../../../../../uri.js', () => ({
   CANCEL_RP_CONFIRM: { uri: Symbol('cancel-rp-confirm-uri') }
 }))
 jest.mock('../../../../../processors/uri-helper.js')
+jest.mock('moment-timezone', () =>
+  jest.fn(() => ({
+    format: jest.fn()
+  }))
+)
+jest.mock('../../../../../processors/date-and-time-display.js', () => ({
+  cacheDateFormat: Symbol('cache-date-format')
+}))
 
 describe('route', () => {
   beforeEach(jest.clearAllMocks)
@@ -82,7 +92,7 @@ describe('route', () => {
       referenceNumber: 'abc123'
     },
     recurringPayment: {
-      lastDigitsCardNumbers: 1234
+      lastDigitsCardNumbers: '1234'
     }
   })
 
@@ -96,7 +106,8 @@ describe('route', () => {
     }),
     i18n: {
       getCatalog: () => catalog
-    }
+    },
+    locale: Symbol('en-GB')
   })
 
   describe('getData', () => {
@@ -115,17 +126,67 @@ describe('route', () => {
 
     it('returns summaryTable with expected data', async () => {
       const mssgs = getSampleCatalog()
-      const mockRequest = createMockRequest({ catalog: mssgs })
+      const sampleData = {
+        permission: {
+          licensee: {
+            firstName: 'Brenin',
+            lastName: 'Pysgotwr'
+          },
+          permit: {
+            description: 'Wellies and old shopping trollies'
+          },
+          endDate: '21-03-2026',
+          referenceNumber: 'aaa-111-bbb-222'
+        },
+        recurringPayment: {
+          lastDigitsCardNumbers: '9999'
+        }
+      }
+      const sampleFormattedDate = Symbol('formatted-end-date')
+      const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+      moment.mockReturnValueOnce({
+        format: () => sampleFormattedDate
+      })
 
       const result = await getData(mockRequest)
 
       expect(result.summaryTable).toEqual([
-        { key: { text: mssgs.rp_cancel_details_licence_holder }, value: { text: 'John Smith' } },
-        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: 'Salmon and sea trout' } },
-        { key: { text: mssgs.rp_cancel_details_payment_card }, value: { text: 1234 } },
-        { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: 'abc123' } },
-        { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: '01-01-2026' } }
+        {
+          key: { text: mssgs.rp_cancel_details_licence_holder },
+          value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
+        },
+        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: sampleData.permission.permit.description } },
+        {
+          key: { text: mssgs.rp_cancel_details_payment_card },
+          value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
+        },
+        { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
+        { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
       ])
+    })
+
+    it('passes cache date format and request locale to moment', async () => {
+      const data = getSamplePermission()
+      data.permission.endDate = Symbol('end-date')
+      const mockRequest = createMockRequest({ currentPermission: data })
+
+      await getData(mockRequest)
+
+      expect(moment).toHaveBeenCalledWith(data.permission.endDate, cacheDateFormat, mockRequest.locale)
+    })
+
+    it('requests correct date format', async () => {
+      const data = getSamplePermission()
+      data.permission.endDate = Symbol('end-date')
+      const mockRequest = createMockRequest({ currentPermission: data })
+      const format = jest.fn()
+      moment.mockReturnValueOnce({
+        format
+      })
+
+      await getData(mockRequest)
+
+      expect(format).toHaveBeenCalledWith('Do MMMM, YYYY')
     })
   })
 })
