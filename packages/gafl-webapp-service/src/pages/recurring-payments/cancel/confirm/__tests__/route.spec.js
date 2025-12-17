@@ -64,7 +64,7 @@ describe('getData function', () => {
   })
 
   const mockRequest = () => {
-    const getCurrentPermission = jest.fn(() => ({ recurringPayment: { endDate: '2025-02-15' } }))
+    const getCurrentPermission = jest.fn(() => ({ permission: { endDate: '2025-02-15' } }))
 
     return {
       locale: 'en',

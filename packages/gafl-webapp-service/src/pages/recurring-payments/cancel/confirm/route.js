@@ -5,10 +5,10 @@ import { cacheDateFormat } from '../../../../processors/date-and-time-display.js
 import moment from 'moment-timezone'
 
 const getData = async request => {
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const { permission } = await request.cache().helpers.transaction.getCurrentPermission()
 
   return {
-    licenceExpiry: moment(permission.recurringPayment.endDate, cacheDateFormat, request.locale).format('Do MMMM, YYYY'),
+    licenceExpiry: moment(permission.endDate, cacheDateFormat, request.locale).format('Do MMMM, YYYY'),
     uri: {
       cancelRpIdentify: addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri)
     }
