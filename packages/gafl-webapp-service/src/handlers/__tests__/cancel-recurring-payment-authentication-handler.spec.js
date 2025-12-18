@@ -1,5 +1,11 @@
 import handler from '../cancel-recurring-payment-authentication-handler'
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_AGREEMENT_NOT_FOUND, CANCEL_RP_ALREADY_CANCELLED } from '../../uri.js'
+import {
+  CANCEL_RP_IDENTIFY,
+  CANCEL_RP_DETAILS,
+  CANCEL_RP_AGREEMENT_NOT_FOUND,
+  CANCEL_RP_ALREADY_CANCELLED,
+  CANCEL_RP_LICENCE_NOT_FOUND
+} from '../../uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
 jest.mock('../../processors/uri-helper.js')
@@ -20,7 +26,8 @@ jest.mock('../../uri.js', () => ({
   CANCEL_RP_IDENTIFY: { page: 'cancel-rp-identify page', uri: Symbol('cancel-rp-identify-uri') },
   CANCEL_RP_DETAILS: { uri: Symbol('cancel-rp-details-uri') },
   CANCEL_RP_AGREEMENT_NOT_FOUND: { uri: Symbol('cancel-rp-agreement-not-found-uri') },
-  CANCEL_RP_ALREADY_CANCELLED: { uri: Symbol('cancel-rp-already-cancelled-uri ') }
+  CANCEL_RP_ALREADY_CANCELLED: { uri: Symbol('cancel-rp-already-cancelled-uri ') },
+  CANCEL_RP_LICENCE_NOT_FOUND: { uri: Symbol('cancel-rp-licence-not-found-uri') }
 }))
 jest.mock('../../processors/recurring-payments-write-cache.js')
 
@@ -100,9 +107,9 @@ describe('Cancel RP Authentication Handler', () => {
   })
 
   describe('Unsuccessful authentication - no match', () => {
-    it('redirects to the CANCEL_RP_IDENTIFY.uri', async () => {
+    it('redirects to the CANCEL_RP_LICENCE_NOT_FOUND.uri', async () => {
       const { h } = await invokeHandlerWithMocks({ salesApiResponse: null })
-      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_IDENTIFY.uri)
+      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_LICENCE_NOT_FOUND.uri)
     })
 
     it('returns value of redirect', async () => {
@@ -122,7 +129,7 @@ describe('Cancel RP Authentication Handler', () => {
         CANCEL_RP_IDENTIFY.page,
         expect.objectContaining({
           payload: expect.any(Object),
-          error: { referenceNumber: 'not-found' }
+          errorRedirect: true
         })
       )
     })

@@ -5,6 +5,7 @@ import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js
 import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
 import cancelRPComplete from '../pages/recurring-payments/cancel/complete/route.js'
 import cancelRPAgreementNotFound from '../pages/recurring-payments/cancel/agreement-not-found/route.js'
+import cancelRPLicenceNotFound from '../pages/recurring-payments/cancel/licence-not-found/route.js'
 import cancelRPAlreadyCancelled from '../pages/recurring-payments/cancel/already-cancelled/route.js'
 
 const telesalesRoutes = [
@@ -40,7 +41,8 @@ if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
     ...cancelRPConfirm,
     ...cancelRPComplete,
     ...cancelRPAgreementNotFound,
-    ...cancelRPAlreadyCancelled
+    ...cancelRPAlreadyCancelled,
+    ...cancelRPLicenceNotFound
   )
 }
 export default telesalesRoutes

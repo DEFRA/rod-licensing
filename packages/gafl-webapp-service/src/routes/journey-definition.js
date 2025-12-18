@@ -35,7 +35,8 @@ import {
   CANCEL_RP_CONFIRM,
   CANCEL_RP_COMPLETE,
   CANCEL_RP_AGREEMENT_NOT_FOUND,
-  CANCEL_RP_ALREADY_CANCELLED
+  CANCEL_RP_ALREADY_CANCELLED,
+  CANCEL_RP_LICENCE_NOT_FOUND
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -466,7 +467,15 @@ export default [
     backLink: CANCEL_RP_IDENTIFY.uri
   },
   {
+    current: CANCEL_RP_LICENCE_NOT_FOUND,
+    backLink: CANCEL_RP_IDENTIFY.uri
+  },
+  {
     current: CANCEL_RP_ALREADY_CANCELLED,
+    backLink: CANCEL_RP_IDENTIFY.uri
+  },
+  {
+    current: CANCEL_RP_LICENCE_NOT_FOUND,
     backLink: CANCEL_RP_IDENTIFY.uri
   }
 ]

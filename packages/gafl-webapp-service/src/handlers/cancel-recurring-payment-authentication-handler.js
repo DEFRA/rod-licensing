@@ -1,4 +1,10 @@
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_AGREEMENT_NOT_FOUND, CANCEL_RP_ALREADY_CANCELLED } from '../../src/uri.js'
+import {
+  CANCEL_RP_IDENTIFY,
+  CANCEL_RP_DETAILS,
+  CANCEL_RP_AGREEMENT_NOT_FOUND,
+  CANCEL_RP_ALREADY_CANCELLED,
+  CANCEL_RP_LICENCE_NOT_FOUND
+} from '../../src/uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 import { setupCancelRecurringPaymentCacheFromAuthResult } from '../processors/recurring-payments-write-cache.js'
@@ -32,7 +38,8 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   }
 
   if (!authenticationResult) {
-    context.pageData.error = { referenceNumber: 'not-found' }
+    context.pageData.errorRedirect = true
+    context.redirectUri = CANCEL_RP_LICENCE_NOT_FOUND.uri
   } else if (!authenticationResult.recurringPayment) {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
