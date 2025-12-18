@@ -41,8 +41,8 @@ if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
     ...cancelRPConfirm,
     ...cancelRPComplete,
     ...cancelRPAgreementNotFound,
-    ...cancelRPLicenceNotFound,
-    ...cancelRPAlreadyCancelled
+    ...cancelRPAlreadyCancelled,
+    ...cancelRPLicenceNotFound
   )
 }
 export default telesalesRoutes
