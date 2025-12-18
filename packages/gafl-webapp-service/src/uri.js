@@ -75,6 +75,7 @@ export const CANCEL_RP_AGREEMENT_NOT_FOUND = {
   page: 'cancel-rp-agreement-not-found'
 }
 export const CANCEL_RP_LICENCE_NOT_FOUND = { uri: '/buy/cancel-recurring-payment/licence-not-found', page: 'licence-not-found' }
+export const CANCEL_RP_ALREADY_CANCELLED = { uri: '/buy/cancel-recurring-payment/already-cancelled', page: 'already-cancelled' }
 
 /**
  * These are informational static pages

@@ -1,5 +1,5 @@
 import handler from '../cancel-recurring-payment-authentication-handler'
-import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_AGREEMENT_NOT_FOUND, CANCEL_RP_LICENCE_NOT_FOUND } from '../../uri.js'
+import { CANCEL_RP_IDENTIFY, CANCEL_RP_DETAILS, CANCEL_RP_AGREEMENT_NOT_FOUND, CANCEL_RP_LICENCE_NOT_FOUND, CANCEL_RP_ALREADY_CANCELLED } from '../../uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
 jest.mock('../../processors/uri-helper.js')
@@ -166,12 +166,12 @@ describe('Cancel RP Authentication Handler', () => {
     })
   })
 
-  describe('Unsuccessful authentication - RCP cancelled', () => {
-    it('redirects to the CANCEL_RP_IDENTIFY.uri', async () => {
+  describe('Unsuccessful authentication - RCP already cancelled', () => {
+    it('redirects to the CANCEL_RP_ALREADY_CANCELLED.uri', async () => {
       const { h } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
       })
-      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_IDENTIFY.uri)
+      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_ALREADY_CANCELLED.uri)
     })
 
     it('returns value of redirect', async () => {
@@ -185,7 +185,7 @@ describe('Cancel RP Authentication Handler', () => {
       expect(result).toBe(redirectResult)
     })
 
-    it('sets page cache error for RCP cancelled', async () => {
+    it('sets page cache for RCP already cancelled', async () => {
       const { request } = await invokeHandlerWithMocks({
         salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
       })
@@ -193,7 +193,7 @@ describe('Cancel RP Authentication Handler', () => {
         CANCEL_RP_IDENTIFY.page,
         expect.objectContaining({
           payload: expect.any(Object),
-          error: { recurringPayment: 'rcp-cancelled' }
+          errorRedirect: true
         })
       )
     })

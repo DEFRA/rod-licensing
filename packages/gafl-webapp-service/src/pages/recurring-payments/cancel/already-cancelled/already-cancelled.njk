@@ -1,0 +1,28 @@
+{% extends "layout.njk" %}
+{% from "page-title.njk" import pageTitle %}
+
+{% set title = mssgs.rp_cancel_already_cancelled_title %}
+{% block pageTitle %}{{ pageTitle(title, mssgs) }}{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">{{ mssgs.rp_licence_already_cancelled_heading }}</h1>
+    <p class="govuk-body">
+      {{ mssgs.rp_licence_already_cancelled_body_1 }}{{ data.referenceNumber }}{{ mssgs.rp_licence_already_cancelled_body_1_1 }}{{ data.endDate }}{{ mssgs.rp_licence_already_cancelled_body_1_2 }}
+      <a href="/" class="govuk-link" target="_blank" rel="noopener"> {{ mssgs.rp_licence_already_cancelled_body_link }}</a>{{ mssgs.full_stop }}
+    </p>
+    <p class="govuk-body">
+      {{ mssgs.rp_licence_already_cancelled_body_2_1 }}
+      <a href="mailto:enquiries@environment-agency.gov.uk"> {{ mssgs.rp_licence_already_cancelled_body_ea_link }}</a>
+      {{ mssgs.rp_licence_already_cancelled_body_2_2 }}
+      <a href="https://www.gov.uk/call-charges" target="_blank" rel="noopener"> {{ mssgs.licence_not_found_body_call_charges_link }}</a>{{ mssgs.full_stop }}
+    </p>
+    <p class="govuk-body">
+      <a class="govuk-link" href="/buy/cancel-recurring-payment/identify"> {{ mssgs.rp_licence_already_cancelled_body_3_1 }}
+        </a>{{ mssgs.rp_licence_already_cancelled_body_3_2 }}
+    </p>
+    
+  </div>
+</div>
+{% endblock %}
