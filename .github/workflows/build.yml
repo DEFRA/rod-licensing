@@ -30,6 +30,11 @@ jobs:
         run: npm install -g npm@11.5.1
       - name: Install dependencies
         run: npm ci
+      - name: Shai-hulud scan
+        uses: gensecaihq/Shai-Hulud-2.0-Detector@v2
+        with:
+          working-directory: '.'
+          scan-lockfiles: true
       - name: Run tests
         run: npm run test
       - name: Fix code coverage paths
