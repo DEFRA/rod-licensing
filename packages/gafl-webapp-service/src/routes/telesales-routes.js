@@ -1,5 +1,6 @@
 import { OIDC_SIGNIN, OIDC_ACCOUNT_DISABLED, OIDC_ROLE_REQUIRED, CONTROLLER } from '../uri.js'
 import { signIn } from '../handlers/oidc-handler.js'
+import journeyGoal from '../pages/journey-goal/route.js'
 import cancelRPIdentify from '../pages/recurring-payments/cancel/identify/route.js'
 import cancelRPDetails from '../pages/recurring-payments/cancel/details/route.js'
 import cancelRPConfirm from '../pages/recurring-payments/cancel/confirm/route.js'
@@ -31,7 +32,8 @@ const telesalesRoutes = [
     path: OIDC_ROLE_REQUIRED.uri,
     handler: async (request, h) => h.view(OIDC_ROLE_REQUIRED.page, { uri: { buy: CONTROLLER.uri } }),
     options: { auth: false }
-  }
+  },
+  ...journeyGoal
 ]
 
 if (process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
