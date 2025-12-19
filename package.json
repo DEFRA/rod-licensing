@@ -17,15 +17,16 @@
     "type": "git",
     "url": "git://github.com/DEFRA/rod-licensing.git"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "postinstall": "npm run lerna:bootstrap",
     "prepare": "husky install",
     "test": "jest",
     "test:only-changed": "jest --changedSince develop",
     "test:watch": "jest --watch --verbose --silent false",
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
-    "lerna:bootstrap": "lerna bootstrap",
     "docker:infrastructure": "docker-compose -f docker/infrastructure.yml build && docker stack deploy -c docker/infrastructure.yml rli",
     "docker:build-dev": "TAG=dev PROJECT_DOCKERFILE=Dockerfile.dev docker-compose -f docker/services.build.yml build",
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
@@ -49,7 +50,7 @@
     "husky": "7.0.4",
     "jest": "27.5.1",
     "jest-circus": "27.5.1",
-    "lerna": "5.6.2",
+    "lerna": "9.0.3",
     "lerna-changelog": "2.2.0",
     "lerna-update-wizard": "1.1.1",
     "lint-staged": "11.2.6",
