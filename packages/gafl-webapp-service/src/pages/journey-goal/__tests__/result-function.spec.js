@@ -16,18 +16,12 @@ describe('resultFunction', () => {
   )
 
   describe.each(['invalid-goal', 'unknown-journey-goal'])('handles unrecognised journey goal - %s', journeyGoal => {
-    it('returns PURCHASE_PERMISSION for unrecognised journey goal', async () => {
-      const mockRequest = getMockRequest(journeyGoal)
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe('purchase-permission')
-    })
-
-    it('logs a warning for unrecognised journey goal', async () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn')
+    it('logs an error for unrecognised journey goal', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error')
       const mockRequest = getMockRequest(journeyGoal)
       await resultFunction(mockRequest)
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown journey goal selected:', journeyGoal)
-      consoleWarnSpy.mockRestore()
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Unknown journey goal selected:', journeyGoal)
+      consoleErrorSpy.mockRestore()
     })
   })
 })

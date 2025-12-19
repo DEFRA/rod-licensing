@@ -13,8 +13,7 @@ const journeyGoalResult = async request => {
     case 'cancel-recurring-payment':
       return journeyGoalResults.CANCEL_RECURRING_PAYMENT
     default:
-      console.warn('Unknown journey goal selected:', request.payload['journey-goal'])
-      return journeyGoalResults.PURCHASE_PERMISSION
+      console.error('Unknown journey goal selected:', request.payload['journey-goal'])
   }
 }
 
