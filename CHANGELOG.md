@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.6 (2025-12-19)
+
+#### :bug: Bug Fix
+* `sqs-receiver-service`
+  * [#2269](https://github.com/DEFRA/rod-licensing/pull/2269) Fix error checking failed sqs messages from delete request ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.5 (2025-12-18)
 
 #### :rocket: Enhancement
