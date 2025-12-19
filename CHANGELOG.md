@@ -1,4 +1,22 @@
 
+## v1.65.0-rc.5 (2025-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2263](https://github.com/DEFRA/rod-licensing/pull/2263) Unhappy cancellation journey page 2 - no match ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.65.0-rc.4 (2025-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2262](https://github.com/DEFRA/rod-licensing/pull/2262) Unhappy cancellation journey page 2 - already cancelled ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.65.0-rc.2 (2025-12-05)
 
