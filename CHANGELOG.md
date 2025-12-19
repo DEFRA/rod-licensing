@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.7 (2025-12-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2265](https://github.com/DEFRA/rod-licensing/pull/2265) Journey Goal Page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.6 (2025-12-19)
 
 #### :bug: Bug Fix
