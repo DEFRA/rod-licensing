@@ -14,6 +14,7 @@ const journeyGoalResult = async request => {
       return journeyGoalResults.CANCEL_RECURRING_PAYMENT
     default:
       console.error('Unknown journey goal selected:', request.payload['journey-goal'])
+      return null
   }
 }
 

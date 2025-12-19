@@ -16,6 +16,12 @@ describe('resultFunction', () => {
   )
 
   describe.each(['invalid-goal', 'unknown-journey-goal'])('handles unrecognised journey goal - %s', journeyGoal => {
+    it('returns null for unrecognised journey goal', async () => {
+      const mockRequest = getMockRequest(journeyGoal)
+      const result = await resultFunction(mockRequest)
+      expect(result).toBeNull()
+    })
+
     it('logs an error for unrecognised journey goal', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error')
       const mockRequest = getMockRequest(journeyGoal)
