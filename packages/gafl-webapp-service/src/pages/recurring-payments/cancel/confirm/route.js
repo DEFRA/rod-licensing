@@ -1,14 +1,14 @@
 import pageRoute from '../../../../routes/page-route.js'
 import { CANCEL_RP_COMPLETE, CANCEL_RP_CONFIRM, CANCEL_RP_IDENTIFY } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { cacheDateFormat } from '../../../../processors/date-and-time-display.js'
+import { cacheDateFormat, dateDisplayFormat } from '../../../../processors/date-and-time-display.js'
 import moment from 'moment-timezone'
 
 const getData = async request => {
   const { permission } = await request.cache().helpers.transaction.getCurrentPermission()
 
   return {
-    licenceExpiry: moment(permission.endDate, cacheDateFormat, request.locale).format('Do MMMM, YYYY'),
+    licenceExpiry: moment(permission.endDate, cacheDateFormat, request.locale).format(dateDisplayFormat),
     uri: {
       cancelRpIdentify: addLanguageCodeToUri(request, CANCEL_RP_IDENTIFY.uri)
     }

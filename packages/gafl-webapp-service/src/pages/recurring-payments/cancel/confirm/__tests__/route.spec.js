@@ -2,6 +2,7 @@ import pageRoute from '../../../../../routes/page-route.js'
 import { CANCEL_RP_CONFIRM, CANCEL_RP_COMPLETE, CANCEL_RP_IDENTIFY } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 import moment from 'moment-timezone'
+import { dateDisplayFormat } from '../../../../../processors/date-and-time-display.js'
 
 require('../route.js')
 
@@ -17,6 +18,10 @@ jest.mock('../../../../../uri.js', () => ({
 }))
 jest.mock('../../../../../processors/uri-helper.js')
 jest.mock('moment-timezone')
+jest.mock('../../../../../processors/date-and-time-display.js', () => ({
+  cacheDateFormat: Symbol('cache date format'),
+  dateDisplayFormat: Symbol('date display format')
+}))
 
 describe('pageRoute receives expected arguments', () => {
   it('passes expected arguments to pageRoute', () => {
@@ -108,5 +113,10 @@ describe('getData function', () => {
     const data = await getData(mockRequest())
 
     expect(data.licenceExpiry).toEqual('19th November, 2025')
+  })
+
+  it.only('uses expected date format', async () => {
+    await getData(mockRequest())
+    expect(moment.mock.results[0].value.format).toHaveBeenCalledWith(dateDisplayFormat)
   })
 })
