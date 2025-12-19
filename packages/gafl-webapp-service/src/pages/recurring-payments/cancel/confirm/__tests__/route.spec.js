@@ -115,7 +115,7 @@ describe('getData function', () => {
     expect(data.licenceExpiry).toEqual('19th November, 2025')
   })
 
-  it.only('uses expected date format', async () => {
+  it('uses expected date format', async () => {
     await getData(mockRequest())
     expect(moment.mock.results[0].value.format).toHaveBeenCalledWith(dateDisplayFormat)
   })
