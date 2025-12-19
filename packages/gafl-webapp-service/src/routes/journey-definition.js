@@ -503,9 +503,9 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: CANCEL_RP_COMPLETE
-      },
-      backLink: CANCEL_RP_DETAILS.uri
-    }
+      }
+    },
+    backLink: CANCEL_RP_DETAILS.uri
   },
   {
     current: CANCEL_RP_AGREEMENT_NOT_FOUND,
