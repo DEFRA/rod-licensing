@@ -8,8 +8,8 @@ const getSampleDeleteMessageBatchResponse = (successfulIds, failedIds = []) => (
   ResponseMetadata: {
     RequestId: '00000000-0000-0000-0000-000000000000'
   },
-  Successful: successfulIds.map(Id => ({ Id })),
-  Failed: failedIds.map(Id => ({ Id }))
+  ...(successfulIds.length ? { Successful: successfulIds.map(Id => ({ Id })) } : {}),
+  ...(failedIds.length ? { Failed: failedIds.map(Id => ({ Id })) } : {})
 })
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -47,6 +47,32 @@ test('Delete messages successfully', async () => {
   ])
 
   expect(results).toBeUndefined()
+})
+
+test("Delete messages successfully doesn't generate an error", async () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error')
+  sqs.deleteMessageBatch.mockResolvedValueOnce(
+    getSampleDeleteMessageBatchResponse(['58f6f3c9-97f8-405a-a3a7-5ac467277521', '58f6f3c9-97f8-405a-a3a7-5ac467277522'])
+  )
+  await deleteMessages('http://0.0.0.0:0000/queue', [
+    {
+      id: '58f6f3c9-97f8-405a-a3a7-5ac467277521',
+      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b1',
+      status: 200
+    },
+    {
+      id: '58f6f3c9-97f8-405a-a3a7-5ac467277522',
+      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b2',
+      status: 200
+    },
+    {
+      id: '58f6f3c9-97f8-405a-a3a7-5ac467277523',
+      handle: '58f6f3c9-97f8-405a-a3a7-5ac467277521#03f003bc-7770-41c2-9217-aed966b578b3',
+      status: 4200
+    }
+  ])
+
+  expect(consoleErrorSpy).not.toHaveBeenCalled()
 })
 
 test('Delete messages nothing to delete', async () => {
