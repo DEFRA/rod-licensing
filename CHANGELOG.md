@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.8 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.7 (2025-12-19)
 
 #### :rocket: Enhancement
