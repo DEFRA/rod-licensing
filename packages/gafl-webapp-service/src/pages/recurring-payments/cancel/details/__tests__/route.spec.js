@@ -3,7 +3,7 @@ import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
 import moment from 'moment-timezone'
-import { cacheDateFormat } from '../../../../../processors/date-and-time-display.js'
+import { cacheDateFormat, dateDisplayFormat } from '../../../../../processors/date-and-time-display.js'
 
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
@@ -18,7 +18,8 @@ jest.mock('moment-timezone', () =>
   }))
 )
 jest.mock('../../../../../processors/date-and-time-display.js', () => ({
-  cacheDateFormat: Symbol('cache-date-format')
+  cacheDateFormat: Symbol('cache-date-format'),
+  dateDisplayFormat: Symbol('date-display-format')
 }))
 
 describe('route', () => {
@@ -186,7 +187,7 @@ describe('route', () => {
 
       await getData(mockRequest)
 
-      expect(format).toHaveBeenCalledWith('Do MMMM, YYYY')
+      expect(format).toHaveBeenCalledWith(dateDisplayFormat)
     })
   })
 })
