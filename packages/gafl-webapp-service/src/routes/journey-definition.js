@@ -518,9 +518,5 @@ export default [
   {
     current: CANCEL_RP_ALREADY_CANCELLED,
     backLink: CANCEL_RP_IDENTIFY.uri
-  },
-  {
-    current: CANCEL_RP_LICENCE_NOT_FOUND,
-    backLink: CANCEL_RP_IDENTIFY.uri
   }
 ]
