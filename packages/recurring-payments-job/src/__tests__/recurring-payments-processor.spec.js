@@ -54,7 +54,12 @@ const getPaymentStatusFailure = () => ({ state: { status: 'payment status failur
 const getPaymentStatusError = () => ({ state: { status: 'payment status error' } })
 const getMockPaymentRequestResponse = () => [
   {
-    entity: { agreementId: 'agreement-1' },
+    entity: {
+      agreementId: 'agreement-1',
+      recurringPayment: {
+        id: 'recurring-payment-1'
+      }
+    },
     expanded: {
       activePermission: {
         entity: {
@@ -303,6 +308,37 @@ describe('recurring-payments-processor', () => {
       await execute()
 
       expect(console.error).toHaveBeenCalledWith(expect.any(String), ...errors)
+    })
+
+    describe('when the error is caused by an invalid agreementId', () => {
+      it('logs out the ids', async () => {
+        jest.spyOn(console, 'log')
+        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
+        const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
+        sendPayment.mockRejectedValueOnce(oopsie)
+
+        try {
+          await execute()
+        } catch (e) {
+          expect(console.log).toHaveBeenCalledWith(
+            '%s is an invalid agreementId. Recurring payment %s will be cancelled',
+            'agreement-1',
+            'recurring-payment-1'
+          )
+        }
+      })
+
+      it('cancels the recurring payment', async () => {
+        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
+        const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
+        sendPayment.mockRejectedValueOnce(oopsie)
+
+        try {
+          await execute()
+        } catch (e) {
+          expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith('recurring-payment-1')
+        }
+      })
     })
   })
 
