@@ -35,5 +35,5 @@ export const cancelRecurringPaymentRequestParamsSchema = Joi.object({
 })
 
 export const cancelRecurringPaymentRequestQuerySchema = Joi.object({
-  reason: Joi.string().required().valid('Payment Failure')
+  reason: Joi.string().required().valid('Payment Failure', 'User Cancelled')
 })

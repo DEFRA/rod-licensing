@@ -185,8 +185,13 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
 })
 
 describe('cancelRecurringPaymentRequestQuerySchema', () => {
-  it('validates expected object', async () => {
+  it('validates expected object if the reason is Payment Failure', async () => {
     const sampleData = { reason: 'Payment Failure' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('validates expected object if the reason is User Cancelled', async () => {
+    const sampleData = { reason: 'User Cancelled' }
     expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
   })
 
