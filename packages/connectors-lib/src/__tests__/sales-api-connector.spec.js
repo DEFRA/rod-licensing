@@ -743,7 +743,10 @@ describe('sales-api-connector', () => {
   })
 
   describe('cancelRecurringPayment', () => {
-    describe.each([['id'], ['abc-123']])("Cancelling recurring payment id '%s'", id => {
+    describe.each([
+      ['id', 'User Cancelled', 'User%20Cancelled'],
+      ['abc-123', 'Because I Said So', 'Because%20I%20Said%20So']
+    ])("Cancelling recurring payment id '%s'", (id, reason, stringifiedReason) => {
       beforeEach(() => {
         fetch.mockReturnValueOnce({
           ok: true,
@@ -754,9 +757,19 @@ describe('sales-api-connector', () => {
       })
 
       it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.cancelRecurringPayment(id, reason)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}?reason=${stringifiedReason}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('defaults to Payment Failure if no reason is provided', async () => {
         await salesApi.cancelRecurringPayment(id)
 
-        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}`, {
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}?reason=Payment%20Failure`, {
           method: 'get',
           headers: expect.any(Object),
           timeout: 20000
@@ -764,7 +777,7 @@ describe('sales-api-connector', () => {
       })
 
       it('returns the expected response data', async () => {
-        const processedResult = await salesApi.cancelRecurringPayment(id)
+        const processedResult = await salesApi.cancelRecurringPayment(id, reason)
 
         expect(processedResult).toEqual({ id })
       })

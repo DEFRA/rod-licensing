@@ -337,8 +337,8 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const cancelRecurringPayment = async id => {
-  return exec2xxOrThrow(call(new URL(`/cancelRecurringPayment/${id}`, urlBase), 'get'))
+export const cancelRecurringPayment = async (id, reason = 'Payment Failure') => {
+  return exec2xxOrThrow(call(new URL(`/cancelRecurringPayment/${id}?${querystring.stringify({ reason })}`, urlBase), 'get'))
 }
 
 /**
