@@ -5,8 +5,8 @@ import '../route.js'
 jest.mock('../../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../../uri.js', () => ({
   CANCEL_RP_LICENCE_NOT_FOUND: {
-    page: Symbol('licence-not-found page'),
-    uri: Symbol('licence-not-found uri')
+    page: Symbol('cancel-rp-licence-not-found page'),
+    uri: Symbol('cancel-rp-licence-not-found uri')
   }
 }))
 
