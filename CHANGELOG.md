@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.13 (2026-01-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2278](https://github.com/DEFRA/rod-licensing/pull/2278) Backlink not working on rcp licence-not-found page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 
 
