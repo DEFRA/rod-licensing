@@ -9,7 +9,9 @@ const getData = async () => ({
 })
 
 export const validator = Joi.object({
-  'journey-goal': Joi.string().valid(Object.values(journeyGoalResults)).required()
+  'journey-goal': Joi.string()
+    .valid(...Object.values(journeyGoalResults))
+    .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 export default pageRoute(JOURNEY_GOAL.page, JOURNEY_GOAL.uri, validator, nextPage, getData)

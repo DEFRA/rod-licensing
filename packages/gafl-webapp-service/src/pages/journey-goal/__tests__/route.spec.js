@@ -61,7 +61,7 @@ describe('Journey Goal Page Route', () => {
     })
 
     it('specifies all values of JOURNEY_GOAL_RESULTS as valid options', () => {
-      expect(Joi.string.mock.results[0].value.valid).toHaveBeenCalledWith(expect.arrayContaining(Object.values(journeyGoalResults)))
+      expect(Joi.string.mock.results[0].value.valid).toHaveBeenCalledWith(...Object.values(journeyGoalResults))
     })
 
     it('sets journey-goal to be return value of string().valid().required()', () => {
