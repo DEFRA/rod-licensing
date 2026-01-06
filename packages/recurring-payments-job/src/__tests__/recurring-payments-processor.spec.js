@@ -28,7 +28,10 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     createPaymentJournal: jest.fn(),
     createTransaction: jest.fn(() => ({
       id: 'test-transaction-id',
-      cost: 30
+      cost: 30,
+      recurringPayment: {
+        id: 'recurring-payment-1'
+      }
     })),
     getDueRecurringPayments: jest.fn(() => []),
     getPaymentJournal: jest.fn(),
@@ -54,12 +57,7 @@ const getPaymentStatusFailure = () => ({ state: { status: 'payment status failur
 const getPaymentStatusError = () => ({ state: { status: 'payment status error' } })
 const getMockPaymentRequestResponse = () => [
   {
-    entity: {
-      agreementId: 'agreement-1',
-      recurringPayment: {
-        id: 'recurring-payment-1'
-      }
-    },
+    entity: { agreementId: 'agreement-1' },
     expanded: {
       activePermission: {
         entity: {
@@ -317,15 +315,13 @@ describe('recurring-payments-processor', () => {
         const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
         sendPayment.mockRejectedValueOnce(oopsie)
 
-        try {
-          await execute()
-        } catch (e) {
-          expect(console.log).toHaveBeenCalledWith(
-            '%s is an invalid agreementId. Recurring payment %s will be cancelled',
-            'agreement-1',
-            'recurring-payment-1'
-          )
-        }
+        try { await execute() } catch (e) {}
+
+        expect(console.log).toHaveBeenCalledWith(
+          '%s is an invalid agreementId. Recurring payment %s will be cancelled',
+          'agreement-1',
+          'recurring-payment-1'
+        )
       })
 
       it('cancels the recurring payment', async () => {
@@ -333,11 +329,9 @@ describe('recurring-payments-processor', () => {
         const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
         sendPayment.mockRejectedValueOnce(oopsie)
 
-        try {
-          await execute()
-        } catch (e) {
-          expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith('recurring-payment-1')
-        }
+        try { await execute() } catch (e) {}
+
+        expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith('recurring-payment-1')
       })
     })
 
