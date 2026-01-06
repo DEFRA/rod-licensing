@@ -23,7 +23,7 @@ afterEach(() => {
   jest.restoreAllMocks()
 })
 
-function mockMoment(fixedDate) {
+function mockMoment (fixedDate) {
   jest.spyOn(moment, 'now').mockImplementation(() => fixedDate.valueOf())
 }
 
@@ -87,7 +87,7 @@ describe('The licence start time page', () => {
 
     // For minHour = 0, value="0" should be disabled
     const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
-    const disabledFragment = 'name="licence-start-time" type="radio" value="0" disabled>';
+    const disabledFragment = 'name="licence-start-time" type="radio" value="0" disabled>'
     expect(response.payload).toContain(disabledFragment)
   })
 
