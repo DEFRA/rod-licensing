@@ -340,6 +340,20 @@ describe('recurring-payments-processor', () => {
         }
       })
     })
+
+    describe('when the error is caused by a reason other than invalid agreementId', () => {
+      it('does not try to cancel the recurring payment', async () => {
+        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
+        const oopsie = new Error('The moon blew up without warning and for no apparent reason')
+        sendPayment.mockRejectedValueOnce(oopsie)
+
+        try {
+          await execute()
+        } catch (e) {
+          expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalledWith('recurring-payment-1')
+        }
+      })
+    })
   })
 
   describe('When payment status request throws an error...', () => {
