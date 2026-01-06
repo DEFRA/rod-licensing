@@ -89,20 +89,25 @@ const createNewTransaction = async (referenceNumber, recurringPayment) => {
 
 const takeRecurringPayment = async (agreementId, transaction) => {
   const preparedPayment = preparePayment(agreementId, transaction)
-  try {
-    const payment = await sendPayment(preparedPayment)
-    await salesApi.createPaymentJournal(transaction.id, {
-      paymentReference: payment.payment_id,
-      paymentTimestamp: payment.created_date,
-      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
-    })
+  const payment = await takePaymentIfValid(preparedPayment, agreementId, transaction)
 
-    return {
-      agreementId,
-      paymentId: payment.payment_id,
-      created_date: payment.created_date,
-      transaction
-    }
+  await salesApi.createPaymentJournal(transaction.id, {
+    paymentReference: payment.payment_id,
+    paymentTimestamp: payment.created_date,
+    paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+  })
+
+  return {
+    agreementId,
+    paymentId: payment.payment_id,
+    created_date: payment.created_date,
+    transaction
+  }
+}
+
+const takePaymentIfValid = async (preparedPayment, agreementId, transaction) => {
+  try {
+    return await sendPayment(preparedPayment)
   } catch (error) {
     if (error.message.includes('Invalid attribute value: agreement_id. Agreement does not exist')) {
       console.log('%s is an invalid agreementId. Recurring payment %s will be cancelled', agreementId, transaction.recurringPayment.id)

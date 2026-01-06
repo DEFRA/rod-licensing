@@ -315,7 +315,9 @@ describe('recurring-payments-processor', () => {
         const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
         sendPayment.mockRejectedValueOnce(oopsie)
 
-        try { await execute() } catch (e) {}
+        try {
+          await execute()
+        } catch (e) {}
 
         expect(console.log).toHaveBeenCalledWith(
           '%s is an invalid agreementId. Recurring payment %s will be cancelled',
@@ -329,7 +331,9 @@ describe('recurring-payments-processor', () => {
         const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
         sendPayment.mockRejectedValueOnce(oopsie)
 
-        try { await execute() } catch (e) {}
+        try {
+          await execute()
+        } catch (e) {}
 
         expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith('recurring-payment-1')
       })
