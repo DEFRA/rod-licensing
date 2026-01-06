@@ -1,18 +1,15 @@
 {% extends "layout.njk" %}
-
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "date-input/macro.njk" import govukDateInput %}
 {% from "input/macro.njk" import govukInput %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "page-title.njk" import pageTitle %}
-
 {% set title = mssgs.identify_title %}
-
-{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
-
-{%
-    set errorMap = {
+{% block pageTitle %}
+    {{ pageTitle(title, error, mssgs) }}
+{% endblock %}
+{% set errorMap = {
         'referenceNumber' : {
             'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
             'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' }
@@ -52,9 +49,7 @@
             'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_min },
             'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
         }
-    }
-%}
-
+    } %}
 {% set dateInputItems = [
     {
       label: mssgs.date_day,
@@ -77,15 +72,13 @@
       value: payload['date-of-birth-year'],
       attributes: { maxlength : 4 }
     }
-  ]
-%}
-
+  ] %}
 {% block content %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
-        <form method="post" class="govuk-!-margin-bottom-6">
-            {% call govukFieldset({
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+            <form method="post" class="govuk-!-margin-bottom-6">
+                {% call govukFieldset({
               describedBy: "ref-hint date-of-birth-hint postcode-hint",
               legend: {
                 text: title,
@@ -93,10 +86,8 @@
                 isPageHeading: true
               }
             }) %}
-
                 <p class="govuk-body-m">{{ mssgs.identify_body_protect_info }}</p>
                 <h2 class="govuk-heading-m">{{ mssgs.identify_subheading_confirm }}</h2>
-
                 <div id="ref-rw" class="govuk-body-m">
                     {{ govukInput({
                       id: "ref",
@@ -118,31 +109,51 @@
                       value: data.referenceNumber if data.referenceNumber else payload.referenceNumber
                     }) }}
                 </div>
-
                 <div id="ref-ro" class="govuk-body-m initially-hidden">
                     <span class="govuk-!-font-weight-bold">{{ mssgs.identify_label_licence_ending }}</span>
-                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }}
-                        &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.change_licence_number }}</a>
+                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }} &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.change_licence_number }}</a>
                     </span>
                 </div>
-
+                {% set dobErrorMessage = undefined %}
+                {% if error['full-date'] and errorMap['full-date'] and errorMap['full-date'][error['full-date']] %}
+                    {% set dobErrorMessage = { text: errorMap['full-date'][error['full-date']].text } %}
+                {% elif error['day-and-month'] and errorMap['day-and-month'] and errorMap['day-and-month'][error['day-and-month']] %}
+                    {% set dobErrorMessage = { text: errorMap['day-and-month'][error['day-and-month']].text } %}
+                {% elif error['day-and-year'] and errorMap['day-and-year'] and errorMap['day-and-year'][error['day-and-year']] %}
+                    {% set dobErrorMessage = { text: errorMap['day-and-year'][error['day-and-year']].text } %}
+                {% elif error['month-and-year'] and errorMap['month-and-year'] and errorMap['month-and-year'][error['month-and-year']] %}
+                    {% set dobErrorMessage = { text: errorMap['month-and-year'][error['month-and-year']].text } %}
+                {% elif error['day'] and errorMap['day'] and errorMap['day'][error['day']] %}
+                    {% set dobErrorMessage = { text: errorMap['day'][error['day']].text } %}
+                {% elif error['month'] and errorMap['month'] and errorMap['month'][error['month']] %}
+                    {% set dobErrorMessage = { text: errorMap['month'][error['month']].text } %}
+                {% elif error['year'] and errorMap['year'] and errorMap['year'][error['year']] %}
+                    {% set dobErrorMessage = { text: errorMap['year'][error['year']].text } %}
+                {% elif error['non-numeric'] and errorMap['non-numeric'] and errorMap['non-numeric'][error['non-numeric']] %}
+                    {% set dobErrorMessage = { text: errorMap['non-numeric'][error['non-numeric']].text } %}
+                {% elif error['invalid-date'] and errorMap['invalid-date'] and errorMap['invalid-date'][error['invalid-date']] %}
+                    {% set dobErrorMessage = { text: errorMap['invalid-date'][error['invalid-date']].text } %}
+                {% elif error['date-range'] == 'date.min' and errorMap['date-range'] and errorMap['date-range']['date.min'] %}
+                    {% set dobErrorMessage = { text: errorMap['date-range']['date.min'].text } %}
+                {% elif error['date-range'] == 'date.max' and errorMap['date-range'] and errorMap['date-range']['date.max'] %}
+                    {% set dobErrorMessage = { text: errorMap['date-range']['date.max'].text } %}
+                {% endif %}
                 {{ govukDateInput({
-                  id: "date-of-birth",
-                  namePrefix: "date-of-birth",
-                  items: dateInputItems,
-                  fieldset: {
-                      legend: {
-                            text: mssgs.licence_summary_dob,
-                            isPageHeading: false,
-                            classes: "govuk-!-font-weight-bold govuk-label"
-                      }
-                  },
-                  errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
-                  hint: {
-                    text: mssgs.enter_dob_example
-                  }
+                        id: "date-of-birth",
+                        namePrefix: "date-of-birth",
+                        items: dateInputItems,
+                        fieldset: {
+                                legend: {
+                                            text: mssgs.licence_summary_dob,
+                                            isPageHeading: false,
+                                            classes: "govuk-!-font-weight-bold govuk-label"
+                                }
+                        },
+                        errorMessage: dobErrorMessage,
+                        hint: {
+                            text: mssgs.enter_dob_example
+                        }
                 }) }}
-
                 {{ govukInput({
                   label: {
                     text: mssgs.address_entry_content_postcode,
@@ -157,9 +168,7 @@
                   attributes: { maxlength: 10 },
                   errorMessage: { text: mssgs.enter_postcode } if error['postcode']
                 }) }}
-
-            {% endcall %}
-
+                {% endcall %}
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
@@ -167,35 +176,54 @@
                     text: mssgs.continue,
                     classes: "govuk-!-margin-top-1"
                 }) }}
-
-            {{ csrf() }}
-        </form>
-        <div>
-            <h2 class="govuk-heading-s">{{ mssgs.identify_subheading_problem }}</h2>
-            <p class="govuk-body">{{ mssgs.identify_problem_body }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.identify_problem_link }}</a></p>
+                {{ csrf() }}
+            </form>
+            <div>
+                <h2 class="govuk-heading-s">{{ mssgs.identify_subheading_problem }}</h2>
+                <p class="govuk-body">{{ mssgs.identify_problem_body }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.identify_problem_link }}</a>
+                </p>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
-
 {% block bodyEnd %}
     <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
-    <script nonce="{{nonce}}" type="module">
-        import { initAll } from '/public/javascript/govuk-frontend-min.js'
+    <script nonce="{{ nonce }}" type="module">
+        import {initAll} from '/public/javascript/govuk-frontend-min.js'
         initAll()
     </script>
-    <script nonce={{nonce}}>(function () {
-        if ({{ true if data.referenceNumber else false }} && !'{{ error.referenceNumber }}') {
-            document.getElementById("ref-ro").style.display = "block"
-            document.getElementById("ref-rw").style.display = "none"
-         } else {
-            document.getElementById("ref-ro").style.display = "none"
-            document.getElementById("ref-rw").style.display = "block"
-        }
-        document.getElementById("change").addEventListener("click", function () {
-            document.getElementById("ref-ro").style.display = "none"
-            document.getElementById("ref-rw").style.display = "block"
-            document.getElementById("ref").focus()
-        })
-    })()</script>
+    <script nonce={{ nonce }}>
+        (function () {
+            if ({{ true if data.referenceNumber else false }} && !'{{ error.referenceNumber }}') {
+                document
+                    .getElementById("ref-ro")
+                    .style
+                    .display = "block"
+                document
+                    .getElementById("ref-rw")
+                    .style
+                    .display = "none"
+            } else {
+                document
+                    .getElementById("ref-ro")
+                    .style
+                    .display = "none"
+                document
+                    .getElementById("ref-rw")
+                    .style
+                    .display = "block"
+            }
+            document.getElementById("change").addEventListener("click", function () {
+                document
+                    .getElementById("ref-ro")
+                    .style
+                    .display = "none"
+                document
+                    .getElementById("ref-rw")
+                    .style
+                    .display = "block"
+                document.getElementById("ref").focus()
+            })
+        })()
+    </script>
 {% endblock %}

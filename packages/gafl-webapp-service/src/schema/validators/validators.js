@@ -59,20 +59,19 @@ export const renewalStartDateValidator = (payload, options) => {
 export const getDateErrorFlags = error => {
   const errorFlags = { isDayError: false, isMonthError: false, isYearError: false }
   const commonErrors = ['full-date', 'invalid-date', 'date-range', 'non-numeric']
-
   if (error) {
-    const [errorKey] = Object.keys(error)
-
-    if (['day-and-month', 'day-and-year', 'day', ...commonErrors].includes(errorKey)) {
-      errorFlags.isDayError = true
-    }
-    if (['day-and-month', 'month-and-year', 'month', ...commonErrors].includes(errorKey)) {
-      errorFlags.isMonthError = true
-    }
-    if (['day-and-year', 'month-and-year', 'year', ...commonErrors].includes(errorKey)) {
-      errorFlags.isYearError = true
+    const errorKeys = Object.keys(error)
+    for (const errorKey of errorKeys) {
+      if (['day-and-month', 'day-and-year', 'day', ...commonErrors].includes(errorKey)) {
+        errorFlags.isDayError = true
+      }
+      if (['day-and-month', 'month-and-year', 'month', ...commonErrors].includes(errorKey)) {
+        errorFlags.isMonthError = true
+      }
+      if (['day-and-year', 'month-and-year', 'year', ...commonErrors].includes(errorKey)) {
+        errorFlags.isYearError = true
+      }
     }
   }
-
   return errorFlags
 }
