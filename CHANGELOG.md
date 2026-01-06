@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.15 (2026-01-06)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2264](https://github.com/DEFRA/rod-licensing/pull/2264) RP job should cancel invalid agreementIds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.65.0-rc.13 (2026-01-02)
 
