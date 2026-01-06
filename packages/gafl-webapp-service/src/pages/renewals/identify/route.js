@@ -39,8 +39,8 @@ export const getData = async request => {
 }
 
 export const validator = payload => {
-  let joiError = null;
-  let dobError = null;
+  let joiError = null
+  let dobError = null
 
   try {
     Joi.assert(
@@ -52,29 +52,33 @@ export const validator = payload => {
         referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
         postcode: validation.contact.createOverseasPostcodeValidator(Joi)
       }).options({ abortEarly: false })
-    );
+    )
   } catch (err) {
-    joiError = err;
+    joiError = err
   }
 
   try {
-    dateOfBirthValidator(payload);
+    dateOfBirthValidator(payload)
   } catch (err) {
-    dobError = err;
+    dobError = err
   }
 
   if (joiError && dobError) {
     const mergedDetails = [
       ...(Array.isArray(joiError.details) ? joiError.details : []),
       ...(Array.isArray(dobError.details) ? dobError.details : [])
-    ];
-    const error = new Error('expected error');
-    error.details = mergedDetails;
-    throw error;
+    ]
+    const error = new Error('expected error')
+    error.details = mergedDetails
+    throw error
   }
 
-  if (joiError) throw joiError;
-  if (dobError) throw dobError;
+  if (joiError) {
+    throw joiError
+  }
+  if (dobError) {
+    throw dobError
+  }
 }
 
 export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)
