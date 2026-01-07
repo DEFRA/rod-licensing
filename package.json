@@ -47,7 +47,7 @@
     "clone-deep": "4.0.1",
     "dynamics-web-api": "1.7.3",
     "eslint": "7.32.0",
-    "husky": "7.0.4",
+    "husky": "^9.1.7",
     "jest": "27.5.1",
     "jest-circus": "27.5.1",
     "lerna": "9.0.3",

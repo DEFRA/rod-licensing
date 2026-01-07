@@ -44,7 +44,7 @@ const copyRobots = () => {
 
 const copyFrontendJs = () => {
   return gulp
-    .src(`${paths.govUk}govuk-frontend.min.js`)
+    .src(`${paths.govUk}govuk-frontend.min.js`, { allowEmpty: true })
     .pipe(concat('govuk-frontend.js'))
     .pipe(minify({ noSource: true }))
     .pipe(gulp.dest(`${paths.public}javascript`))
