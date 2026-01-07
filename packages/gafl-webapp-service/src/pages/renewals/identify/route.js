@@ -77,7 +77,9 @@ export const getData = async request => {
       }
       return error[type] && errorMap[type] && errorMap[type][error[type]]
     })
-    if (!found) { return undefined }
+    if (!found) {
+      return undefined
+    }
     const [type, subType] = found
     if (type === DATE_RANGE) {
       return { text: errorMap[type][subType].text }
@@ -144,8 +146,12 @@ export const validator = payload => {
     throw error
   }
 
-  if (joiError) { throw joiError }
-  if (dobError) { throw dobError }
+  if (joiError) {
+    throw joiError
+  }
+  if (dobError) {
+    throw dobError
+  }
 }
 
 export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)
