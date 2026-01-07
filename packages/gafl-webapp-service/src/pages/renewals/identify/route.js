@@ -22,6 +22,7 @@ export const getData = async request => {
   }
 
   const error = page?.error || {}
+  const DATE_RANGE = 'date-range'
   const errorMap = {
     'full-date': {
       'object.missing': { text: request.i18n.getCatalog().dob_error }
@@ -50,7 +51,7 @@ export const getData = async request => {
     'invalid-date': {
       'any.custom': { text: request.i18n.getCatalog().dob_error_date_real }
     },
-    'date-range': {
+    [DATE_RANGE]: {
       'date.min': { text: request.i18n.getCatalog().dob_error_year_min },
       'date.max': { text: request.i18n.getCatalog().dob_error_year_max }
     }
@@ -67,18 +68,18 @@ export const getData = async request => {
       ['year'],
       ['non-numeric'],
       ['invalid-date'],
-      ['date-range', 'date.min'],
-      ['date-range', 'date.max']
+      [DATE_RANGE, 'date.min'],
+      [DATE_RANGE, 'date.max']
     ]
     const found = errorTypes.find(([type, subType]) => {
-      if (type === 'date-range') {
+      if (type === DATE_RANGE) {
         return error[type] === subType && errorMap[type] && errorMap[type][subType]
       }
       return error[type] && errorMap[type] && errorMap[type][error[type]]
     })
-    if (!found) return undefined
+    if (!found) { return undefined }
     const [type, subType] = found
-    if (type === 'date-range') {
+    if (type === DATE_RANGE) {
       return { text: errorMap[type][subType].text }
     }
     return { text: errorMap[type][error[type]].text }
@@ -143,8 +144,8 @@ export const validator = payload => {
     throw error
   }
 
-  if (joiError) throw joiError
-  if (dobError) throw dobError
+  if (joiError) { throw joiError }
+  if (dobError) { throw dobError }
 }
 
 export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)
