@@ -35,13 +35,13 @@ export const getData = async request => {
     'month-and-year': {
       'object.missing': { text: request.i18n.getCatalog().dob_error_missing_month_and_year }
     },
-    'day': {
+    day: {
       'any.required': { text: request.i18n.getCatalog().dob_error_missing_day }
     },
-    'month': {
+    month: {
       'any.required': { text: request.i18n.getCatalog().dob_error_missing_month }
     },
-    'year': {
+    year: {
       'any.required': { text: request.i18n.getCatalog().dob_error_missing_year }
     },
     'non-numeric': {
