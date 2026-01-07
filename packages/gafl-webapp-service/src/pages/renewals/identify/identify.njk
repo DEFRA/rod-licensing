@@ -114,30 +114,6 @@
                     <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }} &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.change_licence_number }}</a>
                     </span>
                 </div>
-                {% set dobErrorMessage = undefined %}
-                {% if error['full-date'] and errorMap['full-date'] and errorMap['full-date'][error['full-date']] %}
-                    {% set dobErrorMessage = { text: errorMap['full-date'][error['full-date']].text } %}
-                {% elif error['day-and-month'] and errorMap['day-and-month'] and errorMap['day-and-month'][error['day-and-month']] %}
-                    {% set dobErrorMessage = { text: errorMap['day-and-month'][error['day-and-month']].text } %}
-                {% elif error['day-and-year'] and errorMap['day-and-year'] and errorMap['day-and-year'][error['day-and-year']] %}
-                    {% set dobErrorMessage = { text: errorMap['day-and-year'][error['day-and-year']].text } %}
-                {% elif error['month-and-year'] and errorMap['month-and-year'] and errorMap['month-and-year'][error['month-and-year']] %}
-                    {% set dobErrorMessage = { text: errorMap['month-and-year'][error['month-and-year']].text } %}
-                {% elif error['day'] and errorMap['day'] and errorMap['day'][error['day']] %}
-                    {% set dobErrorMessage = { text: errorMap['day'][error['day']].text } %}
-                {% elif error['month'] and errorMap['month'] and errorMap['month'][error['month']] %}
-                    {% set dobErrorMessage = { text: errorMap['month'][error['month']].text } %}
-                {% elif error['year'] and errorMap['year'] and errorMap['year'][error['year']] %}
-                    {% set dobErrorMessage = { text: errorMap['year'][error['year']].text } %}
-                {% elif error['non-numeric'] and errorMap['non-numeric'] and errorMap['non-numeric'][error['non-numeric']] %}
-                    {% set dobErrorMessage = { text: errorMap['non-numeric'][error['non-numeric']].text } %}
-                {% elif error['invalid-date'] and errorMap['invalid-date'] and errorMap['invalid-date'][error['invalid-date']] %}
-                    {% set dobErrorMessage = { text: errorMap['invalid-date'][error['invalid-date']].text } %}
-                {% elif error['date-range'] == 'date.min' and errorMap['date-range'] and errorMap['date-range']['date.min'] %}
-                    {% set dobErrorMessage = { text: errorMap['date-range']['date.min'].text } %}
-                {% elif error['date-range'] == 'date.max' and errorMap['date-range'] and errorMap['date-range']['date.max'] %}
-                    {% set dobErrorMessage = { text: errorMap['date-range']['date.max'].text } %}
-                {% endif %}
                 {{ govukDateInput({
                         id: "date-of-birth",
                         namePrefix: "date-of-birth",

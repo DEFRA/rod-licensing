@@ -21,12 +21,76 @@ export const getData = async request => {
     }
   }
 
+  const error = page?.error || {}
+  const errorMap = {
+    'full-date': {
+      'object.missing': { text: request.i18n.getCatalog().dob_error }
+    },
+    'day-and-month': {
+      'object.missing': { text: request.i18n.getCatalog().dob_error_missing_day_and_month }
+    },
+    'day-and-year': {
+      'object.missing': { text: request.i18n.getCatalog().dob_error_missing_day_and_year }
+    },
+    'month-and-year': {
+      'object.missing': { text: request.i18n.getCatalog().dob_error_missing_month_and_year }
+    },
+    'day': {
+      'any.required': { text: request.i18n.getCatalog().dob_error_missing_day }
+    },
+    'month': {
+      'any.required': { text: request.i18n.getCatalog().dob_error_missing_month }
+    },
+    'year': {
+      'any.required': { text: request.i18n.getCatalog().dob_error_missing_year }
+    },
+    'non-numeric': {
+      'number.base': { text: request.i18n.getCatalog().dob_error_non_numeric }
+    },
+    'invalid-date': {
+      'any.custom': { text: request.i18n.getCatalog().dob_error_date_real }
+    },
+    'date-range': {
+      'date.min': { text: request.i18n.getCatalog().dob_error_year_min },
+      'date.max': { text: request.i18n.getCatalog().dob_error_year_max }
+    }
+  }
+
+  const dobErrorMessage = (() => {
+    const errorTypes = [
+      ['full-date'],
+      ['day-and-month'],
+      ['day-and-year'],
+      ['month-and-year'],
+      ['day'],
+      ['month'],
+      ['year'],
+      ['non-numeric'],
+      ['invalid-date'],
+      ['date-range', 'date.min'],
+      ['date-range', 'date.max']
+    ]
+    const found = errorTypes.find(([type, subType]) => {
+      if (type === 'date-range') {
+        return error[type] === subType && errorMap[type] && errorMap[type][subType]
+      }
+      return error[type] && errorMap[type] && errorMap[type][error[type]]
+    })
+    if (!found) return undefined
+    const [type, subType] = found
+    if (type === 'date-range') {
+      return { text: errorMap[type][subType].text }
+    }
+    return { text: errorMap[type][error[type]].text }
+  })()
+
   const pageData = {
     referenceNumber: permission.referenceNumber,
     uri: {
       new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     },
-    ...getDateErrorFlags(page?.error)
+    ...getDateErrorFlags(page?.error),
+    dobErrorMessage
   }
 
   if (page?.error) {
@@ -39,29 +103,35 @@ export const getData = async request => {
 }
 
 export const validator = payload => {
-  let joiError = null
-  let dobError = null
-
-  try {
-    Joi.assert(
-      {
-        postcode: payload.postcode,
-        referenceNumber: payload.referenceNumber
-      },
-      Joi.object({
-        referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
-        postcode: validation.contact.createOverseasPostcodeValidator(Joi)
-      }).options({ abortEarly: false })
-    )
-  } catch (err) {
-    joiError = err
+  const getJoiError = () => {
+    try {
+      Joi.assert(
+        {
+          postcode: payload.postcode,
+          referenceNumber: payload.referenceNumber
+        },
+        Joi.object({
+          referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
+          postcode: validation.contact.createOverseasPostcodeValidator(Joi)
+        }).options({ abortEarly: false })
+      )
+      return null
+    } catch (err) {
+      return err
+    }
   }
 
-  try {
-    dateOfBirthValidator(payload)
-  } catch (err) {
-    dobError = err
+  const getDobError = () => {
+    try {
+      dateOfBirthValidator(payload)
+      return null
+    } catch (err) {
+      return err
+    }
   }
+
+  const joiError = getJoiError()
+  const dobError = getDobError()
 
   if (joiError && dobError) {
     const mergedDetails = [
@@ -73,12 +143,8 @@ export const validator = payload => {
     throw error
   }
 
-  if (joiError) {
-    throw joiError
-  }
-  if (dobError) {
-    throw dobError
-  }
+  if (joiError) throw joiError
+  if (dobError) throw dobError
 }
 
 export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)
