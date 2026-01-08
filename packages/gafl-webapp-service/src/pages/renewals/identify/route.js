@@ -32,9 +32,7 @@ export const getData = async request => {
 
 const validatePermissionNumberHelper = async (permission, request) => {
   if (permission.referenceNumber) {
-    const result = validation.permission
-      .permissionNumberUniqueComponentValidator(Joi)
-      .validate(permission.referenceNumber)
+    const result = validation.permission.permissionNumberUniqueComponentValidator(Joi).validate(permission.referenceNumber)
     if (result.error) {
       request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
       throw new GetDataRedirect(addLanguageCodeToUri(request, IDENTIFY.uri))
