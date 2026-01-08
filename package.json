@@ -21,7 +21,7 @@
     "packages/*"
   ],
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "[[ $CI != 'true' ]] && husky install || echo 'Skipping husky install in CI environment'",
     "test": "jest",
     "test:only-changed": "jest --changedSince develop",
     "test:watch": "jest --watch --verbose --silent false",
