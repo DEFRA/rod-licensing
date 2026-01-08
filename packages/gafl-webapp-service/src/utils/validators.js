@@ -15,7 +15,7 @@ export const runValidators = (validators, payload) => {
 
   if (errors.length === 1) throw errors[0]
 
-  const mergedDetails = errors.flatMap(e => Array.isArray(e.details) ? e.details : [])
+  const mergedDetails = errors.flatMap(e => (Array.isArray(e.details) ? e.details : []))
   const error = new Error('expected error')
   error.details = mergedDetails
   throw error
