@@ -11,7 +11,7 @@ export const getData = async request => {
   const permission = await request.cache().helpers.status.getCurrentPermission()
   const page = await request.cache().helpers.page.getCurrentPermission(IDENTIFY.page)
 
-  await validatePermissionNumber(permission, request)
+  await validatePermissionNumberHelper(permission, request)
   const error = page?.error || {}
   const dobErrorMessage = getDobErrorMessage(error, request)
   const pageData = {
@@ -30,12 +30,12 @@ export const getData = async request => {
   return pageData
 }
 
-const validatePermissionNumber = (permission, request) => {
+const validatePermissionNumberHelper = async (permission, request) => {
   if (permission.referenceNumber) {
-    const validatePermissionNumber = validation.permission
+    const result = validation.permission
       .permissionNumberUniqueComponentValidator(Joi)
       .validate(permission.referenceNumber)
-    if (validatePermissionNumber.error) {
+    if (result.error) {
       request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
       throw new GetDataRedirect(addLanguageCodeToUri(request, IDENTIFY.uri))
     }
