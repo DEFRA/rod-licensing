@@ -5,6 +5,7 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../schema/validators/validators.js'
+import { runValidators } from '../../../utils/validators.js'
 
 export const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
@@ -106,52 +107,23 @@ export const getData = async request => {
 }
 
 export const validator = payload => {
-  const getJoiError = () => {
-    try {
-      Joi.assert(
-        {
-          postcode: payload.postcode,
-          referenceNumber: payload.referenceNumber
-        },
-        Joi.object({
-          referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
-          postcode: validation.contact.createOverseasPostcodeValidator(Joi)
-        }).options({ abortEarly: false })
-      )
-      return null
-    } catch (err) {
-      return err
-    }
-  }
-
-  const getDobError = () => {
-    try {
-      dateOfBirthValidator(payload)
-      return null
-    } catch (err) {
-      return err
-    }
-  }
-
-  const joiError = getJoiError()
-  const dobError = getDobError()
-
-  if (joiError && dobError) {
-    const mergedDetails = [
-      ...(Array.isArray(joiError.details) ? joiError.details : []),
-      ...(Array.isArray(dobError.details) ? dobError.details : [])
-    ]
-    const error = new Error('expected error')
-    error.details = mergedDetails
-    throw error
-  }
-
-  if (joiError) {
-    throw joiError
-  }
-  if (dobError) {
-    throw dobError
-  }
+  runValidators(
+    [
+      p =>
+        Joi.assert(
+          {
+            postcode: p.postcode,
+            referenceNumber: p.referenceNumber
+          },
+          Joi.object({
+            referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
+            postcode: validation.contact.createOverseasPostcodeValidator(Joi)
+          }).options({ abortEarly: false })
+        ),
+      dateOfBirthValidator
+    ],
+    payload
+  )
 }
 
 export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)
