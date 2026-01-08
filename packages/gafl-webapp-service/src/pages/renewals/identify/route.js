@@ -8,21 +8,41 @@ import { dateOfBirthValidator, getDateErrorFlags } from '../../../schema/validat
 import { runValidators } from '../../../utils/validators.js'
 
 export const getData = async request => {
-  // If we are supplied a permission number, validate it or throw 400
   const permission = await request.cache().helpers.status.getCurrentPermission()
   const page = await request.cache().helpers.page.getCurrentPermission(IDENTIFY.page)
 
+  await validatePermissionNumber(permission, request)
+  const error = page?.error || {}
+  const dobErrorMessage = getDobErrorMessage(error, request)
+  const pageData = {
+    referenceNumber: permission.referenceNumber,
+    uri: {
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
+    },
+    ...getDateErrorFlags(page?.error),
+    dobErrorMessage
+  }
+  if (page?.error) {
+    const [errorKey] = Object.keys(page.error)
+    const errorValue = page.error[errorKey]
+    pageData.error = { errorKey, errorValue }
+  }
+  return pageData
+}
+
+const validatePermissionNumber = (permission, request) => {
   if (permission.referenceNumber) {
     const validatePermissionNumber = validation.permission
       .permissionNumberUniqueComponentValidator(Joi)
       .validate(permission.referenceNumber)
     if (validatePermissionNumber.error) {
-      await request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
+      request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
       throw new GetDataRedirect(addLanguageCodeToUri(request, IDENTIFY.uri))
     }
   }
+}
 
-  const error = page?.error || {}
+const getDobErrorMessage = (error, request) => {
   const DATE_RANGE = 'date-range'
   const errorMap = {
     'full-date': {
@@ -57,54 +77,33 @@ export const getData = async request => {
       'date.max': { text: request.i18n.getCatalog().dob_error_year_max }
     }
   }
-
-  const dobErrorMessage = (() => {
-    const errorTypes = [
-      ['full-date'],
-      ['day-and-month'],
-      ['day-and-year'],
-      ['month-and-year'],
-      ['day'],
-      ['month'],
-      ['year'],
-      ['non-numeric'],
-      ['invalid-date'],
-      [DATE_RANGE, 'date.min'],
-      [DATE_RANGE, 'date.max']
-    ]
-    // Avoid shadowing by using different variable names in the callback
-    const found = errorTypes.find(([errType, errSubType]) => {
-      if (errType === DATE_RANGE) {
-        return error[errType] === errSubType && errorMap[errType]?.[errSubType]
-      }
-      return error[errType] && errorMap[errType]?.[error[errType]]
-    })
-    if (!found) {
-      return undefined
+  const errorTypes = [
+    ['full-date'],
+    ['day-and-month'],
+    ['day-and-year'],
+    ['month-and-year'],
+    ['day'],
+    ['month'],
+    ['year'],
+    ['non-numeric'],
+    ['invalid-date'],
+    [DATE_RANGE, 'date.min'],
+    [DATE_RANGE, 'date.max']
+  ]
+  const found = errorTypes.find(([errType, errSubType]) => {
+    if (errType === DATE_RANGE) {
+      return error[errType] === errSubType && errorMap[errType]?.[errSubType]
     }
-    const [foundType, foundSubType] = found
-    if (foundType === DATE_RANGE) {
-      return { text: errorMap[foundType]?.[foundSubType]?.text }
-    }
-    return { text: errorMap[foundType]?.[error[foundType]]?.text }
-  })()
-
-  const pageData = {
-    referenceNumber: permission.referenceNumber,
-    uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    },
-    ...getDateErrorFlags(page?.error),
-    dobErrorMessage
+    return error[errType] && errorMap[errType]?.[error[errType]]
+  })
+  if (!found) {
+    return undefined
   }
-
-  if (page?.error) {
-    const [errorKey] = Object.keys(page.error)
-    const errorValue = page.error[errorKey]
-    pageData.error = { errorKey, errorValue }
+  const [foundType, foundSubType] = found
+  if (foundType === DATE_RANGE) {
+    return { text: errorMap[foundType]?.[foundSubType]?.text }
   }
-
-  return pageData
+  return { text: errorMap[foundType]?.[error[foundType]]?.text }
 }
 
 export const validator = payload => {
