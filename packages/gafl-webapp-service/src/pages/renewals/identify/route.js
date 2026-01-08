@@ -72,20 +72,21 @@ export const getData = async request => {
       [DATE_RANGE, 'date.min'],
       [DATE_RANGE, 'date.max']
     ]
-    const found = errorTypes.find(([type, subType]) => {
-      if (type === DATE_RANGE) {
-        return error[type] === subType && errorMap[type] && errorMap[type][subType]
+    // Avoid shadowing by using different variable names in the callback
+    const found = errorTypes.find(([errType, errSubType]) => {
+      if (errType === DATE_RANGE) {
+        return error[errType] === errSubType && errorMap[errType]?.[errSubType]
       }
-      return error[type] && errorMap[type] && errorMap[type][error[type]]
+      return error[errType] && errorMap[errType]?.[error[errType]]
     })
     if (!found) {
       return undefined
     }
-    const [type, subType] = found
-    if (type === DATE_RANGE) {
-      return { text: errorMap[type][subType].text }
+    const [foundType, foundSubType] = found
+    if (foundType === DATE_RANGE) {
+      return { text: errorMap[foundType]?.[foundSubType]?.text }
     }
-    return { text: errorMap[type][error[type]].text }
+    return { text: errorMap[foundType]?.[error[foundType]]?.text }
   })()
 
   const pageData = {
