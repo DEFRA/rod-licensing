@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.16 (2026-01-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2281](https://github.com/DEFRA/rod-licensing/pull/2281) Add validation to journey goals page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.15 (2026-01-06)
 
 #### :bug: Bug Fix
