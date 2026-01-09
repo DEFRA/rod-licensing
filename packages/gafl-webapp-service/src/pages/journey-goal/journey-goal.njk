@@ -5,6 +5,14 @@
 {% set title = mssgs.journey_goal_title %}
 {% set errorMsg = mssgs.journey_goal_error %}
 
+{%
+set errorMap = {
+        'journey-goal': {
+            'any.required': { ref: '#selector-buy-licence', text: errorMsg }
+        }
+    }
+ %}
+
 {% set instructions %}
   <p class="govuk-body-m">{{ mssgs.journey_goal_you_will_need }}</p>
   <ul class="govuk-list govuk-list--bullet">
