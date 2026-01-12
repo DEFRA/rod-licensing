@@ -59,16 +59,19 @@ export const renewalStartDateValidator = (payload, options) => {
 export const getDateErrorFlags = error => {
   const errorFlags = { isDayError: false, isMonthError: false, isYearError: false }
   const commonErrors = ['full-date', 'invalid-date', 'date-range', 'non-numeric']
+  const dayErrorKeys = new Set(['day-and-month', 'day-and-year', 'day', ...commonErrors])
+  const monthErrorKeys = new Set(['day-and-month', 'month-and-year', 'month', ...commonErrors])
+  const yearErrorKeys = new Set(['day-and-year', 'month-and-year', 'year', ...commonErrors])
   if (error) {
     const errorKeys = Object.keys(error)
     for (const errorKey of errorKeys) {
-      if (['day-and-month', 'day-and-year', 'day', ...commonErrors].includes(errorKey)) {
+      if (dayErrorKeys.has(errorKey)) {
         errorFlags.isDayError = true
       }
-      if (['day-and-month', 'month-and-year', 'month', ...commonErrors].includes(errorKey)) {
+      if (monthErrorKeys.has(errorKey)) {
         errorFlags.isMonthError = true
       }
-      if (['day-and-year', 'month-and-year', 'year', ...commonErrors].includes(errorKey)) {
+      if (yearErrorKeys.has(errorKey)) {
         errorFlags.isYearError = true
       }
     }
@@ -78,7 +81,7 @@ export const getDateErrorFlags = error => {
 
 export const getDobErrorMessage = (error = {}, catalog) => {
   if (!catalog) {
-    return
+    return undefined
   }
 
   const DATE_RANGE = 'date-range'
@@ -138,7 +141,7 @@ export const getDobErrorMessage = (error = {}, catalog) => {
   })
 
   if (!found) {
-    return
+    return undefined
   }
 
   const [foundType, foundSubType] = found
