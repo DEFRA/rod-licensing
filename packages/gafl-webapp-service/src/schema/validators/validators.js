@@ -7,14 +7,19 @@ const MAX_AGE = 120
 const LICENCE_TO_START_FIELD = 'licence-to-start'
 const AFTER_PAYMENT = 'after-payment'
 const ANOTHER_DATE = 'another-date'
-const DAY_SPECIFIC_ERRORS = ['day-and-month', 'day-and-year', 'day']
-const MONTH_SPECIFIC_ERRORS = ['day-and-month', 'month-and-year', 'month']
-const YEAR_SPECIFIC_ERRORS = ['day-and-year', 'month-and-year', 'year']
+const DOB_ERROR_KEYS = {
+  DAY_AND_MONTH: 'day-and-month',
+  DAY_AND_YEAR: 'day-and-year',
+  MONTH_AND_YEAR: 'month-and-year'
+}
+const DAY_SPECIFIC_ERRORS = [DOB_ERROR_KEYS.DAY_AND_MONTH, DOB_ERROR_KEYS.DAY_AND_YEAR, 'day']
+const MONTH_SPECIFIC_ERRORS = [DOB_ERROR_KEYS.DAY_AND_MONTH, DOB_ERROR_KEYS.MONTH_AND_YEAR, 'month']
+const YEAR_SPECIFIC_ERRORS = [DOB_ERROR_KEYS.DAY_AND_YEAR, DOB_ERROR_KEYS.MONTH_AND_YEAR, 'year']
 const DOB_FIELD_ERROR_PRIORITY = [
   'full-date',
-  'day-and-month',
-  'day-and-year',
-  'month-and-year',
+  DOB_ERROR_KEYS.DAY_AND_MONTH,
+  DOB_ERROR_KEYS.DAY_AND_YEAR,
+  DOB_ERROR_KEYS.MONTH_AND_YEAR,
   'day',
   'month',
   'year',
@@ -93,7 +98,8 @@ export const getDateErrorFlags = error => {
   return errorFlags
 }
 
-export const getDobErrorMessage = (error = {}, catalog) => {
+export const getDobErrorMessage = (error, catalog) => {
+  const normalizedError = error ?? {}
   if (!catalog) {
     return undefined
   }
@@ -103,13 +109,13 @@ export const getDobErrorMessage = (error = {}, catalog) => {
     'full-date': {
       'object.missing': { text: catalog.dob_error }
     },
-    'day-and-month': {
+    [DOB_ERROR_KEYS.DAY_AND_MONTH]: {
       'object.missing': { text: catalog.dob_error_missing_day_and_month }
     },
-    'day-and-year': {
+    [DOB_ERROR_KEYS.DAY_AND_YEAR]: {
       'object.missing': { text: catalog.dob_error_missing_day_and_year }
     },
-    'month-and-year': {
+    [DOB_ERROR_KEYS.MONTH_AND_YEAR]: {
       'object.missing': { text: catalog.dob_error_missing_month_and_year }
     },
     day: {
@@ -137,9 +143,9 @@ export const getDobErrorMessage = (error = {}, catalog) => {
 
   const found = errorTypes.find(([errType, errSubType]) => {
     if (errType === DATE_RANGE) {
-      return error[errType] === errSubType && errorMap[errType]?.[errSubType]
+      return normalizedError[errType] === errSubType && errorMap[errType]?.[errSubType]
     }
-    return error[errType] && errorMap[errType]?.[error[errType]]
+    return normalizedError[errType] && errorMap[errType]?.[normalizedError[errType]]
   })
 
   if (!found) {
@@ -151,5 +157,5 @@ export const getDobErrorMessage = (error = {}, catalog) => {
     return { text: errorMap[foundType]?.[foundSubType]?.text }
   }
 
-  return { text: errorMap[foundType]?.[error[foundType]]?.text }
+  return { text: errorMap[foundType]?.[normalizedError[foundType]]?.text }
 }
