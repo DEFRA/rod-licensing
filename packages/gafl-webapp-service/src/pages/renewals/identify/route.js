@@ -40,7 +40,6 @@ const validatePermissionNumberHelper = async (permission, request) => {
   }
 }
 
-
 export const validator = payload => {
   runValidators(
     [
