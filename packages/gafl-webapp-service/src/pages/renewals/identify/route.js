@@ -96,7 +96,7 @@ const getDobErrorMessage = (error, request) => {
     return error[errType] && errorMap[errType]?.[error[errType]]
   })
   if (!found) {
-    return undefined
+    return
   }
   const [foundType, foundSubType] = found
   if (foundType === DATE_RANGE) {
