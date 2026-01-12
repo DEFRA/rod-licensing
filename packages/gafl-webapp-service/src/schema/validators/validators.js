@@ -133,11 +133,7 @@ export const getDobErrorMessage = (error = {}, catalog) => {
     }
   }
 
-  const errorTypes = [
-    ...DOB_FIELD_ERROR_PRIORITY.map(type => [type]),
-    [DATE_RANGE, 'date.min'],
-    [DATE_RANGE, 'date.max']
-  ]
+  const errorTypes = [...DOB_FIELD_ERROR_PRIORITY.map(type => [type]), [DATE_RANGE, 'date.min'], [DATE_RANGE, 'date.max']]
 
   const found = errorTypes.find(([errType, errSubType]) => {
     if (errType === DATE_RANGE) {
