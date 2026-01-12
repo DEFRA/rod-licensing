@@ -1,5 +1,11 @@
 import Joi from 'joi'
-import { dateOfBirthValidator, startDateValidator, getDateErrorFlags, renewalStartDateValidator, getDobErrorMessage } from '../validators.js'
+import {
+  dateOfBirthValidator,
+  startDateValidator,
+  getDateErrorFlags,
+  renewalStartDateValidator,
+  getDobErrorMessage
+} from '../validators.js'
 import moment from 'moment-timezone'
 const dateSchema = require('../../date.schema.js')
 
