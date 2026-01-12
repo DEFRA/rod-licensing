@@ -7,6 +7,20 @@ const MAX_AGE = 120
 const LICENCE_TO_START_FIELD = 'licence-to-start'
 const AFTER_PAYMENT = 'after-payment'
 const ANOTHER_DATE = 'another-date'
+const DAY_SPECIFIC_ERRORS = ['day-and-month', 'day-and-year', 'day']
+const MONTH_SPECIFIC_ERRORS = ['day-and-month', 'month-and-year', 'month']
+const YEAR_SPECIFIC_ERRORS = ['day-and-year', 'month-and-year', 'year']
+const DOB_FIELD_ERROR_PRIORITY = [
+  'full-date',
+  'day-and-month',
+  'day-and-year',
+  'month-and-year',
+  'day',
+  'month',
+  'year',
+  'non-numeric',
+  'invalid-date'
+]
 
 const validateDate = (day, month, year, minDate, maxDate) => {
   Joi.assert(dateSchemaInput(day, month, year), dateSchema)
@@ -59,9 +73,9 @@ export const renewalStartDateValidator = (payload, options) => {
 export const getDateErrorFlags = error => {
   const errorFlags = { isDayError: false, isMonthError: false, isYearError: false }
   const commonErrors = ['full-date', 'invalid-date', 'date-range', 'non-numeric']
-  const dayErrorKeys = new Set(['day-and-month', 'day-and-year', 'day', ...commonErrors])
-  const monthErrorKeys = new Set(['day-and-month', 'month-and-year', 'month', ...commonErrors])
-  const yearErrorKeys = new Set(['day-and-year', 'month-and-year', 'year', ...commonErrors])
+  const dayErrorKeys = new Set([...DAY_SPECIFIC_ERRORS, ...commonErrors])
+  const monthErrorKeys = new Set([...MONTH_SPECIFIC_ERRORS, ...commonErrors])
+  const yearErrorKeys = new Set([...YEAR_SPECIFIC_ERRORS, ...commonErrors])
   if (error) {
     const errorKeys = Object.keys(error)
     for (const errorKey of errorKeys) {
@@ -120,15 +134,7 @@ export const getDobErrorMessage = (error = {}, catalog) => {
   }
 
   const errorTypes = [
-    ['full-date'],
-    ['day-and-month'],
-    ['day-and-year'],
-    ['month-and-year'],
-    ['day'],
-    ['month'],
-    ['year'],
-    ['non-numeric'],
-    ['invalid-date'],
+    ...DOB_FIELD_ERROR_PRIORITY.map(type => [type]),
     [DATE_RANGE, 'date.min'],
     [DATE_RANGE, 'date.max']
   ]
