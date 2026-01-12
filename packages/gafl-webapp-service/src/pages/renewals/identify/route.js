@@ -42,37 +42,38 @@ const validatePermissionNumberHelper = async (permission, request) => {
 
 const getDobErrorMessage = (error, request) => {
   const DATE_RANGE = 'date-range'
+  const catalog = request.i18n.getCatalog()
   const errorMap = {
     'full-date': {
-      'object.missing': { text: request.i18n.getCatalog().dob_error }
+      'object.missing': { text: catalog.dob_error }
     },
     'day-and-month': {
-      'object.missing': { text: request.i18n.getCatalog().dob_error_missing_day_and_month }
+      'object.missing': { text: catalog.dob_error_missing_day_and_month }
     },
     'day-and-year': {
-      'object.missing': { text: request.i18n.getCatalog().dob_error_missing_day_and_year }
+      'object.missing': { text: catalog.dob_error_missing_day_and_year }
     },
     'month-and-year': {
-      'object.missing': { text: request.i18n.getCatalog().dob_error_missing_month_and_year }
+      'object.missing': { text: catalog.dob_error_missing_month_and_year }
     },
     day: {
-      'any.required': { text: request.i18n.getCatalog().dob_error_missing_day }
+      'any.required': { text: catalog.dob_error_missing_day }
     },
     month: {
-      'any.required': { text: request.i18n.getCatalog().dob_error_missing_month }
+      'any.required': { text: catalog.dob_error_missing_month }
     },
     year: {
-      'any.required': { text: request.i18n.getCatalog().dob_error_missing_year }
+      'any.required': { text: catalog.dob_error_missing_year }
     },
     'non-numeric': {
-      'number.base': { text: request.i18n.getCatalog().dob_error_non_numeric }
+      'number.base': { text: catalog.dob_error_non_numeric }
     },
     'invalid-date': {
-      'any.custom': { text: request.i18n.getCatalog().dob_error_date_real }
+      'any.custom': { text: catalog.dob_error_date_real }
     },
     [DATE_RANGE]: {
-      'date.min': { text: request.i18n.getCatalog().dob_error_year_min },
-      'date.max': { text: request.i18n.getCatalog().dob_error_year_max }
+      'date.min': { text: catalog.dob_error_year_min },
+      'date.max': { text: catalog.dob_error_year_max }
     }
   }
   const errorTypes = [
