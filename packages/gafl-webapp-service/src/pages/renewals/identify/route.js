@@ -4,7 +4,7 @@ import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { dateOfBirthValidator, getDateErrorFlags } from '../../../schema/validators/validators.js'
+import { dateOfBirthValidator, getDateErrorFlags, getDobErrorMessage } from '../../../schema/validators/validators.js'
 import { runValidators } from '../../../utils/validators.js'
 
 export const getData = async request => {
@@ -13,7 +13,7 @@ export const getData = async request => {
 
   await validatePermissionNumberHelper(permission, request)
   const error = page?.error || {}
-  const dobErrorMessage = getDobErrorMessage(error, request)
+  const dobErrorMessage = getDobErrorMessage(error, request.i18n.getCatalog())
   const pageData = {
     referenceNumber: permission.referenceNumber,
     uri: {
@@ -40,70 +40,6 @@ const validatePermissionNumberHelper = async (permission, request) => {
   }
 }
 
-const getDobErrorMessage = (error, request) => {
-  const DATE_RANGE = 'date-range'
-  const catalog = request.i18n.getCatalog()
-  const errorMap = {
-    'full-date': {
-      'object.missing': { text: catalog.dob_error }
-    },
-    'day-and-month': {
-      'object.missing': { text: catalog.dob_error_missing_day_and_month }
-    },
-    'day-and-year': {
-      'object.missing': { text: catalog.dob_error_missing_day_and_year }
-    },
-    'month-and-year': {
-      'object.missing': { text: catalog.dob_error_missing_month_and_year }
-    },
-    day: {
-      'any.required': { text: catalog.dob_error_missing_day }
-    },
-    month: {
-      'any.required': { text: catalog.dob_error_missing_month }
-    },
-    year: {
-      'any.required': { text: catalog.dob_error_missing_year }
-    },
-    'non-numeric': {
-      'number.base': { text: catalog.dob_error_non_numeric }
-    },
-    'invalid-date': {
-      'any.custom': { text: catalog.dob_error_date_real }
-    },
-    [DATE_RANGE]: {
-      'date.min': { text: catalog.dob_error_year_min },
-      'date.max': { text: catalog.dob_error_year_max }
-    }
-  }
-  const errorTypes = [
-    ['full-date'],
-    ['day-and-month'],
-    ['day-and-year'],
-    ['month-and-year'],
-    ['day'],
-    ['month'],
-    ['year'],
-    ['non-numeric'],
-    ['invalid-date'],
-    [DATE_RANGE, 'date.min'],
-    [DATE_RANGE, 'date.max']
-  ]
-  const found = errorTypes.find(([errType, errSubType]) => {
-    if (errType === DATE_RANGE) {
-      return error[errType] === errSubType && errorMap[errType]?.[errSubType]
-    }
-    return error[errType] && errorMap[errType]?.[error[errType]]
-  })
-  if (!found) {
-    return
-  }
-  const [foundType, foundSubType] = found
-  if (foundType === DATE_RANGE) {
-    return { text: errorMap[foundType]?.[foundSubType]?.text }
-  }
-  return { text: errorMap[foundType]?.[error[foundType]]?.text }
-}
 
 export const validator = payload => {
   runValidators(
