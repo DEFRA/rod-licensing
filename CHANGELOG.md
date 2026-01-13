@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.17 (2026-01-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2285](https://github.com/DEFRA/rod-licensing/pull/2285) Flaky unit test in license-start-time.spec.js ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.65.0-rc.16 (2026-01-09)
 
 #### :bug: Bug Fix
