@@ -19,6 +19,14 @@ beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
+afterEach(() => {
+  jest.restoreAllMocks()
+})
+
+function mockMoment (fixedDate) {
+  jest.spyOn(moment, 'now').mockImplementation(() => fixedDate.valueOf())
+}
+
 describe('The licence start time page', () => {
   it('returns success on requesting', async () => {
     const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
@@ -67,7 +75,25 @@ describe('The licence start time page', () => {
     expect(JSON.parse(payload).permissions[0].licenceStartTime).toBe(code)
   })
 
-  it('does not display prior times for same day licence', async () => {
+  it('does not display prior times for same day licence when minHour = 0', async () => {
+    mockMoment(new Date('2026-01-05T22:30:00Z')) // This will make minHour = 0
+
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment())
+    })
+
+    // For minHour = 0, value="0" should be disabled
+    const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
+    const disabledFragment = 'name="licence-start-time" type="radio" value="0" disabled>'
+    expect(response.payload).toContain(disabledFragment)
+  })
+
+  it('does not display prior times for same day licence when minHour > 0', async () => {
+    mockMoment(new Date('2026-01-06T13:15:00Z'))
+
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await injectWithCookies('POST', LICENCE_TO_START.uri, {
