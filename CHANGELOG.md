@@ -1,4 +1,81 @@
 
+## v1.65.0-rc.17 (2026-01-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2285](https://github.com/DEFRA/rod-licensing/pull/2285) Flaky unit test in license-start-time.spec.js ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.16 (2026-01-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2281](https://github.com/DEFRA/rod-licensing/pull/2281) Add validation to journey goals page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.15 (2026-01-06)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2264](https://github.com/DEFRA/rod-licensing/pull/2264) RP job should cancel invalid agreementIds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.65.0-rc.13 (2026-01-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2278](https://github.com/DEFRA/rod-licensing/pull/2278) Backlink not working on rcp licence-not-found page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+
+
+## v1.65.0-rc.9 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2267](https://github.com/DEFRA/rod-licensing/pull/2267) Cancellation confirmation UI fixes ([@jaucourt](https://github.com/jaucourt))
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.8 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.7 (2025-12-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2265](https://github.com/DEFRA/rod-licensing/pull/2265) Journey Goal Page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.6 (2025-12-19)
+
+#### :bug: Bug Fix
+* `sqs-receiver-service`
+  * [#2269](https://github.com/DEFRA/rod-licensing/pull/2269) Fix error checking failed sqs messages from delete request ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.5 (2025-12-18)
 
 #### :rocket: Enhancement

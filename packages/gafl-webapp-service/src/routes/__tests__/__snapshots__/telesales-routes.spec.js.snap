@@ -1,233 +1,535 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`cancellation route journey behaves as expected adds the cancellation route journey if SHOW_CANCELLATION_JOURNEY is set to true 1`] = `
-Object {
-  "default": Array [
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "POST",
-      ],
-      "options": Object {
-        "auth": false,
-        "plugins": Object {
-          "crumb": false,
+Array [
+  Object {
+    "handler": [Function],
+    "method": Array [
+      "POST",
+    ],
+    "options": Object {
+      "auth": false,
+      "plugins": Object {
+        "crumb": false,
+      },
+    },
+    "path": "/oidc/signin",
+  },
+  Object {
+    "handler": [Function],
+    "method": Array [
+      "GET",
+    ],
+    "options": Object {
+      "auth": false,
+    },
+    "path": "/oidc/account-disabled",
+  },
+  Object {
+    "handler": [Function],
+    "method": Array [
+      "GET",
+    ],
+    "options": Object {
+      "auth": false,
+    },
+    "path": "/oidc/role-required",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/journey-goal",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": Object {
+          "$_root": Object {
+            "ValidationError": [Function],
+            "_types": Set {
+              "alternatives",
+              "any",
+              "array",
+              "boolean",
+              "date",
+              "function",
+              "link",
+              "number",
+              "object",
+              "string",
+              "symbol",
+              "binary",
+            },
+            "allow": [Function],
+            "alt": [Function],
+            "alternatives": [Function],
+            "any": [Function],
+            "array": [Function],
+            "assert": [Function],
+            "attempt": [Function],
+            "binary": [Function],
+            "bool": [Function],
+            "boolean": [Function],
+            "build": [Function],
+            "cache": Object {
+              "provision": [Function],
+            },
+            "checkPreferences": [Function],
+            "compile": [Function],
+            "custom": [Function],
+            "date": [Function],
+            "defaults": [Function],
+            "disallow": [Function],
+            "equal": [Function],
+            "exist": [Function],
+            "expression": [Function],
+            "extend": [Function],
+            "forbidden": [Function],
+            "func": [Function],
+            "function": [Function],
+            "in": [Function],
+            "invalid": [Function],
+            "isError": [Function],
+            "isExpression": [Function],
+            "isRef": [Function],
+            "isSchema": [Function],
+            "link": [Function],
+            "not": [Function],
+            "number": [Function],
+            "object": [Function],
+            "only": [Function],
+            "optional": [Function],
+            "options": [Function],
+            "override": Symbol(override),
+            "preferences": [Function],
+            "prefs": [Function],
+            "ref": [Function],
+            "required": [Function],
+            "string": [Function],
+            "strip": [Function],
+            "symbol": [Function],
+            "trace": [Function],
+            "types": [Function],
+            "untrace": [Function],
+            "valid": [Function],
+            "version": "17.6.0",
+            "when": [Function],
+            "x": [Function],
+            Symbol(@hapi/lab/coverage/initialize): [Function],
+          },
+          "$_super": Object {
+            "default": [Function],
+          },
+          "$_temp": Object {
+            "ruleset": false,
+            "whens": Object {},
+          },
+          "$_terms": Object {
+            "alterations": null,
+            "dependencies": null,
+            "examples": null,
+            "externals": null,
+            "keys":  [
+              Object {
+                "key": "journey-goal",
+                "schema": Object {
+                  "$_root": Object {
+                    "ValidationError": [Function],
+                    "_types": Set {
+                      "alternatives",
+                      "any",
+                      "array",
+                      "boolean",
+                      "date",
+                      "function",
+                      "link",
+                      "number",
+                      "object",
+                      "string",
+                      "symbol",
+                      "binary",
+                    },
+                    "allow": [Function],
+                    "alt": [Function],
+                    "alternatives": [Function],
+                    "any": [Function],
+                    "array": [Function],
+                    "assert": [Function],
+                    "attempt": [Function],
+                    "binary": [Function],
+                    "bool": [Function],
+                    "boolean": [Function],
+                    "build": [Function],
+                    "cache": Object {
+                      "provision": [Function],
+                    },
+                    "checkPreferences": [Function],
+                    "compile": [Function],
+                    "custom": [Function],
+                    "date": [Function],
+                    "defaults": [Function],
+                    "disallow": [Function],
+                    "equal": [Function],
+                    "exist": [Function],
+                    "expression": [Function],
+                    "extend": [Function],
+                    "forbidden": [Function],
+                    "func": [Function],
+                    "function": [Function],
+                    "in": [Function],
+                    "invalid": [Function],
+                    "isError": [Function],
+                    "isExpression": [Function],
+                    "isRef": [Function],
+                    "isSchema": [Function],
+                    "link": [Function],
+                    "not": [Function],
+                    "number": [Function],
+                    "object": [Function],
+                    "only": [Function],
+                    "optional": [Function],
+                    "options": [Function],
+                    "override": Symbol(override),
+                    "preferences": [Function],
+                    "prefs": [Function],
+                    "ref": [Function],
+                    "required": [Function],
+                    "string": [Function],
+                    "strip": [Function],
+                    "symbol": [Function],
+                    "trace": [Function],
+                    "types": [Function],
+                    "untrace": [Function],
+                    "valid": [Function],
+                    "version": "17.6.0",
+                    "when": [Function],
+                    "x": [Function],
+                    Symbol(@hapi/lab/coverage/initialize): [Function],
+                  },
+                  "$_super": Object {},
+                  "$_temp": Object {
+                    "ruleset": false,
+                    "whens": Object {},
+                  },
+                  "$_terms": Object {
+                    "alterations": null,
+                    "examples": null,
+                    "externals": null,
+                    "metas": Array [],
+                    "notes": Array [],
+                    "replacements": null,
+                    "shared": null,
+                    "tags": Array [],
+                    "whens": null,
+                  },
+                  "_cache": null,
+                  "_flags": Object {
+                    "only": true,
+                    "presence": "required",
+                  },
+                  "_ids": Object {
+                    "_byId": Map {},
+                    "_byKey": Map {},
+                    "_schemaChain": false,
+                  },
+                  "_invalids": null,
+                  "_preferences": null,
+                  "_refs": Object {
+                    "refs": Array [],
+                  },
+                  "_rules": Array [],
+                  "_singleRules": Map {},
+                  "_valids": Object {
+                    "_lowercase": Map {
+                      "purchase-permission" => "purchase-permission",
+                      "renew-permission" => "renew-permission",
+                      "cancel-recurring-payment" => "cancel-recurring-payment",
+                    },
+                    "_override": false,
+                    "_refs": Set {},
+                    "_values": Set {
+                      "purchase-permission",
+                      "renew-permission",
+                      "cancel-recurring-payment",
+                    },
+                  },
+                  "type": "string",
+                },
+              },
+            ],
+            "metas": Array [],
+            "notes": Array [],
+            "patterns": null,
+            "renames": null,
+            "shared": null,
+            "tags": Array [],
+            "whens": null,
+          },
+          "_cache": null,
+          "_flags": Object {},
+          "_ids": Object {
+            "_byId": Map {},
+            "_byKey": Map {
+              "journey-goal" => Object {
+                "id": "journey-goal",
+                "schema": Object {
+                  "$_root": Object {
+                    "ValidationError": [Function],
+                    "_types": Set {
+                      "alternatives",
+                      "any",
+                      "array",
+                      "boolean",
+                      "date",
+                      "function",
+                      "link",
+                      "number",
+                      "object",
+                      "string",
+                      "symbol",
+                      "binary",
+                    },
+                    "allow": [Function],
+                    "alt": [Function],
+                    "alternatives": [Function],
+                    "any": [Function],
+                    "array": [Function],
+                    "assert": [Function],
+                    "attempt": [Function],
+                    "binary": [Function],
+                    "bool": [Function],
+                    "boolean": [Function],
+                    "build": [Function],
+                    "cache": Object {
+                      "provision": [Function],
+                    },
+                    "checkPreferences": [Function],
+                    "compile": [Function],
+                    "custom": [Function],
+                    "date": [Function],
+                    "defaults": [Function],
+                    "disallow": [Function],
+                    "equal": [Function],
+                    "exist": [Function],
+                    "expression": [Function],
+                    "extend": [Function],
+                    "forbidden": [Function],
+                    "func": [Function],
+                    "function": [Function],
+                    "in": [Function],
+                    "invalid": [Function],
+                    "isError": [Function],
+                    "isExpression": [Function],
+                    "isRef": [Function],
+                    "isSchema": [Function],
+                    "link": [Function],
+                    "not": [Function],
+                    "number": [Function],
+                    "object": [Function],
+                    "only": [Function],
+                    "optional": [Function],
+                    "options": [Function],
+                    "override": Symbol(override),
+                    "preferences": [Function],
+                    "prefs": [Function],
+                    "ref": [Function],
+                    "required": [Function],
+                    "string": [Function],
+                    "strip": [Function],
+                    "symbol": [Function],
+                    "trace": [Function],
+                    "types": [Function],
+                    "untrace": [Function],
+                    "valid": [Function],
+                    "version": "17.6.0",
+                    "when": [Function],
+                    "x": [Function],
+                    Symbol(@hapi/lab/coverage/initialize): [Function],
+                  },
+                  "$_super": Object {},
+                  "$_temp": Object {
+                    "ruleset": false,
+                    "whens": Object {},
+                  },
+                  "$_terms": Object {
+                    "alterations": null,
+                    "examples": null,
+                    "externals": null,
+                    "metas": Array [],
+                    "notes": Array [],
+                    "replacements": null,
+                    "shared": null,
+                    "tags": Array [],
+                    "whens": null,
+                  },
+                  "_cache": null,
+                  "_flags": Object {
+                    "only": true,
+                    "presence": "required",
+                  },
+                  "_ids": Object {
+                    "_byId": Map {},
+                    "_byKey": Map {},
+                    "_schemaChain": false,
+                  },
+                  "_invalids": null,
+                  "_preferences": null,
+                  "_refs": Object {
+                    "refs": Array [],
+                  },
+                  "_rules": Array [],
+                  "_singleRules": Map {},
+                  "_valids": Object {
+                    "_lowercase": Map {
+                      "purchase-permission" => "purchase-permission",
+                      "renew-permission" => "renew-permission",
+                      "cancel-recurring-payment" => "cancel-recurring-payment",
+                    },
+                    "_override": false,
+                    "_refs": Set {},
+                    "_values": Set {
+                      "purchase-permission",
+                      "renew-permission",
+                      "cancel-recurring-payment",
+                    },
+                  },
+                  "type": "string",
+                },
+              },
+            },
+            "_schemaChain": false,
+          },
+          "_invalids": null,
+          "_preferences": Object {
+            "abortEarly": false,
+            "allowUnknown": true,
+          },
+          "_refs": Object {
+            "refs": Array [],
+          },
+          "_rules": Array [],
+          "_singleRules": Map {},
+          "_valids": null,
+          "type": "object",
         },
       },
-      "path": "/oidc/signin",
     },
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "GET",
-      ],
-      "options": Object {
-        "auth": false,
+    "path": "/buy/journey-goal",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/identify",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": [Function],
       },
-      "path": "/oidc/account-disabled",
     },
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "GET",
-      ],
-      "options": Object {
-        "auth": false,
+    "path": "/buy/cancel-recurring-payment/identify",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/details",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": [Function],
       },
-      "path": "/oidc/role-required",
     },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/identify",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": [Function],
-        },
+    "path": "/buy/cancel-recurring-payment/details",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/confirm",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": [Function],
       },
-      "path": "/buy/cancel-recurring-payment/identify",
     },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/details",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": [Function],
-        },
+    "path": "/buy/cancel-recurring-payment/confirm",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/complete",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": [Function],
       },
-      "path": "/buy/cancel-recurring-payment/details",
     },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/confirm",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": [Function],
-        },
+    "path": "/buy/cancel-recurring-payment/complete",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/agreement-not-found",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": [Function],
       },
-      "path": "/buy/cancel-recurring-payment/confirm",
     },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/complete",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": [Function],
-        },
+    "path": "/buy/cancel-recurring-payment/agreement-not-found",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/already-cancelled",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": [Function],
       },
-      "path": "/buy/cancel-recurring-payment/complete",
     },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/agreement-not-found",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": [Function],
-        },
+    "path": "/buy/cancel-recurring-payment/already-cancelled",
+  },
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/cancel-recurring-payment/licence-not-found",
+  },
+  Object {
+    "handler": [Function],
+    "method": "POST",
+    "options": Object {
+      "validate": Object {
+        "failAction": [Function],
+        "payload": undefined,
       },
-      "path": "/buy/cancel-recurring-payment/agreement-not-found",
     },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/already-cancelled",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": [Function],
-        },
-      },
-      "path": "/buy/cancel-recurring-payment/already-cancelled",
-    },
-    Object {
-      "handler": [Function],
-      "method": "GET",
-      "path": "/buy/cancel-recurring-payment/licence-not-found",
-    },
-    Object {
-      "handler": [Function],
-      "method": "POST",
-      "options": Object {
-        "validate": Object {
-          "failAction": [Function],
-          "payload": undefined,
-        },
-      },
-      "path": "/buy/cancel-recurring-payment/licence-not-found",
-    },
-  ],
-}
-`;
-
-exports[`cancellation route journey behaves as expected omits the cancellation route journey if SHOW_CANCELLATION_JOURNEY is not present 1`] = `
-Object {
-  "default": Array [
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "POST",
-      ],
-      "options": Object {
-        "auth": false,
-        "plugins": Object {
-          "crumb": false,
-        },
-      },
-      "path": "/oidc/signin",
-    },
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "GET",
-      ],
-      "options": Object {
-        "auth": false,
-      },
-      "path": "/oidc/account-disabled",
-    },
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "GET",
-      ],
-      "options": Object {
-        "auth": false,
-      },
-      "path": "/oidc/role-required",
-    },
-  ],
-}
-`;
-
-exports[`cancellation route journey behaves as expected omits the cancellation route journey if SHOW_CANCELLATION_JOURNEY is set to false 1`] = `
-Object {
-  "default": Array [
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "POST",
-      ],
-      "options": Object {
-        "auth": false,
-        "plugins": Object {
-          "crumb": false,
-        },
-      },
-      "path": "/oidc/signin",
-    },
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "GET",
-      ],
-      "options": Object {
-        "auth": false,
-      },
-      "path": "/oidc/account-disabled",
-    },
-    Object {
-      "handler": [Function],
-      "method": Array [
-        "GET",
-      ],
-      "options": Object {
-        "auth": false,
-      },
-      "path": "/oidc/role-required",
-    },
-  ],
-}
+    "path": "/buy/cancel-recurring-payment/licence-not-found",
+  },
+]
 `;
