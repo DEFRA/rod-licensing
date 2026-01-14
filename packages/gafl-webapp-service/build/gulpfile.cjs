@@ -14,13 +14,8 @@ const minify = require('gulp-minify')
 const path = require('path')
 const concat = require('gulp-concat')
 
-const govukFrontendRootPath = path.dirname(
-  require.resolve('govuk-frontend/package.json')
-)
-const govukFrontendDist = path.join(
-  govukFrontendRootPath,
-  'dist'
-);
+const govukFrontendRootPath = path.dirname(require.resolve('govuk-frontend/package.json'))
+const govukFrontendDist = path.join(govukFrontendRootPath, 'dist')
 const paths = {
   assets: path.join('..', 'assets/'),
   public: path.join('..', 'public/'),

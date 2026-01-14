@@ -36,7 +36,6 @@ import { airbrake } from '@defra-fish/connectors-lib'
 import { addEmptyFragmentToUri, addLanguageCodeToUri } from './processors/uri-helper.js'
 import fs from 'fs'
 import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url';
 
 airbrake.initialise()
 let server
@@ -130,9 +129,9 @@ const logGtmConfig = gtmContainerId => {
 }
 
 const getGovUKFrontendRootPath = async () => {
-  const requireInstance = (typeof require !== 'undefined' && require.resolve) ? require : createRequire(`${process.cwd()}/src/server.js`)
+  const requireInstance = typeof require !== 'undefined' && require.resolve ? require : createRequire(`${process.cwd()}/src/server.js`)
 
-  return path.dirname(requireInstance.resolve('govuk-frontend/package.json'));
+  return path.dirname(requireInstance.resolve('govuk-frontend/package.json'))
 }
 
 const init = async () => {
@@ -140,7 +139,7 @@ const init = async () => {
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   const govukFrontendRootPath = await getGovUKFrontendRootPath()
-  
+
   server.views({
     engines: {
       njk: {
