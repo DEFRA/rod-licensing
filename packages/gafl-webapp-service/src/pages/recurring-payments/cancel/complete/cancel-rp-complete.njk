@@ -1,16 +1,35 @@
 {% extends "layout.njk" %}
-
 {% from "page-title.njk" import pageTitle %}
-
 {% set title = mssgs.rp_cancel_complete_title %}
-{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
-
+{% block pageTitle %}
+  {{ pageTitle(title, error, mssgs) }}
+{% endblock %}
 {% block content %}
-<div class="govuk-grid-row">
+  <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="post" class="govuk-!-margin-bottom-6">
-          {{ csrf() }}
-        </form>
+      <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+          {{ mssgs.rp_cancel_complete_panel_title }}
+        </h1>
+      </div>
+      <p class="govuk-body">&nbsp;</p>
+      <p class="govuk-body">{{ mssgs.rp_cancel_complete_body_1 }}</p>
+      <p class="govuk-body">
+        {{ mssgs.rp_cancel_complete_body_2_1 }} {{ data.licenceExpiry }} {{ mssgs.rp_cancel_complete_body_2_2 }}
+        <a href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence" target="_blank">{{ mssgs.rp_cancel_complete_body_2_link }}</a>.
+      </p>
+      <h2 class="govuk-heading-m">{{ mssgs.rp_cancel_complete_body_3_header }}</h2>
+      <p class="govuk-body">
+        {{ mssgs.rp_cancel_complete_body_3_paragraph }}
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          <a href="https://www.smartsurvey.co.uk/s/0L205/" class="govuk-link" target="_blank">{{ mssgs.rp_cancel_complete_body_3_bulletpoint_1_link }}</a>
+          - {{ mssgs.rp_cancel_complete_body_3_bulletpoint_1 }}</li>
+        <li>
+          <a href="https://www.gov.uk/government/collections/fisheries-annual-reports" target="_blank">{{ mssgs.rp_cancel_complete_body_3_bulletpoint_2_link }}</a>
+          {{ mssgs.rp_cancel_complete_body_3_bulletpoint_2 }}</li>
+      </ul>
     </div>
-</div>
+  </div>
 {% endblock %}
