@@ -129,7 +129,8 @@ const logGtmConfig = gtmContainerId => {
 }
 
 const getGovUKFrontendRootPath = async () => {
-  const requireInstance = typeof require !== 'undefined' && require.resolve ? require : createRequire(`${process.cwd()}/src/server.js`)
+  // we use createRequire as require is not available in ES modules
+  const requireInstance = createRequire(`${process.cwd()}/src/server.js`)
 
   return path.dirname(requireInstance.resolve('govuk-frontend/package.json'))
 }
