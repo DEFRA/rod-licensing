@@ -98,6 +98,10 @@
         "statements": 90
       }
     },
+    "moduleDirectories": [
+      "node_modules",
+      "../../node_modules"
+    ],
     "projects": [
       "<rootDir>/packages/*"
     ],
