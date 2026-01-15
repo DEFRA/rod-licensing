@@ -40,8 +40,8 @@ This project uses [Lerna](https://lerna.js.org/) and npm workspaces to simplify
 the management and versioning of multiple packages which comprise the rod
 licensing digital service.
 
-Running `npm install --workspaces --include=dev` in the root project will
-install dependencies of all workspaces as well as dev dependencies. Local
+Rename npmrc.example to .npmrc, and then run `npm install` in the root project 
+will install dependencies of all workspaces as well as dev dependencies. Local
 packages which depend on one another will be linked locally (using symbolic
 links).
 
