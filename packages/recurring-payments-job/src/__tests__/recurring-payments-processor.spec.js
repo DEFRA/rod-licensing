@@ -337,6 +337,79 @@ describe('recurring-payments-processor', () => {
 
         expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith('recurring-payment-1')
       })
+
+      it('throws an error', async () => {
+        jest.spyOn(console, 'error')
+        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
+        const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
+        sendPayment.mockRejectedValueOnce(oopsie)
+
+        try {
+          await execute()
+        } catch (e) {}
+
+        expect(console.error).toHaveBeenCalledWith('Error requesting payments:', oopsie)
+      })
+
+      describe('when there are valid and invalid agreement_ids', () => {
+        const setUpMultipleRecurringPayments = (
+          error = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
+        ) => {
+          // Send three recurring payments to the GOV.UK Pay API
+          salesApi.getDueRecurringPayments.mockReturnValueOnce([
+            ...getMockPaymentRequestResponse(), ...getMockPaymentRequestResponse(), ...getMockPaymentRequestResponse()
+          ])
+          salesApi.createTransaction.mockReturnValueOnce({
+            id: 'test-transaction-id',
+            cost: 30,
+            recurringPayment: {
+              id: 'first-recurring-payment'
+            }
+          }).mockReturnValueOnce({
+            id: 'test-transaction-id',
+            cost: 30,
+            recurringPayment: {
+              id: 'second-recurring-payment'
+            }
+          }).mockReturnValueOnce({
+            id: 'test-transaction-id',
+            cost: 30,
+            recurringPayment: {
+              id: 'third-recurring-payment'
+            }
+          })
+
+          // Throw errors for the first two
+          sendPayment.mockRejectedValueOnce(error).mockRejectedValueOnce(error)
+          // The third should succeed
+          getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+        }
+
+        it('cancels the invalid recurring payments but not the valid ones', async () => {
+          setUpMultipleRecurringPayments()
+
+          try {
+            await execute()
+          } catch (e) {}
+
+          expect(salesApi.cancelRecurringPayment.mock.calls).toEqual(
+            [['first-recurring-payment'], ['second-recurring-payment']]
+          )
+        })
+
+        it('throws an error for each invalid payment', async () => {
+          jest.spyOn(console, 'error')
+
+          const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
+          setUpMultipleRecurringPayments()
+
+          try {
+            await execute()
+          } catch (e) {}
+
+          expect(console.error.mock.calls).toEqual([['Error requesting payments:', oopsie, oopsie]])
+        })
+      })
     })
 
     describe('when the error is caused by a reason other than invalid agreementId', () => {
