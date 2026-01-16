@@ -9,8 +9,7 @@ jest.mock('../../../../../uri.js', () => ({
   CANCEL_RP_COMPLETE: { page: Symbol('cancel-rp-complete-page'), uri: Symbol('cancel-rp-complete-uri') }
 }))
 jest.mock('../../../../../processors/uri-helper.js')
-const mockFormat = jest.fn()
-jest.mock('moment-timezone', () => jest.fn(() => ({ format: mockFormat })))
+jest.mock('moment-timezone', () => jest.fn(() => ({ format: () => {} })))
 jest.mock('../../../../../processors/date-and-time-display.js', () => ({
   cacheDateFormat: Symbol('cache-date-format'),
   dateDisplayFormat: Symbol('date-display-format')
@@ -103,47 +102,63 @@ describe('completion handler', () => {
 })
 
 describe('getData', () => {
-  const endDate = '2026-02-03'
-  const locale = 'cy'
-  const formatted = '3 February 2026'
-
-  const getMockRequest = ({ endDate: overrideEndDate = endDate, locale: overrideLocale = locale } = {}) => {
-    const getCurrentPermission = jest.fn().mockResolvedValue({ permission: { endDate: overrideEndDate } })
-    return {
-      locale: overrideLocale,
-      cache: () => ({
-        helpers: {
-          transaction: {
-            getCurrentPermission
-          }
+  const getMockRequest = ({
+    locale = 'cy',
+    endDate = '2026-02-03',
+    getCurrentPermission = jest.fn(() => ({
+      permission: {
+        endDate
+      }
+    }))
+  } = {}) => ({
+    locale,
+    cache: () => ({
+      helpers: {
+        transaction: {
+          getCurrentPermission
         }
-      })
-    }
-  }
+      }
+    })
+  })
 
-  const ctx = {}
-
-  beforeEach(async () => {
+  beforeEach(() => {
     moment.mockClear()
-    mockFormat.mockReset()
-    mockFormat.mockReturnValue(formatted)
-    ctx.request = getMockRequest()
-    ctx.data = await getData(ctx.request)
   })
 
-  it('retrieves the current permission once', () => {
-    expect(ctx.request.cache().helpers.transaction.getCurrentPermission).toHaveBeenCalledTimes(1)
+  it('retrieves the current permission once', async () => {
+    const getCurrentPermission = jest.fn(() => ({ permission: { endDate: 'end date' } }))
+    const request = getMockRequest({ getCurrentPermission })
+
+    await getData(request)
+
+    expect(getCurrentPermission).toHaveBeenCalledTimes(1)
   })
 
-  it('passes the cached end date and locale to moment', () => {
+  it('passes the cached end date and locale to moment', async () => {
+    const locale = 'en'
+    const endDate = '2026-02-27'
+
+    await getData(getMockRequest({ locale, endDate }))
+
     expect(moment).toHaveBeenCalledWith(endDate, cacheDateFormat, locale)
   })
 
-  it('formats the expiry using the shared display format', () => {
-    expect(mockFormat).toHaveBeenCalledWith(dateDisplayFormat)
+  it('formats the expiry using the shared display format', async () => {
+    const format = jest.fn()
+    moment.mockReturnValueOnce({ format })
+
+    await getData(getMockRequest())
+
+    expect(format).toHaveBeenCalledWith(dateDisplayFormat)
   })
 
-  it('returns the formatted licence expiry', () => {
-    expect(ctx.data).toEqual({ licenceExpiry: formatted })
+  it('returns the formatted licence expiry', async () => {
+    const formattedLicenceExpiry = Symbol('formatted date')
+    const format = () => formattedLicenceExpiry
+    moment.mockReturnValueOnce({ format })
+
+    const data = await getData(getMockRequest())
+
+    expect(data).toEqual({ licenceExpiry: formattedLicenceExpiry })
   })
 })
