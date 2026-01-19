@@ -7,6 +7,25 @@ const MAX_AGE = 120
 const LICENCE_TO_START_FIELD = 'licence-to-start'
 const AFTER_PAYMENT = 'after-payment'
 const ANOTHER_DATE = 'another-date'
+const DOB_ERROR_KEYS = {
+  DAY_AND_MONTH: 'day-and-month',
+  DAY_AND_YEAR: 'day-and-year',
+  MONTH_AND_YEAR: 'month-and-year'
+}
+const DAY_SPECIFIC_ERRORS = [DOB_ERROR_KEYS.DAY_AND_MONTH, DOB_ERROR_KEYS.DAY_AND_YEAR, 'day']
+const MONTH_SPECIFIC_ERRORS = [DOB_ERROR_KEYS.DAY_AND_MONTH, DOB_ERROR_KEYS.MONTH_AND_YEAR, 'month']
+const YEAR_SPECIFIC_ERRORS = [DOB_ERROR_KEYS.DAY_AND_YEAR, DOB_ERROR_KEYS.MONTH_AND_YEAR, 'year']
+const DOB_FIELD_ERROR_PRIORITY = [
+  'full-date',
+  DOB_ERROR_KEYS.DAY_AND_MONTH,
+  DOB_ERROR_KEYS.DAY_AND_YEAR,
+  DOB_ERROR_KEYS.MONTH_AND_YEAR,
+  'day',
+  'month',
+  'year',
+  'non-numeric',
+  'invalid-date'
+]
 
 const validateDate = (day, month, year, minDate, maxDate) => {
   Joi.assert(dateSchemaInput(day, month, year), dateSchema)
@@ -59,20 +78,84 @@ export const renewalStartDateValidator = (payload, options) => {
 export const getDateErrorFlags = error => {
   const errorFlags = { isDayError: false, isMonthError: false, isYearError: false }
   const commonErrors = ['full-date', 'invalid-date', 'date-range', 'non-numeric']
-
+  const dayErrorKeys = new Set([...DAY_SPECIFIC_ERRORS, ...commonErrors])
+  const monthErrorKeys = new Set([...MONTH_SPECIFIC_ERRORS, ...commonErrors])
+  const yearErrorKeys = new Set([...YEAR_SPECIFIC_ERRORS, ...commonErrors])
   if (error) {
-    const [errorKey] = Object.keys(error)
+    const errorKeys = Object.keys(error)
+    for (const errorKey of errorKeys) {
+      if (dayErrorKeys.has(errorKey)) {
+        errorFlags.isDayError = true
+      }
+      if (monthErrorKeys.has(errorKey)) {
+        errorFlags.isMonthError = true
+      }
+      if (yearErrorKeys.has(errorKey)) {
+        errorFlags.isYearError = true
+      }
+    }
+  }
+  return errorFlags
+}
 
-    if (['day-and-month', 'day-and-year', 'day', ...commonErrors].includes(errorKey)) {
-      errorFlags.isDayError = true
-    }
-    if (['day-and-month', 'month-and-year', 'month', ...commonErrors].includes(errorKey)) {
-      errorFlags.isMonthError = true
-    }
-    if (['day-and-year', 'month-and-year', 'year', ...commonErrors].includes(errorKey)) {
-      errorFlags.isYearError = true
+export const getDobErrorMessage = (error, catalog) => {
+  const normalizedError = error ?? {}
+  if (!catalog) {
+    return undefined
+  }
+
+  const DATE_RANGE = 'date-range'
+  const errorMap = {
+    'full-date': {
+      'object.missing': { text: catalog.dob_error }
+    },
+    [DOB_ERROR_KEYS.DAY_AND_MONTH]: {
+      'object.missing': { text: catalog.dob_error_missing_day_and_month }
+    },
+    [DOB_ERROR_KEYS.DAY_AND_YEAR]: {
+      'object.missing': { text: catalog.dob_error_missing_day_and_year }
+    },
+    [DOB_ERROR_KEYS.MONTH_AND_YEAR]: {
+      'object.missing': { text: catalog.dob_error_missing_month_and_year }
+    },
+    day: {
+      'any.required': { text: catalog.dob_error_missing_day }
+    },
+    month: {
+      'any.required': { text: catalog.dob_error_missing_month }
+    },
+    year: {
+      'any.required': { text: catalog.dob_error_missing_year }
+    },
+    'non-numeric': {
+      'number.base': { text: catalog.dob_error_non_numeric }
+    },
+    'invalid-date': {
+      'any.custom': { text: catalog.dob_error_date_real }
+    },
+    [DATE_RANGE]: {
+      'date.min': { text: catalog.dob_error_year_min },
+      'date.max': { text: catalog.dob_error_year_max }
     }
   }
 
-  return errorFlags
+  const errorTypes = [...DOB_FIELD_ERROR_PRIORITY.map(type => [type]), [DATE_RANGE, 'date.min'], [DATE_RANGE, 'date.max']]
+
+  const found = errorTypes.find(([errType, errSubType]) => {
+    if (errType === DATE_RANGE) {
+      return normalizedError[errType] === errSubType && errorMap[errType]?.[errSubType]
+    }
+    return normalizedError[errType] && errorMap[errType]?.[normalizedError[errType]]
+  })
+
+  if (!found) {
+    return undefined
+  }
+
+  const [foundType, foundSubType] = found
+  if (foundType === DATE_RANGE) {
+    return { text: errorMap[foundType]?.[foundSubType]?.text }
+  }
+
+  return { text: errorMap[foundType]?.[normalizedError[foundType]]?.text }
 }

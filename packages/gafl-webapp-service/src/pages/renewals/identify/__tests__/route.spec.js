@@ -3,6 +3,8 @@ import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData, validator } from '../route.js'
 import { IDENTIFY, NEW_TRANSACTION } from '../../../../uri.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
+import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
+import { validation } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../uri.js', () => ({
@@ -26,7 +28,22 @@ describe('getData', () => {
           getCurrentPermission: pageGet
         }
       }
-    })
+    }),
+    i18n: {
+      getCatalog: () => ({
+        dob_error: 'mock dob_error',
+        dob_error_missing_day_and_month: 'mock dob_error_missing_day_and_month',
+        dob_error_missing_day_and_year: 'mock dob_error_missing_day_and_year',
+        dob_error_missing_month_and_year: 'mock dob_error_missing_month_and_year',
+        dob_error_missing_day: 'mock dob_error_missing_day',
+        dob_error_missing_month: 'mock dob_error_missing_month',
+        dob_error_missing_year: 'mock dob_error_missing_year',
+        dob_error_non_numeric: 'mock dob_error_non_numeric',
+        dob_error_date_real: 'mock dob_error_date_real',
+        dob_error_year_min: 'mock dob_error_year_min',
+        dob_error_year_max: 'mock dob_error_year_max'
+      })
+    }
   })
 
   it('addLanguageCodeToUri is called with the expected arguments', async () => {
@@ -82,6 +99,78 @@ describe('getData', () => {
   it('omits error if there is no error', async () => {
     const result = await getData(getMockRequest())
     expect(result.error).toBeUndefined()
+  })
+
+  describe('permission number validation', () => {
+    const referenceNumber = 'ABC123'
+    const setCurrentPermission = jest.fn()
+
+    const getRequestWithSetCurrentPermission = () => {
+      const baseRequest = getMockRequest(referenceNumber)
+      return {
+        ...baseRequest,
+        cache: () => {
+          const cache = baseRequest.cache()
+          return {
+            helpers: {
+              ...cache.helpers,
+              status: {
+                ...cache.helpers.status,
+                setCurrentPermission
+              }
+            }
+          }
+        }
+      }
+    }
+
+    beforeEach(() => {
+      setCurrentPermission.mockReset()
+    })
+
+    it('throws a redirect when validation fails', async () => {
+      jest
+        .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
+        .mockReturnValueOnce({ validate: () => ({ error: new Error('invalid') }) })
+
+      await expect(getData(getRequestWithSetCurrentPermission())).rejects.toBeInstanceOf(GetDataRedirect)
+    })
+
+    it('clears the cached reference when validation fails', async () => {
+      jest
+        .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
+        .mockReturnValueOnce({ validate: () => ({ error: new Error('invalid') }) })
+
+      try {
+        await getData(getRequestWithSetCurrentPermission())
+      } catch (error) {
+        if (!(error instanceof GetDataRedirect)) {
+          throw error
+        }
+      }
+
+      expect(setCurrentPermission).toHaveBeenCalledWith({ referenceNumber: null })
+    })
+
+    it('returns the reference number when validation passes', async () => {
+      jest
+        .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
+        .mockReturnValueOnce({ validate: () => ({ value: referenceNumber }) })
+
+      const result = await getData(getRequestWithSetCurrentPermission())
+
+      expect(result.referenceNumber).toBe(referenceNumber)
+    })
+
+    it('does not mutate the cached reference when validation passes', async () => {
+      jest
+        .spyOn(validation.permission, 'permissionNumberUniqueComponentValidator')
+        .mockReturnValueOnce({ validate: () => ({ value: referenceNumber }) })
+
+      await getData(getRequestWithSetCurrentPermission())
+
+      expect(setCurrentPermission).not.toHaveBeenCalled()
+    })
   })
 })
 
