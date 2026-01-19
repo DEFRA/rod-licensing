@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.20 (2026-01-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2284](https://github.com/DEFRA/rod-licensing/pull/2284) https://eaflood.atlassian.net/browse/IWTF-4957 ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.65.0-rc.19 (2026-01-19)
 
 #### :rocket: Enhancement
