@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.18 (2026-01-19)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2270](https://github.com/DEFRA/rod-licensing/pull/2270) Upgrade Lerna ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.17 (2026-01-13)
 
 #### :bug: Bug Fix
