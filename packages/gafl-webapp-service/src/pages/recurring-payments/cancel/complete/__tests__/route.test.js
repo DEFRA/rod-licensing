@@ -2,6 +2,7 @@ import pageRoute from '../../../../../routes/page-route.js'
 import { CANCEL_RP_COMPLETE } from '../../../../../uri.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat, dateDisplayFormat } from '../../../../../processors/date-and-time-display.js'
+import '../route.js'
 
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
@@ -14,8 +15,6 @@ jest.mock('../../../../../processors/date-and-time-display.js', () => ({
   cacheDateFormat: Symbol('cache-date-format'),
   dateDisplayFormat: Symbol('date-display-format')
 }))
-
-require('../route.js')
 
 // eslint-disable-next-line no-unused-vars
 const [[_v, _p, validator, completion, getData]] = pageRoute.mock.calls
