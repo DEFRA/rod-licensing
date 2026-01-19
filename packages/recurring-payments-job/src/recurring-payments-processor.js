@@ -40,18 +40,33 @@ const processRecurringPayments = async () => {
   }
 
   debug('Recurring Payments job enabled')
-  const date = new Date().toISOString().split('T')[0]
 
-  const dueRCPayments = await fetchDueRecurringPayments(date)
-  if (dueRCPayments.length === 0) {
-    return
+  const errorData = await fetchErrorData()
+
+  await generateABunchOfErrors(errorData)
+}
+
+const fetchErrorData = async () => {
+  return ['foo', 'bar', 'baz']
+}
+
+const generateABunchOfErrors = async errorData => {
+  const results = await Promise.allSettled(errorData.map(generateAndCatchAnError))
+  return results
+}
+
+const generateAndCatchAnError = async (errorText) => {
+  try {
+    return await generateAnError(errorText)
+  } catch (error) {
+    console.log('Check out this error:', errorText, error)
+    throw error
   }
+}
 
-  const payments = await requestPayments(dueRCPayments)
-
-  await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
-
-  await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+const generateAnError = async (errorText) => {
+  const error = new Error('%s is invalid! Panic stations!', errorText)
+  throw error
 }
 
 const fetchDueRecurringPayments = async date => {
