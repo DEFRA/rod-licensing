@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.19 (2026-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2289](https://github.com/DEFRA/rod-licensing/pull/2289) Cancellation journey page 4 - confirmation English ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.65.0-rc.18 (2026-01-19)
 
 #### :rocket: Enhancement
