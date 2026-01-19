@@ -1,0 +1,3 @@
+workspaces=true
+include=dev
+include-workspace-root=true

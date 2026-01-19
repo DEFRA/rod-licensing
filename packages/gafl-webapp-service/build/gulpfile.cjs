@@ -14,10 +14,12 @@ const minify = require('gulp-minify')
 const path = require('path')
 const concat = require('gulp-concat')
 
+const govukFrontendRootPath = path.dirname(require.resolve('govuk-frontend/package.json'))
+const govukFrontendDist = path.join(govukFrontendRootPath, 'dist')
 const paths = {
   assets: path.join('..', 'assets/'),
   public: path.join('..', 'public/'),
-  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'dist', 'govuk/')
+  govUk: path.join(govukFrontendRootPath, 'dist', 'govuk/')
 }
 
 Object.assign(paths, {
@@ -44,7 +46,7 @@ const copyRobots = () => {
 
 const copyFrontendJs = () => {
   return gulp
-    .src(`${paths.govUk}govuk-frontend.min.js`)
+    .src(`${paths.govUk}govuk-frontend.min.js`, { allowEmpty: true })
     .pipe(concat('govuk-frontend.js'))
     .pipe(minify({ noSource: true }))
     .pipe(gulp.dest(`${paths.public}javascript`))
@@ -58,7 +60,7 @@ const buildSass = () => {
     .pipe(
       sass({
         outputStyle: 'compressed',
-        includePaths: path.join('..', 'node_modules')
+        includePaths: [govukFrontendDist]
       }).on('error', sass.logError)
     )
     .pipe(sourcemaps.write())

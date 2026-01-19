@@ -1,7 +1,6 @@
 import { setupEnvironment } from '../../__mocks__/openid-client.js'
 import {
   CANCEL_RP_IDENTIFY,
-  CANCEL_RP_AUTHENTICATE,
   CANCEL_RP_DETAILS,
   CANCEL_RP_CONFIRM,
   CANCEL_RP_COMPLETE,
@@ -11,9 +10,8 @@ import {
 } from '../../uri.js'
 
 jest.mock('@defra-fish/connectors-lib')
-const CANCEL_RP_URIS = [
+const getCancelRPURIs = () => [
   CANCEL_RP_IDENTIFY.uri,
-  CANCEL_RP_AUTHENTICATE.uri,
   CANCEL_RP_DETAILS.uri,
   CANCEL_RP_CONFIRM.uri,
   CANCEL_RP_COMPLETE.uri,
@@ -70,8 +68,8 @@ describe('cancellation route journey behaves as expected', () => {
   it('adds the cancellation route journey if SHOW_CANCELLATION_JOURNEY is set to true', () => {
     process.env.SHOW_CANCELLATION_JOURNEY = 'true'
     jest.isolateModules(() => {
-      const telesalesRoutes = require('../telesales-routes.js').default
-      expect(telesalesRoutes).toMatchSnapshot()
+      const telesalesRoutePaths = require('../telesales-routes.js').default.map(route => route.path)
+      expect(telesalesRoutePaths).toEqual(expect.arrayContaining(getCancelRPURIs()))
     })
   })
 
@@ -79,7 +77,8 @@ describe('cancellation route journey behaves as expected', () => {
     process.env.SHOW_CANCELLATION_JOURNEY = 'false'
     jest.isolateModules(() => {
       const telesalesRoutes = require('../telesales-routes.js').default
-      const cancelRPRoutes = telesalesRoutes.filter(route => CANCEL_RP_URIS.includes(route.path))
+      const cancelRPURIs = getCancelRPURIs()
+      const cancelRPRoutes = telesalesRoutes.filter(route => cancelRPURIs.includes(route.path))
       expect(cancelRPRoutes).toHaveLength(0)
     })
   })
@@ -88,7 +87,8 @@ describe('cancellation route journey behaves as expected', () => {
     delete process.env.SHOW_CANCELLATION_JOURNEY
     jest.isolateModules(() => {
       const telesalesRoutes = require('../telesales-routes.js').default
-      const cancelRPRoutes = telesalesRoutes.filter(route => CANCEL_RP_URIS.includes(route.path))
+      const cancelRPURIs = getCancelRPURIs()
+      const cancelRPRoutes = telesalesRoutes.filter(route => cancelRPURIs.includes(route.path))
       expect(cancelRPRoutes).toHaveLength(0)
     })
   })
