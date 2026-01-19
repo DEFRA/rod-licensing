@@ -1,4 +1,12 @@
 
+## v1.65.0-rc.21 (2026-01-19)
+
+#### :bug: Bug Fix
+* [#2291](https://github.com/DEFRA/rod-licensing/pull/2291) Update workspace setup instructions  ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.65.0-rc.20 (2026-01-19)
 
 #### :bug: Bug Fix
