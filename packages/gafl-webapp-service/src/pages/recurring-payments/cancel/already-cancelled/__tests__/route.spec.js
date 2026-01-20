@@ -119,4 +119,11 @@ describe('getData', () => {
     await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
   })
+
+  it('sets data.uri.new to the decorated URL', async () => {
+    const expectedUri = Symbol('expected uri')
+    addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
+    const result = await getData(getSampleRequest())
+    expect(result.uri.new).toBe(expectedUri)
+  })
 })
