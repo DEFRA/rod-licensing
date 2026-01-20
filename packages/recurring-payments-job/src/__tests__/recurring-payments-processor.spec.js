@@ -309,8 +309,8 @@ describe('recurring-payments-processor', () => {
     })
 
     describe('when the error is caused by an invalid agreementId', () => {
-      it('logs out the ids', async () => {
-        jest.spyOn(console, 'log')
+      it('logs out the ids as an error', async () => {
+        jest.spyOn(console, 'error')
         salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
         const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
         sendPayment.mockRejectedValueOnce(oopsie)
@@ -319,7 +319,7 @@ describe('recurring-payments-processor', () => {
           await execute()
         } catch (e) {}
 
-        expect(console.log).toHaveBeenCalledWith(
+        expect(console.error).toHaveBeenCalledWith(
           '%s is an invalid agreementId. Recurring payment %s will be cancelled',
           'agreement-1',
           'recurring-payment-1'
@@ -407,7 +407,19 @@ describe('recurring-payments-processor', () => {
             await execute()
           } catch (e) {}
 
-          expect(console.error.mock.calls).toEqual([['Error requesting payments:', oopsie, oopsie]])
+          expect(console.error.mock.calls).toEqual([
+            [
+              '%s is an invalid agreementId. Recurring payment %s will be cancelled',
+              'agreement-1',
+              'first-recurring-payment'
+            ],
+            [
+              '%s is an invalid agreementId. Recurring payment %s will be cancelled',
+              'agreement-1',
+              'second-recurring-payment'
+            ],
+            ['Error requesting payments:', oopsie, oopsie]
+          ])
         })
       })
     })
