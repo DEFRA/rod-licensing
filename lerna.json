@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "1.65.0-rc.21",
+  "version": "1.65.0-rc.22",
   "npmClient": "npm",
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
