@@ -65,7 +65,7 @@ const generateAndCatchAnError = async (errorText) => {
 }
 
 const generateAnError = async (errorText) => {
-  const error = new Error('%s is invalid! Panic stations!', errorText)
+  const error = new Error(`${errorText} is invalid! Panic stations!`)
   throw error
 }
 
