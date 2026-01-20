@@ -59,7 +59,7 @@ const generateAndCatchAnError = async (errorText) => {
   try {
     return await generateAnError(errorText)
   } catch (error) {
-    console.log('Check out this error:', errorText, error)
+    console.error('Check out this error:', errorText, error)
     throw error
   }
 }
