@@ -110,7 +110,7 @@ const takePaymentIfValid = async (preparedPayment, agreementId, transaction) => 
     return await sendPayment(preparedPayment)
   } catch (error) {
     if (error.message.includes('Invalid attribute value: agreement_id. Agreement does not exist')) {
-      console.error('%s is an invalid agreementId. Recurring payment %s will be cancelled', agreementId, transaction.recurringPayment.id)
+      console.error(`${agreementId} is an invalid agreementId. Recurring payment ${transaction.recurringPayment.id} will be cancelled`)
       await salesApi.cancelRecurringPayment(transaction.recurringPayment.id)
     }
     throw error

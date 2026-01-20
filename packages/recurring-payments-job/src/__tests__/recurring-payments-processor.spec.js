@@ -320,9 +320,7 @@ describe('recurring-payments-processor', () => {
         } catch (e) {}
 
         expect(console.error).toHaveBeenCalledWith(
-          '%s is an invalid agreementId. Recurring payment %s will be cancelled',
-          'agreement-1',
-          'recurring-payment-1'
+          'agreement-1 is an invalid agreementId. Recurring payment recurring-payment-1 will be cancelled'
         )
       })
 
@@ -352,32 +350,35 @@ describe('recurring-payments-processor', () => {
       })
 
       describe('when there are valid and invalid agreement_ids', () => {
-        const setUpMultipleRecurringPayments = (
-          error = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
-        ) => {
+        const setUpMultipleRecurringPayments = (error = new Error('Invalid attribute value: agreement_id. Agreement does not exist')) => {
           // Send three recurring payments to the GOV.UK Pay API
           salesApi.getDueRecurringPayments.mockReturnValueOnce([
-            ...getMockPaymentRequestResponse(), ...getMockPaymentRequestResponse(), ...getMockPaymentRequestResponse()
+            ...getMockPaymentRequestResponse(),
+            ...getMockPaymentRequestResponse(),
+            ...getMockPaymentRequestResponse()
           ])
-          salesApi.createTransaction.mockReturnValueOnce({
-            id: 'test-transaction-id',
-            cost: 30,
-            recurringPayment: {
-              id: 'first-recurring-payment'
-            }
-          }).mockReturnValueOnce({
-            id: 'test-transaction-id',
-            cost: 30,
-            recurringPayment: {
-              id: 'second-recurring-payment'
-            }
-          }).mockReturnValueOnce({
-            id: 'test-transaction-id',
-            cost: 30,
-            recurringPayment: {
-              id: 'third-recurring-payment'
-            }
-          })
+          salesApi.createTransaction
+            .mockReturnValueOnce({
+              id: 'test-transaction-id',
+              cost: 30,
+              recurringPayment: {
+                id: 'first-recurring-payment'
+              }
+            })
+            .mockReturnValueOnce({
+              id: 'test-transaction-id',
+              cost: 30,
+              recurringPayment: {
+                id: 'second-recurring-payment'
+              }
+            })
+            .mockReturnValueOnce({
+              id: 'test-transaction-id',
+              cost: 30,
+              recurringPayment: {
+                id: 'third-recurring-payment'
+              }
+            })
 
           // Throw errors for the first two
           sendPayment.mockRejectedValueOnce(error).mockRejectedValueOnce(error)
@@ -392,9 +393,7 @@ describe('recurring-payments-processor', () => {
             await execute()
           } catch (e) {}
 
-          expect(salesApi.cancelRecurringPayment.mock.calls).toEqual(
-            [['first-recurring-payment'], ['second-recurring-payment']]
-          )
+          expect(salesApi.cancelRecurringPayment.mock.calls).toEqual([['first-recurring-payment'], ['second-recurring-payment']])
         })
 
         it('throws an error for each invalid payment', async () => {
@@ -408,16 +407,8 @@ describe('recurring-payments-processor', () => {
           } catch (e) {}
 
           expect(console.error.mock.calls).toEqual([
-            [
-              '%s is an invalid agreementId. Recurring payment %s will be cancelled',
-              'agreement-1',
-              'first-recurring-payment'
-            ],
-            [
-              '%s is an invalid agreementId. Recurring payment %s will be cancelled',
-              'agreement-1',
-              'second-recurring-payment'
-            ],
+            ['agreement-1 is an invalid agreementId. Recurring payment first-recurring-payment will be cancelled'],
+            ['agreement-1 is an invalid agreementId. Recurring payment second-recurring-payment will be cancelled'],
             ['Error requesting payments:', oopsie, oopsie]
           ])
         })
