@@ -1,5 +1,6 @@
 import pageRoute from '../../../../../routes/page-route.js'
-import { CANCEL_RP_ALREADY_CANCELLED } from '../../../../../uri.js'
+import { CANCEL_RP_ALREADY_CANCELLED, NEW_TRANSACTION } from '../../../../../uri.js'
+import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 
 require('../route.js')
 
@@ -111,5 +112,18 @@ describe('getData', () => {
     })
     const data = await getData(request)
     expect(data.endDate).toEqual('3 October 2025')
+  })
+
+  it('calls addLanguageCodeToUri with NEW_TRANSACTION.uri', async () => {
+    const request = getSampleRequest()
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
+  })
+
+  it('sets data.uri.new to the decorated URL', async () => {
+    const expectedUri = Symbol('expected uri')
+    addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
+    const result = await getData(getSampleRequest())
+    expect(result.uri.new).toBe(expectedUri)
   })
 })
