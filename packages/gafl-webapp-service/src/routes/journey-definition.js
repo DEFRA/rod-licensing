@@ -50,7 +50,7 @@ import { journeyGoalResults } from '../pages/journey-goal/result-function.js'
 import { isPhysical } from '../processors/licence-type-display.js'
 
 const getJourneyStart = () => {
-  if (process.env.CHANNEL === 'telesales') {
+  if (process.env.CHANNEL === 'telesales' && process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
     return [
       {
         current: { page: 'start' },
