@@ -1,4 +1,13 @@
 
+## v1.65.0-rc.23 (2026-01-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2288](https://github.com/DEFRA/rod-licensing/pull/2288) Fixing already cancelled rp backlink ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.65.0-rc.21 (2026-01-19)
 
