@@ -16,7 +16,7 @@ echo "Executing deployment - BRANCH=${BRANCH}, COMMIT_MESSAGE=${COMMIT_MESSAGE},
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
-npm i -g semver lerna lerna-changelog 
+npm i -g semver lerna lerna-changelog
 
 echo "Checking out target branch"
 git fetch --unshallow
@@ -24,10 +24,6 @@ git fetch --tags
 git checkout "${BRANCH}"
 git pull
 git branch -avl
-
-echo "Setting up npm"
-echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
-npm whoami
 
 echo "Setting up git"
 git config user.name "GitHub Actions"

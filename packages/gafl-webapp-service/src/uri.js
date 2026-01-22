@@ -62,11 +62,22 @@ export const ERROR_TESTING = { uri: '/buy/throw-error' }
 export const CHOOSE_PAYMENT = { uri: '/buy/choose-payment', page: 'choose-payment' }
 export const SET_UP_PAYMENT = { uri: '/buy/set-up-recurring-card-payment', page: 'set-up-payment' }
 
+/**
+ * Recurring payments cancellation pages
+ */
 export const CANCEL_RP_IDENTIFY = { uri: '/buy/cancel-recurring-payment/identify', page: 'cancel-rp-identify' }
 export const CANCEL_RP_AUTHENTICATE = { uri: '/buy/cancel-recurring-payment/authenticate' }
 export const CANCEL_RP_DETAILS = { uri: '/buy/cancel-recurring-payment/details', page: 'cancel-rp-details' }
 export const CANCEL_RP_CONFIRM = { uri: '/buy/cancel-recurring-payment/confirm', page: 'cancel-rp-confirm' }
 export const CANCEL_RP_COMPLETE = { uri: '/buy/cancel-recurring-payment/complete', page: 'cancel-rp-complete' }
+export const CANCEL_RP_AGREEMENT_NOT_FOUND = {
+  uri: '/buy/cancel-recurring-payment/agreement-not-found',
+  page: 'cancel-rp-agreement-not-found'
+}
+export const CANCEL_RP_LICENCE_NOT_FOUND = { uri: '/buy/cancel-recurring-payment/licence-not-found', page: 'cancel-rp-licence-not-found' }
+export const CANCEL_RP_ALREADY_CANCELLED = { uri: '/buy/cancel-recurring-payment/already-cancelled', page: 'cancel-rp-already-cancelled' }
+
+export const JOURNEY_GOAL = { uri: '/buy/journey-goal', page: 'journey-goal' }
 
 /**
  * These are informational static pages

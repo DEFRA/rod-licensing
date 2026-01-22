@@ -1,6 +1,5 @@
 import pageRoute from '../../../../../routes/page-route.js'
-import { CANCEL_RP_CONFIRM, CANCEL_RP_COMPLETE } from '../../../../../uri.js'
-import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
+import { CANCEL_RP_AGREEMENT_NOT_FOUND, CANCEL_RP_IDENTIFY } from '../../../../../uri.js'
 
 require('../route.js')
 // eslint-disable-next-line no-unused-vars
@@ -9,17 +8,27 @@ const [[_v, _p, validator, completion, getData]] = pageRoute.mock.calls
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
   ...jest.requireActual('../../../../../uri.js'),
-  CANCEL_RP_CONFIRM: { page: Symbol('cancel-rp-confirm-page'), uri: Symbol('cancel-rp-confirm-uri') },
-  CANCEL_RP_COMPLETE: { uri: Symbol('cancel-rp-complete-uri') }
+  CANCEL_RP_IDENTIFY: { page: Symbol('cancel-rp-identify-page') },
+  CANCEL_RP_AGREEMENT_NOT_FOUND: { page: Symbol('cancel-rp-agreement-not-found-page'), uri: Symbol('cancel-rp-agreement-not-found-uri') }
 }))
 jest.mock('../../../../../processors/uri-helper.js')
 
+const getSampleRequest = (referenceNumber = 'RP12345678') => ({
+  cache: jest.fn(() => ({
+    helpers: {
+      page: {
+        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber } }))
+      }
+    }
+  }))
+})
+
 describe('pageRoute receives expected arguments', () => {
-  it('passes CANCEL_RP_CONFIRM.page as the view name', () => {
+  it('passes CANCEL_RP_AGREEMENT_NOT_FOUND.page as the view name', () => {
     jest.isolateModules(() => {
       require('../route.js')
       expect(pageRoute).toHaveBeenCalledWith(
-        CANCEL_RP_CONFIRM.page,
+        CANCEL_RP_AGREEMENT_NOT_FOUND.page,
         expect.anything(),
         expect.anything(),
         expect.anything(),
@@ -28,12 +37,12 @@ describe('pageRoute receives expected arguments', () => {
     })
   })
 
-  it('passes CANCEL_RP_CONFIRM.uri as the path', () => {
+  it('passes CANCEL_RP_AGREEMENT_NOT_FOUND.uri as the path', () => {
     jest.isolateModules(() => {
       require('../route.js')
       expect(pageRoute).toHaveBeenCalledWith(
         expect.anything(),
-        CANCEL_RP_CONFIRM.uri,
+        CANCEL_RP_AGREEMENT_NOT_FOUND.uri,
         expect.anything(),
         expect.anything(),
         expect.anything()
@@ -81,26 +90,40 @@ describe('pageRoute receives expected arguments', () => {
   })
 })
 
-describe('completion function', () => {
-  beforeEach(jest.clearAllMocks)
-
-  it('calls addLanguageCodeToUri with request object', () => {
-    const sampleRequest = Symbol('sample request')
-    completion(sampleRequest)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, expect.anything())
+describe('getData', () => {
+  it('passes call charges link in list of urls', async () => {
+    expect(await getData(getSampleRequest())).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({
+          callCharges: 'https://www.gov.uk/call-charges'
+        })
+      })
+    )
   })
 
-  it('calls addLanguageCodeToUri with CANCEL_RP_AUTHENTICATE uri', () => {
-    completion({})
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), CANCEL_RP_COMPLETE.uri)
+  it('passes contact us email in list of urls', async () => {
+    expect(await getData(getSampleRequest())).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({
+          contactUs: 'mailto:enquiries@environment-agency.gov.uk'
+        })
+      })
+    )
   })
 
-  it('returns the value of addLanguageCodeToUri', () => {
-    const expectedCompletionRedirect = Symbol('expected-completion-redirect')
-    addLanguageCodeToUri.mockReturnValueOnce(expectedCompletionRedirect)
+  it('requests page data from CANCEL_RP_IDENTIFY page', async () => {
+    const request = getSampleRequest()
+    await getData(request)
+    const [{ value: pageCache }] = request.cache.mock.results
+    expect(pageCache.helpers.page.getCurrentPermission).toHaveBeenCalledWith(CANCEL_RP_IDENTIFY.page)
+  })
 
-    const completionRedirect = completion({})
-
-    expect(completionRedirect).toBe(expectedCompletionRedirect)
+  it('passes reference number from CANCEL_RP_IDENTIFY page data', async () => {
+    const referenceNumber = 'RP87654321'
+    expect(await getData(getSampleRequest(referenceNumber))).toEqual(
+      expect.objectContaining({
+        referenceNumber
+      })
+    )
   })
 })

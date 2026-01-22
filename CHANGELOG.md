@@ -1,5 +1,174 @@
 
 
+## v1.65.0-rc.23 (2026-01-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2288](https://github.com/DEFRA/rod-licensing/pull/2288) Fixing already cancelled rp backlink ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.65.0-rc.21 (2026-01-19)
+
+#### :bug: Bug Fix
+* [#2291](https://github.com/DEFRA/rod-licensing/pull/2291) Update workspace setup instructions  ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.20 (2026-01-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2284](https://github.com/DEFRA/rod-licensing/pull/2284) https://eaflood.atlassian.net/browse/IWTF-4957 ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.19 (2026-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2289](https://github.com/DEFRA/rod-licensing/pull/2289) Cancellation journey page 4 - confirmation English ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.18 (2026-01-19)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2270](https://github.com/DEFRA/rod-licensing/pull/2270) Upgrade Lerna ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.17 (2026-01-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2285](https://github.com/DEFRA/rod-licensing/pull/2285) Flaky unit test in license-start-time.spec.js ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.16 (2026-01-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2281](https://github.com/DEFRA/rod-licensing/pull/2281) Add validation to journey goals page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.15 (2026-01-06)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2264](https://github.com/DEFRA/rod-licensing/pull/2264) RP job should cancel invalid agreementIds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.65.0-rc.13 (2026-01-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2278](https://github.com/DEFRA/rod-licensing/pull/2278) Backlink not working on rcp licence-not-found page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+
+
+## v1.65.0-rc.9 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2267](https://github.com/DEFRA/rod-licensing/pull/2267) Cancellation confirmation UI fixes ([@jaucourt](https://github.com/jaucourt))
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.8 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.7 (2025-12-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2265](https://github.com/DEFRA/rod-licensing/pull/2265) Journey Goal Page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.6 (2025-12-19)
+
+#### :bug: Bug Fix
+* `sqs-receiver-service`
+  * [#2269](https://github.com/DEFRA/rod-licensing/pull/2269) Fix error checking failed sqs messages from delete request ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.5 (2025-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2263](https://github.com/DEFRA/rod-licensing/pull/2263) Unhappy cancellation journey page 2 - no match ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.65.0-rc.4 (2025-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2262](https://github.com/DEFRA/rod-licensing/pull/2262) Unhappy cancellation journey page 2 - already cancelled ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.65.0-rc.2 (2025-12-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2233](https://github.com/DEFRA/rod-licensing/pull/2233) RCP Cancellation - no RCP agreement ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.1 (2025-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2261](https://github.com/DEFRA/rod-licensing/pull/2261) Cancellation journey page 3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.65.0-rc.0 (2025-12-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2221](https://github.com/DEFRA/rod-licensing/pull/2221) Cancellation confirm details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 ## v1.64.0-rc.22 (2025-11-21)
 
 #### :bug: Bug Fix

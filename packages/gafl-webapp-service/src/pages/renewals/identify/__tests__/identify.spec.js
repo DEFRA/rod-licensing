@@ -119,7 +119,22 @@ describe('The easy renewal identification page', () => {
             getCurrentPermission: async () => ({})
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => ({
+          dob_error: 'mock dob_error',
+          dob_error_missing_day_and_month: 'mock dob_error_missing_day_and_month',
+          dob_error_missing_day_and_year: 'mock dob_error_missing_day_and_year',
+          dob_error_missing_month_and_year: 'mock dob_error_missing_month_and_year',
+          dob_error_missing_day: 'mock dob_error_missing_day',
+          dob_error_missing_month: 'mock dob_error_missing_month',
+          dob_error_missing_year: 'mock dob_error_missing_year',
+          dob_error_non_numeric: 'mock dob_error_non_numeric',
+          dob_error_date_real: 'mock dob_error_date_real',
+          dob_error_year_min: 'mock dob_error_year_min',
+          dob_error_year_max: 'mock dob_error_year_max'
+        })
+      }
     })
 
     it('passes request to addLanguageCodeToUri', async () => {

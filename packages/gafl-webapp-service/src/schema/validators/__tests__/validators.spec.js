@@ -1,5 +1,11 @@
 import Joi from 'joi'
-import { dateOfBirthValidator, startDateValidator, getDateErrorFlags, renewalStartDateValidator } from '../validators.js'
+import {
+  dateOfBirthValidator,
+  startDateValidator,
+  getDateErrorFlags,
+  renewalStartDateValidator,
+  getDobErrorMessage
+} from '../validators.js'
 import moment from 'moment-timezone'
 const dateSchema = require('../../date.schema.js')
 
@@ -288,5 +294,58 @@ describe('renewalStartDateValidator', () => {
   it('throws an error if licence-to-start is set to an invalid value', () => {
     const samplePayload = { 'licence-to-start': '12th-of-never' }
     expect(() => renewalStartDateValidator(samplePayload, options)).toThrow()
+  })
+})
+
+describe('getDobErrorMessage', () => {
+  const getMockCatalog = () => ({
+    dob_error: 'Enter your date of birth',
+    dob_error_missing_day_and_month: 'Enter the day and month',
+    dob_error_missing_day_and_year: 'Enter the day and year',
+    dob_error_missing_month_and_year: 'Enter the month and year',
+    dob_error_missing_day: 'Enter the day',
+    dob_error_missing_month: 'Enter the month',
+    dob_error_missing_year: 'Enter the year',
+    dob_error_non_numeric: 'Date of birth must be numbers',
+    dob_error_date_real: 'Enter a real date',
+    dob_error_year_min: 'Year is too far in the past',
+    dob_error_year_max: 'Year is too recent'
+  })
+
+  it('returns undefined when no matching error is present', () => {
+    const result = getDobErrorMessage({}, getMockCatalog())
+    expect(result).toBeUndefined()
+  })
+
+  it('returns the mapped message for a simple field error', () => {
+    const catalog = getMockCatalog()
+    const error = { day: 'any.required' }
+    const result = getDobErrorMessage(error, catalog)
+    expect(result).toEqual({ text: catalog.dob_error_missing_day })
+  })
+
+  it('returns undefined when error payload is missing', () => {
+    const catalog = getMockCatalog()
+    const result = getDobErrorMessage(undefined, catalog)
+    expect(result).toBeUndefined()
+  })
+
+  it('returns the mapped message for a date-range minimum error', () => {
+    const catalog = getMockCatalog()
+    const error = { 'date-range': 'date.min' }
+    const result = getDobErrorMessage(error, catalog)
+    expect(result).toEqual({ text: catalog.dob_error_year_min })
+  })
+
+  it('returns the mapped message for a date-range maximum error', () => {
+    const catalog = getMockCatalog()
+    const error = { 'date-range': 'date.max' }
+    const result = getDobErrorMessage(error, catalog)
+    expect(result).toEqual({ text: catalog.dob_error_year_max })
+  })
+
+  it('returns undefined when catalog is missing', () => {
+    const error = { day: 'any.required' }
+    expect(getDobErrorMessage(error)).toBeUndefined()
   })
 })
