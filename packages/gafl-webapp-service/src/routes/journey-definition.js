@@ -113,7 +113,7 @@ export default [
       if (s.fromSummary) {
         return LICENCE_SUMMARY.uri
       }
-      if (process.env.CHANNEL === 'telesales') {
+      if (process.env.CHANNEL === 'telesales' && process.env.SHOW_CANCELLATION_JOURNEY === 'true') {
         return JOURNEY_GOAL.uri
       }
       return null

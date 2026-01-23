@@ -47,12 +47,29 @@ describe('The licence-for page', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
   })
 
-  it('has a back-link to the journey-goal page in telesales journey', () => {
+  it('has a back-link to the journey-goal page in telesales journey when cancellation enabled', () => {
     jest.isolateModules(() => {
       process.env.CHANNEL = 'telesales'
+      process.env.SHOW_CANCELLATION_JOURNEY = 'true'
       const isolatedJourneyDefinition = require('../journey-definition.js').default
       const isolatedJourneyGoal = isolatedJourneyDefinition.find(n => n.current.page === LICENCE_FOR.page)
       expect(isolatedJourneyGoal.backLink({})).toBe(JOURNEY_GOAL.uri)
+      delete process.env.CHANNEL
+    })
+  })
+
+  it.each([
+    ['telesales not flagged', 'CHANNEL', 'not_telesales'],
+    ['cancellation journey disabled', 'SHOW_CANCELLATION_JOURNEY', 'false'],
+    ['cancellation journey flag undefined', 'SHOW_CANCELLATION_JOURNEY', undefined]
+  ])('omits back-link to the journey-goal page if %s', (_d, envKey, envVal) => {
+    jest.isolateModules(() => {
+      process.env.CHANNEL = 'telesales'
+      process.env.SHOW_CANCELLATION_JOURNEY = 'true'
+      process.env[envKey] = envVal
+      const isolatedJourneyDefinition = require('../journey-definition.js').default
+      const isolatedJourneyGoal = isolatedJourneyDefinition.find(n => n.current.page === LICENCE_FOR.page)
+      expect(isolatedJourneyGoal.backLink({})).toBeNull()
       delete process.env.CHANNEL
     })
   })
