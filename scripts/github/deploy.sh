@@ -40,7 +40,12 @@ git config --global --add versionsort.suffix -rc.
 echo "Determining versions for release"
 if [ "${BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
-    PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)
+    if [ "$RELEASE_TYPE" == "patch" ]; then
+        echo "Patch release on master branch, incrementing patch version."
+        PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*$' | tail -1)
+    else
+        PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)
+    fi
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
 elif [ "$BRANCH" == "develop" ]; then
