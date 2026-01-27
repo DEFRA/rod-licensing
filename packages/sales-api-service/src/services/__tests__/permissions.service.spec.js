@@ -159,5 +159,20 @@ describe('permissions service', () => {
       }
       expect(results).toEqual(['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'A1', 'A2', 'A3', 'B1', 'B2', 'B3'])
     })
+
+    it('rolls over once all dictionaries are exhausted', () => {
+      const d = [
+        'ABCDEFGHJKLMNPQRSTUVWXYZ1234567890',
+        'BCDFGHJKLM256789',
+        'NPQRSTVWXZ256789',
+        'BCDFGHJKLM256789',
+        'ABCDEFGHJKLMNPQRSTUVWXYZ1234567890'
+      ]
+      const results = []
+      for (let i = 4734975; i < 4734979; i++) {
+        results.push(generate(i, d))
+      }
+      expect(results).toEqual(['09990', 'ABNBA', 'ABNBB', 'ABNBC'])
+    })
   })
 })
