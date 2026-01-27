@@ -306,6 +306,93 @@ describe('The page handler function', () => {
       )
     })
   })
+
+  describe('currentPage tracking', () => {
+    it('updates currentPage when viewing a page with next property', async () => {
+      journeyDefinition.push({
+        current: { page: 'test-page' },
+        next: { ok: { page: { uri: '/next' } } }
+      })
+
+      const setCurrentPermission = jest.fn()
+      const getCurrentPermission = jest.fn(() => ({ someStatus: 'value' }))
+      const request = getMockRequest({
+        getCurrentPermission,
+        setCurrentPermission
+      })
+
+      const { get } = pageHandler('', 'test-page', '/next')
+      await get(request, getMockToolkit())
+
+      expect(setCurrentPermission).toHaveBeenCalledWith({
+        someStatus: 'value',
+        currentPage: 'test-page'
+      })
+    })
+
+    it('does not update currentPage when viewing a terminal page without next property', async () => {
+      journeyDefinition.push({
+        current: { page: 'error-page' }
+        // no next property - terminal page
+      })
+
+      const setCurrentPermission = jest.fn()
+      const getCurrentPermission = jest.fn(() => ({ someStatus: 'value' }))
+      const request = getMockRequest({
+        getCurrentPermission,
+        setCurrentPermission
+      })
+
+      const { get } = pageHandler('', 'error-page', null)
+      await get(request, getMockToolkit())
+
+      expect(setCurrentPermission).not.toHaveBeenCalledWith(
+        expect.objectContaining({ currentPage: 'error-page' })
+      )
+    })
+
+    it('does not update currentPage when page is not in journey definition', async () => {
+      // journeyDefinition is empty
+
+      const setCurrentPermission = jest.fn()
+      const request = getMockRequest({
+        setCurrentPermission
+      })
+
+      const { get } = pageHandler('', 'unknown-page', null)
+      await get(request, getMockToolkit())
+
+      expect(setCurrentPermission).not.toHaveBeenCalled()
+    })
+
+    it('preserves existing status properties when updating currentPage', async () => {
+      journeyDefinition.push({
+        current: { page: 'form-page' },
+        next: { ok: { page: { uri: '/next' } } }
+      })
+
+      const existingStatus = {
+        authentication: { authorised: true },
+        fromSummary: true,
+        'some-page': 'completed'
+      }
+
+      const setCurrentPermission = jest.fn()
+      const getCurrentPermission = jest.fn(() => existingStatus)
+      const request = getMockRequest({
+        getCurrentPermission,
+        setCurrentPermission
+      })
+
+      const { get } = pageHandler('', 'form-page', '/next')
+      await get(request, getMockToolkit())
+
+      expect(setCurrentPermission).toHaveBeenCalledWith({
+        ...existingStatus,
+        currentPage: 'form-page'
+      })
+    })
+  })
 })
 
 const getAnalytics = overides => ({
@@ -314,7 +401,7 @@ const getAnalytics = overides => ({
   ...overides
 })
 
-const getMockRequest = ({ setCurrentPermission = () => {}, path = '/buy/we/are/here', analytics, set = () => {} } = {}) => ({
+const getMockRequest = ({ setCurrentPermission = () => {}, getCurrentPermission = () => ({}), path = '/buy/we/are/here', analytics, set = () => {} } = {}) => ({
   cache: () => ({
     helpers: {
       page: {
@@ -322,8 +409,8 @@ const getMockRequest = ({ setCurrentPermission = () => {}, path = '/buy/we/are/h
         setCurrentPermission
       },
       status: {
-        getCurrentPermission: () => ({}),
-        setCurrentPermission: () => {}
+        getCurrentPermission,
+        setCurrentPermission
       },
       transaction: {
         getCurrentPermission: () => {}

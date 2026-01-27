@@ -15,6 +15,12 @@ export const nextPage = async request => {
   // Determine the current page
   const currentPage = status.currentPage || 'start'
   const routeNode = journeyDefinition.find(p => p.current.page === currentPage)
+
+  // If route node has no 'next' property, it's a terminal page (error pages, order complete, etc.) - stay on it
+  if (!routeNode.next) {
+    return routeNode.current.uri
+  }
+
   // If the current page has an error then reload it.
   if (!status[status.currentPage] && currentPage !== 'start') {
     return routeNode.current.uri

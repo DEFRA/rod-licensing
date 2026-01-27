@@ -9,13 +9,15 @@ jest.mock('../../uri.js', () => ({
     page: 'identify page'
   },
   LICENCE_NOT_FOUND: {
-    uri: Symbol('licence not found uri')
+    uri: Symbol('licence not found uri'),
+    page: 'licence-not-found'
   },
   CONTROLLER: {
     uri: Symbol('controller uri')
   },
   RENEWAL_INACTIVE: {
-    uri: Symbol('renewal inactive uri')
+    uri: Symbol('renewal inactive uri'),
+    page: 'renewal-inactive'
   }
 }))
 jest.mock('../../processors/concession-helper.js')
@@ -91,5 +93,187 @@ describe.each([
   })
   const getSampleResponseToolkit = () => ({
     redirectWithLanguageCode: jest.fn()
+  })
+})
+
+describe('currentPage tracking', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('sets currentPage to LICENCE_NOT_FOUND.page when authentication fails', async () => {
+    salesApi.authenticate.mockReturnValueOnce(false)
+    mockDiff.mockReturnValue(1)
+
+    const setCurrentPermission = jest.fn()
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          page: {
+            getCurrentPermission: async () => ({
+              payload: {
+                'date-of-birth-year': 1970,
+                'date-of-birth-month': 1,
+                'date-of-birth-day': 1,
+                postcode: 'AB1 1AB',
+                referenceNumber: 'ABC123'
+              }
+            }),
+            setCurrentPermission: async () => {}
+          },
+          transaction: {
+            getCurrentPermission: async () => ({
+              renewedEndDate: '2023-08-10'
+            }),
+            setCurrentPermission: async () => {}
+          },
+          status: {
+            getCurrentPermission: async () => ({}),
+            setCurrentPermission
+          }
+        }
+      })
+    }
+
+    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
+    await handler(mockRequest, responseToolkit)
+
+    expect(setCurrentPermission).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: LICENCE_NOT_FOUND.page
+      })
+    )
+  })
+
+  it('sets currentPage to RENEWAL_INACTIVE.page when renewal is not due', async () => {
+    salesApi.authenticate.mockReturnValueOnce(getSampleAuthResult())
+    mockDiff.mockReturnValue(61) // > RENEW_BEFORE_DAYS
+
+    const setCurrentPermission = jest.fn()
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          page: {
+            getCurrentPermission: async () => ({
+              payload: {
+                'date-of-birth-year': 1970,
+                'date-of-birth-month': 1,
+                'date-of-birth-day': 1,
+                postcode: 'AB1 1AB',
+                referenceNumber: 'ABC123'
+              }
+            }),
+            setCurrentPermission: async () => {}
+          },
+          transaction: {
+            getCurrentPermission: async () => ({
+              renewedEndDate: '2023-08-10'
+            }),
+            setCurrentPermission: async () => {}
+          },
+          status: {
+            getCurrentPermission: async () => ({}),
+            setCurrentPermission
+          }
+        }
+      })
+    }
+
+    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
+    await handler(mockRequest, responseToolkit)
+
+    expect(setCurrentPermission).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: RENEWAL_INACTIVE.page
+      })
+    )
+  })
+
+  it('sets currentPage to RENEWAL_INACTIVE.page when renewal is expired', async () => {
+    salesApi.authenticate.mockReturnValueOnce(getSampleAuthResult())
+    mockDiff.mockReturnValue(-61) // < -RENEW_AFTER_DAYS
+
+    const setCurrentPermission = jest.fn()
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          page: {
+            getCurrentPermission: async () => ({
+              payload: {
+                'date-of-birth-year': 1970,
+                'date-of-birth-month': 1,
+                'date-of-birth-day': 1,
+                postcode: 'AB1 1AB',
+                referenceNumber: 'ABC123'
+              }
+            }),
+            setCurrentPermission: async () => {}
+          },
+          transaction: {
+            getCurrentPermission: async () => ({
+              renewedEndDate: '2023-08-10'
+            }),
+            setCurrentPermission: async () => {}
+          },
+          status: {
+            getCurrentPermission: async () => ({}),
+            setCurrentPermission
+          }
+        }
+      })
+    }
+
+    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
+    await handler(mockRequest, responseToolkit)
+
+    expect(setCurrentPermission).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: RENEWAL_INACTIVE.page
+      })
+    )
+  })
+
+  it('sets currentPage to RENEWAL_INACTIVE.page when licence is not annual', async () => {
+    salesApi.authenticate.mockReturnValueOnce(getSampleAuthResult('D', 8)) // 8-day licence
+    mockDiff.mockReturnValue(1)
+
+    const setCurrentPermission = jest.fn()
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          page: {
+            getCurrentPermission: async () => ({
+              payload: {
+                'date-of-birth-year': 1970,
+                'date-of-birth-month': 1,
+                'date-of-birth-day': 1,
+                postcode: 'AB1 1AB',
+                referenceNumber: 'ABC123'
+              }
+            }),
+            setCurrentPermission: async () => {}
+          },
+          transaction: {
+            getCurrentPermission: async () => ({
+              renewedEndDate: '2023-08-10'
+            }),
+            setCurrentPermission: async () => {}
+          },
+          status: {
+            getCurrentPermission: async () => ({}),
+            setCurrentPermission
+          }
+        }
+      })
+    }
+
+    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
+    await handler(mockRequest, responseToolkit)
+
+    expect(setCurrentPermission).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: RENEWAL_INACTIVE.page
+      })
+    )
   })
 })
