@@ -124,7 +124,7 @@ export default (path, view, completion, getData) => ({
 
     // Update currentPage if this is not a terminal page (error pages remain sticky)
     const routeNode = journeyDefinition.find(p => p.current.page === view)
-    if (routeNode && routeNode.next) {
+    if (routeNode?.next) {
       const status = await request.cache().helpers.status.getCurrentPermission()
       await request.cache().helpers.status.setCurrentPermission({
         ...status,
