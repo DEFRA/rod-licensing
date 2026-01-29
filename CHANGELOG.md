@@ -1,4 +1,13 @@
 
+## v1.67.0-rc.0 (2026-01-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2304](https://github.com/DEFRA/rod-licensing/pull/2304) GAFL:Dev - Remove information banner from fullfilment page ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 
 
 
