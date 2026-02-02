@@ -43,6 +43,10 @@ const getSampleAuthResult = (description = 'M', durationMagnitude = 12) => ({
   }
 })
 
+const getSampleResponseToolkit = () => ({
+  redirectWithLanguageCode: jest.fn()
+})
+
 describe.each([
   [false, 'licence not found', LICENCE_NOT_FOUND.uri, 1],
   [getSampleAuthResult(), 'controller', CONTROLLER.uri, -1],
@@ -91,9 +95,6 @@ describe.each([
       }
     })
   })
-  const getSampleResponseToolkit = () => ({
-    redirectWithLanguageCode: jest.fn()
-  })
 })
 
 describe('currentPage tracking', () => {
@@ -101,178 +102,52 @@ describe('currentPage tracking', () => {
     jest.clearAllMocks()
   })
 
-  it('sets currentPage to LICENCE_NOT_FOUND.page when authentication fails', async () => {
-    salesApi.authenticate.mockReturnValueOnce(false)
-    mockDiff.mockReturnValue(1)
-
-    const setCurrentPermission = jest.fn()
-    const mockRequest = {
-      cache: () => ({
-        helpers: {
-          page: {
-            getCurrentPermission: async () => ({
-              payload: {
-                'date-of-birth-year': 1970,
-                'date-of-birth-month': 1,
-                'date-of-birth-day': 1,
-                postcode: 'AB1 1AB',
-                referenceNumber: 'ABC123'
-              }
-            }),
-            setCurrentPermission: async () => {}
-          },
-          transaction: {
-            getCurrentPermission: async () => ({
-              renewedEndDate: '2023-08-10'
-            }),
-            setCurrentPermission: async () => {}
-          },
-          status: {
-            getCurrentPermission: async () => ({}),
-            setCurrentPermission
-          }
+  const getMockRequestForCurrentPageTests = (setCurrentPermissionSpy = jest.fn()) => ({
+    cache: () => ({
+      helpers: {
+        page: {
+          getCurrentPermission: async () => ({
+            payload: {
+              'date-of-birth-year': 1970,
+              'date-of-birth-month': 1,
+              'date-of-birth-day': 1,
+              postcode: 'AB1 1AB',
+              referenceNumber: 'ABC123'
+            }
+          }),
+          setCurrentPermission: async () => {}
+        },
+        transaction: {
+          getCurrentPermission: async () => ({
+            renewedEndDate: '2023-08-10'
+          }),
+          setCurrentPermission: async () => {}
+        },
+        status: {
+          getCurrentPermission: async () => ({}),
+          setCurrentPermission: setCurrentPermissionSpy
         }
-      })
-    }
-
-    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
-    await handler(mockRequest, responseToolkit)
-
-    expect(setCurrentPermission).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currentPage: LICENCE_NOT_FOUND.page
-      })
-    )
+      }
+    })
   })
 
-  it('sets currentPage to RENEWAL_INACTIVE.page when renewal is not due', async () => {
-    salesApi.authenticate.mockReturnValueOnce(getSampleAuthResult())
-    mockDiff.mockReturnValue(61) // > RENEW_BEFORE_DAYS
+  it.each([
+    [false, 1, LICENCE_NOT_FOUND.page, 'authentication fails'],
+    [getSampleAuthResult(), 61, RENEWAL_INACTIVE.page, 'renewal is not due'],
+    [getSampleAuthResult(), -61, RENEWAL_INACTIVE.page, 'renewal is expired'],
+    [getSampleAuthResult('D', 8), 1, RENEWAL_INACTIVE.page, 'licence is not annual']
+  ])('sets currentPage when %s', async (authResult, daysDiff, expectedPage, scenario) => {
+    salesApi.authenticate.mockReturnValueOnce(authResult)
+    mockDiff.mockReturnValue(daysDiff)
 
     const setCurrentPermission = jest.fn()
-    const mockRequest = {
-      cache: () => ({
-        helpers: {
-          page: {
-            getCurrentPermission: async () => ({
-              payload: {
-                'date-of-birth-year': 1970,
-                'date-of-birth-month': 1,
-                'date-of-birth-day': 1,
-                postcode: 'AB1 1AB',
-                referenceNumber: 'ABC123'
-              }
-            }),
-            setCurrentPermission: async () => {}
-          },
-          transaction: {
-            getCurrentPermission: async () => ({
-              renewedEndDate: '2023-08-10'
-            }),
-            setCurrentPermission: async () => {}
-          },
-          status: {
-            getCurrentPermission: async () => ({}),
-            setCurrentPermission
-          }
-        }
-      })
-    }
-
-    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
+    const mockRequest = getMockRequestForCurrentPageTests(setCurrentPermission)
+    const responseToolkit = getSampleResponseToolkit()
     await handler(mockRequest, responseToolkit)
 
     expect(setCurrentPermission).toHaveBeenCalledWith(
       expect.objectContaining({
-        currentPage: RENEWAL_INACTIVE.page
-      })
-    )
-  })
-
-  it('sets currentPage to RENEWAL_INACTIVE.page when renewal is expired', async () => {
-    salesApi.authenticate.mockReturnValueOnce(getSampleAuthResult())
-    mockDiff.mockReturnValue(-61) // < -RENEW_AFTER_DAYS
-
-    const setCurrentPermission = jest.fn()
-    const mockRequest = {
-      cache: () => ({
-        helpers: {
-          page: {
-            getCurrentPermission: async () => ({
-              payload: {
-                'date-of-birth-year': 1970,
-                'date-of-birth-month': 1,
-                'date-of-birth-day': 1,
-                postcode: 'AB1 1AB',
-                referenceNumber: 'ABC123'
-              }
-            }),
-            setCurrentPermission: async () => {}
-          },
-          transaction: {
-            getCurrentPermission: async () => ({
-              renewedEndDate: '2023-08-10'
-            }),
-            setCurrentPermission: async () => {}
-          },
-          status: {
-            getCurrentPermission: async () => ({}),
-            setCurrentPermission
-          }
-        }
-      })
-    }
-
-    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
-    await handler(mockRequest, responseToolkit)
-
-    expect(setCurrentPermission).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currentPage: RENEWAL_INACTIVE.page
-      })
-    )
-  })
-
-  it('sets currentPage to RENEWAL_INACTIVE.page when licence is not annual', async () => {
-    salesApi.authenticate.mockReturnValueOnce(getSampleAuthResult('D', 8)) // 8-day licence
-    mockDiff.mockReturnValue(1)
-
-    const setCurrentPermission = jest.fn()
-    const mockRequest = {
-      cache: () => ({
-        helpers: {
-          page: {
-            getCurrentPermission: async () => ({
-              payload: {
-                'date-of-birth-year': 1970,
-                'date-of-birth-month': 1,
-                'date-of-birth-day': 1,
-                postcode: 'AB1 1AB',
-                referenceNumber: 'ABC123'
-              }
-            }),
-            setCurrentPermission: async () => {}
-          },
-          transaction: {
-            getCurrentPermission: async () => ({
-              renewedEndDate: '2023-08-10'
-            }),
-            setCurrentPermission: async () => {}
-          },
-          status: {
-            getCurrentPermission: async () => ({}),
-            setCurrentPermission
-          }
-        }
-      })
-    }
-
-    const responseToolkit = { redirectWithLanguageCode: jest.fn() }
-    await handler(mockRequest, responseToolkit)
-
-    expect(setCurrentPermission).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currentPage: RENEWAL_INACTIVE.page
+        currentPage: expectedPage
       })
     )
   })

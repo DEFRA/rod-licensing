@@ -325,7 +325,6 @@ describe('The page handler function', () => {
       await get(request, getMockToolkit())
 
       expect(setCurrentPermission).toHaveBeenCalledWith({
-        someStatus: 'value',
         currentPage: 'test-page'
       })
     })
@@ -346,9 +345,7 @@ describe('The page handler function', () => {
       const { get } = pageHandler('', 'error-page', null)
       await get(request, getMockToolkit())
 
-      expect(setCurrentPermission).not.toHaveBeenCalledWith(
-        expect.objectContaining({ currentPage: 'error-page' })
-      )
+      expect(setCurrentPermission).not.toHaveBeenCalledWith(expect.objectContaining({ currentPage: 'error-page' }))
     })
 
     it('does not update currentPage when page is not in journey definition', async () => {
@@ -388,7 +385,6 @@ describe('The page handler function', () => {
       await get(request, getMockToolkit())
 
       expect(setCurrentPermission).toHaveBeenCalledWith({
-        ...existingStatus,
         currentPage: 'form-page'
       })
     })
@@ -401,7 +397,13 @@ const getAnalytics = overides => ({
   ...overides
 })
 
-const getMockRequest = ({ setCurrentPermission = () => {}, getCurrentPermission = () => ({}), path = '/buy/we/are/here', analytics, set = () => {} } = {}) => ({
+const getMockRequest = ({
+  setCurrentPermission = () => {},
+  getCurrentPermission = () => ({}),
+  path = '/buy/we/are/here',
+  analytics,
+  set = () => {}
+} = {}) => ({
   cache: () => ({
     helpers: {
       page: {

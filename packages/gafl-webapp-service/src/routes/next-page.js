@@ -16,15 +16,13 @@ export const nextPage = async request => {
   const currentPage = status.currentPage || 'start'
   const routeNode = journeyDefinition.find(p => p.current.page === currentPage)
 
-  // If route node has no 'next' property, it's a terminal page (error pages, order complete, etc.) - stay on it
-  if (!routeNode.next) {
+  const isTerminalPage = !routeNode.next
+  const hasErrorOnPage = !status[status.currentPage] && currentPage !== 'start'
+
+  if (isTerminalPage || hasErrorOnPage) {
     return routeNode.current.uri
   }
 
-  // If the current page has an error then reload it.
-  if (!status[status.currentPage] && currentPage !== 'start') {
-    return routeNode.current.uri
-  }
   // Update the transaction with the validated page details
   if (typeof updateTransactionFunctions[currentPage] === 'function') {
     await updateTransactionFunctions[currentPage](request)
