@@ -1,4 +1,13 @@
 
+## v1.67.0-rc.1 (2026-02-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2305](https://github.com/DEFRA/rod-licensing/pull/2305) GAFL: Dev – incorrect statement in RCP T&C page ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.67.0-rc.0 (2026-01-29)
 
 #### :rocket: Enhancement
