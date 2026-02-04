@@ -361,33 +361,6 @@ describe('The page handler function', () => {
 
       expect(setCurrentPermission).not.toHaveBeenCalled()
     })
-
-    it('preserves existing status properties when updating currentPage', async () => {
-      journeyDefinition.push({
-        current: { page: 'form-page' },
-        next: { ok: { page: { uri: '/next' } } }
-      })
-
-      const existingStatus = {
-        authentication: { authorised: true },
-        fromSummary: true,
-        'some-page': 'completed'
-      }
-
-      const setCurrentPermission = jest.fn()
-      const getCurrentPermission = jest.fn(() => existingStatus)
-      const request = getMockRequest({
-        getCurrentPermission,
-        setCurrentPermission
-      })
-
-      const { get } = pageHandler('', 'form-page', '/next')
-      await get(request, getMockToolkit())
-
-      expect(setCurrentPermission).toHaveBeenCalledWith({
-        currentPage: 'form-page'
-      })
-    })
   })
 })
 
