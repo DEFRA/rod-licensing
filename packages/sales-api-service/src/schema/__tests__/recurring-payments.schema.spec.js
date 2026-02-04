@@ -2,7 +2,8 @@ import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema,
+  cancelRecurringPaymentRequestQuerySchema
 } from '../recurring-payments.schema.js'
 
 jest.mock('../validators/validators.js', () => ({
@@ -180,5 +181,37 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
   it('throws an error if id is not the correct type', async () => {
     const sampleData = { id: 99 }
     expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('cancelRecurringPaymentRequestQuerySchema', () => {
+  it('validates expected object if the reason is Payment Failure', async () => {
+    const sampleData = { reason: 'Payment Failure' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('validates expected object if the reason is User Cancelled', async () => {
+    const sampleData = { reason: 'User Cancelled' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if query is empty', async () => {
+    const sampleData = {}
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+  })
+
+  it('throws an error if reason is not the correct type', async () => {
+    const sampleData = { reason: 99 }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+  })
+
+  it('throws an error if reason is not the correct value', async () => {
+    const sampleData = { reason: 'Because I said so' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+  })
+
+  it('throws an error if an incorrect key is provided', async () => {
+    const sampleData = { foo: 'Payment Failure' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
   })
 })

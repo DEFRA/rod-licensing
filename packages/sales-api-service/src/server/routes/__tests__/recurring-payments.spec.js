@@ -3,7 +3,8 @@ import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '.
 import {
   dueRecurringPaymentsRequestParamsSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema,
+  cancelRecurringPaymentRequestQuerySchema
 } from '../../../schema/recurring-payments.schema.js'
 
 const [
@@ -37,9 +38,11 @@ const getMockRequest = ({
   createdDate = 'created-date',
   existingRecurringPaymentId = 'existing-recurring-payment-id',
   agreementId = 'agreement-id',
-  id = 'abc123'
+  id = 'abc123',
+  reason = 'Payment Failure'
 }) => ({
-  params: { date, transactionId, paymentId, createdDate, existingRecurringPaymentId, agreementId, id }
+  params: { date, transactionId, paymentId, createdDate, existingRecurringPaymentId, agreementId, id },
+  query: { reason }
 })
 
 const getMockResponseToolkit = () => ({
@@ -104,18 +107,24 @@ describe('recurring payments', () => {
       expect(await crpHandler(request, responseToolkit)).toEqual(responseToolkit.continue)
     })
 
-    it('should call cancelRecurringPayment with id', async () => {
+    it('should call cancelRecurringPayment with id and reason', async () => {
       const id = Symbol('recurring-payment-id')
-      const request = getMockRequest({ id })
+      const reason = Symbol('recurring-payment-reason')
+      const request = getMockRequest({ id, reason })
       await crpHandler(request, getMockResponseToolkit())
-      expect(cancelRecurringPayment).toHaveBeenCalledWith(id)
+      expect(cancelRecurringPayment).toHaveBeenCalledWith(id, reason)
     })
 
-    it('should validate with cancelRecurringPaymentRequestParamsSchema', async () => {
-      const id = Symbol('recurring-payment-id')
-      const request = getMockRequest({ id })
+    it('should validate id with cancelRecurringPaymentRequestParamsSchema', async () => {
+      const request = getMockRequest({})
       await crpHandler(request, getMockResponseToolkit())
       expect(recurringPayments[2].options.validate.params).toBe(cancelRecurringPaymentRequestParamsSchema)
+    })
+
+    it('should validate reason with cancelRecurringPaymentRequestQuerySchema', async () => {
+      const request = getMockRequest({})
+      await crpHandler(request, getMockResponseToolkit())
+      expect(recurringPayments[2].options.validate.query).toBe(cancelRecurringPaymentRequestQuerySchema)
     })
   })
 })
