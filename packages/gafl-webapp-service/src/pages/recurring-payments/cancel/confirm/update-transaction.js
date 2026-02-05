@@ -6,6 +6,10 @@ export default async request => {
   const { recurringPayment } = await request.cache().helpers.transaction.getCurrentPermission()
   const recurringPaymentId = recurringPayment?.id
 
+  if (!recurringPaymentId) {
+    return
+  }
+
   try {
     await salesApi.cancelRecurringPayment(recurringPaymentId, 'User Cancelled')
     debug('Successfully cancelled recurring payment', recurringPaymentId)
