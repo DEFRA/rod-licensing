@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { CANCEL_RP_COMPLETE } from '../uri'
+import { CANCEL_RP_COMPLETE } from '../uri.js'
 import db from 'debug'
 const debug = db('webapp:cancel-rp-agreed')
 

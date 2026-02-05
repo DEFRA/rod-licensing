@@ -10,6 +10,7 @@ export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, au
       permit: { description: permit.description }
     },
     recurringPayment: {
+      id: recurringPayment.id,
       lastDigitsCardNumbers: recurringPayment.lastDigitsCardNumbers
     }
   })
