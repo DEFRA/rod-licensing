@@ -1,4 +1,13 @@
 
+## v1.67.0-rc.2 (2026-02-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2303](https://github.com/DEFRA/rod-licensing/pull/2303) GAFL: RCP cancellation and renewal journey "back" link not working on static pages ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.67.0-rc.1 (2026-02-03)
 
 #### :bug: Bug Fix
