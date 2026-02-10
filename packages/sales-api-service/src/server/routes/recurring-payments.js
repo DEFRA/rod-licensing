@@ -2,7 +2,8 @@ import {
   dueRecurringPaymentsRequestParamsSchema,
   dueRecurringPaymentsResponseSchema,
   processRPResultRequestParamsSchema,
-  cancelRecurringPaymentRequestParamsSchema
+  cancelRecurringPaymentRequestParamsSchema,
+  cancelRecurringPaymentRequestQuerySchema
 } from '../../schema/recurring-payments.schema.js'
 import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '../../services/recurring-payments.service.js'
 
@@ -63,13 +64,15 @@ export default [
     options: {
       handler: async (request, h) => {
         const { id } = request.params
-        const result = await cancelRecurringPayment(id)
+        const { reason } = request.query
+        const result = await cancelRecurringPayment(id, reason)
         return h.response(result)
       },
       description: 'Cancel a recurring payment',
       tags: SWAGGER_TAGS,
       validate: {
-        params: cancelRecurringPaymentRequestParamsSchema
+        params: cancelRecurringPaymentRequestParamsSchema,
+        query: cancelRecurringPaymentRequestQuerySchema
       },
       plugins: {
         'hapi-swagger': {

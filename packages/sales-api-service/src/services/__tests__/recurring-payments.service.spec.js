@@ -28,6 +28,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
+import { getGlobalOptionSetValue } from '../reference-data.service.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 import db from 'debug'
 
@@ -97,6 +98,14 @@ jest.mock('../../services/paymentjournals/payment-journals.service.js', () => ({
   createPaymentJournal: jest.fn(),
   getPaymentJournal: jest.fn(),
   updatePaymentJournal: jest.fn()
+}))
+
+jest.mock('../reference-data.service.js', () => ({
+  getGlobalOptionSetValue: jest.fn(() => ({
+    description: 'Payment Failure',
+    id: 910400002,
+    label: 'Payment Failure'
+  }))
 }))
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
@@ -890,8 +899,16 @@ describe('recurring payments service', () => {
       retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       findById.mockReturnValueOnce(getMockRecurringPayment())
       const id = 'abc123'
-      await cancelRecurringPayment(id)
+      await cancelRecurringPayment(id, 'Payment Failure')
       expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
+    })
+
+    it('should set the reason based on the provided argument', async () => {
+      retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
+      findById.mockReturnValueOnce(getMockRecurringPayment())
+      const reason = Symbol('unique-reason')
+      await cancelRecurringPayment('abc123', reason)
+      expect(getGlobalOptionSetValue).toHaveBeenCalledWith(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     })
 
     it('should call persist with the updated RecurringPayment', async () => {
@@ -916,7 +933,7 @@ describe('recurring payments service', () => {
       const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
       const expectedUpdatedRecurringPayment = { ...recurringPayment, cancelledReason, cancelledDate }
 
-      await cancelRecurringPayment('id')
+      await cancelRecurringPayment('id', 'Payment Failure')
 
       expect(persist).toHaveBeenCalledWith([expect.objectContaining(expectedUpdatedRecurringPayment)])
     })
@@ -924,7 +941,9 @@ describe('recurring payments service', () => {
     it('should raise an error when there are no matches', async () => {
       findById.mockReturnValueOnce(undefined)
 
-      await expect(cancelRecurringPayment('id')).rejects.toThrow('Invalid id provided for recurring payment cancellation')
+      await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(
+        'Invalid id provided for recurring payment cancellation'
+      )
     })
   })
 
