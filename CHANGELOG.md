@@ -1,4 +1,13 @@
 
+## v1.67.0-rc.3 (2026-02-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2306](https://github.com/DEFRA/rod-licensing/pull/2306) GAFL:Dev - Cancellation journey page 3 functionality ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.67.0-rc.2 (2026-02-09)
 
 #### :bug: Bug Fix
