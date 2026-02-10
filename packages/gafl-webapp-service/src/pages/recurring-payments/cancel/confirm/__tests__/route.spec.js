@@ -3,6 +3,7 @@ import { CANCEL_RP_CONFIRM, CANCEL_RP_IDENTIFY } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 import moment from 'moment-timezone'
 import { dateDisplayFormat } from '../../../../../processors/date-and-time-display.js'
+import '../route.js'
 
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
@@ -26,38 +27,21 @@ const extractArgs = () => {
 
 describe('pageRoute receives expected arguments', () => {
   it('passes expected arguments to pageRoute', () => {
-    jest.isolateModules(() => {
-      require('../route.js')
-      expect(pageRoute).toHaveBeenCalledWith(
-        CANCEL_RP_CONFIRM.page,
-        CANCEL_RP_CONFIRM.uri,
-        null,
-        expect.any(Function),
-        expect.any(Function)
-      )
-    })
+    expect(pageRoute).toHaveBeenCalledWith(CANCEL_RP_CONFIRM.page, CANCEL_RP_CONFIRM.uri, null, expect.any(Function), expect.any(Function))
   })
 })
 
 describe('completion function', () => {
   it('has name nextPage', () => {
-    jest.clearAllMocks()
-    jest.isolateModules(() => {
-      require('../route.js')
-    })
     const { completion } = extractArgs()
     expect(completion.name).toBe('nextPage')
   })
 })
 
 describe('getData function', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-    moment.mockReturnValue({ format: jest.fn(() => '18th November, 2025') })
-    jest.isolateModules(() => {
-      require('../route.js')
-    })
-  })
+  moment.mockReturnValue({ format: jest.fn(() => '18th November, 2025') })
+
+  const { getData } = extractArgs()
 
   const mockRequest = () => {
     const getCurrentPermission = jest.fn(() => ({ permission: { endDate: '2025-02-15' } }))
@@ -75,14 +59,12 @@ describe('getData function', () => {
   }
 
   it('calls addLanguageCodeToUri with request object', async () => {
-    const { getData } = extractArgs()
     const request = mockRequest()
     await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
   })
 
   it('calls addLanguageCodeToUri with CANCEL_RP_IDENTIFY uri', async () => {
-    const { getData } = extractArgs()
     const request = mockRequest()
     await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), CANCEL_RP_IDENTIFY.uri)
@@ -92,7 +74,6 @@ describe('getData function', () => {
     const expectedUri = Symbol('expected-cancel-rp-identify-uri')
     addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
 
-    const { getData } = extractArgs()
     const data = await getData(mockRequest())
 
     expect(data.uri).toEqual({
@@ -104,14 +85,12 @@ describe('getData function', () => {
     const mockFormat = jest.fn().mockReturnValue('19th November, 2025')
     moment.mockReturnValue({ format: mockFormat })
 
-    const { getData } = extractArgs()
     const data = await getData(mockRequest())
 
     expect(data.licenceExpiry).toEqual('19th November, 2025')
   })
 
   it('uses expected date format', async () => {
-    const { getData } = extractArgs()
     await getData(mockRequest())
     expect(moment.mock.results[0].value.format).toHaveBeenCalledWith(dateDisplayFormat)
   })

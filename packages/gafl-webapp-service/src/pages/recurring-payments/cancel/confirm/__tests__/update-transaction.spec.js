@@ -1,3 +1,6 @@
+import { salesApi } from '@defra-fish/connectors-lib'
+import updateTransaction from '../update-transaction.js'
+
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     cancelRecurringPayment: jest.fn()
@@ -22,14 +25,11 @@ const getMockRequest = ({ id } = {}) => {
 describe('confirm update-transaction', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.resetModules()
   })
 
   it('calls connector with id and reason', async () => {
-    const { salesApi } = require('@defra-fish/connectors-lib')
     salesApi.cancelRecurringPayment.mockResolvedValueOnce()
 
-    const updateTransaction = require('../update-transaction.js').default
     const request = getMockRequest({ id: 'rp-123' })
 
     await updateTransaction(request)
@@ -38,7 +38,6 @@ describe('confirm update-transaction', () => {
   })
 
   it('reads cache once', async () => {
-    const updateTransaction = require('../update-transaction.js').default
     const request = getMockRequest({ id: 'rp-456' })
 
     await updateTransaction(request)
@@ -48,11 +47,9 @@ describe('confirm update-transaction', () => {
   })
 
   it('calls connector once when connector rejects', async () => {
-    const { salesApi } = require('@defra-fish/connectors-lib')
     const err = new Error('boom')
     salesApi.cancelRecurringPayment.mockRejectedValueOnce(err)
 
-    const updateTransaction = require('../update-transaction.js').default
     const request = getMockRequest({ id: 'rp-789' })
 
     try {
@@ -63,19 +60,15 @@ describe('confirm update-transaction', () => {
   })
 
   it('throws when connector rejects', async () => {
-    const { salesApi } = require('@defra-fish/connectors-lib')
     const err = new Error('kaboom')
     salesApi.cancelRecurringPayment.mockRejectedValueOnce(err)
 
-    const updateTransaction = require('../update-transaction.js').default
     const request = getMockRequest({ id: 'rp-000' })
 
     await expect(updateTransaction(request)).rejects.toBe(err)
   })
 
   it('does not call connector when id absent', async () => {
-    const { salesApi } = require('@defra-fish/connectors-lib')
-    const updateTransaction = require('../update-transaction.js').default
     const request = getMockRequest()
 
     try {

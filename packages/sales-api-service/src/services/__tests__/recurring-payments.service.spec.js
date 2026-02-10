@@ -906,7 +906,7 @@ describe('recurring payments service', () => {
     it('should set the reason based on the provided argument', async () => {
       retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       findById.mockReturnValueOnce(getMockRecurringPayment())
-      const reason = 'reason123'
+      const reason = Symbol('unique-reason')
       await cancelRecurringPayment('abc123', reason)
       expect(getGlobalOptionSetValue).toHaveBeenCalledWith(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     })
