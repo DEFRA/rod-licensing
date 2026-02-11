@@ -25,7 +25,6 @@ beforeEach(jest.clearAllMocks)
 describe('update transaction', () => {
   it('should set status to agreed', async () => {
     const statusSet = jest.fn()
-    process.env.SHOW_RECURRING_PAYMENTS = 'false'
     await updateTransaction(getSampleRequest({ statusSet }))
 
     expect(statusSet).toHaveBeenCalledWith(
@@ -68,8 +67,8 @@ describe('update transaction', () => {
 
   it('debug should be called saying "Recurring payment valid option" when validForRecurringPayment is true', async () => {
     validForRecurringPayment.mockReturnValueOnce(true)
-    await updateTransaction(getSampleRequest({ }))
+    await updateTransaction(getSampleRequest({}))
 
-    expect(debug).toHaveBeenCalledWith(('Recurring payment valid option'))
+    expect(debug).toHaveBeenCalledWith('Recurring payment valid option')
   })
 })
