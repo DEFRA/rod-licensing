@@ -1,4 +1,13 @@
 
+## v1.67.0-rc.4 (2026-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2307](https://github.com/DEFRA/rod-licensing/pull/2307) Remove RCP feature flag ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.67.0-rc.3 (2026-02-10)
 
 #### :rocket: Enhancement
