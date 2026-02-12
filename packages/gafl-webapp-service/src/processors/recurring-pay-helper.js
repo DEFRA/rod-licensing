@@ -14,7 +14,6 @@ export const recurringPayReminderDisplay = (permission, mssgs) => {
 export const validForRecurringPayment = permission => {
   const licenseeAge = moment().tz(SERVICE_LOCAL_TIME).diff(moment(permission.licensee.birthDate), 'years')
   return (
-    process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
     permission.licenceLength === '12M' &&
     permission.isLicenceForYou &&
     licenseeAge > JUNIOR_MAX_AGE &&
