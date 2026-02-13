@@ -562,7 +562,7 @@ describe('recurring-payments-processor', () => {
       throw new Error(error)
     })
 
-    await expect(processRecurringPayments()).rejects.toThrowError(error)
+    await expect(execute()).rejects.toThrowError(error)
   })
 
   it.skip('prepares and queues the payment request', async () => {

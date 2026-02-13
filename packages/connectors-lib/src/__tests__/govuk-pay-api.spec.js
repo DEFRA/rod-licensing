@@ -211,7 +211,7 @@ describe('govuk-pay-api-connector', () => {
       setRCPEnvVars(savedEnvVars)
     })
   })
-  
+
   describe('isGovPayUp', () => {
     it.each(['http://gov.uk.pay/health/check/url', 'https://gov-uk-pay?health-check-url'])(
       'calls healthy endpoint %s',

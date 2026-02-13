@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { salesApi, airbrake, govUkPayApi, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
+import { salesApi, airbrake, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
 
