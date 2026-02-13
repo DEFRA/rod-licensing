@@ -1,0 +1,15 @@
+{% extends "layout.njk" %}
+{% extends "standard-form.njk" %}
+
+{% set title = mssgs.rp_cancel_no_agreement_found_title %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">{{ mssgs.rp_cancel_no_agreement_found_heading }}</h1>
+        <p class="govuk-body">{{ mssgs.rp_cancel_no_agreement_found_licence_will_not_renew_1 }}{{ data.referenceNumber }}{{ mssgs.rp_cancel_no_agreement_found_licence_will_not_renew_2 }}</p>
+        <p class="govuk-body"><a class="govuk-link" href="{{ backRef }}">{{ mssgs.rp_cancel_no_agreement_found_go_back_link }}</a>{{ mssgs.rp_cancel_no_agreement_found_go_back_instruction }}</p>
+        <p class="govuk-body">{{ mssgs.rp_cancel_no_agreement_found_need_help_1 }}<a class="govuk-link" href="mailto:{{ data.links.contactUs }}">{{ mssgs.rp_cancel_no_agreement_found_need_help_email }}</a>{{ mssgs.rp_cancel_no_agreement_found_need_help_2 }}<a class="govuk-link" href="{{ data.links.callCharges }}" target="_blank">{{ mssgs.rp_cancel_no_agreement_found_call_charges_link }}</a></p>
+    </div>
+</div>
+{% endblock %}

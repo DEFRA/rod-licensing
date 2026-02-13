@@ -28,6 +28,7 @@ import renewalInactive from '../pages/renewals/renewal-inactive/update-transacti
 
 import choosePayment from '../pages/recurring-payments/choose-payment/update-transaction.js'
 import setupRecurring from '../pages/recurring-payments/set-up-payment/update-transaction.js'
+import cancelRpConfirm from '../pages/recurring-payments/cancel/confirm/update-transaction.js'
 
 import {
   DATE_OF_BIRTH,
@@ -50,7 +51,8 @@ import {
   PAYMENT_FAILED,
   RENEWAL_INACTIVE,
   CHOOSE_PAYMENT,
-  SET_UP_PAYMENT
+  SET_UP_PAYMENT,
+  CANCEL_RP_CONFIRM
 } from '../uri.js'
 
 export default {
@@ -74,5 +76,6 @@ export default {
   [PAYMENT_CANCELLED.page]: paymentCancelled,
   [RENEWAL_INACTIVE.page]: renewalInactive,
   [CHOOSE_PAYMENT.page]: choosePayment,
-  [SET_UP_PAYMENT.page]: setupRecurring
+  [SET_UP_PAYMENT.page]: setupRecurring,
+  [CANCEL_RP_CONFIRM.page]: cancelRpConfirm
 }

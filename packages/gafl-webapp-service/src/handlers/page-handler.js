@@ -122,6 +122,14 @@ export default (path, view, completion, getData) => ({
     // from abandoned pages
     await clearErrorsFromOtherPages(request, view)
 
+    // Update currentPage if this is not a terminal page (error pages remain sticky)
+    const routeNode = journeyDefinition.find(p => p.current.page === view)
+    if (routeNode?.next) {
+      await request.cache().helpers.status.setCurrentPermission({
+        currentPage: view
+      })
+    }
+
     // Calculate the back reference and add to page
     pageData.mssgs = request.i18n.getCatalog()
     pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())

@@ -23,8 +23,6 @@ import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { displayPermissionPrice } from '../../../processors/price-display.js'
 import { hasJunior } from '../../../processors/concession-helper.js'
-import db from 'debug'
-const debug = db('webapp:licence-summary')
 
 class RowGenerator {
   constructor (request, permission) {
@@ -72,7 +70,7 @@ class RowGenerator {
 
   _getConcessionText () {
     if (this.disabled?.proof?.type === CONCESSION_PROOF.blueBadge) {
-      return this.labels.licence_summary_blue_badge_num
+      return this.labels.licence_summary_blue_badge
     } else if (this.disabled?.proof?.type === CONCESSION_PROOF.NI) {
       return this.labels.licence_summary_ni_num
     }
@@ -95,7 +93,16 @@ class RowGenerator {
   }
 
   generateConcessionRow () {
-    const label = this.disabled ? this.disabled.proof.referenceNumber : `<span>${this.labels.licence_summary_none}</span>`
+    const label = (() => {
+      if (this.disabled?.proof?.type === CONCESSION_PROOF.blueBadge) {
+        return this.labels.licence_summary_blue_badge_eligible
+      }
+      if (this.disabled?.proof?.type === CONCESSION_PROOF.NI) {
+        return this.disabled.proof.referenceNumber
+      }
+      return this.labels.licence_summary_none
+    })()
+
     const concessionText = this._getConcessionText()
     return this._generateRow(concessionText, label, DISABILITY_CONCESSION.uri, concessionText, 'change-benefit-check')
   }
@@ -190,14 +197,12 @@ export const getData = async request => {
 
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
-  debug('retrieving permit info')
   const hash = hashPermission(permission)
   if (permission.hash !== hash) {
     permission.permit = await findPermit(permission)
     permission.hash = hash
     await request.cache().helpers.transaction.setCurrentPermission(permission)
   }
-  debug('retrieved permit', JSON.stringify(permission))
 
   return {
     licenceSummaryRows: getLicenceSummaryRows(request, permission),

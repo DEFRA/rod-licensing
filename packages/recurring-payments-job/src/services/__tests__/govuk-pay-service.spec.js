@@ -1,17 +1,26 @@
-import { getPaymentStatus, sendPayment } from '../govuk-pay-service.js'
+import { getPaymentStatus, sendPayment, isGovPayUp } from '../govuk-pay-service.js'
 import { govUkPayApi } from '@defra-fish/connectors-lib'
+import db from 'debug'
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const mockDebug = db.mock.results[0].value
 
 describe('govuk-pay-service', () => {
+  it('initialises logger', () => {
+    expect(db).toHaveBeenCalledWith('recurring-payments:gov.uk-pay-service')
+  })
+
   describe('sendPayment', () => {
     const preparedPayment = { id: '1234' }
 
     it('sendPayment should return response from createPayment in json format', async () => {
       const mockPreparedPayment = { id: 'test-payment-id' }
-      const mockResponse = { status: 'success', paymentId: 'abc123' }
+      const mockResponse = { state: { status: 'created' }, payment_id: 'abcde12345' }
 
       const mockFetchResponse = {
+        status: 200,
+        ok: true,
         json: jest.fn().mockResolvedValue(mockResponse)
       }
       govUkPayApi.createPayment.mockResolvedValue(mockFetchResponse)
@@ -48,17 +57,27 @@ describe('govuk-pay-service', () => {
       }
     })
 
-    it('should log error message when the GOV.UK Pay API raises an error', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      govUkPayApi.createPayment.mockImplementationOnce(() => {
-        throw new Error()
-      })
-
-      try {
-        await sendPayment(preparedPayment)
-      } catch (error) {
-        expect(consoleSpy).toHaveBeenCalledWith('Error creating payment', preparedPayment.id)
+    it('should throw an error when response is not ok', async () => {
+      const mockFetchResponse = {
+        ok: false,
+        status: 400,
+        json: jest.fn().mockResolvedValue({
+          code: 'P0102',
+          field: 'agreement_id',
+          description: 'Invalid attribute value: agreement_id. Agreement does not exist'
+        })
       }
+      govUkPayApi.createPayment.mockResolvedValueOnce(mockFetchResponse)
+
+      await expect(
+        sendPayment({
+          amount: 100,
+          description: 'The recurring card payment for your rod fishing licence',
+          id: 'a50f0d51-295f-42b3-98f8-97c0641ede5a',
+          authorisation_mode: 'agreement',
+          agreement_id: 'does_not_exist'
+        })
+      ).rejects.toThrow('Unexpected response from GOV.UK Pay API')
     })
   })
 
@@ -74,7 +93,7 @@ describe('govuk-pay-service', () => {
     })
 
     it('should return the payment status on successful response', async () => {
-      const mockPaymentStatus = { code: 'P1234', description: 'Success' }
+      const mockPaymentStatus = { amount: 37.5, state: { status: 'success', finished: 'true' } }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue(mockPaymentStatus)
@@ -89,25 +108,47 @@ describe('govuk-pay-service', () => {
     })
 
     it('should throw an error when response is not ok', async () => {
-      const mockErrorDetails = { error: 'Payment not found' }
       const mockFetchResponse = {
         ok: false,
-        json: jest.fn().mockResolvedValue(mockErrorDetails)
+        status: 404,
+        json: jest.fn().mockResolvedValue({
+          code: 'P0200',
+          field: 'payment_id',
+          description: 'No payment matched the payment id you provided'
+        })
       }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
 
-      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Payment not found')
+      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Unexpected response from GOV.UK Pay API')
     })
 
-    it('should throw an error when response is not ok but errorDetails has no value', async () => {
-      const mockErrorDetails = {}
+    it('should log details when response is not ok', async () => {
+      const serviceResponseBody = {
+        code: 'P0200',
+        field: 'payment_id',
+        description: 'No payment matched the payment id you provided'
+      }
       const mockFetchResponse = {
         ok: false,
-        json: jest.fn().mockResolvedValue(mockErrorDetails)
+        status: 404,
+        json: jest.fn().mockResolvedValue(serviceResponseBody)
       }
       govUkPayApi.fetchPaymentStatus.mockResolvedValue(mockFetchResponse)
+      jest.spyOn(console, 'error')
+      const paymentId = 'invalid-payment-id'
 
-      await expect(getPaymentStatus('invalid-payment-id')).rejects.toThrow('Error fetching payment status')
+      try {
+        await getPaymentStatus(paymentId)
+      } catch {}
+
+      expect(console.error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          status: mockFetchResponse.status,
+          response: serviceResponseBody,
+          paymentId
+        })
+      )
     })
 
     it('should throw an error when fetchPaymentStatus fails', async () => {
@@ -115,6 +156,36 @@ describe('govuk-pay-service', () => {
       govUkPayApi.fetchPaymentStatus.mockRejectedValue(mockError)
 
       await expect(getPaymentStatus('test-payment-id')).rejects.toThrow('Network error')
+    })
+  })
+
+  describe('isGovPayUp', () => {
+    it.each([
+      [true, 'true', 'true'],
+      [false, 'true', 'false'],
+      [false, 'false', 'true'],
+      [false, 'false', 'false']
+    ])('resolves to %p if healthy is %s and deadlocks is %s', async (expectedResult, pingHealthy, deadlocksHealthy) => {
+      govUkPayApi.isGovPayUp.mockResolvedValueOnce({
+        ok: true,
+        text: async () => `{"ping":{"healthy":${pingHealthy}},"deadlocks":{"healthy":${deadlocksHealthy}}}`
+      })
+      expect(await isGovPayUp()).toBe(expectedResult)
+    })
+
+    it("resolves to false if we don't receive a 2xx response", async () => {
+      govUkPayApi.isGovPayUp.mockResolvedValueOnce({
+        ok: false
+      })
+      expect(await isGovPayUp()).toBe(false)
+    })
+
+    it("logs if we don't receive a 2xx response", async () => {
+      govUkPayApi.isGovPayUp.mockResolvedValueOnce({
+        ok: false
+      })
+      await isGovPayUp()
+      expect(mockDebug).toHaveBeenCalledWith('Health endpoint unavailable')
     })
   })
 })

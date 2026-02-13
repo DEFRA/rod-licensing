@@ -10,14 +10,14 @@ describe('sales-api-connector', () => {
   describe('call', () => {
     it('handles get requests with a 200 response', async () => {
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({ ok: true, status: 200, statusText: 'OK', body: expectedResponse })
       expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
     })
 
     it('handles get requests with a 204 response', async () => {
       const expectedResponse = undefined
-      fetch.mockReturnValue({ ok: true, status: 204, statusText: 'No Content', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 204, statusText: 'No Content', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({
         ok: true,
         status: 204,
@@ -30,7 +30,7 @@ describe('sales-api-connector', () => {
     it('handles post requests', async () => {
       const payload = { example: 'payload' }
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.call(new URL(TEST_HREF), 'post', payload)).resolves.toEqual({
         ok: true,
         status: 200,
@@ -47,7 +47,7 @@ describe('sales-api-connector', () => {
     it('handles patch requests', async () => {
       const payload = { example: 'payload' }
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.call(new URL(TEST_HREF), 'patch', payload)).resolves.toEqual({
         ok: true,
         status: 200,
@@ -62,7 +62,12 @@ describe('sales-api-connector', () => {
       })
     })
     it('returns necessary information on a non-ok response', async () => {
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({
         ok: false,
         status: 404,
@@ -76,7 +81,7 @@ describe('sales-api-connector', () => {
 
     it('parses response text if a json response cannot be parsed', async () => {
       const textResponseMethod = jest.fn(async () => 'Text response')
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: textResponseMethod })
+      fetch.mockReturnValueOnce({ ok: false, status: 404, statusText: 'Not Found', text: textResponseMethod })
       await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({
         ok: false,
         status: 404,
@@ -100,7 +105,7 @@ describe('sales-api-connector', () => {
     it('creates a single transaction', async () => {
       const transaction = { some: 'data' }
       const expectedResponse = { a: 'response' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.createTransaction(transaction)).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/transactions',
@@ -112,7 +117,12 @@ describe('sales-api-connector', () => {
     })
     it('throws on a non-ok response', async () => {
       const transaction = { some: 'data' }
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.createTransaction(transaction)).rejects.toThrow(
         /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
       )
@@ -130,7 +140,7 @@ describe('sales-api-connector', () => {
     it('creates multiple transactions in batch', async () => {
       const transactions = ['a', 'b']
       const expectedResponse = [{}, {}]
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.createTransactions(transactions)).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/transactions/$batch',
@@ -142,7 +152,12 @@ describe('sales-api-connector', () => {
     })
     it('throws on a non-ok response', async () => {
       const transactions = ['a', 'b']
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.createTransactions(transactions)).rejects.toThrow(
         /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
       )
@@ -168,7 +183,7 @@ describe('sales-api-connector', () => {
         }
       }
       const expectedResponse = { messageId: 'example', status: 'queued' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.finaliseTransaction(transactionId, payload)).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         `http://0.0.0.0:4000/transactions/${transactionId}`,
@@ -189,7 +204,12 @@ describe('sales-api-connector', () => {
           method: 'Debit card'
         }
       }
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.finaliseTransaction(transactionId, payload)).rejects.toThrow(
         /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
       )
@@ -206,7 +226,7 @@ describe('sales-api-connector', () => {
   describe('getTransactionFile', () => {
     it('retrieves details of an existing transaction file', async () => {
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.getTransactionFile('test.xml')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/transaction-files/test.xml',
@@ -216,7 +236,12 @@ describe('sales-api-connector', () => {
       )
     })
     it('returns null if none found', async () => {
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.getTransactionFile('test.xml')).resolves.toBeNull()
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/transaction-files/test.xml',
@@ -230,7 +255,7 @@ describe('sales-api-connector', () => {
   describe('upsertTransactionFile', () => {
     it('updates the details of a given transaction file', async () => {
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.upsertTransactionFile('test.xml')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/transaction-files/test.xml',
@@ -240,7 +265,7 @@ describe('sales-api-connector', () => {
       )
     })
     it('throws on a non-ok response', async () => {
-      fetch.mockReturnValue({
+      fetch.mockReturnValueOnce({
         ok: false,
         status: 422,
         statusText: 'Unprocessable Entity',
@@ -261,7 +286,7 @@ describe('sales-api-connector', () => {
   describe('getPaymentJournal', () => {
     it('retrieves details of an existing payment journal', async () => {
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.getPaymentJournal('test-id')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/paymentJournals/test-id',
@@ -271,7 +296,12 @@ describe('sales-api-connector', () => {
       )
     })
     it('returns null if none found', async () => {
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.getPaymentJournal('test-id')).resolves.toBeNull()
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/paymentJournals/test-id',
@@ -286,7 +316,7 @@ describe('sales-api-connector', () => {
     it('creates a new payment journal', async () => {
       const payload = { some: 'data' }
       const expectedResponse = { a: 'response' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.createPaymentJournal('test-id', payload)).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/paymentJournals/test-id',
@@ -298,7 +328,7 @@ describe('sales-api-connector', () => {
     })
     it('throws on a non-ok response', async () => {
       const payload = { some: 'data' }
-      fetch.mockReturnValue({
+      fetch.mockReturnValueOnce({
         ok: false,
         status: 422,
         statusText: 'Unprocessable Entity',
@@ -320,7 +350,7 @@ describe('sales-api-connector', () => {
   describe('updatePaymentJournal', () => {
     it('updates the details of a given transaction file', async () => {
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.updatePaymentJournal('test-id')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/paymentJournals/test-id',
@@ -330,7 +360,7 @@ describe('sales-api-connector', () => {
       )
     })
     it('throws on a non-ok response', async () => {
-      fetch.mockReturnValue({
+      fetch.mockReturnValueOnce({
         ok: false,
         status: 422,
         statusText: 'Unprocessable Entity',
@@ -352,7 +382,7 @@ describe('sales-api-connector', () => {
     it('creates a new staging exception', async () => {
       const payload = { some: 'data' }
       const expectedResponse = { a: 'response' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.createStagingException(payload)).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/stagingExceptions',
@@ -364,7 +394,7 @@ describe('sales-api-connector', () => {
     })
     it('throws on a non-ok response', async () => {
       const payload = { some: 'data' }
-      fetch.mockReturnValue({
+      fetch.mockReturnValueOnce({
         ok: false,
         status: 422,
         statusText: 'Unprocessable Entity',
@@ -386,7 +416,7 @@ describe('sales-api-connector', () => {
   describe('getPoclValidationErrorsForProcessing', () => {
     it('creates a new staging exception', async () => {
       const expectedResponse = { a: 'response' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.getPoclValidationErrorsForProcessing()).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/poclValidationErrors',
@@ -396,7 +426,7 @@ describe('sales-api-connector', () => {
       )
     })
     it('throws on a non-ok response', async () => {
-      fetch.mockReturnValue({
+      fetch.mockReturnValueOnce({
         ok: false,
         status: 422,
         statusText: 'Unprocessable Entity',
@@ -419,7 +449,7 @@ describe('sales-api-connector', () => {
       const id = 'test-id'
       const payload = { some: 'data' }
       const expectedResponse = { a: 'response' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.updatePoclValidationError(id, payload)).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/poclValidationErrors/test-id',
@@ -432,7 +462,7 @@ describe('sales-api-connector', () => {
     it('throws on a non-ok response', async () => {
       const id = 'test-id'
       const payload = { some: 'data' }
-      fetch.mockReturnValue({
+      fetch.mockReturnValueOnce({
         ok: false,
         status: 422,
         statusText: 'Unprocessable Entity',
@@ -454,7 +484,7 @@ describe('sales-api-connector', () => {
   describe('getSystemUser', () => {
     it('retrieves details of a system user', async () => {
       const expectedResponse = { some: 'data' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.getSystemUser('test-id')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/systemUsers/test-id',
@@ -464,7 +494,12 @@ describe('sales-api-connector', () => {
       )
     })
     it('returns null if none found', async () => {
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
       await expect(salesApi.getSystemUser('test-id')).resolves.toBeNull()
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/systemUsers/test-id',
@@ -481,7 +516,7 @@ describe('sales-api-connector', () => {
       endpoint => {
         it('retrieves all items using .getAll()', async () => {
           const expectedResponse = [{ id: 'test-1' }, { id: 'test-2' }]
-          fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+          fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
           await expect(salesApi[endpoint].getAll()).resolves.toEqual(expectedResponse)
           expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?`, {
             method: 'get',
@@ -495,7 +530,7 @@ describe('sales-api-connector', () => {
             { id: 'test-1', set: '1' },
             { id: 'test-2', set: '1' }
           ]
-          fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+          fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
           await expect(salesApi[endpoint].getAll({ set: '1' })).resolves.toEqual(expectedResponse)
           expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?set=1`, {
             method: 'get',
@@ -510,7 +545,7 @@ describe('sales-api-connector', () => {
             { id: 'test-2', set: '1' }
           ]
           const expectedResponse = { id: 'test-1', set: '1' }
-          fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(apiResponse) })
+          fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(apiResponse) })
           await expect(salesApi[endpoint].find({ set: '1' })).resolves.toEqual(expectedResponse)
           expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?set=1`, {
             method: 'get',
@@ -520,7 +555,7 @@ describe('sales-api-connector', () => {
         })
 
         it('throws if given a non-ok response code when calling .getAll()', async () => {
-          fetch.mockReturnValue({
+          fetch.mockReturnValueOnce({
             ok: false,
             status: 404,
             statusText: 'Not Found',
@@ -537,7 +572,7 @@ describe('sales-api-connector', () => {
         })
 
         it('throws if given a non-ok response code when calling .find(criteria)', async () => {
-          fetch.mockReturnValue({
+          fetch.mockReturnValueOnce({
             ok: false,
             status: 404,
             statusText: 'Not Found',
@@ -554,7 +589,7 @@ describe('sales-api-connector', () => {
         })
 
         it('returns undefined if no item could be found using .find(criteria)', async () => {
-          fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify([]) })
+          fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify([]) })
           await expect(salesApi[endpoint].find({ set: '1' })).resolves.toEqual(undefined)
           expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?set=1`, {
             method: 'get',
@@ -569,7 +604,7 @@ describe('sales-api-connector', () => {
   describe('country endpoint', () => {
     it('retrieves all items using .getAll()', async () => {
       const expectedResponse = [{ id: 'test-1' }, { id: 'test-2' }]
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.countries.getAll()).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/option-sets/defra_country?', {
         method: 'get',
@@ -582,7 +617,7 @@ describe('sales-api-connector', () => {
   describe('authentication', () => {
     it('retrieves all items using .getAll()', async () => {
       const expectedResponse = { foo: 'bar' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.authenticate('AAAAAA', '1980-03-02', 'BS9 4PT')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/authenticate/renewal/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
@@ -618,7 +653,7 @@ describe('sales-api-connector', () => {
         ]
       }
 
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
 
       await expect(salesApi.getDueRecurringPayments(date)).resolves.toEqual(expectedResponse)
     })
@@ -632,7 +667,7 @@ describe('sales-api-connector', () => {
         ]
       }
 
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
 
       await salesApi.getDueRecurringPayments(date)
 
@@ -647,7 +682,7 @@ describe('sales-api-connector', () => {
   describe('preparePermissionDataForRenewal', () => {
     it('retrieves all items using .getAll()', async () => {
       const expectedResponse = { foo: 'bar' }
-      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
       await expect(salesApi.preparePermissionDataForRenewal('AAAAAA')).resolves.toEqual(expectedResponse)
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/permissionRenewalData/AAAAAA', {
         method: 'get',
@@ -655,5 +690,182 @@ describe('sales-api-connector', () => {
         timeout: 20000
       })
     })
+  })
+
+  describe('processRPResult', () => {
+    describe.each([
+      ['transaction-id', 'payment-id', '2025-01-01T00:00:00.000Z'],
+      ['abc-123', 'def-456', '2025-02-15T23:49:32.386Z']
+    ])("Processing payment for transaction id '%s'", (transactionId, paymentId, createdDate) => {
+      beforeEach(() => {
+        fetch.mockReturnValueOnce({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ transactionId, paymentId, createdDate })
+        })
+      })
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.processRPResult(transactionId, paymentId, createdDate)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/processRPResult/${transactionId}/${paymentId}/${createdDate}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.processRPResult(transactionId, paymentId, createdDate)
+
+        expect(processedResult).toEqual({ transactionId, paymentId, createdDate })
+      })
+    })
+
+    it('throws an error on non-2xx response', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: async () => 'Server Error'
+      })
+
+      await expect(salesApi.processRPResult('transaction-id', 'payment-id', '2025-01-01T00:00:00.000Z')).rejects.toThrow(
+        'Internal Server Error'
+      )
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/processRPResult/transaction-id/payment-id/2025-01-01T00:00:00.000Z', {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      })
+    })
+  })
+
+  describe('cancelRecurringPayment', () => {
+    describe.each([
+      ['id', 'User Cancelled', 'User%20Cancelled'],
+      ['abc-123', 'Because I Said So', 'Because%20I%20Said%20So']
+    ])("Cancelling recurring payment id '%s'", (id, reason, stringifiedReason) => {
+      beforeEach(() => {
+        fetch.mockReturnValueOnce({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ id })
+        })
+      })
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.cancelRecurringPayment(id, reason)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}?reason=${stringifiedReason}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('defaults to Payment Failure if no reason is provided', async () => {
+        await salesApi.cancelRecurringPayment(id)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/cancelRecurringPayment/${id}?reason=Payment%20Failure`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.cancelRecurringPayment(id, reason)
+
+        expect(processedResult).toEqual({ id })
+      })
+    })
+
+    it('throws an error on non-2xx response', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: async () => 'Server Error'
+      })
+
+      await expect(salesApi.cancelRecurringPayment('id')).rejects.toThrow('Internal Server Error')
+    })
+  })
+
+  describe('retrieveStagedTransaction', () => {
+    describe.each([['id'], ['abc-123']])("Retrieving staged transaction id '%s'", id => {
+      beforeEach(() => {
+        fetch.mockReturnValueOnce({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          text: async () => JSON.stringify({ id })
+        })
+      })
+
+      it('calls the endpoint with the correct parameters', async () => {
+        await salesApi.retrieveStagedTransaction(id)
+
+        expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/retrieveStagedTransaction/${id}`, {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        })
+      })
+
+      it('returns the expected response data', async () => {
+        const processedResult = await salesApi.retrieveStagedTransaction(id)
+
+        expect(processedResult).toEqual({ id })
+      })
+    })
+
+    it('throws an error on non-2xx response', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: async () => 'Server Error'
+      })
+
+      await expect(salesApi.retrieveStagedTransaction('id')).rejects.toThrow('Internal Server Error')
+    })
+  })
+})
+
+describe('rcp authentication', () => {
+  it('returns parsed JSON with successful fetch', async () => {
+    const expectedResponse = { woo: 'hoo' }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    const response = await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(response).toEqual(expectedResponse)
+  })
+
+  it('calls fetch with the RCP authenticate URL and query params', async () => {
+    const expectedResponse = { woo: 'hoo' }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(fetch).toHaveBeenCalledWith(
+      'http://0.0.0.0:4000/authenticate/rcp/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+      {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      }
+    )
+  })
+
+  it('returns null when the sales API responds with a non-2xx status', async () => {
+    fetch.mockReturnValueOnce({
+      ok: false,
+      status: 400,
+      statusText: 'Bad Request',
+      text: async () => 'Bad Request'
+    })
+    const response = await salesApi.authenticateRecurringPayment('AAAAAA', '1980-03-02', 'BS9 4PT')
+    expect(response).toBeNull()
   })
 })

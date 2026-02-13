@@ -1,10 +1,10 @@
 {
   "name": "@defra-fish/dynamics-lib",
-  "version": "1.59.0-rc.9",
+  "version": "1.67.0-rc.4",
   "description": "Framework to support integration with dynamics",
   "type": "module",
   "engines": {
-    "node": ">=18.17"
+    "node": ">=22"
   },
   "keywords": [
     "rod",
@@ -33,14 +33,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "cache-manager": "^3.6.0",
-    "cache-manager-ioredis": "^2.1.0",
-    "debug": "^4.3.3",
+    "cache-manager": "3.6.0",
+    "cache-manager-ioredis": "2.1.0",
+    "debug": "4.3.3",
     "dynamics-web-api": "1.7.3",
-    "joi": "^17.6.0",
-    "moment": "^2.29.1",
-    "pluralize": "^8.0.0",
-    "simple-oauth2": "^4.3.0",
-    "uuid": "^8.3.2"
+    "joi": "17.13.3",
+    "moment": "2.29.1",
+    "pluralize": "8.0.0",
+    "simple-oauth2": "4.3.0",
+    "uuid": "8.3.2"
   }
 }

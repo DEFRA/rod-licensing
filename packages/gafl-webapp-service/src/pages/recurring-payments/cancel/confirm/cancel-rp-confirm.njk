@@ -1,0 +1,45 @@
+{% extends "layout.njk" %}
+
+{% from "button/macro.njk" import govukButton %}
+{% from "page-title.njk" import pageTitle %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+
+{% set title = mssgs.rp_cancel_confirm_title %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
+
+{% block content %}
+  {% set legendHtml %}
+    <span class="govuk-caption-l">{{ mssgs.cancel_rp_identify_caption }}</span>
+    {{ title }}
+  {% endset %}
+
+  {% call govukFieldset({
+    legend: {
+      html: legendHtml,
+      classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+      isPageHeading: true
+    }
+  }) %}
+
+  <p class="govuk-body-m">{{ mssgs.rp_cancel_confirm_body }}{{ data.licenceExpiry }}</p>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post" class="govuk-!-margin-bottom-6">
+          <div class="govuk-button-group">
+            {{ govukButton({
+              attributes: { id: 'continue' },
+              preventDoubleClick: true,
+              name: "continue",
+              text: mssgs.rp_cancel_confirm_accept,
+              classes: "govuk-!-margin-top-1"
+            }) }}
+            {{ csrf() }}
+            <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.cancelRpIdentify }}">{{ mssgs.rp_cancel_confirm_reject }}</a></p>
+          </div>
+        </form>
+    </div>
+  </div>
+
+  {% endcall %}
+{% endblock %}

@@ -56,7 +56,8 @@ describe('name > route', () => {
     important_info_contact_content_salmon: 'Salmon content',
     important_info_contact_content_not_salmon: 'Not salmon content',
     licence_confirm_method_where_title_you: 'Where send you',
-    licence_confirm_method_where_title_other: 'Where send other'
+    licence_confirm_method_where_title_other: 'Where send other',
+    important_info_contact_content_junior_12_months: 'Junior content'
   })
 
   describe('getData', () => {
@@ -149,10 +150,10 @@ describe('name > route', () => {
       [true, 'Trout and coarse', '8D', false, 'Not salmon content'],
       [false, 'Salmon and sea trout', '1D', false, 'Salmon content'],
       [false, 'Trout and coarse', '1D', false, 'Not salmon content'],
-      [true, 'Salmon and sea trout', '12M', true, 'Salmon content'],
-      [true, 'Trout and coarse', '12M', true, 'Not salmon content'],
-      [false, 'Salmon and sea trout', '12M', true, 'Salmon content'],
-      [false, 'Trout and coarse', '12M', true, 'Not salmon content']
+      [true, 'Salmon and sea trout', '12M', true, 'Junior content'],
+      [true, 'Trout and coarse', '12M', true, 'Junior content'],
+      [false, 'Salmon and sea trout', '12M', true, 'Junior content'],
+      [false, 'Trout and coarse', '12M', true, 'Junior content']
     ])(
       'content has correct value depending on isLicenceForYou is %s, licenceType is %s, licenceLength is %s and junior is %s',
       async (isLicenceForYou, licenceType, licenceLength, junior, expected) => {

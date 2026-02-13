@@ -1,11 +1,17 @@
-import { dueRecurringPaymentsResponseSchema } from '../recurring-payments.schema.js'
+import {
+  dueRecurringPaymentsRequestParamsSchema,
+  dueRecurringPaymentsResponseSchema,
+  processRPResultRequestParamsSchema,
+  cancelRecurringPaymentRequestParamsSchema,
+  cancelRecurringPaymentRequestQuerySchema
+} from '../recurring-payments.schema.js'
 
 jest.mock('../validators/validators.js', () => ({
   ...jest.requireActual('../validators/validators.js'),
   createEntityIdValidator: () => () => {} // sample data so we don't want it validated for being a real entity id
 }))
 
-const getSampleData = () => ({
+const getResponseSampleData = () => ({
   id: 'd5549fc6-41c1-ef11-b8e8-7c1e52215dc9',
   name: 'test',
   status: 0,
@@ -28,10 +34,10 @@ const getSampleData = () => ({
         mobilePhone: null,
         organisation: null,
         premises: '1',
-        street: 'Catharine Place',
+        street: 'Test Street',
         locality: null,
-        town: 'Bath',
-        postcode: 'BA1 2PR'
+        town: 'Testville',
+        postcode: 'TE1 1ST'
       }
     },
     activePermission: {
@@ -52,9 +58,15 @@ const getSampleData = () => ({
   }
 })
 
+const getProcessRPResultSampleData = () => ({
+  transactionId: 'abc123',
+  paymentId: 'def456',
+  createdDate: '2025-01-01T00:00:00.000Z'
+})
+
 describe('getDueRecurringPaymentsSchema', () => {
   it('validates expected object', async () => {
-    await expect(() => dueRecurringPaymentsResponseSchema.validateAsync(getSampleData())).not.toThrow()
+    expect(() => dueRecurringPaymentsResponseSchema.validateAsync(getResponseSampleData())).not.toThrow()
   })
 
   it.each([
@@ -70,7 +82,7 @@ describe('getDueRecurringPaymentsSchema', () => {
     'contactId',
     'publicId'
   ])('throws an error if %s is missing', async property => {
-    const sampleData = getSampleData()
+    const sampleData = getResponseSampleData()
     delete sampleData[property]
     expect(() => dueRecurringPaymentsResponseSchema.validateAsync(sampleData)).rejects.toThrow()
   })
@@ -88,12 +100,118 @@ describe('getDueRecurringPaymentsSchema', () => {
     ['contactId', 'still-not-a-guid'],
     ['publicId', 99]
   ])('throws an error if %s is not the correct type', async (property, value) => {
-    const sampleData = getSampleData()
+    const sampleData = getResponseSampleData()
     sampleData[property] = value
     expect(() => dueRecurringPaymentsResponseSchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
   it('snapshot test schema', async () => {
-    expect(dueRecurringPaymentsResponseSchema).toMatchSnapshot()
+    expect(dueRecurringPaymentsResponseSchema.schema().describe()).toMatchSnapshot()
+  })
+})
+
+describe('dueRecurringPaymentsRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    const sampleData = {
+      date: '2024-12-23'
+    }
+    expect(() => dueRecurringPaymentsRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if date missing', async () => {
+    expect(() => dueRecurringPaymentsRequestParamsSchema.validateAsync({}).rejects.toThrow())
+  })
+
+  it('throws an error if date is not the correct type', async () => {
+    const sampleData = {
+      date: 'not-a-date'
+    }
+    expect(() => dueRecurringPaymentsRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('processRPResultRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    expect(() => processRPResultRequestParamsSchema.validateAsync(getProcessRPResultSampleData())).not.toThrow()
+  })
+
+  it.each([['transactionId'], ['paymentId'], ['createdDate']])('throws an error if %s is missing', async property => {
+    const sampleData = getProcessRPResultSampleData()
+    delete sampleData[property]
+    expect(() => processRPResultRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+
+  it.each([
+    ['transactionId', 99],
+    ['paymentId', 99],
+    ['createdDate', 'not-a-date']
+  ])('throws an error if %s is not the correct type', async (property, value) => {
+    const sampleData = getProcessRPResultSampleData()
+    sampleData[property] = value
+    expect(() => processRPResultRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('cancelRecurringPaymentRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    const sampleData = { id: 'abc123' }
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if id missing', async () => {
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync({}).rejects.toThrow())
+  })
+
+  it('throws an error if id is not the correct type', async () => {
+    const sampleData = { id: 99 }
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('cancelRecurringPaymentRequestParamsSchema', () => {
+  it('validates expected object', async () => {
+    const sampleData = { id: 'abc123' }
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if id missing', async () => {
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync({}).rejects.toThrow())
+  })
+
+  it('throws an error if id is not the correct type', async () => {
+    const sampleData = { id: 99 }
+    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
+  })
+})
+
+describe('cancelRecurringPaymentRequestQuerySchema', () => {
+  it('validates expected object if the reason is Payment Failure', async () => {
+    const sampleData = { reason: 'Payment Failure' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('validates expected object if the reason is User Cancelled', async () => {
+    const sampleData = { reason: 'User Cancelled' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('throws an error if query is empty', async () => {
+    const sampleData = {}
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+  })
+
+  it('throws an error if reason is not the correct type', async () => {
+    const sampleData = { reason: 99 }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+  })
+
+  it('throws an error if reason is not the correct value', async () => {
+    const sampleData = { reason: 'Because I said so' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+  })
+
+  it('throws an error if an incorrect key is provided', async () => {
+    const sampleData = { foo: 'Payment Failure' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
   })
 })

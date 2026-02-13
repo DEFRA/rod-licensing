@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { isRecurringPayment, recurringPayReminderDisplay, validForRecurringPayment } from '../recurring-pay-helper.js'
 
 const getCatalog = () => ({
@@ -29,18 +30,19 @@ describe('recurringPayReminderDisplay', () => {
 
 describe('validForRecurringPayment', () => {
   test.each`
-    expected | length   | licenceFor | recurring | telesales          | birthDate
-    ${true}  | ${'12M'} | ${true}    | ${true}   | ${'not telesales'} | ${'1946-01-01'}
-    ${false} | ${'8D'}  | ${true}    | ${true}   | ${'not telesales'} | ${'1946-01-01'}
-    ${false} | ${'12M'} | ${false}   | ${true}   | ${'not telesales'} | ${'1946-01-01'}
-    ${false} | ${'12M'} | ${true}    | ${false}  | ${'not telesales'} | ${'1946-01-01'}
-    ${false} | ${'12M'} | ${true}    | ${true}   | ${'telesales'}     | ${'1946-01-01'}
-    ${false} | ${'12M'} | ${true}    | ${true}   | ${'not telesales'} | ${'2010-01-01'}
+    expected | length   | licenceFor | telesales          | age
+    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${69} // senior
+    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${39} // adult
+    ${false} | ${'12M'} | ${true}    | ${'not telesales'} | ${15} // junior - not valid
+    ${false} | ${'8D'}  | ${true}    | ${'not telesales'} | ${69} // 8 day licence - not valid
+    ${false} | ${'1D'}  | ${true}    | ${'not telesales'} | ${69} // 1 day licence - not valid
+    ${false} | ${'12M'} | ${false}   | ${'not telesales'} | ${69} // not licence for you - not valid
+    ${false} | ${'12M'} | ${true}    | ${'telesales'}     | ${69} // telesales - not valid
   `(
-    'should return %s as licence length is %s, licence for you is %s, SHOW_RECURRING_PAYMENTS is %s, journey is %s, and birthDate is %s',
-    ({ expected, length, licenceFor, recurring, telesales, birthDate }) => {
+    'should return $expected as licence length is $length, licence for you is $licenceFor, journey is $telesales, and age is $age',
+    ({ expected, length, licenceFor, telesales, age }) => {
       process.env.CHANNEL = telesales
-      process.env.SHOW_RECURRING_PAYMENTS = recurring
+      const birthDate = `${moment().subtract(age, 'years').format('YYYY')}-01-01`
       const permission = getPermission({ licenceFor, length, birthDate })
       const result = validForRecurringPayment(permission)
       expect(result).toEqual(expected)
@@ -50,20 +52,11 @@ describe('validForRecurringPayment', () => {
 
 describe('isRecurringPayment', () => {
   it.each`
-    show     | agreementId  | expected
-    ${true}  | ${'foo123'}  | ${true}
-    ${true}  | ${undefined} | ${false}
-    ${false} | ${'foo123'}  | ${false}
-    ${false} | ${undefined} | ${false}
-  `(
-    'recurringPayment returns $expected when SHOW_RECURRING_PAYMENTS is $show and the transaction agreementId is $agreementId',
-    async ({ show, agreementId, expected }) => {
-      process.env.SHOW_RECURRING_PAYMENTS = show
-      const transaction = { agreementId }
-
-      expect(isRecurringPayment(transaction)).toBe(expected)
-
-      delete process.env.SHOW_RECURRING_PAYMENTS
-    }
-  )
+    agreementId  | expected
+    ${'foo123'}  | ${true}
+    ${undefined} | ${false}
+  `('recurringPayment returns $expected when transaction agreementId is $agreementId', async ({ agreementId, expected }) => {
+    const transaction = { agreementId }
+    expect(isRecurringPayment(transaction)).toBe(expected)
+  })
 })

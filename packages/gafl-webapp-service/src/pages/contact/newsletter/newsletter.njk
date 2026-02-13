@@ -65,7 +65,7 @@
         {
           value: "no",
           text: mssgs.no,
-          checked: true if not payload or payload['newsletter'] === 'no' else false
+          checked: payload.newsletter === 'no'
         }
       ]
     }) }}

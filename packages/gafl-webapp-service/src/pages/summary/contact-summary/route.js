@@ -41,6 +41,14 @@ const CHANGE_CONTACT = 'change-contact'
 
 const META_TAG_TELEPHONE_NO = '<meta name="format-detection" content="telephone=no">'
 
+function capitalise (str) {
+  if (!str) {
+    return undefined
+  } else {
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase())
+  }
+}
+
 export class RowGenerator {
   constructor (request, permission) {
     this.request = request
@@ -112,7 +120,15 @@ export class RowGenerator {
 
   generateAddressRow (countryName) {
     const { licensee } = this.permission
-    const text = [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+
+    const text = [
+      capitalise(licensee.premises),
+      capitalise(licensee.street),
+      capitalise(licensee.locality),
+      capitalise(licensee.town),
+      licensee.postcode?.toUpperCase(),
+      countryName
+    ]
       .filter(Boolean)
       .join(', ')
 

@@ -18,13 +18,11 @@ export class RecurringPayment extends BaseEntity {
       status: { field: 'statecode', type: 'decimal' },
       nextDueDate: { field: 'defra_nextduedate', type: 'datetime' },
       cancelledDate: { field: 'defra_cancelleddate', type: 'datetime' },
-      cancelledReason: { field: 'defra_cancelledreason', type: 'optionset', ref: 'defra_cancelledreason' },
+      cancelledReason: { field: 'defra_cancelledreason', type: 'optionset', ref: 'defra_cancelledreasons' },
       endDate: { field: 'defra_enddate', type: 'datetime' },
       agreementId: { field: 'defra_agreementid', type: 'string' },
-      activePermission: { field: '_defra_activepermission_value', type: 'string' },
-      contactId: { field: '_defra_contact_value', type: 'string' },
       publicId: { field: 'defra_publicid', type: 'string' },
-      nextRecurringPayment: { field: '_defra_nextrecurringpayment_value', type: 'string' }
+      lastDigitsCardNumbers: { field: 'defra_lastdigitscardnumbers', type: 'string' }
     },
     relationships: {
       contact: { property: 'defra_Contact', entity: Contact, parent: true },
@@ -135,5 +133,17 @@ export class RecurringPayment extends BaseEntity {
 
   set status (status) {
     super._setState('status', status)
+  }
+
+  /**
+   * Last four digits of card number
+   * @type {string}
+   */
+  get lastDigitsCardNumbers () {
+    return super._getState('lastDigitsCardNumbers')
+  }
+
+  set lastDigitsCardNumbers (lastDigitsCardNumbers) {
+    super._setState('lastDigitsCardNumbers', lastDigitsCardNumbers)
   }
 }

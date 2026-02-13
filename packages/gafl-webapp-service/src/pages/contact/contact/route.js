@@ -13,8 +13,7 @@ export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const mssgs = request.i18n.getCatalog()
 
-  // We need to have set the licence length, dob and start date here to determining the contact
-  // messaging
+  // We need to have set the licence length, dob and start date here to determine the contact messaging
   if (!permission.licensee.birthDate) {
     throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
@@ -29,11 +28,12 @@ export const getData = async request => {
 
   const junior = hasJunior(permission)
   const twelveMonthNonJuniorLicence = !junior && permission.licenceLength === '12M'
+  const twelveMonthJuniorLicence = junior && permission.licenceLength === '12M'
 
   return {
     title: getTitle(permission, mssgs, twelveMonthNonJuniorLicence),
     postHint: getPostHint(permission, mssgs),
-    content: getContent(permission, mssgs, twelveMonthNonJuniorLicence),
+    content: getContent(permission, mssgs, twelveMonthNonJuniorLicence, twelveMonthJuniorLicence),
     emailConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email,
     emailText: getEmailText(permission, mssgs, twelveMonthNonJuniorLicence),
     mobileConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text,
@@ -41,7 +41,8 @@ export const getData = async request => {
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     errorMessage: getErrorText(mssgs, twelveMonthNonJuniorLicence),
-    twelveMonthNonJuniorLicence
+    twelveMonthNonJuniorLicence,
+    twelveMonthJuniorLicence
   }
 }
 
@@ -55,8 +56,9 @@ const getTitle = (permission, messages, twelveMonthNonJuniorLicence) => {
 const getPostHint = (permission, messages) =>
   permission.isLicenceForYou ? messages.important_info_contact_post_hint_you : messages.important_info_contact_post_hint_other
 
-const getContent = (permission, messages, twelveMonthNonJuniorLicence) => {
+const getContent = (permission, messages, twelveMonthNonJuniorLicence, twelveMonthJuniorLicence) => {
   const isSalmonLicense = permission.licenceType === 'Salmon and sea trout'
+
   if (twelveMonthNonJuniorLicence) {
     if (isSalmonLicense) {
       return permission.isLicenceForYou
@@ -67,6 +69,11 @@ const getContent = (permission, messages, twelveMonthNonJuniorLicence) => {
       ? messages.important_info_contact_post_not_salmon_you
       : messages.important_info_contact_post_not_salmon_other
   }
+
+  if (twelveMonthJuniorLicence) {
+    return messages.important_info_contact_content_junior_12_months
+  }
+
   return isSalmonLicense ? messages.important_info_contact_content_salmon : messages.important_info_contact_content_not_salmon
 }
 

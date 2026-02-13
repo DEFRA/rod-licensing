@@ -36,7 +36,10 @@ const createTransactionRequestSchemaContent = {
   createdBy: Joi.string().optional(),
   journalId: Joi.string().optional(),
   transactionId: Joi.string().guid({ version: 'uuidv4' }).optional(),
-  agreementId: Joi.string().alphanum().length(AGREEMENT_ID_LENGTH).optional()
+  recurringPayment: Joi.object({
+    agreementId: Joi.string().alphanum().length(AGREEMENT_ID_LENGTH).required(),
+    id: Joi.string().guid()
+  }).optional()
 }
 
 /**
@@ -153,3 +156,7 @@ export const finaliseTransactionResponseSchema = Joi.object({
     .required()
     .label('finalise-transaction-status')
 }).label('finalise-transaction-response')
+
+export const retrieveStagedTransactionParamsSchema = Joi.object({
+  id: Joi.string().guid({ version: 'uuidv4' }).required()
+})

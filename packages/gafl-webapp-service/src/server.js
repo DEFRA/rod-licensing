@@ -34,6 +34,8 @@ import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
 import { addEmptyFragmentToUri, addLanguageCodeToUri } from './processors/uri-helper.js'
+import fs from 'fs'
+import { createRequire } from 'node:module'
 
 airbrake.initialise()
 let server
@@ -126,9 +128,18 @@ const logGtmConfig = gtmContainerId => {
   }
 }
 
+const getGovUKFrontendRootPath = async () => {
+  // we use createRequire as require is not available in ES modules
+  const requireInstance = createRequire(`${process.cwd()}/src/server.js`)
+
+  return path.dirname(requireInstance.resolve('govuk-frontend/package.json'))
+}
+
 const init = async () => {
   await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
+
+  const govukFrontendRootPath = await getGovUKFrontendRootPath()
 
   server.views({
     engines: {
@@ -149,8 +160,8 @@ const init = async () => {
 
     // This needs all absolute paths to work with jest and in normal operation
     path: [
-      path.join(Dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk'),
-      path.join(Dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk', 'components'),
+      path.join(govukFrontendRootPath, 'dist', 'govuk'),
+      path.join(govukFrontendRootPath, 'dist', 'govuk', 'components'),
       path.join(Dirname, 'src/pages/layout'),
       path.join(Dirname, 'src/pages/macros'),
       ...viewPaths
@@ -220,7 +231,10 @@ const init = async () => {
 
   logGtmConfig(process.env.GTM_CONTAINER_ID)
 
-  console.log('Server running on %s', server.info.uri)
+  const pkgPath = path.join(process.cwd(), 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+
+  console.log('Server running on %s. name: %s. version: %s.', server.info.uri, pkg.name, pkg.version)
 }
 
 const shutdownBehavior = () => {

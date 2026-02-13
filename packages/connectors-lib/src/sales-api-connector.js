@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import querystring from 'querystring'
+import querystring from 'node:querystring'
 import db from 'debug'
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 20000
@@ -27,7 +27,7 @@ export const call = async (url, method = 'get', payload = null) => {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: response.status !== 204 ? await parseResponseBody(response) : undefined
+    body: response.status === 204 ? undefined : await parseResponseBody(response)
   }
   debug(
     'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',
@@ -270,6 +270,27 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
   )
 
 /**
+ * Support for cancelling recurring payment authentication
+ * @param referenceNumber
+ * @param birthDate
+ * @param postcode
+ * @returns {Promise<*>}
+ */
+export const authenticateRecurringPayment = (referenceNumber, birthDate, postcode) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `/authenticate/rcp/${referenceNumber}?${querystring.stringify({
+          licenseeBirthDate: birthDate,
+          licenseePostcode: postcode
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )
+
+/**
  * Helper to check if an HTTP status code is classed as a system error
  *
  * @param {number} statusCode the HTTP status code to test
@@ -295,3 +316,38 @@ export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL
  */
 export const preparePermissionDataForRenewal = async referenceNumber =>
   exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
+
+/**
+ * Process a recurring payment result
+ *
+ * @param transactionId
+ * @param paymentId
+ * @param createdDate
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const processRPResult = async (transactionId, paymentId, createdDate) => {
+  return exec2xxOrThrow(call(new URL(`/processRPResult/${transactionId}/${paymentId}/${createdDate}`, urlBase), 'get'))
+}
+
+/**
+ * Cancel a RecurringPayment
+ *
+ * @param id
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const cancelRecurringPayment = async (id, reason = 'Payment Failure') => {
+  return exec2xxOrThrow(call(new URL(`/cancelRecurringPayment/${id}?${querystring.stringify({ reason })}`, urlBase), 'get'))
+}
+
+/**
+ * Retrieve a staged transaction
+ *
+ * @param id
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const retrieveStagedTransaction = async id => {
+  return exec2xxOrThrow(call(new URL(`/retrieveStagedTransaction/${id}`, urlBase), 'get'))
+}

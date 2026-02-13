@@ -30,7 +30,7 @@ jest.mock('../../../../processors/mapping-constants', () => ({
 
 jest.mock('../../../../processors/refdata-helper.js', () => ({
   countries: {
-    nameFromCode: async () => 'GB'
+    nameFromCode: async () => 'England'
   }
 }))
 
@@ -124,6 +124,67 @@ const getRequestMock = ({
 })
 
 describe('contact-summary > route', () => {
+  describe('generateAddressRow', () => {
+    it.each([
+      [
+        'premises',
+        {
+          premises: undefined,
+          street: 'howecroft court',
+          locality: 'eastmead lane',
+          town: 'bristol',
+          postcode: 'BS9 1HJ',
+          country: 'England'
+        },
+        'Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, England'
+      ],
+      [
+        'street',
+        {
+          premises: '14',
+          street: undefined,
+          locality: 'eastmead lane',
+          town: 'bristol',
+          postcode: 'BS9 1HJ',
+          country: 'England'
+        },
+        '14, Eastmead Lane, Bristol, BS9 1HJ, England'
+      ],
+      [
+        'locality',
+        {
+          premises: '14',
+          street: 'howecroft court',
+          locality: undefined,
+          town: 'bristol',
+          postcode: 'BS9 1HJ',
+          country: 'Northern Ireland'
+        },
+        '14, Howecroft Court, Bristol, BS9 1HJ, Northern Ireland'
+      ],
+      [
+        'town',
+        {
+          premises: '14',
+          street: 'howecroft court',
+          locality: 'eastmead lane',
+          town: undefined,
+          postcode: 'BS9 1HJ',
+          country: 'Wales'
+        },
+        '14, Howecroft Court, Eastmead Lane, BS9 1HJ, Wales'
+      ]
+    ])('omits %s when undefined', (missingField, licenseeOverrides, expectedAddress) => {
+      const permission = getMockPermission(licenseeOverrides)
+      const request = getRequestMock({ permission })
+      const rowGenerator = new route.RowGenerator(request, permission)
+
+      const row = rowGenerator.generateAddressRow(licenseeOverrides.country)
+
+      expect(row.value.text).toBe(expectedAddress)
+    })
+  })
+
   it('should set status.fromSummary to seen', async () => {
     const mockPermission = jest.fn()
     const mockRequest = getRequestMock({ setStatusPermission: mockPermission })

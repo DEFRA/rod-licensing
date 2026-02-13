@@ -1,6 +1,5 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
-{% from "notification-banner.njk" import notificationBanner %}
 
 {% set title = mssgs['licence_fulfilment_title_' + data.youOrOther] %}
 {% set describedByTag = "licence-option-item-hint licence-option-2-item-hint" %}
@@ -11,12 +10,6 @@
         }
     }
 %}
-
-{% block notificationContent %}
-    {% if data.showNotificationBanner %}
-        {{ notificationBanner(mssgs) }}
-    {% endif%}
-{% endblock %}
 
 {% block pageContent %}
     <p class="govuk-body">{{ mssgs.licence_fulfilment_content_info }}</p>

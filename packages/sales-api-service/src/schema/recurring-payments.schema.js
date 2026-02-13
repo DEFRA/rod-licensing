@@ -19,3 +19,21 @@ export const dueRecurringPaymentsResponseSchema = Joi.object({
     activePermission: { entity: finalisedPermissionSchemaContent }
   })
 })
+
+export const dueRecurringPaymentsRequestParamsSchema = Joi.object({
+  date: Joi.string().isoDate().required()
+})
+
+export const processRPResultRequestParamsSchema = Joi.object({
+  transactionId: Joi.string().required(),
+  paymentId: Joi.string().required(),
+  createdDate: Joi.string().isoDate().required()
+})
+
+export const cancelRecurringPaymentRequestParamsSchema = Joi.object({
+  id: Joi.string().required()
+})
+
+export const cancelRecurringPaymentRequestQuerySchema = Joi.object({
+  reason: Joi.string().required().valid('Payment Failure', 'User Cancelled')
+})

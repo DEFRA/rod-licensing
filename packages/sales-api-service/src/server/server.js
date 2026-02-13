@@ -8,6 +8,8 @@ import Boom from '@hapi/boom'
 import { SERVER } from '../config.js'
 import moment from 'moment'
 import { airbrake } from '@defra-fish/connectors-lib'
+import path from 'path'
+import fs from 'fs'
 
 export default async (opts = { port: SERVER.Port }) => {
   airbrake.initialise()
@@ -49,7 +51,17 @@ export default async (opts = { port: SERVER.Port }) => {
   server.route(Routes)
 
   await server.start()
-  console.log('Server started at %s. Listening on %s', moment().toISOString(), server.info.uri)
+
+  const pkgPath = path.join(process.cwd(), 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+
+  console.log(
+    'Server started at %s. Listening on %s. name: %s. version: %s',
+    moment().toISOString(),
+    server.info.uri,
+    pkg.name,
+    pkg.version
+  )
 
   const shutdown = async code => {
     await server.stop()

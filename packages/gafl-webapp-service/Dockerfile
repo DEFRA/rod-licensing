@@ -9,7 +9,7 @@ COPY packages/gafl-webapp-service/package*.json /app/
 COPY packages/gafl-webapp-service/assets /app/assets
 COPY packages/gafl-webapp-service/build /app/build
 
-RUN npm install && npm run prepare
+RUN npm install --workspaces=false && npm run prepare
 
 # Bundle app source
 COPY packages/gafl-webapp-service/ /app
@@ -22,6 +22,14 @@ RUN rm -Rf /app/build /app/assets
 FROM rod_licensing/base
 WORKDIR /app
 COPY --from=builder --chown=node:node /app/ /app/
+
+# Create a destination directory for the rebrand assets
+RUN mkdir -p /app/public/assets/rebrand
+
+# Copy rebrand assets to detination directory
+COPY --from=builder \
+     /app/node_modules/govuk-frontend/dist/govuk/assets/rebrand \
+     /app/public/assets/rebrand
 
 RUN npm prune --production && npm cache clean --force > /dev/null 2>&1
 

@@ -16,6 +16,7 @@ describe('recurring payment entity', () => {
     recurringPayment.endDate = '2019-12-15T00:00:00Z'
     recurringPayment.agreementId = 'c9267c6e-573d-488b-99ab-ea18431fc472'
     recurringPayment.publicId = '649-213'
+    recurringPayment.lastDigitsCardNumbers = '1234'
     recurringPayment.status = 1
 
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
@@ -34,10 +35,11 @@ describe('recurring payment entity', () => {
       defra_name: '18569ba8-094e-4e8c-9911-bfedd5ccc17a',
       defra_nextduedate: '2019-12-14T00:00:00Z',
       defra_cancelleddate: '2019-12-14T00:00:00Z',
-      defra_cancelledreason: 910400195,
+      defra_cancelledreason: 910400003,
       defra_enddate: '2019-12-15T00:00:00Z',
       defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
       defra_publicid: '649-213',
+      defra_lastdigitscardnumbers: '1234',
       statecode: 1,
       _defra_contact_value: 'b3d33cln-2e83-ea11-a811-000d3a649213',
       _defra_activepermission_value: 'a5b24adf-2e83-ea11-a811-000d3a649213',
@@ -64,10 +66,11 @@ describe('recurring payment entity', () => {
           name: '18569ba8-094e-4e8c-9911-bfedd5ccc17a',
           nextDueDate: '2019-12-14T00:00:00Z',
           cancelledDate: '2019-12-14T00:00:00Z',
-          cancelledReason: expect.objectContaining({ id: 910400195, label: 'User cancelled', description: 'User cancelled' }),
+          cancelledReason: expect.objectContaining({ id: 910400003, label: 'User Cancelled', description: 'User Cancelled' }),
           endDate: '2019-12-15T00:00:00Z',
           agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           publicId: '649-213',
+          lastDigitsCardNumbers: '1234',
           status: 1
         })
       )
@@ -80,7 +83,7 @@ describe('recurring payment entity', () => {
         contact,
         permission,
         cancelledDate: '2019-10-14T00:00:00Z',
-        cancelledReason: optionSetData.defra_cancelledreason.options['910400195']
+        cancelledReason: optionSetData.defra_cancelledreasons.options['910400003']
       })
       const dynamicsEntity = recurringPayment.toRequestBody()
       expect(dynamicsEntity).toMatchObject(
@@ -88,10 +91,11 @@ describe('recurring payment entity', () => {
           defra_name: 'Test Name',
           defra_nextduedate: '2019-12-14T00:00:00Z',
           defra_cancelleddate: '2019-10-14T00:00:00Z',
-          defra_cancelledreason: 910400195,
+          defra_cancelledreason: 910400003,
           defra_enddate: '2019-12-15T00:00:00Z',
           defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           defra_publicid: '649-213',
+          defra_lastdigitscardnumbers: '1234',
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
@@ -119,6 +123,7 @@ describe('recurring payment entity', () => {
           endDate: '2019-12-15T00:00:00Z',
           agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           publicId: '649-213',
+          lastDigitsCardNumbers: '1234',
           status: 1
         })
       )
@@ -138,6 +143,7 @@ describe('recurring payment entity', () => {
           defra_enddate: '2019-12-15T00:00:00Z',
           defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           defra_publicid: '649-213',
+          defra_lastdigitscardnumbers: '1234',
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
@@ -162,6 +168,7 @@ describe('recurring payment entity', () => {
           defra_enddate: '2019-12-15T00:00:00Z',
           defra_agreementid: 'c9267c6e-573d-488b-99ab-ea18431fc472',
           defra_publicid: '649-213',
+          defra_lastdigitscardnumbers: '1234',
           statecode: 1,
           'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
           'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`,

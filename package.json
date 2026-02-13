@@ -4,7 +4,7 @@
   "description": "rod licensing digital services",
   "private": true,
   "engines": {
-    "node": ">=18.17"
+    "node": ">=22"
   },
   "keywords": [
     "rod",
@@ -17,43 +17,45 @@
     "type": "git",
     "url": "git://github.com/DEFRA/rod-licensing.git"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "postinstall": "npm run lerna:bootstrap",
-    "prepare": "husky install",
+    "prepare": "[[ $CI != 'true' ]] && husky install || echo 'Skipping husky install in CI environment'",
     "test": "jest",
     "test:only-changed": "jest --changedSince develop",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --verbose --silent false",
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
-    "lerna:bootstrap": "lerna bootstrap",
     "docker:infrastructure": "docker-compose -f docker/infrastructure.yml build && docker stack deploy -c docker/infrastructure.yml rli",
     "docker:build-dev": "TAG=dev PROJECT_DOCKERFILE=Dockerfile.dev docker-compose -f docker/services.build.yml build",
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
-    "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build",
+    "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build && npm run docker:gafl-webapp-refresh",
     "docker:services": "docker stack deploy -c docker/services.yml rls",
+    "docker:gafl-webapp-refresh": "docker-compose -f docker/services.build.yml build --no-cache gafl_webapp && docker stack deploy -c docker/services.yml rls",
     "pre-commit": "npm run test && lint-staged",
     "pre-push": "prettier-standard --check --lint --since develop"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.2",
-    "@babel/eslint-parser": "^7.17.0",
-    "@babel/preset-env": "^7.16.11",
-    "@ksmithut/prettier-standard": "^0.0.10",
-    "@types/hapi__hapi": "^20.0.10",
-    "@types/jest": "^27.4.0",
-    "babel-jest": "^27.5.1",
-    "clone-deep": "^4.0.1",
-    "dynamics-web-api": "^1.7.3",
-    "eslint": "^7.32.0",
-    "husky": "^7.0.4",
-    "jest": "^27.5.1",
-    "jest-circus": "^27.5.1",
-    "lerna": "^5.6.2",
-    "lerna-changelog": "^2.2.0",
-    "lerna-update-wizard": "^1.1.1",
-    "lint-staged": "^11.2.6",
-    "simple-oauth2": "^4.3.0",
-    "standard": "^16.0.4"
+    "@babel/core": "7.17.2",
+    "@babel/eslint-parser": "7.17.0",
+    "@babel/preset-env": "7.16.11",
+    "@ksmithut/prettier-standard": "0.0.10",
+    "@types/hapi__hapi": "20.0.10",
+    "@types/jest": "27.4.0",
+    "babel-jest": "27.5.1",
+    "clone-deep": "4.0.1",
+    "dynamics-web-api": "1.7.3",
+    "eslint": "7.32.0",
+    "husky": "9.1.7",
+    "jest": "27.5.1",
+    "jest-circus": "27.5.1",
+    "lerna": "9.0.3",
+    "lerna-changelog": "2.2.0",
+    "lerna-update-wizard": "1.1.1",
+    "lint-staged": "11.2.6",
+    "simple-oauth2": "4.3.0",
+    "standard": "16.0.4"
   },
   "eslintConfig": {
     "extends": "standard",
@@ -96,6 +98,10 @@
         "statements": 90
       }
     },
+    "moduleDirectories": [
+      "node_modules",
+      "../../node_modules"
+    ],
     "projects": [
       "<rootDir>/packages/*"
     ],

@@ -62,7 +62,9 @@ describe('permissions service', () => {
       const number = await generatePermissionNumber(
         getSamplePermission({
           permitId: MOCK_12MONTH_DISABLED_PERMIT.id,
-          birthDate: moment().subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
+          birthDate: moment()
+            .subtract(JUNIOR_MAX_AGE + 1, 'years')
+            .format('YYYY-MM-DD')
         }),
         'Telesales'
       )

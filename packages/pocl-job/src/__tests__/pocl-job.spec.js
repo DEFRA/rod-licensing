@@ -1,5 +1,6 @@
 import { execute } from '../pocl-processor.js'
 import commander from 'commander'
+import fs from 'fs'
 
 jest.mock('commander', () => {
   if (!global.commander) {
@@ -24,6 +25,22 @@ jest.mock('../pocl-processor.js', () => {
 describe('pocl-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  it('logs startup details including name and version', () => {
+    const mockPkg = { name: 'pocl-test', version: '1.2.3' }
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockPkg))
+
+    jest.isolateModules(() => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      require('../pocl-job.js')
+      expect(logSpy).toHaveBeenCalledWith(
+        'POCL job starting at %s. name: %s. version: %s',
+        expect.any(String),
+        mockPkg.name,
+        mockPkg.version
+      )
+    })
   })
 
   it('exposes an execute command to the cli', async () => {

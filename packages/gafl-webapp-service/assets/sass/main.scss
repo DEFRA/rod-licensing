@@ -3,11 +3,8 @@ $govuk-assets-path: '/public/';
 $govuk-images-path: '#{$govuk-assets-path}images/';
 $govuk-fonts-path: '#{$govuk-assets-path}fonts/';
 
-@import '../node_modules/govuk-frontend/dist/govuk/all';
+@import 'govuk/all';
 @import '../assets/sass/rod-licensing/general';
-@import '../node_modules/flatpickr/dist/flatpickr';
 @import '../assets/sass/rod-licensing/address';
-@import '../assets/sass/rod-licensing/calendar';
-@import '../assets/sass/rod-licensing/cookie_banner';
 @import '../assets/sass/rod-licensing/pricing_summary';
 @import '../assets/sass/rod-licensing/table_extras';

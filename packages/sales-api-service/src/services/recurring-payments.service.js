@@ -1,13 +1,34 @@
-import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
+import {
+  dynamicsClient,
+  executeQuery,
+  findById,
+  findDueRecurringPayments,
+  findRecurringPaymentsByAgreementId,
+  persist,
+  RecurringPayment,
+  findRecurringPaymentByPermissionId,
+  retrieveGlobalOptionSets
+} from '@defra-fish/dynamics-lib'
+import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
+import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
+import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
+import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
+import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
+import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
+import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
+import db from 'debug'
+const debug = db('sales:recurring')
+const { sqs, docClient } = AWS()
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
 
 const getNextDueDate = (startDate, issueDate, endDate) => {
   const mStart = moment(startDate)
-  if (mStart.isAfter(moment(issueDate)) && mStart.isSameOrBefore(moment(issueDate).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'), 'day')) {
+  if (mStart.isAfter(moment(issueDate))) {
     if (mStart.isSame(moment(issueDate), 'day')) {
       return moment(startDate).add(1, 'year').subtract(10, 'days').startOf('day').toISOString()
     }
@@ -19,8 +40,10 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
   throw new Error('Invalid dates provided for permission')
 }
 
-export const generateRecurringPaymentRecord = (transactionRecord, permission) => {
-  if (transactionRecord.agreementId) {
+export const generateRecurringPaymentRecord = async (transactionRecord, permission) => {
+  if (transactionRecord.recurringPayment?.agreementId) {
+    const agreementResponse = await getRecurringPaymentAgreement(transactionRecord.recurringPayment.agreementId)
+    const lastDigitsCardNumbers = agreementResponse.payment_instrument?.card_details?.last_digits_card_number
     const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
     return {
       payment: {
@@ -30,8 +53,9 @@ export const generateRecurringPaymentRecord = (transactionRecord, permission) =>
           cancelledDate: null,
           cancelledReason: null,
           endDate,
-          agreementId: transactionRecord.agreementId,
-          status: 1
+          agreementId: transactionRecord.recurringPayment.agreementId,
+          status: 1,
+          last_digits_card_number: lastDigitsCardNumbers
         }
       },
       permissions: [permission]
@@ -50,7 +74,7 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
   if (transactionRecord.payment?.recurring) {
     const recurringPayment = new RecurringPayment()
     hash.update(recurringPayment.uniqueContentId)
-    recurringPayment.name = transactionRecord.payment.recurring.name
+    recurringPayment.name = determineRecurringPaymentName(transactionRecord, contact)
     recurringPayment.nextDueDate = transactionRecord.payment.recurring.nextDueDate
     recurringPayment.cancelledDate = transactionRecord.payment.recurring.cancelledDate
     recurringPayment.cancelledReason = transactionRecord.payment.recurring.cancelledReason
@@ -58,10 +82,116 @@ export const processRecurringPayment = async (transactionRecord, contact) => {
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = hash.digest('base64')
     recurringPayment.status = transactionRecord.payment.recurring.status
+    recurringPayment.lastDigitsCardNumbers = transactionRecord.payment.recurring.last_digits_card_number
     const [permission] = transactionRecord.permissions
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
     recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
     return { recurringPayment }
   }
   return { recurringPayment: null }
+}
+
+export const getRecurringPaymentAgreement = async agreementId => {
+  const response = await govUkPayApi.getRecurringPaymentAgreementInformation(agreementId)
+  if (response.ok) {
+    const resBody = await response.json()
+    const resBodyNoCardDetails = structuredClone(resBody)
+
+    if (resBodyNoCardDetails.payment_instrument?.card_details) {
+      delete resBodyNoCardDetails.payment_instrument.card_details
+    }
+    debug('Successfully got recurring payment agreement information: %o', resBodyNoCardDetails)
+    return resBody
+  } else {
+    throw new Error('Failure getting agreement in the GOV.UK API service')
+  }
+}
+
+export const processRPResult = async (transactionId, paymentId, createdDate) => {
+  const transactionRecord = await retrieveStagedTransaction(transactionId)
+  if (await getPaymentJournal(transactionId)) {
+    await updatePaymentJournal(transactionId, {
+      paymentReference: paymentId,
+      paymentTimestamp: createdDate,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  } else {
+    await createPaymentJournal(transactionId, {
+      paymentReference: paymentId,
+      paymentTimestamp: createdDate,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  }
+  const [permission] = transactionRecord.permissions
+  permission.issueDate = new Date().toISOString()
+
+  permission.endDate = await calculateEndDate(permission)
+  permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+  permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
+
+  await docClient.update({
+    TableName: TRANSACTION_STAGING_TABLE.TableName,
+    Key: { id: transactionId },
+    ...docClient.createUpdateExpression({
+      payload: permission,
+      permissions: transactionRecord.permissions,
+      status: { id: TRANSACTION_STATUS.FINALISED },
+      payment: {
+        amount: transactionRecord.cost,
+        method: PAYMENT_TYPE.debit,
+        source: TRANSACTION_SOURCE.govPay,
+        timestamp: new Date().toISOString()
+      }
+    }),
+    ReturnValues: 'ALL_NEW'
+  })
+
+  await sqs.sendMessage({
+    QueueUrl: TRANSACTION_QUEUE.Url,
+    MessageGroupId: transactionId,
+    MessageDeduplicationId: transactionId,
+    MessageBody: JSON.stringify({ id: transactionId })
+  })
+
+  return { permission }
+}
+
+export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
+  const query = findRecurringPaymentsByAgreementId(agreementId)
+  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  if (response.value.length) {
+    const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
+    return RecurringPayment.fromResponse(rcpResponseData)
+  }
+  return false
+}
+
+export const cancelRecurringPayment = async (id, reason) => {
+  const recurringPayment = await findById(RecurringPayment, id)
+  if (recurringPayment) {
+    const data = recurringPayment
+    data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+    await persist([updatedRecurringPayment])
+    return updatedRecurringPayment
+  } else {
+    throw new Error('Invalid id provided for recurring payment cancellation')
+  }
+}
+
+const determineRecurringPaymentName = (transactionRecord, contact) => {
+  const [dueYear] = transactionRecord.payment.recurring.nextDueDate.split('-')
+  return [contact.firstName, contact.lastName, dueYear].join(' ')
+}
+
+export const findLinkedRecurringPayment = async permissionId => {
+  const query = findRecurringPaymentByPermissionId(permissionId)
+  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  if (response.value.length) {
+    const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
+    const definition = await retrieveGlobalOptionSets().cached()
+    return RecurringPayment.fromResponse(rcpResponseData, definition)
+  }
+  return false
 }

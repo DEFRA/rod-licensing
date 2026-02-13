@@ -1,4 +1,861 @@
 
+## v1.67.0-rc.4 (2026-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2307](https://github.com/DEFRA/rod-licensing/pull/2307) Remove RCP feature flag ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.67.0-rc.3 (2026-02-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2306](https://github.com/DEFRA/rod-licensing/pull/2306) GAFL:Dev - Cancellation journey page 3 functionality ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.2 (2026-02-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2303](https://github.com/DEFRA/rod-licensing/pull/2303) GAFL: RCP cancellation and renewal journey "back" link not working on static pages ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.1 (2026-02-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2305](https://github.com/DEFRA/rod-licensing/pull/2305) GAFL: Dev – incorrect statement in RCP T&C page ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.0 (2026-01-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2304](https://github.com/DEFRA/rod-licensing/pull/2304) GAFL:Dev - Remove information banner from fullfilment page ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+
+
+## v1.65.0-rc.23 (2026-01-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2288](https://github.com/DEFRA/rod-licensing/pull/2288) Fixing already cancelled rp backlink ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.65.0-rc.21 (2026-01-19)
+
+#### :bug: Bug Fix
+* [#2291](https://github.com/DEFRA/rod-licensing/pull/2291) Update workspace setup instructions  ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.20 (2026-01-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2284](https://github.com/DEFRA/rod-licensing/pull/2284) https://eaflood.atlassian.net/browse/IWTF-4957 ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.19 (2026-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2289](https://github.com/DEFRA/rod-licensing/pull/2289) Cancellation journey page 4 - confirmation English ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.18 (2026-01-19)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2270](https://github.com/DEFRA/rod-licensing/pull/2270) Upgrade Lerna ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.17 (2026-01-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2285](https://github.com/DEFRA/rod-licensing/pull/2285) Flaky unit test in license-start-time.spec.js ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.65.0-rc.16 (2026-01-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2281](https://github.com/DEFRA/rod-licensing/pull/2281) Add validation to journey goals page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.15 (2026-01-06)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2264](https://github.com/DEFRA/rod-licensing/pull/2264) RP job should cancel invalid agreementIds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.65.0-rc.13 (2026-01-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2278](https://github.com/DEFRA/rod-licensing/pull/2278) Backlink not working on rcp licence-not-found page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+
+
+## v1.65.0-rc.9 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2267](https://github.com/DEFRA/rod-licensing/pull/2267) Cancellation confirmation UI fixes ([@jaucourt](https://github.com/jaucourt))
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.8 (2025-12-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2268](https://github.com/DEFRA/rod-licensing/pull/2268) Cancel confirmation UI Fixes ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.7 (2025-12-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2265](https://github.com/DEFRA/rod-licensing/pull/2265) Journey Goal Page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.6 (2025-12-19)
+
+#### :bug: Bug Fix
+* `sqs-receiver-service`
+  * [#2269](https://github.com/DEFRA/rod-licensing/pull/2269) Fix error checking failed sqs messages from delete request ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.5 (2025-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2263](https://github.com/DEFRA/rod-licensing/pull/2263) Unhappy cancellation journey page 2 - no match ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.65.0-rc.4 (2025-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2262](https://github.com/DEFRA/rod-licensing/pull/2262) Unhappy cancellation journey page 2 - already cancelled ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.65.0-rc.2 (2025-12-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2233](https://github.com/DEFRA/rod-licensing/pull/2233) RCP Cancellation - no RCP agreement ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.65.0-rc.1 (2025-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2261](https://github.com/DEFRA/rod-licensing/pull/2261) Cancellation journey page 3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.65.0-rc.0 (2025-12-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2221](https://github.com/DEFRA/rod-licensing/pull/2221) Cancellation confirm details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.64.0-rc.22 (2025-11-21)
+
+#### :bug: Bug Fix
+* [#2254](https://github.com/DEFRA/rod-licensing/pull/2254) Fix code duplication false positive ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.64.0-rc.21 (2025-11-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2255](https://github.com/DEFRA/rod-licensing/pull/2255) Cancel RP Identify Cache ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.64.0-rc.19 (2025-11-11)
+
+#### :bug: Bug Fix
+* [#2249](https://github.com/DEFRA/rod-licensing/pull/2249) Use Node 20.19.5 and NPM 11.5.1 for Actions builds ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.64.0-rc.18 (2025-11-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2247](https://github.com/DEFRA/rod-licensing/pull/2247) RP journey cancellation page 1 - Identify ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.64.0-rc.16 (2025-11-06)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2244](https://github.com/DEFRA/rod-licensing/pull/2244) Allow lowercase chars in licence number when renewing ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.64.0-rc.14 (2025-11-04)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `sales-api-service`
+  * [#2211](https://github.com/DEFRA/rod-licensing/pull/2211) RCP job not updating fields in CRM ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.13 (2025-10-30)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2239](https://github.com/DEFRA/rod-licensing/pull/2239) Revert two commits ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.64.0-rc.11 (2025-10-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2230](https://github.com/DEFRA/rod-licensing/pull/2230) Fix incorrect links in Accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.64.0-rc.10 (2025-10-27)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2232](https://github.com/DEFRA/rod-licensing/pull/2232) Revert two commits ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.64.0-rc.8 (2025-10-24)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#2216](https://github.com/DEFRA/rod-licensing/pull/2216) RP not updating CRM connectors lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.7 (2025-10-24)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2220](https://github.com/DEFRA/rod-licensing/pull/2220) Remove rcp variables ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.6 (2025-10-23)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2223](https://github.com/DEFRA/rod-licensing/pull/2223) Fix issues alerting errors to Errbit ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.64.0-rc.5 (2025-10-23)
+
+#### :rocket: Enhancement
+* [#2224](https://github.com/DEFRA/rod-licensing/pull/2224) Update npm deployment process ([@irisfaraway](https://github.com/irisfaraway))
+
+#### :bug: Bug Fix
+* [#2226](https://github.com/DEFRA/rod-licensing/pull/2226) Revert "Update npm deployment process (#2224)" ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.64.0-rc.3 (2025-10-14)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `pocl-job`
+  * [#2209](https://github.com/DEFRA/rod-licensing/pull/2209) Upgrade pocl job to use AWS SDK v3 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.64.0-rc.2 (2025-10-06)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2215](https://github.com/DEFRA/rod-licensing/pull/2215) Recurring payment job should handle errors from await salesApi.processRPResult() ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.64.0-rc.1 (2025-10-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2201](https://github.com/DEFRA/rod-licensing/pull/2201) Create cancellation journey ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.64.0-rc.0 (2025-10-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2212](https://github.com/DEFRA/rod-licensing/pull/2212) Add missing reminder content to contact page on junior journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.63.0-rc.18 (2025-09-18)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2207](https://github.com/DEFRA/rod-licensing/pull/2207) Refactor for Airbrake integration ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.17 (2025-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2210](https://github.com/DEFRA/rod-licensing/pull/2210) Country capital letters ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.16 (2025-09-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2205](https://github.com/DEFRA/rod-licensing/pull/2205) Capitals in address ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.15 (2025-09-09)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2204](https://github.com/DEFRA/rod-licensing/pull/2204) Allow RCP agreements to be created through easy renewal with later date ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.14 (2025-09-04)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2200](https://github.com/DEFRA/rod-licensing/pull/2200) Junior licence format ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.13 (2025-08-29)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2203](https://github.com/DEFRA/rod-licensing/pull/2203) Don't cancel RP if checking payment status throws error ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.12 (2025-08-27)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2198](https://github.com/DEFRA/rod-licensing/pull/2198) Setup Recurring Payments job to log to Errbit ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.11 (2025-08-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`, `sales-api-service`
+  * [#2164](https://github.com/DEFRA/rod-licensing/pull/2164) Add function to cancel recurring payments in Sales API ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.10 (2025-08-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`
+  * [#2194](https://github.com/DEFRA/rod-licensing/pull/2194) Output version of service on startup ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.9 (2025-08-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `payment-mop-up-job`, `recurring-payments-job`
+  * [#2183](https://github.com/DEFRA/rod-licensing/pull/2183) RCP - Clean up from previous jobs ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.8 (2025-08-15)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2192](https://github.com/DEFRA/rod-licensing/pull/2192) Log when GOV.UK Pay cannot find an Agreement ID ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.7 (2025-08-14)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2196](https://github.com/DEFRA/rod-licensing/pull/2196) Don't try to generate RCP record without data ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.6 (2025-08-13)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `payment-mop-up-job`, `sales-api-service`
+  * [#2177](https://github.com/DEFRA/rod-licensing/pull/2177) Recurring payments mop up ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.63.0-rc.5 (2025-08-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2193](https://github.com/DEFRA/rod-licensing/pull/2193) Fix bug with creating RPs in Web Sales journey ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.4 (2025-08-08)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#2191](https://github.com/DEFRA/rod-licensing/pull/2191)  Amend RP job with RP id ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.63.0-rc.3 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2184](https://github.com/DEFRA/rod-licensing/pull/2184) Incorrect capitalistion of address in contact summary ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.63.0-rc.2 (2025-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2189](https://github.com/DEFRA/rod-licensing/pull/2189) Add additional card_details filtering ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.63.0-rc.1 (2025-08-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2187](https://github.com/DEFRA/rod-licensing/pull/2187) Make reference number entry box on renewal journey smaller ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.63.0-rc.0 (2025-08-07)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2190](https://github.com/DEFRA/rod-licensing/pull/2190) Fix name of cancelledreasons optionset ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.62.0-rc.10 (2025-07-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2185](https://github.com/DEFRA/rod-licensing/pull/2185) Exclude card_brand from logs ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.9 (2025-07-24)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`
+  * [#2169](https://github.com/DEFRA/rod-licensing/pull/2169) RP job handles GOV.UK Pay error responses ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.62.0-rc.8 (2025-07-23)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2145](https://github.com/DEFRA/rod-licensing/pull/2145) Store bank card digits ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.7 (2025-07-22)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `recurring-payments-job`
+  * [#2148](https://github.com/DEFRA/rod-licensing/pull/2148) Recurring payments failed payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.6 (2025-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2180](https://github.com/DEFRA/rod-licensing/pull/2180) Use blue favicon ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.5 (2025-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2178](https://github.com/DEFRA/rod-licensing/pull/2178) Sanitise payment details in logging ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.4 (2025-07-21)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2179](https://github.com/DEFRA/rod-licensing/pull/2179) Set name of RecurringPayment record ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.3 (2025-07-10)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2165](https://github.com/DEFRA/rod-licensing/pull/2165) Logs not diplsaying aws ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.62.0-rc.2 (2025-07-04)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2162](https://github.com/DEFRA/rod-licensing/pull/2162) Add endpoint for cancelling recurring payments ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.62.0-rc.1 (2025-07-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2176](https://github.com/DEFRA/rod-licensing/pull/2176) Remove Gov.UK Frontend dependency for the whole repo ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.62.0-rc.0 (2025-07-01)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2159](https://github.com/DEFRA/rod-licensing/pull/2159) Exclude completed recurring payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.61.0-rc.19 (2025-06-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2172](https://github.com/DEFRA/rod-licensing/pull/2172) Update GAFL Frontend to v5.10.2 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.18 (2025-06-20)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `pocl-job`
+  * [#2171](https://github.com/DEFRA/rod-licensing/pull/2171) AWS SDK v3 pocl job ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.17 (2025-06-17)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2161](https://github.com/DEFRA/rod-licensing/pull/2161) Link recurring payments after new objects created ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.16 (2025-06-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2170](https://github.com/DEFRA/rod-licensing/pull/2170) Allow customers to indicate concession eligibility ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.15 (2025-06-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2166](https://github.com/DEFRA/rod-licensing/pull/2166) https://eaflood.atlassian.net/browse/IWTF-4392 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.14 (2025-06-03)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2138](https://github.com/DEFRA/rod-licensing/pull/2138) Implement fail screen for easy renewals journey Part 1 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.13 (2025-06-02)
+
+#### :rocket: Enhancement
+* [#2163](https://github.com/DEFRA/rod-licensing/pull/2163) Amend test:watch to automatically enable verbose and non-silent running ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.12 (2025-05-30)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2140](https://github.com/DEFRA/rod-licensing/pull/2140) Upgrade AWS SDK to v3 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.11 (2025-05-30)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2158](https://github.com/DEFRA/rod-licensing/pull/2158) Upgrade to v20 of node ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+## v1.61.0-rc.8 (2025-05-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2157](https://github.com/DEFRA/rod-licensing/pull/2157) Remove logging code for new prices bug ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.61.0-rc.7 (2025-05-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `sales-api-service`
+  * [#2155](https://github.com/DEFRA/rod-licensing/pull/2155) Add link-recurring-payments endpoint ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.6 (2025-05-15)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2152](https://github.com/DEFRA/rod-licensing/pull/2152) Remove date picker from start kind screen ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.61.0-rc.5 (2025-05-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2151](https://github.com/DEFRA/rod-licensing/pull/2151) RCP confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.4 (2025-05-13)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#2135](https://github.com/DEFRA/rod-licensing/pull/2135) Recurring payments logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.3 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2150](https://github.com/DEFRA/rod-licensing/pull/2150) Fix capitalisation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.2 (2025-05-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2149](https://github.com/DEFRA/rod-licensing/pull/2149) Fix field names in test ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.61.0-rc.1 (2025-04-28)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2139](https://github.com/DEFRA/rod-licensing/pull/2139) Card digits dynamics lib ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.61.0-rc.0 (2025-04-24)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#2144](https://github.com/DEFRA/rod-licensing/pull/2144) Add validation schemas to recurring payment routes ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.60.0-rc.4 (2025-04-01)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`, `sales-api-service`
+  * [#2119](https://github.com/DEFRA/rod-licensing/pull/2119) RP Job save permission ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.60.0-rc.3 (2025-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2137](https://github.com/DEFRA/rod-licensing/pull/2137) Auto amend newsletter ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.60.0-rc.2 (2025-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2136](https://github.com/DEFRA/rod-licensing/pull/2136) Ability to turn off rcp ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.60.0-rc.1 (2025-03-20)
+
+#### :rocket: Enhancement
+* `connectors-lib`
+  * [#2121](https://github.com/DEFRA/rod-licensing/pull/2121) HTTP Request Batcher ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.60.0-rc.0 (2025-03-20)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2132](https://github.com/DEFRA/rod-licensing/pull/2132) RCP cancellation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 ## v1.59.0-rc.9 (2025-02-18)
 
 #### :bug: Bug Fix
