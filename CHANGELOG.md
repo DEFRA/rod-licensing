@@ -1,4 +1,31 @@
 
+## v1.67.0-rc.4 (2026-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2307](https://github.com/DEFRA/rod-licensing/pull/2307) Remove RCP feature flag ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.67.0-rc.3 (2026-02-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2306](https://github.com/DEFRA/rod-licensing/pull/2306) GAFL:Dev - Cancellation journey page 3 functionality ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.2 (2026-02-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2303](https://github.com/DEFRA/rod-licensing/pull/2303) GAFL: RCP cancellation and renewal journey "back" link not working on static pages ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.67.0-rc.1 (2026-02-03)
 
 #### :bug: Bug Fix

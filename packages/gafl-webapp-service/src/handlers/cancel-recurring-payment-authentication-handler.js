@@ -12,9 +12,12 @@ import { cacheDateFormat } from '../../src/processors/date-and-time-display.js'
 import moment from 'moment-timezone'
 import Joi from 'joi'
 
-const applyAuthFailure = async (request, h, { pageData, redirectUri, statusData }) => {
+const applyAuthFailure = async (request, h, { pageData, redirectUri, statusData, errorPageName }) => {
   await request.cache().helpers.page.setCurrentPermission(CANCEL_RP_IDENTIFY.page, pageData)
-  await request.cache().helpers.status.setCurrentPermission(statusData)
+  await request.cache().helpers.status.setCurrentPermission({
+    ...statusData,
+    currentPage: errorPageName
+  })
   return h.redirectWithLanguageCode(redirectUri)
 }
 
@@ -40,12 +43,15 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
   if (!authenticationResult) {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_LICENCE_NOT_FOUND.uri
+    context.errorPageName = CANCEL_RP_LICENCE_NOT_FOUND.page
   } else if (!authenticationResult.recurringPayment) {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
+    context.errorPageName = CANCEL_RP_AGREEMENT_NOT_FOUND.page
   } else if (authenticationResult.recurringPayment.cancelledDate) {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_ALREADY_CANCELLED.uri
+    context.errorPageName = CANCEL_RP_ALREADY_CANCELLED.page
     context.pageData.payload = {
       ...context.pageData.payload,
       endDate: moment(authenticationResult.recurringPayment.endDate).format(cacheDateFormat)

@@ -140,6 +140,15 @@ describe('Cancel RP Authentication Handler', () => {
         expect.objectContaining({ authentication: { authorised: false } })
       )
     })
+
+    it('sets currentPage to error page name', async () => {
+      const { request } = await invokeHandlerWithMocks({ salesApiResponse: null })
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: CANCEL_RP_LICENCE_NOT_FOUND.page
+        })
+      )
+    })
   })
 
   describe('Unsuccessful authentication - no recurring payment agreement', () => {
@@ -169,6 +178,17 @@ describe('Cancel RP Authentication Handler', () => {
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
+      )
+    })
+
+    it('sets currentPage to error page name', async () => {
+      const { request } = await invokeHandlerWithMocks({
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: null }
+      })
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: CANCEL_RP_AGREEMENT_NOT_FOUND.page
+        })
       )
     })
   })
@@ -211,6 +231,17 @@ describe('Cancel RP Authentication Handler', () => {
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
+      )
+    })
+
+    it('sets currentPage to error page name', async () => {
+      const { request } = await invokeHandlerWithMocks({
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
+      })
+      expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: CANCEL_RP_ALREADY_CANCELLED.page
+        })
       )
     })
   })
