@@ -929,9 +929,8 @@ describe('recurring payments service', () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
 
-      const cancelledDate = new Date().toISOString().split('T')[0]
       const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
-      const expectedUpdatedRecurringPayment = { ...recurringPayment, cancelledReason, cancelledDate }
+      const expectedUpdatedRecurringPayment = { ...recurringPayment, cancelledReason }
 
       await cancelRecurringPayment('id', 'Payment Failure')
 
