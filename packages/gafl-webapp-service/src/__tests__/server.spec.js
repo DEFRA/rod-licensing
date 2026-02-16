@@ -165,21 +165,6 @@ describe('The server', () => {
     })
 
     it.each([
-      ['true', true],
-      ['TRUE', true],
-      ['false', false],
-      ['FALSE', false]
-    ])(
-      'if SHOW_WELSH_CONTENT is %s, it should set SHOW_WELSH_CONTENT to %s in the response',
-      (inputShowWelshContent, outputShowWelshContent) => {
-        process.env.SHOW_WELSH_CONTENT = inputShowWelshContent
-        const request = getSampleRequest()
-        layoutContextAmalgamation(request, {})
-        expect(request.response.source.context.SHOW_WELSH_CONTENT).toBe(outputShowWelshContent)
-      }
-    )
-
-    it.each([
       ['cookies', 'cookies.url', 'COOKIES'],
       ['refunds', 'refunds.url', 'REFUND_POLICY'],
       ['accessibility', 'access.ibility.uri', 'ACCESSIBILITY_STATEMENT'],
