@@ -31,13 +31,13 @@ describe('recurringPayReminderDisplay', () => {
 describe('validForRecurringPayment', () => {
   test.each`
     expected | length   | licenceFor | telesales          | age
-    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${69}
-    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${39}
-    ${false} | ${'12M'} | ${true}    | ${'not telesales'} | ${15}
-    ${false} | ${'8D'}  | ${true}    | ${'not telesales'} | ${69}
-    ${false} | ${'1D'}  | ${true}    | ${'not telesales'} | ${69}
-    ${false} | ${'12M'} | ${false}   | ${'not telesales'} | ${69}
-    ${false} | ${'12M'} | ${true}    | ${'telesales'}     | ${69}
+    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${69} // senior
+    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${39} // adult
+    ${false} | ${'12M'} | ${true}    | ${'not telesales'} | ${15} // junior - not valid
+    ${false} | ${'8D'}  | ${true}    | ${'not telesales'} | ${69} // 8 day licence - not valid
+    ${false} | ${'1D'}  | ${true}    | ${'not telesales'} | ${69} // 1 day licence - not valid
+    ${false} | ${'12M'} | ${false}   | ${'not telesales'} | ${69} // not licence for you - not valid
+    ${false} | ${'12M'} | ${true}    | ${'telesales'}     | ${69} // telesales - not valid
   `(
     'should return $expected as licence length is $length, licence for you is $licenceFor, journey is $telesales, and age is $age',
     ({ expected, length, licenceFor, telesales, age }) => {
