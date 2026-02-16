@@ -3,7 +3,7 @@ import db from 'debug'
 import { LICENCE_TYPE, NAME, ADDRESS_LOOKUP, CONTACT, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../uri.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
-import { ageConcessionHelper, addDisabled } from './concession-helper.js'
+import { ageConcessionHelper } from './concession-helper.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -18,62 +18,44 @@ const getLicenceStartDate = (renewedHasExpired, licenceEndDate) => {
 }
 
 /**
- * Module is used for easy renewals where the data is read from the CRM and written into the session
- * cache.
+ * Module is used for easy renewals where the data is read from the CRM and written into the session cache.
  */
 export const setUpCacheFromAuthenticationResult = async (request, authenticationResult) => {
-  debug(`Set up cache from authentication result for renewal of ${authenticationResult.permission.referenceNumber}`)
+  const { referenceNumber, endDate } = authenticationResult.permission
+  debug(`Set up cache from authentication result for renewal of ${referenceNumber}`)
+
+  const preparedResponse = await salesApi.preparePermissionDataForRenewal(referenceNumber)
+  const preparedPermission = preparedResponse.permission || preparedResponse
+
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  permission.isRenewal = true
-  permission.licenceLength = '12M' // Always for easy renewals
-  permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
-  permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
-  permission.isLicenceForYou = true
-  const endDateMoment = moment.utc(authenticationResult.permission.endDate).tz(SERVICE_LOCAL_TIME)
+
+  Object.assign(permission, {
+    isRenewal: preparedPermission.isRenewal,
+    licenceLength: preparedPermission.licenceLength || '12M',
+    licenceType: preparedPermission.licenceType,
+    numberOfRods: preparedPermission.numberOfRods,
+    isLicenceForYou: preparedPermission.isLicenceForYou,
+    licensee: preparedPermission.licensee,
+    concessions: preparedPermission.concessions
+  })
+
+  const endDateMoment = moment.utc(endDate).tz(SERVICE_LOCAL_TIME)
 
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
 
-  const licenceStartDate = getLicenceStartDate(renewedHasExpired, endDateMoment)
-  permission.licenceToStart = renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE
-  permission.licenceStartDate = renewedHasExpired
-    ? moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat)
-    : licenceStartDate.format(cacheDateFormat)
-  permission.licenceStartTime = renewedHasExpired ? 0 : licenceStartDate.hours()
-  permission.renewedEndDate = endDateMoment.toISOString()
-  permission.renewedHasExpired = renewedHasExpired
-  permission.licensee = Object.assign(
-    (({ country: _country, shortTermPreferredMethodOfConfirmation: _shortTermPreferredMethodOfConfirmation, ...l }) => l)(
-      authenticationResult.permission.licensee
-    ),
-    {
-      countryCode: authenticationResult.permission.licensee.country.description
-    }
-  )
+  const startDateMoment = getLicenceStartDate(renewedHasExpired, endDateMoment)
 
-  // Delete any licensee objects which are null
-  Object.entries(permission.licensee)
-    .filter(e => e[1] === null)
-    .map(e => e[0])
-    .forEach(k => delete permission.licensee[k])
-
-  permission.licensee.preferredMethodOfNewsletter = authenticationResult.permission.licensee.preferredMethodOfNewsletter.label
-  permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label
-  permission.licensee.preferredMethodOfReminder = authenticationResult.permission.licensee.preferredMethodOfReminder.label
-
-  // Add in concession proofs
-  const concessions = await salesApi.concessions.getAll()
-  permission.concessions = []
-  authenticationResult.permission.concessions.forEach(concessionProof => {
-    const concessionReference = concessions.find(c => c.id === concessionProof.id)
-    if (concessionReference && concessionReference.name === constants.CONCESSION.DISABLED) {
-      addDisabled(permission, concessionProof.proof.type.label, concessionProof.proof.referenceNumber)
-    }
+  Object.assign(permission, {
+    licenceToStart: renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE,
+    licenceStartDate: (renewedHasExpired ? moment().tz(SERVICE_LOCAL_TIME) : startDateMoment).format(cacheDateFormat),
+    licenceStartTime: renewedHasExpired ? 0 : startDateMoment.hours(),
+    renewedEndDate: endDateMoment.toISOString(),
+    renewedHasExpired
   })
 
-  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
-
-  // Add appropriate age concessions
   ageConcessionHelper(permission)
+
+  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
   await request.cache().helpers.transaction.setCurrentPermission(permission)
   await request.cache().helpers.status.setCurrentPermission({ showDigitalLicencePages })
 }

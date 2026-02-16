@@ -43,7 +43,7 @@ export default [
             concessions: await getConcessions(permission),
             permit: permission.expanded.permit.entity.toJSON()
           })
-          return h.response(permissionData)
+          return h.response({ permission: permissionData })
         } else if (results.length === 0) {
           throw Boom.unauthorized('Permission not found for renewal')
         } else {
