@@ -153,7 +153,6 @@ export default [
       return h.view(COOKIES.page, {
         ...cookiesView(request, analyticsCache),
         showNotification,
-        SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true',
         CSRF_TOKEN_NAME: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
         CSRF_TOKEN_VALUE: csrfToken
       })
