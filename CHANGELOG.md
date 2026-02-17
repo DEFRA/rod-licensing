@@ -1,4 +1,13 @@
 
+## v1.67.0-rc.5 (2026-02-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2311](https://github.com/DEFRA/rod-licensing/pull/2311) Remove Welsh language feature toggle ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.67.0-rc.4 (2026-02-12)
 
 #### :rocket: Enhancement

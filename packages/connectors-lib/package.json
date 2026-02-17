@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.67.0-rc.4",
+  "version": "1.67.0-rc.5",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
