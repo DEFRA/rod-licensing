@@ -30,8 +30,8 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   Object.assign(permission, {
-    isRenewal: preparedPermission.isRenewal,
-    licenceLength: preparedPermission.licenceLength || '12M',
+    isRenewal: true,
+    licenceLength: '12M',
     licenceType: preparedPermission.licenceType,
     numberOfRods: preparedPermission.numberOfRods,
     isLicenceForYou: preparedPermission.isLicenceForYou,
