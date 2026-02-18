@@ -911,7 +911,7 @@ describe('recurring payments service', () => {
       expect(getGlobalOptionSetValue).toHaveBeenCalledWith(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     })
 
-    it('should call persist with the updated RecurringPayment', async () => {
+    it('should set cancelledDate when reason is not User Cancelled and call persist with the updated RecurringPayment', async () => {
       retrieveGlobalOptionSets.mockReturnValueOnce({
         cached: jest.fn().mockResolvedValue({
           defra_cancelledreasons: {
@@ -930,11 +930,49 @@ describe('recurring payments service', () => {
       findById.mockReturnValueOnce(recurringPayment)
 
       const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
-      const expectedUpdatedRecurringPayment = { ...recurringPayment, cancelledReason }
 
       await cancelRecurringPayment('id', 'Payment Failure')
 
-      expect(persist).toHaveBeenCalledWith([expect.objectContaining(expectedUpdatedRecurringPayment)])
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledReason,
+          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
+        })
+      ])
+    })
+
+    it('should not set cancelledDate when reason is User Cancelled', async () => {
+      retrieveGlobalOptionSets.mockReturnValueOnce({
+        cached: jest.fn().mockResolvedValue({
+          defra_cancelledreasons: {
+            options: {
+              910400003: {
+                id: 910400003,
+                label: 'User Cancelled',
+                description: 'User Cancelled'
+              }
+            }
+          }
+        })
+      })
+
+      const cancelledReason = { description: 'User Cancelled', id: 910400003, label: 'User Cancelled' }
+
+      const recurringPayment = { ...getMockRecurringPayment(), cancelledDate: null }
+      findById.mockReturnValueOnce(recurringPayment)
+
+      getGlobalOptionSetValue.mockReturnValueOnce(cancelledReason)
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledReason,
+          cancelledDate: null
+        })
+      ])
     })
 
     it('should raise an error when there are no matches', async () => {
