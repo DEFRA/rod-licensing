@@ -25,7 +25,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   debug(`Set up cache from authentication result for renewal of ${referenceNumber}`)
 
   const preparedResponse = await salesApi.preparePermissionDataForRenewal(referenceNumber)
-  const preparedPermission = preparedResponse.permission || preparedResponse
+  const preparedPermission = preparedResponse.permission
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
