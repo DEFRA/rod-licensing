@@ -90,7 +90,6 @@ export const layoutContextAmalgamation = (request, h) => {
       CSRF_TOKEN_NAME: getCsrfTokenCookieName(),
       CSRF_TOKEN_VALUE: response.source.context[getCsrfTokenCookieName()],
       TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
-      SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true',
       _uri: {
         cookies: `${COOKIES.uri}${queryString}`,
         refunds: `${REFUND_POLICY.uri}${queryString}`,

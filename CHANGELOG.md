@@ -1,5 +1,60 @@
 
 
+## v1.67.0-rc.5 (2026-02-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2311](https://github.com/DEFRA/rod-licensing/pull/2311) Remove Welsh language feature toggle ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.67.0-rc.4 (2026-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2307](https://github.com/DEFRA/rod-licensing/pull/2307) Remove RCP feature flag ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.67.0-rc.3 (2026-02-10)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2306](https://github.com/DEFRA/rod-licensing/pull/2306) GAFL:Dev - Cancellation journey page 3 functionality ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.2 (2026-02-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2303](https://github.com/DEFRA/rod-licensing/pull/2303) GAFL: RCP cancellation and renewal journey "back" link not working on static pages ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.1 (2026-02-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2305](https://github.com/DEFRA/rod-licensing/pull/2305) GAFL: Dev – incorrect statement in RCP T&C page ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+## v1.67.0-rc.0 (2026-01-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2304](https://github.com/DEFRA/rod-licensing/pull/2304) GAFL:Dev - Remove information banner from fullfilment page ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
 
 
 ## v1.65.0-rc.23 (2026-01-21)

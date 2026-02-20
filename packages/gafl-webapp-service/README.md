@@ -35,10 +35,8 @@ To run from this directory:
 | SERVICE_PAGE                      | GOV.UK service page                                              |    no    | https://www.gov.uk/fishing-licences/buy-a-fishing-licence |                               |
 | AIRBRAKE_HOST                     | URL of airbrake host                                             |    no    |                                                           |                               |
 | AIRBRAKE_PROJECT_KEY              | Project key for airbrake logging                                 |    no    |                                                           |                               |
-| SHOW_WELSH_CONTENT                | Display option to change to welsh language                       |    no    |                                                           |                               |
 | ENABLE_ANALYTICS_OPT_IN_DEBUGGING | Set log if analytics been checked in non-production              |    no    |                                                           |                               |
 | ERROR_PAGE_ROUTE                  | Display error pages to support welsh language                    |    no    |                                                           |                               |
-| SHOW_RECURRING_PAYMENTS           | Display option to show recurring payments journey                |    no    |                                                           |                               |
 | SHOW_CANCELLATION_JOURNEY         | Display option to show recurring payments cancellation journey   |    no    |                                                           |                               |
 
 ## OS Places address lookup

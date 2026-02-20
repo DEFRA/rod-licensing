@@ -36,7 +36,8 @@ export default async (request, h) => {
         reason,
         authorized: false,
         endDate: authenticationResult.permission.endDate
-      }
+      },
+      currentPage: RENEWAL_INACTIVE.page
     })
     return h.redirectWithLanguageCode(RENEWAL_INACTIVE.uri)
   }
@@ -44,7 +45,11 @@ export default async (request, h) => {
   if (!authenticationResult) {
     payload.referenceNumber = referenceNumber
     await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload })
-    await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: { authorized: false },
+      currentPage: LICENCE_NOT_FOUND.page
+    })
     return h.redirectWithLanguageCode(LICENCE_NOT_FOUND.uri)
   } else {
     // Test for 12 month licence
