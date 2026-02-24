@@ -13,7 +13,7 @@ jest.mock('../../../../../uri.js', () => ({
 }))
 jest.mock('../../../../../processors/uri-helper.js')
 
-const getSampleRequest = (referenceNumber = 'RP12345678') => ({
+const getSampleRequest = (referenceNumber = 'rp12345678') => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
@@ -91,6 +91,12 @@ describe('pageRoute receives expected arguments', () => {
 })
 
 describe('getData', () => {
+  it('capitalises reference number', async () => {
+    const request = getSampleRequest()
+    const data = await getData(request)
+    expect(data.referenceNumber).toEqual('RP12345678')
+  })
+
   it('passes call charges link in list of urls', async () => {
     expect(await getData(getSampleRequest())).toEqual(
       expect.objectContaining({
