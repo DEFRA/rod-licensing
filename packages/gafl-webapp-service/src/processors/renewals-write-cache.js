@@ -17,6 +17,36 @@ const getLicenceStartDate = (renewedHasExpired, licenceEndDate) => {
   return moment(licenceEndDate).add(1, 'minute').seconds(0).tz(SERVICE_LOCAL_TIME)
 }
 
+const populateBasicPermissionData = (permission, preparedPermission) => {
+  Object.assign(permission, {
+    isRenewal: true,
+    licenceLength: '12M',
+    licenceType: preparedPermission.licenceType,
+    numberOfRods: preparedPermission.numberOfRods,
+    isLicenceForYou: preparedPermission.isLicenceForYou,
+    licensee: preparedPermission.licensee,
+    concessions: preparedPermission.concessions
+  })
+}
+
+const populateDateFields = (permission, endDateMoment, renewedHasExpired) => {
+  const startDateMoment = getLicenceStartDate(renewedHasExpired, endDateMoment)
+
+  Object.assign(permission, {
+    licenceToStart: renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE,
+    licenceStartDate: (renewedHasExpired ? moment().tz(SERVICE_LOCAL_TIME) : startDateMoment).format(cacheDateFormat),
+    licenceStartTime: renewedHasExpired ? 0 : startDateMoment.hours(),
+    renewedEndDate: endDateMoment.toISOString(),
+    renewedHasExpired
+  })
+}
+
+const updateCache = async (request, permission) => {
+  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
+  await request.cache().helpers.status.setCurrentPermission({ showDigitalLicencePages })
+}
+
 /**
  * Module is used for easy renewals where the data is read from the CRM and written into the session cache.
  */
@@ -29,35 +59,16 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  Object.assign(permission, {
-    isRenewal: true,
-    licenceLength: '12M',
-    licenceType: preparedPermission.licenceType,
-    numberOfRods: preparedPermission.numberOfRods,
-    isLicenceForYou: preparedPermission.isLicenceForYou,
-    licensee: preparedPermission.licensee,
-    concessions: preparedPermission.concessions
-  })
+  populateBasicPermissionData(permission, preparedPermission)
 
   const endDateMoment = moment.utc(endDate).tz(SERVICE_LOCAL_TIME)
-
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
 
-  const startDateMoment = getLicenceStartDate(renewedHasExpired, endDateMoment)
-
-  Object.assign(permission, {
-    licenceToStart: renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE,
-    licenceStartDate: (renewedHasExpired ? moment().tz(SERVICE_LOCAL_TIME) : startDateMoment).format(cacheDateFormat),
-    licenceStartTime: renewedHasExpired ? 0 : startDateMoment.hours(),
-    renewedEndDate: endDateMoment.toISOString(),
-    renewedHasExpired
-  })
+  populateDateFields(permission, endDateMoment, renewedHasExpired)
 
   ageConcessionHelper(permission)
 
-  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
-  await request.cache().helpers.transaction.setCurrentPermission(permission)
-  await request.cache().helpers.status.setCurrentPermission({ showDigitalLicencePages })
+  await updateCache(request, permission)
 }
 
 export const setUpPayloads = async request => {
