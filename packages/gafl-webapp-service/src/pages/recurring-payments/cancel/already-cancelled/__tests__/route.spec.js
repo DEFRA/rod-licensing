@@ -21,7 +21,7 @@ const getSampleRequest = referenceNumber => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
-        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber, endDate: '2025:10:03:03:33:33' } }))
+        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber: 'RP0310', endDate: '2025:10:03:03:33:33' } }))
       }
     }
   }))
