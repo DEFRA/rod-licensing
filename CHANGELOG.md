@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.0 (2026-02-25)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2314](https://github.com/DEFRA/rod-licensing/pull/2314) RCP Cancellation journey - licence should be in caps ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 
 ## v1.67.0-rc.5 (2026-02-17)
