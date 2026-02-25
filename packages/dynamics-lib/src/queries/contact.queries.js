@@ -1,41 +1,7 @@
-import { dynamicsClient } from '../client/dynamics-client.js'
 import { Contact } from '../entities/contact.entity.js'
+import { Permission } from '../entities/permission.entity.js'
 import { escapeODataStringValue } from '../client/util.js'
 import { PredefinedQuery } from './predefined-query.js'
-
-/**
- * @typedef {Object} ContactByLicenceAndPostcode
- * @property {string|null} ContactId - The contact's unique identifier
- * @property {string|null} FirstName - The contact's first name
- * @property {string|null} LastName - The contact's last name
- * @property {string|null} DateOfBirth - The contact's date of birth
- * @property {string|null} Street - The contact's street
- * @property {string|null} Town - The contact's town
- * @property {string|null} Locality - The contact's locality
- * @property {string|null} Postcode - The contact's postcode
- * @property {string} ReturnStatus - The status of the request (e.g., "success" or "error")
- * @property {string|null} SuccessMessage - A success message if the contact is found
- * @property {string|null} ErrorMessage - An error message if the contact is not found
- * @property {string|null} ReturnPermissionNumber - The full permission number of the contact
- * @property {string} oDataContext - The OData context URL
- */
-
-/**
- * Calls the defra_GetContactByLicenceAndPostcode CRM plugin to retrieve a contact by the last 6 characters if their license number and postcode
- *
- * @param permissionReferenceNumberLast6Characters the last 6 characters of the permission reference number
- * @param licenseePostcode the postcode of the contact associated with the permission
- * @returns {Promise<ContactByLicenceAndPostcode>}
- */
-
-export const contactForLicensee = (permissionReferenceNumberLast6Characters, licenseePostcode) => {
-  const request = {
-    PermissionNumber: permissionReferenceNumberLast6Characters,
-    InputPostCode: licenseePostcode
-  }
-
-  return dynamicsClient.executeUnboundAction('defra_GetContactByLicenceAndPostcode', request)
-}
 
 export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcode) => {
   const { postcode, birthDate } = Contact.definition.mappings
@@ -47,4 +13,39 @@ export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcod
     filter,
     expand: []
   })
+}
+
+/**
+ * Gets the query to get a contact by the last 6 characters if their license number and postcode
+ *
+ * @param permissionLast6Characters the last 6 characters of the permission reference number
+ * @param licenseePostcode the postcode of the contact associated with the permission
+ * @returns {Object} returns a query as an object to fetch the contact
+ */
+
+export const contactAndPermissionForLicensee = (permissionLast6Characters, licenseePostcode) => {
+  const filter = `endswith(${Permission.definition.mappings.referenceNumber.field}, '${escapeODataStringValue(
+    permissionLast6Characters
+  )}') and ${Permission.definition.defaultFilter} and ${Permission.definition.relationships.licensee.property}/${
+    Contact.definition.mappings.postcode.field
+  } eq '${escapeODataStringValue(licenseePostcode)}'`
+  const orderBy = [
+    `${Permission.definition.mappings.issueDate.field} desc`,
+    `${Permission.definition.relationships.licensee.property}/${Contact.definition.mappings.id.field} asc`
+  ]
+
+  const query = new PredefinedQuery({
+    root: Permission,
+    filter,
+    orderBy
+  })
+
+  query._retrieveRequest.expand = [
+    {
+      property: Permission.definition.relationships.licensee.property,
+      select: [Contact.definition.mappings.id.field, Contact.definition.mappings.postcode.field]
+    }
+  ]
+
+  return query
 }
