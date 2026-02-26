@@ -52,6 +52,40 @@ jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
 salesApi.countries.getAll = jest.fn(() => Promise.resolve(mockDefraCountries))
 
+const buildPreparedPermissionFromAuthenticationResult = auth => ({
+  isRenewal: true,
+  licenceLength: '12M',
+  licenceType: auth.permission.permit.permitSubtype.label,
+  numberOfRods: auth.permission.permit.numberOfRods.toString(),
+  isLicenceForYou: true,
+  licensee: {
+    postalFulfilment: auth.permission.licensee.postalFulfilment,
+    birthDate: auth.permission.licensee.birthDate,
+    countryCode: auth.permission.licensee.country.description,
+
+    email: auth.permission.licensee.email,
+    mobilePhone: auth.permission.licensee.mobilePhone,
+
+    firstName: auth.permission.licensee.firstName,
+    lastName: auth.permission.licensee.lastName,
+
+    premises: auth.permission.licensee.premises,
+    postcode: auth.permission.licensee.postcode,
+    street: auth.permission.licensee.street,
+    town: auth.permission.licensee.town,
+
+    preferredMethodOfNewsletter: auth.permission.licensee.preferredMethodOfNewsletter.label,
+    preferredMethodOfConfirmation: auth.permission.licensee.preferredMethodOfConfirmation.label,
+    preferredMethodOfReminder: auth.permission.licensee.preferredMethodOfReminder.label
+  },
+  concessions: []
+})
+
+const mockPreparePermissionDataForRenewal = auth =>
+  salesApi.preparePermissionDataForRenewal.mockResolvedValue({
+    permission: buildPreparedPermissionFromAuthenticationResult(auth)
+  })
+
 describe('The easy renewal identification page', () => {
   it('redirects from identify to licence not found page when called with an invalid permission reference', async () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
@@ -169,6 +203,7 @@ describe('The easy renewal identification page', () => {
       newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
       newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
       salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+      mockPreparePermissionDataForRenewal(newAuthenticationResult)
 
       await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
       await injectWithCookies('GET', IDENTIFY.uri)
@@ -273,6 +308,7 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.permit.permitSubtype = obj.subType
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -289,6 +325,7 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     newAuthenticationResult.permission.licensee.birthDate = moment().add(-66, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -306,6 +343,7 @@ describe('The easy renewal identification page', () => {
       .add(RENEW_BEFORE_DAYS + 1, 'days')
       .toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -329,6 +367,7 @@ describe('The easy renewal identification page', () => {
       .add(-1 * (RENEW_AFTER_DAYS + 1), 'days')
       .toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -342,6 +381,7 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.permit.durationMagnitude = 1
     newAuthenticationResult.permission.permit.durationDesignator.description = 'D'
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))

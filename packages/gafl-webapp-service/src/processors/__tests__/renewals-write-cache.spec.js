@@ -1,12 +1,53 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import moment from 'moment'
-
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../renewals-write-cache'
-import mockConcessions from '../../__mocks__/data/concessions'
 import { ADDRESS_LOOKUP, CONTACT, LICENCE_TYPE, NAME, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../uri'
 
-jest.mock('@defra-fish/connectors-lib')
-salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
+jest.mock('@defra-fish/connectors-lib', () => ({
+  salesApi: {
+    preparePermissionDataForRenewal: jest.fn()
+  }
+}))
+
+const buildPreparedPermission = (overrides = {}) => {
+  const base = {
+    isRenewal: true,
+    licenceLength: '12M',
+    licenceType: 'Salmon and sea trout',
+    numberOfRods: '1',
+    isLicenceForYou: true,
+    licensee: {
+      postalFulfilment: true,
+      birthDate: '2004-01-13',
+      countryCode: 'GB-ENG',
+      email: 'email@gmail.com',
+      firstName: 'Negativetwelve',
+      lastName: 'Test',
+      postcode: 'SN15 3PG',
+      street: 'Blackthorn Mews',
+      town: 'Chippenham',
+      preferredMethodOfNewsletter: 'Email',
+      preferredMethodOfConfirmation: 'Text',
+      preferredMethodOfReminder: 'Text'
+    },
+    concessions: []
+  }
+
+  return {
+    ...base,
+    ...overrides,
+    licensee: { ...base.licensee, ...(overrides.licensee || {}) }
+  }
+}
+
+const mockPreparedPermissionOnce = (overrides = {}) =>
+  salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({
+    permission: buildPreparedPermission(overrides)
+  })
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 describe('renewals-write-cache', () => {
   const getMockRequest = ({
@@ -81,9 +122,8 @@ describe('renewals-write-cache', () => {
       }
     })
 
-    beforeEach(jest.clearAllMocks)
-
     it('should set licence length to 12M, as only 12 month licences can be renewed', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -94,6 +134,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set isRenewal to true', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -103,7 +144,8 @@ describe('renewals-write-cache', () => {
       )
     })
 
-    it('should set licence type and number of rods to the values in the permit', async () => {
+    it('should set licence type and number of rods from prepared renewal data', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -115,6 +157,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set start and end dates, if renewal has not expired', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       const endDate = moment().add(5, 'days')
       const mockDateAuthResult = getAuthenticationResult({ endDate })
@@ -131,6 +174,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set start and end dates, if renewal has expired', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       const endDate = moment().subtract(5, 'days')
       const mockDateAuthResult = getAuthenticationResult({ endDate })
@@ -147,6 +191,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should map the licensee object correctly', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -167,19 +212,14 @@ describe('renewals-write-cache', () => {
 
     describe('should remove null values and keep false values from the licensee object', () => {
       const setupAndGetTransactionCacheSetter = async () => {
-        const setTransactionCache = jest.fn()
-        const authenticationResult = getAuthenticationResult()
-        const authResultNullFalse = {
-          permission: {
-            ...authenticationResult.permission,
-            licensee: {
-              ...authenticationResult.permission.licensee,
-              mobilePhone: null,
-              postalFulfilment: false
-            }
+        mockPreparedPermissionOnce({
+          licensee: {
+            postalFulfilment: false
           }
-        }
-        await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), authResultNullFalse)
+        })
+        const setTransactionCache = jest.fn()
+
+        await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
         return setTransactionCache
       }
 
@@ -207,6 +247,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should map the contact preferences correctly', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -221,6 +262,7 @@ describe('renewals-write-cache', () => {
     })
 
     it.each(['country', 'shortTermPreferredMethodOfConfirmation'])('should not assign %s to the licensee', async prop => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       const [[{ licensee }]] = setTransactionCache.mock.calls
@@ -228,6 +270,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should have an empty array if there no match for the provided concession', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       const mockConcessionAuthResult = getAuthenticationResult({
         concessions: [{ id: 'non-existent-concession' }]
@@ -241,6 +284,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should have an empty array if no concessions are present', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -251,24 +295,12 @@ describe('renewals-write-cache', () => {
     })
 
     it('should have an array of concessions if they are present', async () => {
-      const setTransactionCache = jest.fn()
-      const mockConcessionAuthResult = getAuthenticationResult({
-        concessions: [
-          {
-            id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
-            proof: {
-              id: 'concession-proof-id',
-              referenceNumber: '1233',
-              type: {
-                id: 910400000,
-                label: 'Blue Badge',
-                description: 'Blue Badge'
-              }
-            }
-          }
-        ]
+      mockPreparedPermissionOnce({
+        concessions: [{ proof: { referenceNumber: '1233', type: 'Blue Badge' }, type: 'Disabled' }]
       })
-      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockConcessionAuthResult)
+      const setTransactionCache = jest.fn()
+
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
           concessions: [{ proof: { referenceNumber: '1233', type: 'Blue Badge' }, type: 'Disabled' }]
@@ -277,6 +309,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set renewal on the transaction cache', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
@@ -287,50 +320,34 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set showDigitalLicencePages to true on the status cache if postalFulfilment is true', async () => {
+      mockPreparedPermissionOnce()
       const setStatusCache = jest.fn()
-      const authenticationResult = getAuthenticationResult()
-      const authPostalFulfilmentFalse = {
-        permission: {
-          ...authenticationResult.permission,
-          licensee: {
-            ...authenticationResult.permission.licensee,
-            postalFulfilment: true
-          }
-        }
-      }
-      await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), authPostalFulfilmentFalse)
-      expect(setStatusCache).toHaveBeenCalledWith(
-        expect.objectContaining({
-          showDigitalLicencePages: true
-        })
-      )
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), getAuthenticationResult())
+      expect(setStatusCache).toHaveBeenCalledWith(expect.objectContaining({ showDigitalLicencePages: true }))
     })
 
     it('should set showDigitalLicencePages to true on the status cache if postalFulfilment is undefined', async () => {
+      mockPreparedPermissionOnce({
+        licensee: { postalFulfilment: undefined }
+      })
       const setStatusCache = jest.fn()
-      const authPostalFulfilmentFalse = getAuthenticationResult()
-      authPostalFulfilmentFalse.permission.licensee.postalFulfilment = undefined
-      await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), authPostalFulfilmentFalse)
-      expect(setStatusCache).toHaveBeenCalledWith(
-        expect.objectContaining({
-          showDigitalLicencePages: true
-        })
-      )
+
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), getAuthenticationResult())
+      expect(setStatusCache).toHaveBeenCalledWith(expect.objectContaining({ showDigitalLicencePages: true }))
     })
 
     it('should set showDigitalLicencePages to false on the status cache if postalFulfilment is false', async () => {
+      mockPreparedPermissionOnce({
+        licensee: { postalFulfilment: false }
+      })
       const setStatusCache = jest.fn()
-      const authPostalFulfilmentFalse = getAuthenticationResult()
-      authPostalFulfilmentFalse.permission.licensee.postalFulfilment = false
-      await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), authPostalFulfilmentFalse)
-      expect(setStatusCache).toHaveBeenCalledWith(
-        expect.objectContaining({
-          showDigitalLicencePages: false
-        })
-      )
+
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), getAuthenticationResult())
+      expect(setStatusCache).toHaveBeenCalledWith(expect.objectContaining({ showDigitalLicencePages: false }))
     })
 
     it('should have isLicenceForYou set to true', async () => {
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       const isLicenceForYou = true
       const mockPermissionAuthResult = getAuthenticationResult({ isLicenceForYou })
@@ -350,6 +367,7 @@ describe('renewals-write-cache', () => {
     `('starts from $timeDesc on $licenceStartDate, if expiry is at $endDate', async ({ endDate, licenceStartDate, licenceStartTime }) => {
       jest.useFakeTimers()
       jest.setSystemTime(new Date('2024-03-04T14:37:28.743Z'))
+      mockPreparedPermissionOnce()
       const setTransactionCache = jest.fn()
       const permission = getAuthenticationResult({ endDate })
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), permission)
@@ -362,7 +380,7 @@ describe('renewals-write-cache', () => {
     })
   })
 
-  describe('setupPayloads', () => {
+  describe('setUpPayloads', () => {
     const getSamplePermission = () => ({
       licenceType: 'salmon-and-sea-trout',
       licensee: {
