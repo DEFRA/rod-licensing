@@ -106,6 +106,7 @@ describe('HTTP Request Batcher', () => {
     beforeEach(() => {
       jest.useFakeTimers()
       jest.spyOn(global, 'setTimeout')
+      global.setTimeout.mockImplementation(cb => cb())
     })
 
     afterEach(() => {
@@ -166,7 +167,6 @@ describe('HTTP Request Batcher', () => {
       const batcher = new HTTPRequestBatcher({ batchSize: 1 })
       batcher.addRequest('https://api.example.com')
       batcher.addRequest('https://alt-api.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(batcher.responses).toEqual([{ status: 200 }, { status: 200 }])
     })
@@ -175,9 +175,30 @@ describe('HTTP Request Batcher', () => {
       const batcher = new HTTPRequestBatcher({ batchSize: 1 })
       fetch.mockImplementationOnce(() => ({ status: 429 }))
       batcher.addRequest('https://api.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(fetch).toHaveBeenCalledTimes(2)
+    })
+
+    it.each([10, 7])('retries requests that received a 429 response up to configured maxRequestAttempts(%i)', async maxRequestAttempts => {
+      const batcher = new HTTPRequestBatcher({ batchSize: 1 })
+      batcher.maxRequestAttempts = maxRequestAttempts
+      for (let x = 0; x < maxRequestAttempts; x++) {
+        fetch.mockImplementationOnce(() => ({ status: 429 }))
+      }
+      batcher.addRequest('https://api.example.com')
+      await batcher.fetch()
+      expect(fetch).toHaveBeenCalledTimes(maxRequestAttempts)
+    })
+
+    it('stops retrying requests that received a 429 response once a successful response is received', async () => {
+      const batcher = new HTTPRequestBatcher({ batchSize: 1 })
+      batcher.maxRequestAttempts = 5
+      for (let x = 0; x < 4; x++) {
+        fetch.mockImplementationOnce(() => ({ status: 429 }))
+      }
+      batcher.addRequest('https://api.example.com')
+      await batcher.fetch()
+      expect(fetch).toHaveBeenCalledTimes(5)
     })
 
     it('retries requests with the same options as the original request', async () => {
@@ -188,7 +209,6 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://alt-api.example.com', sampleOptions)
       batcher.addRequest('https://api-three.example.com')
       batcher.addRequest('https://api-four.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(fetch).toHaveBeenNthCalledWith(5, 'https://alt-api.example.com', sampleOptions)
     })
@@ -199,7 +219,6 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://api.example.com')
       batcher.addRequest('https://alt-api.example.com')
       batcher.addRequest('https://api-three.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(batcher.batchSize).toBe(2)
     })
@@ -210,7 +229,6 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://api.example.com')
       batcher.addRequest('https://alt-api.example.com')
       batcher.addRequest('https://api-three.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(debug).toHaveBeenCalledWith('429 response received for https://api.example.com, reducing batch size to 2')
     })
@@ -221,7 +239,6 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://api.example.com')
       batcher.addRequest('https://api.example.com')
       batcher.addRequest('https://api.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(debug).toHaveBeenCalledWith(
         'Beginning batched fetch of 4 requests with initial batch size of 3 and delay between batches of 1000ms'
@@ -232,18 +249,35 @@ describe('HTTP Request Batcher', () => {
       const batcher = new HTTPRequestBatcher({ batchSize: 1 })
       fetch.mockImplementationOnce(() => ({ status: 429 }))
       batcher.addRequest('https://api.example.com')
-      global.setTimeout.mockImplementationOnce(cb => cb())
       await batcher.fetch()
       expect(batcher.batchSize).toBe(1)
     })
 
     it('only retry once if a 429 response is received again', async () => {
       const batcher = new HTTPRequestBatcher({ batchSize: 1 })
-      fetch.mockResolvedValueOnce({ status: 429 }).mockResolvedValueOnce({ status: 429 })
       batcher.addRequest('https://api.example.com')
-      global.setTimeout.mockImplementation(cb => cb())
+      fetch.mockResolvedValueOnce({ status: 429 }).mockResolvedValueOnce({ status: 429 })
       await batcher.fetch()
       expect(fetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('sends all requests whether or not they fail', async () => {
+      fetch
+        .mockResolvedValueOnce({ ok: true, status: 200, json: () => {} })
+        .mockResolvedValueOnce({ ok: false, status: 500, json: () => {} })
+        .mockRejectedValueOnce(new Error('test event error'))
+        .mockResolvedValueOnce({ ok: true, status: 200, json: () => {} })
+        .mockResolvedValueOnce({ ok: true, status: 200, json: () => {} })
+      const batcher = new HTTPRequestBatcher()
+      batcher.addRequest('https://api.example.com', { method: 'GET' })
+      batcher.addRequest('https://api.example.com', { method: 'GET' })
+      batcher.addRequest('https://api.example.com', { method: 'GET' })
+      batcher.addRequest('https://api.example.com', { method: 'GET' })
+      batcher.addRequest('https://api.example.com', { method: 'GET' })
+
+      await batcher.fetch()
+
+      expect(fetch).toHaveBeenCalledTimes(5)
     })
   })
 })
