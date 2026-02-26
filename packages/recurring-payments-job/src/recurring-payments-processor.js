@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { PAYMENT_STATUS, SERVICE_LOCAL_TIME, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { salesApi, airbrake } from '@defra-fish/connectors-lib'
+import { salesApi, airbrake, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
 import { getPaymentStatus, sendPayment, isGovPayUp } from './services/govuk-pay-service.js'
 import db from 'debug'
 
@@ -66,7 +66,8 @@ const fetchDueRecurringPayments = async date => {
 }
 
 const requestPayments = async dueRCPayments => {
-  const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(processRecurringPayment))
+  const batcher = new HTTPRequestBatcher()
+  const paymentRequestResults = await Promise.allSettled(dueRCPayments.map(duePayment => processRecurringPayment(duePayment, batcher)))
   const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
   const failures = paymentRequestResults.filter(prr => prr.status === 'rejected').map(f => f.reason)
   if (failures.length) {
@@ -75,11 +76,11 @@ const requestPayments = async dueRCPayments => {
   return payments
 }
 
-const processRecurringPayment = async record => {
+const processRecurringPayment = async (record, batcher) => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const { agreementId, id } = record.entity
   const transaction = await createNewTransaction(referenceNumber, { agreementId, id })
-  return takeRecurringPayment(agreementId, transaction)
+  return takeRecurringPayment(agreementId, transaction, batcher)
 }
 
 const createNewTransaction = async (referenceNumber, recurringPayment) => {
@@ -87,7 +88,7 @@ const createNewTransaction = async (referenceNumber, recurringPayment) => {
   return salesApi.createTransaction(transactionData)
 }
 
-const takeRecurringPayment = async (agreementId, transaction) => {
+const takeRecurringPayment = async (agreementId, transaction, batcher) => {
   const preparedPayment = preparePayment(agreementId, transaction)
   const payment = await takePaymentIfValid(preparedPayment, agreementId, transaction)
 

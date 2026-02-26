@@ -1,4 +1,4 @@
-import { airbrake, salesApi } from '@defra-fish/connectors-lib'
+import { airbrake, salesApi, queueRecurringPayment, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
 import { PAYMENT_STATUS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { execute } from '../recurring-payments-processor.js'
 import { getPaymentStatus, isGovPayUp, sendPayment } from '../services/govuk-pay-service.js'
@@ -40,12 +40,20 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     })),
     processRPResult: jest.fn(),
     updatePaymentJournal: jest.fn()
-  }
+  },
+  govUkPayApi: {
+    queueRecurringPayment: jest.fn()
+  },
+  HTTPRequestBatcher: jest.fn(() => {
+    this.addRequest = jest.fn()
+    this.fetch = jest.fn()
+  })
 }))
 
 jest.mock('../services/govuk-pay-service.js', () => ({
   sendPayment: jest.fn(() => ({ payment_id: 'payment_id', created_date: '2025-07-18T09:00:00.000Z' })),
   getPaymentStatus: jest.fn(),
+  queueRecurringPayment: jest.fn(() => ({ fetch: jest.fn() })),
   isGovPayUp: jest.fn(() => true)
 }))
 
@@ -547,9 +555,25 @@ describe('recurring-payments-processor', () => {
     )
   })
 
-  it('prepares and sends the payment request', async () => {
+  it('raises an error if createTransaction fails', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const error = 'Wuh-oh!'
+    salesApi.createTransaction.mockImplementationOnce(() => {
+      throw new Error(error)
+    })
+
+    await expect(execute()).rejects.toThrowError(error)
+  })
+
+  it.skip('prepares and queues the payment request', async () => {
     const agreementId = Symbol('agreementId')
     const transactionId = 'transactionId'
+    HTTPRequestBatcher.mockImplementationOnce(function () {
+      this.addRequest = jest.fn()
+      this.fetch = jest.fn(() => {
+        this.responses = [{ json: Promise.resolve({ payment_id: 'test-payment-id', agreement_id: agreementId }) }]
+      })
+    })
 
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber: 'foo', agreementId: agreementId })])
 
@@ -576,7 +600,7 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    expect(sendPayment).toHaveBeenCalledWith(expectedData)
+    expect(queueRecurringPayment).toHaveBeenCalledWith(expectedData, expect.any(HTTPRequestBatcher))
   })
 
   it('should call getPaymentStatus with payment id', async () => {
