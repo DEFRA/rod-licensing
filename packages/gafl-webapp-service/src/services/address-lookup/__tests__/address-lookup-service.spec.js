@@ -36,15 +36,7 @@ describe('address-lookup-service', () => {
         'CARDIFF',
         'This record is within Wales'
       ],
-      [
-        '45 TINTERN CLOSE, EASTBOURNE, BN22 0UF',
-        'BN22 0UF',
-        '45 TINTERN CLOSE',
-        null,
-        null,
-        'EASTBOURNE',
-        'This record is within England'
-      ]
+      ['45 TINTERN CLOSE, EASTBOURNE, BN22 0UF', 'BN22 0UF', '45 TINTERN CLOSE', null, null, 'EASTBOURNE', 'This record is within England']
     ])(
       'if data is returned from the API, it maps the data correctly in lower case, other than postcode',
       async (address, postcode, buildingName, thoroughfare, locality, town, country) => {
@@ -468,7 +460,11 @@ describe('address-lookup-service', () => {
 
   describe('handles missing optional fields', () => {
     it.each([
-      ['DEPENDENT_LOCALITY', 'locality', { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }],
+      [
+        'DEPENDENT_LOCALITY',
+        'locality',
+        { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }
+      ],
       ['POST_TOWN', 'town', { BUILDING_NAME: '1 MAIN STREET', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }],
       ['COUNTRY_CODE_DESCRIPTION', 'country', { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL' }]
     ])('returns empty string when %s is missing', async (missingField, resultProperty, dpaData) => {

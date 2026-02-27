@@ -30,27 +30,25 @@ export default async (premises, postcode) => {
   })()
 
   // Filter results by premises if provided
-  const filteredResults = results && premises ? results.filter(r => {
-    const normalizedPremises = premises.trim().replace(/\s+/g, ' ').toLowerCase()
-    const searchText = [
-      r.DPA.SUB_BUILDING_NAME,
-      r.DPA.BUILDING_NUMBER,
-      r.DPA.BUILDING_NAME,
-      r.DPA.ORGANISATION_NAME
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .toLowerCase()
-    
-    return searchText.includes(normalizedPremises)
-  }) : results
+  const filteredResults =
+    results && premises
+      ? results.filter(r => {
+        const normalizedPremises = premises.trim().replace(/\s+/g, ' ').toLowerCase()
+        const searchText = [r.DPA.SUB_BUILDING_NAME, r.DPA.BUILDING_NUMBER, r.DPA.BUILDING_NAME, r.DPA.ORGANISATION_NAME]
+          .filter(Boolean)
+          .join(' ')
+          .replace(/\s+/g, ' ')
+          .toLowerCase()
 
-  debug({ 
-    postcode, 
+        return searchText.includes(normalizedPremises)
+      })
+      : results
+
+  debug({
+    postcode,
     premises: premises || null,
-    receivedCount: results?.length || 0, 
-    filteredCount: filteredResults?.length || 0 
+    receivedCount: results?.length || 0,
+    filteredCount: filteredResults?.length || 0
   })
 
   // Map and enumerate the results
