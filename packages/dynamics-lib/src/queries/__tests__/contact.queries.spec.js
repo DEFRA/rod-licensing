@@ -1,6 +1,6 @@
-import { contactForLicensee, contactForLicenseeNoReference } from '../contact.queries.js'
-import { dynamicsClient } from '../../client/dynamics-client.js'
+import { contactAndPermissionForLicensee, contactForLicenseeNoReference } from '../contact.queries.js'
 import { Contact } from '../../entities/contact.entity.js'
+import { Permission } from '../../entities/permission.entity.js'
 import { PredefinedQuery } from '../predefined-query.js'
 
 jest.mock('dynamics-web-api', () => {
@@ -12,94 +12,6 @@ jest.mock('dynamics-web-api', () => {
 })
 
 describe('Contact Queries', () => {
-  describe('contactForLicensee', () => {
-    const mockResponse = {
-      ContactId: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
-      FirstName: 'Fester',
-      LastName: 'Tester',
-      DateOfBirth: '9/13/1946 12:00:00 AM',
-      Premises: '47',
-      Street: null,
-      Town: 'Testerton',
-      Locality: null,
-      Postcode: 'AB12 3CD',
-      ReturnStatus: 'success',
-      SuccessMessage: 'contact found successfully',
-      ErrorMessage: null,
-      ReturnPermissionNumber: '11100420-2WT1SFT-KPMW2C',
-      oDataContext: 'https://api.com/api/data/v9.1/$metadata#Microsoft.Dynamics.CRM.defra_GetContactByLicenceAndPostcodeResponse'
-    }
-
-    const noContactResponse = {
-      ContactId: null,
-      FirstName: null,
-      LastName: null,
-      DateOfBirth: null,
-      Premises: null,
-      Street: null,
-      Town: null,
-      Locality: null,
-      Postcode: null,
-      ReturnStatus: 'error',
-      SuccessMessage: '',
-      ErrorMessage: 'contact does not exists',
-      ReturnPermissionNumber: null,
-      oDataContext:
-        'https://api.crm4.dynamics.com/api/data/v9.1/$metadata#Microsoft.Dynamics.CRM.defra_GetContactByLicenceAndPostcodeResponse'
-    }
-
-    it('should call dynamicsClient with correct parameters', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
-
-      const permissionNumber = 'KPMW2C'
-      const postcode = 'AB12 3CD'
-
-      await contactForLicensee(permissionNumber, postcode)
-
-      expect(dynamicsClient.executeUnboundAction).toHaveBeenCalledWith('defra_GetContactByLicenceAndPostcode', {
-        PermissionNumber: permissionNumber,
-        InputPostCode: postcode
-      })
-    })
-
-    it('should return the CRM response correctly', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
-
-      const result = await contactForLicensee('KPMW2C', 'AB12 3CD')
-
-      expect(result).toEqual(mockResponse)
-    })
-
-    it('should handle error in dynamicsClient response', async () => {
-      const error = new Error('Failed to fetch data')
-      dynamicsClient.executeUnboundAction.mockRejectedValue(error)
-
-      await expect(contactForLicensee('KPMW2C', 'AB12 3CD')).rejects.toThrow('Failed to fetch data')
-    })
-
-    it('should handle the case where contact does not exist', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(noContactResponse)
-
-      const result = await contactForLicensee('654321', 'ZZ1 1ZZ')
-
-      expect(result).toMatchObject({
-        ContactId: null,
-        FirstName: null,
-        LastName: null,
-        DateOfBirth: null,
-        Premises: null,
-        Street: null,
-        Town: null,
-        Locality: null,
-        Postcode: null,
-        ReturnStatus: 'error',
-        SuccessMessage: '',
-        ErrorMessage: 'contact does not exists',
-        ReturnPermissionNumber: null
-      })
-    })
-  })
-
   describe('contactForLicenseeNoReference', () => {
     beforeEach(() => {
       jest.resetAllMocks()
@@ -144,5 +56,97 @@ describe('Contact Queries', () => {
         select: expect.any(Array)
       })
     })
+  })
+
+  describe('contactAndPermissionForLicensee', () => {
+    beforeEach(() => {
+      jest.resetAllMocks()
+
+      jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
+        id: { field: 'mock_contactid' },
+        postcode: { field: 'mock_postcode' }
+      })
+
+      jest.spyOn(Permission.definition, 'mappings', 'get').mockReturnValue({
+        referenceNumber: { field: 'mock_reference' },
+        issueDate: { field: 'mock_issueDate' }
+      })
+
+      jest.spyOn(Permission.definition, 'defaultFilter', 'get').mockReturnValue('statecode eq 0')
+
+      jest.spyOn(Permission.definition, 'relationships', 'get').mockReturnValue({
+        licensee: { property: 'mock_licensee' }
+      })
+    })
+
+    it('should return a predefined query', () => {
+      const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
+      expect(result).toBeInstanceOf(PredefinedQuery)
+    })
+
+    it('root should return Permission', () => {
+      const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
+      expect(result._root).toEqual(Permission)
+    })
+
+    it('should build correct filter', () => {
+      const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
+
+      expect(result._retrieveRequest.filter).toEqual(
+        "endswith(mock_reference, 'ABC123') and statecode eq 0 and mock_licensee/mock_postcode eq 'AB12 3CD'"
+      )
+    })
+
+    it('should build correct orderBy', () => {
+      const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
+
+      expect(result._retrieveRequest.orderBy).toEqual(['mock_issueDate desc', 'mock_licensee/mock_contactid asc'])
+    })
+
+    it('should set expand correctly', () => {
+      const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
+
+      expect(result._retrieveRequest.expand).toEqual([
+        {
+          property: 'mock_licensee',
+          select: ['mock_contactid', 'mock_postcode']
+        }
+      ])
+    })
+
+    it.each([
+      ['XYZ999', 'EF45 6GH'],
+      ['123ABC', 'IJ78 9KL'],
+      ['AAAAAA', 'ZZ99 9ZZ']
+    ])(
+      'should return correct retrieve request when the last 6 characters of the permission is %s and postcode is %s',
+      (permissionLast6, postcode) => {
+        const result = contactAndPermissionForLicensee(permissionLast6, postcode)
+
+        expect(result._retrieveRequest).toEqual({
+          collection: 'defra_permissions',
+          filter: `endswith(mock_reference, '${permissionLast6}') and statecode eq 0 and mock_licensee/mock_postcode eq '${postcode}'`,
+          orderBy: ['mock_issueDate desc', 'mock_licensee/mock_contactid asc'],
+          expand: [
+            {
+              property: 'mock_licensee',
+              select: ['mock_contactid', 'mock_postcode']
+            }
+          ],
+          select: [
+            'defra_permissionid',
+            'defra_name',
+            'defra_issuedate',
+            'defra_startdate',
+            'defra_enddate',
+            'defra_stagingid',
+            'defra_datasource',
+            'defra_renewal',
+            'defra_rcpagreement',
+            'defra_licenceforyou'
+          ]
+        })
+      }
+    )
   })
 })
