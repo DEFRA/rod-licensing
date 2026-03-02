@@ -29,7 +29,9 @@ const populateBasicPermissionData = (permission, preparedPermission) => {
   })
 }
 
-const populateDateFields = (permission, endDateMoment, renewedHasExpired) => {
+const populateDateFields = (permission, endDate) => {
+  const endDateMoment = moment.utc(endDate).tz(SERVICE_LOCAL_TIME)
+  const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
   const startDateMoment = getLicenceStartDate(renewedHasExpired, endDateMoment)
 
   Object.assign(permission, {
@@ -61,10 +63,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   populateBasicPermissionData(permission, preparedPermission)
 
-  const endDateMoment = moment.utc(endDate).tz(SERVICE_LOCAL_TIME)
-  const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
-
-  populateDateFields(permission, endDateMoment, renewedHasExpired)
+  populateDateFields(permission, endDate)
 
   ageConcessionHelper(permission)
 

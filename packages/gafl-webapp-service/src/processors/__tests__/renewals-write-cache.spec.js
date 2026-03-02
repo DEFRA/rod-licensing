@@ -9,36 +9,29 @@ jest.mock('@defra-fish/connectors-lib', () => ({
   }
 }))
 
-const buildPreparedPermission = (overrides = {}) => {
-  const base = {
-    isRenewal: true,
-    licenceLength: '12M',
-    licenceType: 'Salmon and sea trout',
-    numberOfRods: '1',
-    isLicenceForYou: true,
-    licensee: {
-      postalFulfilment: true,
-      birthDate: '2004-01-13',
-      countryCode: 'GB-ENG',
-      email: 'email@gmail.com',
-      firstName: 'Negativetwelve',
-      lastName: 'Test',
-      postcode: 'SN15 3PG',
-      street: 'Blackthorn Mews',
-      town: 'Chippenham',
-      preferredMethodOfNewsletter: 'Email',
-      preferredMethodOfConfirmation: 'Text',
-      preferredMethodOfReminder: 'Text'
-    },
-    concessions: []
-  }
-
-  return {
-    ...base,
-    ...overrides,
-    licensee: { ...base.licensee, ...(overrides.licensee || {}) }
-  }
-}
+const buildPreparedPermission = (overrides = {}) => ({
+  isRenewal: true,
+  licenceLength: '12M',
+  licenceType: 'Salmon and sea trout',
+  numberOfRods: '1',
+  isLicenceForYou: true,
+  licensee: {
+    postalFulfilment: true,
+    birthDate: '2000-10-03',
+    countryCode: 'GB-ENG',
+    email: 'email@gmail.com',
+    firstName: 'Negativetwelve',
+    lastName: 'Test',
+    postcode: 'SN15 3PG',
+    street: 'Blackthorn Mews',
+    town: 'Chippenham',
+    preferredMethodOfNewsletter: 'Email',
+    preferredMethodOfConfirmation: 'Text',
+    preferredMethodOfReminder: 'Text'
+  },
+  concessions: [],
+  ...overrides
+})
 
 const mockPreparedPermissionOnce = (overrides = {}) =>
   salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({
@@ -77,7 +70,7 @@ describe('renewals-write-cache', () => {
       permission: {
         referenceNumber: 'abc',
         licensee: {
-          birthDate: '2004-01-13',
+          birthDate: '2000-10-03',
           country: {
             id: '910400000',
             label: 'England',
@@ -197,7 +190,7 @@ describe('renewals-write-cache', () => {
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
           licensee: expect.objectContaining({
-            birthDate: '2004-01-13',
+            birthDate: '2000-10-03',
             countryCode: 'GB-ENG',
             email: 'email@gmail.com',
             firstName: 'Negativetwelve',
@@ -213,9 +206,7 @@ describe('renewals-write-cache', () => {
     describe('should remove null values and keep false values from the licensee object', () => {
       const setupAndGetTransactionCacheSetter = async () => {
         mockPreparedPermissionOnce({
-          licensee: {
-            postalFulfilment: false
-          }
+          licensee: { postalFulfilment: false }
         })
         const setTransactionCache = jest.fn()
 
@@ -384,7 +375,7 @@ describe('renewals-write-cache', () => {
     const getSamplePermission = () => ({
       licenceType: 'salmon-and-sea-trout',
       licensee: {
-        birthDate: '2004-01-13',
+        birthDate: '2000-10-03',
         email: 'email@gmail.com',
         firstName: 'First',
         lastName: 'Last',
