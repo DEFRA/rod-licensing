@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.2 (2026-03-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2310](https://github.com/DEFRA/rod-licensing/pull/2310) Refactor easy renewals to use new renewals data service ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.68.0-rc.0 (2026-02-25)
 
