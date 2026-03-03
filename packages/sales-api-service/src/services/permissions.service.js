@@ -82,18 +82,18 @@ const SENIOR_AGE = 66
 /**
  * Determine the appropriate age category code for use in a permission number
  * @param birthDate The birth date of the licensee
- * @param issueDate The date of issue of the permission
+ * @param startDate The start date of the permission
  * @returns {string} The appropriate category code (single digit string)
  */
-const getAgeCategory = (birthDate, issueDate) => {
+const getAgeCategory = (birthDate, startDate) => {
   const dob = moment(birthDate)
-  const issue = moment(issueDate)
+  const start = moment(startDate)
   const seventeenthBirthday = dob.clone().add(ADULT_AGE, 'years')
   const sixtysixthBirthday = dob.clone().add(SENIOR_AGE, 'years')
 
-  if (issue.isBefore(seventeenthBirthday)) {
+  if (start.isBefore(seventeenthBirthday)) {
     return 'J'
-  } else if (issue.isSameOrAfter(sixtysixthBirthday)) {
+  } else if (start.isSameOrAfter(sixtysixthBirthday)) {
     return 'S'
   } else {
     return 'F'
