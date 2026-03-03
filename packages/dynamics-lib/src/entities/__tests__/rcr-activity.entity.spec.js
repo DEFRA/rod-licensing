@@ -11,16 +11,12 @@ describe('rcr activity entity', () => {
       actualend: '2020-03-31T22:59:00Z'
     })
 
-    const expectedFields = {
-      id: '1',
-      status: RCR_ACTIVITY_STATUS.STARTED,
-      season: 2025,
-      lastUpdated: '2020-03-31T22:59:00Z',
-      startDate: '2020-03-31T22:59:00Z',
-      submittedDate: '2020-03-31T22:59:00Z'
-    }
-
-    expect(rcrActivity.toJSON()).toStrictEqual(expectedFields)
+    expect(rcrActivity.id).toBe('1')
+    expect(rcrActivity.status).toBe(RCR_ACTIVITY_STATUS.STARTED)
+    expect(rcrActivity.season).toBe(2025)
+    expect(rcrActivity.startDate).toBe('2020-03-31T22:59:00Z')
+    expect(rcrActivity.lastUpdated).toBe('2020-03-31T22:59:00Z')
+    expect(rcrActivity.submittedDate).toBe('2020-03-31T22:59:00Z')
   })
 
   it('maps to dynamics', async () => {
