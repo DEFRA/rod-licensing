@@ -11,7 +11,7 @@ describe('Session Exempt Informational Pages', () => {
     ['privacy policy', PRIVACY_POLICY.uri],
     ['refund policy', REFUND_POLICY.uri],
     ['accessibility statement', ACCESSIBILITY_STATEMENT.uri]
-  ])('should allow direct access to %s page without session', async (_desc, uri) => {
+  ])('should allow direct access to %s guidance page without session', async (_desc, uri) => {
     const response = await injectWithoutSessionCookie('GET', uri)
     expect(response.statusCode).toBe(200)
   })
