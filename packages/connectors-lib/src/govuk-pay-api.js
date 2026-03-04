@@ -32,8 +32,8 @@ export const createRecurringPaymentAgreement = async preparedPayment => {
   }
 }
 
-export const queueRecurringPayment = async (preparedPayment, batcher) => {
-  batcher.addRequest(process.env.GOV_PAY_RCP_API_URL, {
+export const queueRecurringPayment = (preparedPayment, batcher) => {
+  batcher.addRequest(process.env.GOV_PAY_API_URL, {
     headers: headers(true),
     method: 'post',
     body: JSON.stringify(preparedPayment),

@@ -118,6 +118,7 @@ describe('govuk-pay-api-connector', () => {
         timeout: 10000
       })
     })
+
   })
 
   describe('createRecurringPaymentAgreement', () => {
@@ -150,14 +151,14 @@ describe('govuk-pay-api-connector', () => {
 
   describe('queueRecurringPayment', () => {
     const saveRCPEnvVars = () => ({
-      GOV_PAY_RCP_API_URL: process.env.GOV_PAY_RCP_API_URL,
+      GOV_PAY_API_URL: process.env.GOV_PAY_API_URL,
       GOV_PAY_REQUEST_TIMEOUT_MS: process.env.GOV_PAY_REQUEST_TIMEOUT_MS,
       GOV_PAY_RECURRING_APIKEY: process.env.GOV_PAY_RECURRING_APIKEY,
       GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT: process.env.GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
 
     const setRCPEnvVars = envVars => {
-      process.env.GOV_PAY_RCP_API_URL = envVars.GOV_PAY_RCP_API_URL
+      process.env.GOV_PAY_API_URL = envVars.GOV_PAY_API_URL
       process.env.GOV_PAY_REQUEST_TIMEOUT_MS = envVars.GOV_PAY_REQUEST_TIMEOUT_MS
       process.env.GOV_PAY_RECURRING_APIKEY = envVars.GOV_PAY_RECURRING_APIKEY
       process.env.GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT = envVars.GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
@@ -165,12 +166,12 @@ describe('govuk-pay-api-connector', () => {
 
     it('queues a recurring payment', async () => {
       const savedEnvVars = saveRCPEnvVars()
-      const GOV_PAY_RCP_API_URL = 'GovPay RCP API URL'
+      const GOV_PAY_API_URL = 'GovPay API URL'
       const GOV_PAY_REQUEST_TIMEOUT_MS = 'GovPay Request Timeout'
       const GOV_PAY_RECURRING_APIKEY = 'GovPay Recurring API Key'
       setRCPEnvVars({
         ...savedEnvVars,
-        GOV_PAY_RCP_API_URL,
+        GOV_PAY_API_URL,
         GOV_PAY_REQUEST_TIMEOUT_MS,
         GOV_PAY_RECURRING_APIKEY
       })
@@ -178,7 +179,7 @@ describe('govuk-pay-api-connector', () => {
       govUkPayApi.queueRecurringPayment({ cost: 0 }, batcher)
 
       expect(batcher.addRequest).toHaveBeenCalledWith(
-        GOV_PAY_RCP_API_URL,
+        GOV_PAY_API_URL,
         expect.objectContaining({
           headers: {
             accept: 'application/json',
