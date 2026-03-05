@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.4 (2026-03-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2322](https://github.com/DEFRA/rod-licensing/pull/2322) GAFL: Dev – No Description List ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 
 ## v1.68.0-rc.2 (2026-03-03)
 
