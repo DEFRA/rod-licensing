@@ -18,21 +18,20 @@ export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcod
 /**
  * Gets the query to get a contact by the last 6 characters if their license number and postcode
  *
- * @param permissionLast6Characters the last 6 characters of the permission reference number
- * @param licenseePostcode the postcode of the contact associated with the permission
- * @returns {Object} returns a query as an object to fetch the contact
+ * @param {string} permissionLast6Characters the last 6 characters of the permission reference number
+ * @param {string} licenseePostcode the postcode of the contact associated with the permission
+ * @returns {PredefinedQuery<Permission>} returns a query as an object to fetch the contact
  */
 
 export const contactAndPermissionForLicensee = (permissionLast6Characters, licenseePostcode) => {
-  const filter = `endswith(${Permission.definition.mappings.referenceNumber.field}, '${escapeODataStringValue(
-    permissionLast6Characters
-  )}') and ${Permission.definition.defaultFilter} and ${Permission.definition.relationships.licensee.property}/${
-    Contact.definition.mappings.postcode.field
-  } eq '${escapeODataStringValue(licenseePostcode)}'`
-  const orderBy = [
-    `${Permission.definition.mappings.issueDate.field} desc`,
-    `${Permission.definition.relationships.licensee.property}/${Contact.definition.mappings.id.field} asc`
-  ]
+  const { referenceNumber, issueDate } = Permission.definition.mappings
+  const { licensee } = Permission.definition.relationships
+  const { id } = Contact.definition.mappings
+
+  const filter = `endswith(${referenceNumber.field}, '${escapeODataStringValue(permissionLast6Characters)}') and ${
+    Permission.definition.defaultFilter
+  } and ${licensee.property}/${Contact.definition.mappings.postcode.field} eq '${escapeODataStringValue(licenseePostcode)}'`
+  const orderBy = [`${issueDate.field} desc`, `${licensee.property}/${id.field} asc`]
 
   const query = new PredefinedQuery({
     root: Permission,

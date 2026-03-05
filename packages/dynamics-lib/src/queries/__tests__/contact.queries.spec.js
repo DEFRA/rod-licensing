@@ -63,19 +63,8 @@ describe('Contact Queries', () => {
       jest.resetAllMocks()
 
       jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
-        id: { field: 'mock_contactid' },
-        postcode: { field: 'mock_postcode' }
-      })
-
-      jest.spyOn(Permission.definition, 'mappings', 'get').mockReturnValue({
-        referenceNumber: { field: 'mock_reference' },
-        issueDate: { field: 'mock_issueDate' }
-      })
-
-      jest.spyOn(Permission.definition, 'defaultFilter', 'get').mockReturnValue('statecode eq 0')
-
-      jest.spyOn(Permission.definition, 'relationships', 'get').mockReturnValue({
-        licensee: { property: 'mock_licensee' }
+        id: { field: 'contactid' },
+        postcode: { field: 'defra_postcode' }
       })
     })
 
@@ -93,14 +82,14 @@ describe('Contact Queries', () => {
       const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
 
       expect(result._retrieveRequest.filter).toEqual(
-        "endswith(mock_reference, 'ABC123') and statecode eq 0 and mock_licensee/mock_postcode eq 'AB12 3CD'"
+        "endswith(defra_name, 'ABC123') and statecode eq 0 and defra_ContactId/defra_postcode eq 'AB12 3CD'"
       )
     })
 
     it('should build correct orderBy', () => {
       const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
 
-      expect(result._retrieveRequest.orderBy).toEqual(['mock_issueDate desc', 'mock_licensee/mock_contactid asc'])
+      expect(result._retrieveRequest.orderBy).toEqual(['defra_issuedate desc', 'defra_ContactId/contactid asc'])
     })
 
     it('should set expand correctly', () => {
@@ -108,8 +97,8 @@ describe('Contact Queries', () => {
 
       expect(result._retrieveRequest.expand).toEqual([
         {
-          property: 'mock_licensee',
-          select: ['mock_contactid', 'mock_postcode']
+          property: 'defra_ContactId',
+          select: ['contactid', 'defra_postcode']
         }
       ])
     })
@@ -125,12 +114,12 @@ describe('Contact Queries', () => {
 
         expect(result._retrieveRequest).toEqual({
           collection: 'defra_permissions',
-          filter: `endswith(mock_reference, '${permissionLast6}') and statecode eq 0 and mock_licensee/mock_postcode eq '${postcode}'`,
-          orderBy: ['mock_issueDate desc', 'mock_licensee/mock_contactid asc'],
+          filter: `endswith(defra_name, '${permissionLast6}') and statecode eq 0 and defra_ContactId/defra_postcode eq '${postcode}'`,
+          orderBy: ['defra_issuedate desc', 'defra_ContactId/contactid asc'],
           expand: [
             {
-              property: 'mock_licensee',
-              select: ['mock_contactid', 'mock_postcode']
+              property: 'defra_ContactId',
+              select: ['contactid', 'defra_postcode']
             }
           ],
           select: [
