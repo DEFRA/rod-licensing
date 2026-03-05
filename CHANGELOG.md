@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.5 (2026-03-05)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2316](https://github.com/DEFRA/rod-licensing/pull/2316) Add RCR CRM Activity to dynamics-lib ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
 ## v1.68.0-rc.4 (2026-03-05)
 
 #### :rocket: Enhancement
