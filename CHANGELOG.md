@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.6 (2026-03-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2319](https://github.com/DEFRA/rod-licensing/pull/2319) Allowing guidance links to be accessed out of sessions ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.68.0-rc.5 (2026-03-05)
 
 #### :rocket: Enhancement
