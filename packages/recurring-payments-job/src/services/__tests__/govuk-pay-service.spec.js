@@ -1,4 +1,4 @@
-import { getPaymentStatus, sendPayment, isGovPayUp } from '../govuk-pay-service.js'
+import { getPaymentStatus, sendPayment, isGovPayUp, queueRecurringPayment, queueRecurringPaymentStatusCheck } from '../govuk-pay-service.js'
 import { govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 
@@ -187,5 +187,19 @@ describe('govuk-pay-service', () => {
       await isGovPayUp()
       expect(mockDebug).toHaveBeenCalledWith('Health endpoint unavailable')
     })
+  })
+
+  it('should call govUkPayApi.queueRecurringPayment with the provided preparedPayment and batcher', () => {
+    const preparedPayment = Symbol('preparedPayment')
+    const batcher = Symbol('batcher')
+    queueRecurringPayment(preparedPayment, batcher)
+    expect(govUkPayApi.queueRecurringPayment).toHaveBeenCalledWith(preparedPayment, batcher)
+  })
+
+  it('should call govUkPayApi.queueRecurringPaymentStatusCheck with the provided payment and batcher', () => {
+    const paymentId = Symbol('payment')
+    const batcher = Symbol('batcher')
+    queueRecurringPaymentStatusCheck(paymentId, batcher)
+    expect(govUkPayApi.queueRecurringPaymentStatusCheck).toHaveBeenCalledWith(paymentId, batcher)
   })
 })
