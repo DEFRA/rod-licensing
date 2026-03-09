@@ -33,11 +33,11 @@ export default async (premises, postcode) => {
   const filteredResults =
     results && premises
       ? results.filter(r => {
-        const normalizedPremises = premises.trim().replace(/\s+/g, ' ').toLowerCase()
+        const normalizedPremises = premises.trim().replaceAll(/\s+/g, ' ').toLowerCase()
         const searchText = [r.DPA.SUB_BUILDING_NAME, r.DPA.BUILDING_NUMBER, r.DPA.BUILDING_NAME, r.DPA.ORGANISATION_NAME]
           .filter(Boolean)
           .join(' ')
-          .replace(/\s+/g, ' ')
+          .replaceAll(/\s+/g, ' ')
           .toLowerCase()
 
         return searchText.includes(normalizedPremises)

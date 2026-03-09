@@ -321,7 +321,26 @@ describe('address-lookup-service', () => {
 
       const results = await als(premisesValue, 'SE28 0GG')
 
-      expect(results.length).toBe(2)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: '1 sark tower, london, SE28 0GG',
+          premises: '1 SARK TOWER',
+          street: '',
+          locality: '',
+          town: 'LONDON',
+          postcode: 'SE28 0GG'
+        },
+        {
+          id: 1,
+          address: '10 sark tower, london, SE28 0GG',
+          premises: '10 SARK TOWER',
+          street: '',
+          locality: '',
+          town: 'LONDON',
+          postcode: 'SE28 0GG'
+        }
+      ])
     })
 
     it('returns empty array when filter matches nothing', async () => {
@@ -383,7 +402,26 @@ describe('address-lookup-service', () => {
 
       const results = await als('rose farm', 'YO60 7PD')
 
-      expect(results.length).toBe(2)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: '1 rose farm cottages, york, YO60 7PD',
+          premises: '1 ROSE FARM COTTAGES',
+          street: '',
+          locality: '',
+          town: 'YORK',
+          postcode: 'YO60 7PD'
+        },
+        {
+          id: 1,
+          address: '2 rose farm cottages, york, YO60 7PD',
+          premises: '2 ROSE FARM COTTAGES',
+          street: '',
+          locality: '',
+          town: 'YORK',
+          postcode: 'YO60 7PD'
+        }
+      ])
     })
 
     it('normalizes multiple spaces in user input to single space', async () => {
@@ -405,7 +443,17 @@ describe('address-lookup-service', () => {
 
       const results = await als('the  barn', 'BS1 1AA')
 
-      expect(results.length).toBe(1)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: 'the barn, main street, bristol, BS1 1AA',
+          premises: 'THE BARN',
+          street: '',
+          locality: '',
+          town: 'BRISTOL',
+          postcode: 'BS1 1AA'
+        }
+      ])
     })
 
     it('normalizes multiple spaces in API results to single space', async () => {
@@ -427,7 +475,17 @@ describe('address-lookup-service', () => {
 
       const results = await als('the barn', 'BS1 1AA')
 
-      expect(results.length).toBe(1)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: 'the  barn, main street, bristol, BS1 1AA',
+          premises: 'THE  BARN',
+          street: '',
+          locality: '',
+          town: 'BRISTOL',
+          postcode: 'BS1 1AA'
+        }
+      ])
     })
 
     it('normalizes multiple spaces in both input and API results', async () => {
@@ -449,7 +507,17 @@ describe('address-lookup-service', () => {
 
       const results = await als('the  old  barn', 'BS1 1AA')
 
-      expect(results.length).toBe(1)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: 'the   old   barn, main street, bristol, BS1 1AA',
+          premises: 'THE   OLD   BARN',
+          street: '',
+          locality: '',
+          town: 'BRISTOL',
+          postcode: 'BS1 1AA'
+        }
+      ])
     })
   })
 
