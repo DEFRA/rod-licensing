@@ -65,8 +65,7 @@ describe('address-lookup-service', () => {
           street: thoroughfare || '',
           locality: locality || '',
           town: town || '',
-          postcode: postcode,
-          country: country || ''
+          postcode: postcode
         })
       }
     )
@@ -111,8 +110,7 @@ describe('address-lookup-service', () => {
           street: 'EREBUS DRIVE',
           locality: '',
           town: 'LONDON',
-          postcode: 'SE28 0GG',
-          country: 'This record is within England'
+          postcode: 'SE28 0GG'
         }
       ])
     })
@@ -157,8 +155,7 @@ describe('address-lookup-service', () => {
           street: 'UNIVERSITY ROAD',
           locality: '',
           town: 'SALFORD',
-          postcode: 'M5 4NJ',
-          country: 'This record is within England'
+          postcode: 'M5 4NJ'
         }
       ])
     })
@@ -201,8 +198,7 @@ describe('address-lookup-service', () => {
           street: 'CHURCH STREET',
           locality: '',
           town: 'YORK',
-          postcode: 'YO1 8BE',
-          country: 'This record is within England'
+          postcode: 'YO1 8BE'
         }
       ])
     })
@@ -245,8 +241,7 @@ describe('address-lookup-service', () => {
           street: '',
           locality: '',
           town: 'YORK',
-          postcode: 'YO60 7PD',
-          country: 'This record is within England'
+          postcode: 'YO60 7PD'
         }
       ])
     })
@@ -465,8 +460,7 @@ describe('address-lookup-service', () => {
         'locality',
         { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }
       ],
-      ['POST_TOWN', 'town', { BUILDING_NAME: '1 MAIN STREET', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }],
-      ['COUNTRY_CODE_DESCRIPTION', 'country', { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL' }]
+      ['POST_TOWN', 'town', { BUILDING_NAME: '1 MAIN STREET', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }]
     ])('returns empty string when %s is missing', async (missingField, resultProperty, dpaData) => {
       fetch.mockResolvedValueOnce({
         json: () => ({

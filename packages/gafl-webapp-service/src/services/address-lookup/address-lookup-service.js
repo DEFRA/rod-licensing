@@ -60,8 +60,7 @@ export default async (premises, postcode) => {
       street: r.DPA.THOROUGHFARE_NAME || '',
       locality: r.DPA.DEPENDENT_LOCALITY || '',
       town: r.DPA.POST_TOWN || '',
-      postcode: r.DPA.POSTCODE,
-      country: r.DPA.COUNTRY_CODE_DESCRIPTION || ''
+      postcode: r.DPA.POSTCODE
     }))
     : []
 }
