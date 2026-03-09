@@ -36,7 +36,15 @@ describe('address-lookup-service', () => {
         'CARDIFF',
         'This record is within Wales'
       ],
-      ['45 TINTERN CLOSE, EASTBOURNE, BN22 0UF', 'BN22 0UF', '45 TINTERN CLOSE', null, null, 'EASTBOURNE', 'This record is within England']
+      [
+        '45 TINTERN CLOSE, EASTBOURNE, BN22 0UF',
+        'BN22 0UF',
+        '45 TINTERN CLOSE',
+        null,
+        null,
+        'EASTBOURNE',
+        'This record is within England'
+      ]
     ])(
       'if data is returned from the API, it maps the data correctly in lower case, other than postcode',
       async (address, postcode, buildingName, thoroughfare, locality, town, country) => {
