@@ -36,6 +36,7 @@ describe('address-lookup-service', () => {
         'CARDIFF',
         'This record is within Wales'
       ],
+      // prettier-ignore
       [
         '45 TINTERN CLOSE, EASTBOURNE, BN22 0UF',
         'BN22 0UF',
