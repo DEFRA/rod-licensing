@@ -29,7 +29,6 @@ export * from './queries/concession-proof.queries.js'
 export * from './queries/pocl-validation-error.queries.js'
 export * from './queries/recurring-payments.queries.js'
 export * from './queries/contact.queries.js'
-export * from './queries/activity.queries.js'
 export * from './queries/rcr-activity.queries.js'
 
 // Framework functionality
