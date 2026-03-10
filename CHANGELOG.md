@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.8 (2026-03-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2324](https://github.com/DEFRA/rod-licensing/pull/2324) Amend bulletpoints on cookies page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.68.0-rc.6 (2026-03-06)
 
