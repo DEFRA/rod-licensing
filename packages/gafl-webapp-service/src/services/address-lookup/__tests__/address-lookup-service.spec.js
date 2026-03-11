@@ -1,4 +1,4 @@
-import als from '../address-lookup-service.js'
+import addressLookupService from '../address-lookup-service.js'
 import fetch from 'node-fetch'
 
 jest.mock('node-fetch')
@@ -13,42 +13,31 @@ describe('address-lookup-service', () => {
   describe('default', () => {
     it('returns empty array if results node is missing', async () => {
       fetch.mockResolvedValue({ json: () => Promise.resolve({}) })
-      const results = await als()
+      const results = await addressLookupService()
       expect(results).toEqual([])
     })
 
-    it.each([
-      [
-        '1 HOWECROFT COURT, EASTMEAD LANE, BRISTOL, BS9 1HJ',
-        'BS9 1HJ',
-        '1 HOWECROFT COURT',
-        'EASTMEAD LANE',
-        '',
-        'BRISTOL',
-        'This record is within England'
-      ],
-      [
-        '9 ORBIT STREET, ADAMSDOWN, CARDIfF, CF24 0JX',
-        'CF24 0JX',
-        '9 ORBIT STREET',
-        null,
-        'ADAMSDOWN',
-        'CARDIFF',
-        'This record is within Wales'
-      ],
-      // prettier-ignore
-      [
-        '45 TINTERN CLOSE, EASTBOURNE, BN22 0UF',
-        'BN22 0UF',
-        '45 TINTERN CLOSE',
-        null,
-        null,
-        'EASTBOURNE',
-        'This record is within England'
-      ]
-    ])(
+    it.each`
+      address                                                 | postcode      | buildingName           | thoroughfare       | locality       | town            | country                            | expectedAddress                                         | expectedPremises       | expectedStreet     | expectedLocality | expectedTown
+      ${'1 HOWECROFT COURT, EASTMEAD LANE, BRISTOL, BS9 1HJ'} | ${'BS9 1HJ'}  | ${'1 HOWECROFT COURT'} | ${'EASTMEAD LANE'} | ${''}          | ${'BRISTOL'}    | ${'This record is within England'} | ${'1 howecroft court, eastmead lane, bristol, BS9 1HJ'} | ${'1 HOWECROFT COURT'} | ${'EASTMEAD LANE'} | ${''}            | ${'BRISTOL'}
+      ${'9 ORBIT STREET, ADAMSDOWN, CARDIfF, CF24 0JX'}       | ${'CF24 0JX'} | ${'9 ORBIT STREET'}    | ${null}            | ${'ADAMSDOWN'} | ${'CARDIFF'}    | ${'This record is within Wales'}   | ${'9 orbit street, adamsdown, cardiff, CF24 0JX'}       | ${'9 ORBIT STREET'}    | ${''}              | ${'ADAMSDOWN'}   | ${'CARDIFF'}
+      ${'45 TINTERN CLOSE, EASTBOURNE, BN22 0UF'}             | ${'BN22 0UF'} | ${'45 TINTERN CLOSE'}  | ${null}            | ${null}        | ${'EASTBOURNE'} | ${'This record is within England'} | ${'45 tintern close, eastbourne, BN22 0UF'}             | ${'45 TINTERN CLOSE'}  | ${''}              | ${''}            | ${'EASTBOURNE'}
+    `(
       'if data is returned from the API, it maps the data correctly in lower case, other than postcode',
-      async (address, postcode, buildingName, thoroughfare, locality, town, country) => {
+      async ({
+        address,
+        postcode,
+        buildingName,
+        thoroughfare,
+        locality,
+        town,
+        country,
+        expectedAddress,
+        expectedPremises,
+        expectedStreet,
+        expectedLocality,
+        expectedTown
+      }) => {
         fetch.mockResolvedValue({
           json: () => ({
             results: [
@@ -66,14 +55,14 @@ describe('address-lookup-service', () => {
             ]
           })
         })
-        const results = await als()
+        const results = await addressLookupService()
         expect(results[0]).toEqual({
           id: 0,
-          address: `${address.replace(postcode, '').toLowerCase()}${postcode}`,
-          premises: buildingName || '',
-          street: thoroughfare || '',
-          locality: locality || '',
-          town: town || '',
+          address: expectedAddress,
+          premises: expectedPremises,
+          street: expectedStreet,
+          locality: expectedLocality,
+          town: expectedTown,
           postcode: postcode
         })
       }
@@ -109,7 +98,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('10 sark', 'SE28 0GG')
+      const results = await addressLookupService('10 sark', 'SE28 0GG')
 
       expect(results).toEqual([
         {
@@ -154,7 +143,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('1-1', 'M5 4NJ')
+      const results = await addressLookupService('1-1', 'M5 4NJ')
 
       expect(results).toEqual([
         {
@@ -197,7 +186,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('14', 'YO1 8BE')
+      const results = await addressLookupService('14', 'YO1 8BE')
 
       expect(results).toEqual([
         {
@@ -240,7 +229,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('rose farm', 'YO60 7PD')
+      const results = await addressLookupService('rose farm', 'YO60 7PD')
 
       expect(results).toEqual([
         {
@@ -272,7 +261,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('the barn', 'YO60 7PD')
+      const results = await addressLookupService('the barn', 'YO60 7PD')
 
       expect(results[0].premises).toBe('THE BARN')
     })
@@ -294,7 +283,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('  10 sark  ', 'SE28 0GG')
+      const results = await addressLookupService('  10 sark  ', 'SE28 0GG')
 
       expect(results[0].premises).toBe('10 SARK TOWER')
     })
@@ -328,7 +317,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als(premisesValue, 'SE28 0GG')
+      const results = await addressLookupService(premisesValue, 'SE28 0GG')
 
       expect(results).toEqual([
         {
@@ -369,7 +358,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('nonexistent address', 'SE28 0GG')
+      const results = await addressLookupService('nonexistent address', 'SE28 0GG')
 
       expect(results).toEqual([])
     })
@@ -409,7 +398,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('rose farm', 'YO60 7PD')
+      const results = await addressLookupService('rose farm', 'YO60 7PD')
 
       expect(results).toEqual([
         {
@@ -450,7 +439,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('the  barn', 'BS1 1AA')
+      const results = await addressLookupService('the  barn', 'BS1 1AA')
 
       expect(results).toEqual([
         {
@@ -482,7 +471,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('the barn', 'BS1 1AA')
+      const results = await addressLookupService('the barn', 'BS1 1AA')
 
       expect(results).toEqual([
         {
@@ -514,7 +503,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als('the  old  barn', 'BS1 1AA')
+      const results = await addressLookupService('the  old  barn', 'BS1 1AA')
 
       expect(results).toEqual([
         {
@@ -553,7 +542,7 @@ describe('address-lookup-service', () => {
         })
       })
 
-      const results = await als(null, 'BS1 1AA')
+      const results = await addressLookupService(null, 'BS1 1AA')
 
       expect(results[0][resultProperty]).toBe('')
     })
@@ -568,7 +557,7 @@ describe('address-lookup-service', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
       fetch.mockRejectedValueOnce(new Error(errorMessage))
 
-      const results = await als('test', 'BS9 1HJ')
+      const results = await addressLookupService('test', 'BS9 1HJ')
 
       expect(results).toEqual([])
       consoleErrorSpy.mockRestore()
@@ -583,7 +572,7 @@ describe('address-lookup-service', () => {
       const testError = new Error(errorMessage)
       fetch.mockRejectedValueOnce(testError)
 
-      await als('test', 'BS9 1HJ')
+      await addressLookupService('test', 'BS9 1HJ')
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('Unable to connect to address lookup service', testError)
       consoleErrorSpy.mockRestore()
