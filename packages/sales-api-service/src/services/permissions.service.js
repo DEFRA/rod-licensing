@@ -16,7 +16,6 @@ const DICTIONARIES = [
  * Generate a new permission number
  *
  * @param permitId
- * @param issueDate
  * @param startDate
  * @param dataSource
  * @param firstName
@@ -24,10 +23,7 @@ const DICTIONARIES = [
  * @param birthDate
  * @returns {Promise<string>}
  */
-export const generatePermissionNumber = async (
-  { permitId, issueDate, startDate, licensee: { firstName, lastName, birthDate } },
-  dataSource
-) => {
+export const generatePermissionNumber = async ({ permitId, startDate, licensee: { firstName, lastName, birthDate } }, dataSource) => {
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
   const endDate = await calculateEndDateMoment({ permitId, startDate })
@@ -43,7 +39,7 @@ export const generatePermissionNumber = async (
 
   const durationInDays = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`).asDays()
   const duration = String(durationInDays).charAt(0)
-  const age = getAgeCategory(birthDate, issueDate)
+  const age = getAgeCategory(birthDate, startDate)
   const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
   const block2 = permit.numberOfRods + channel + type + duration + age + initials
 
