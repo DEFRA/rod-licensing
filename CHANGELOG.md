@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.9 (2026-03-12)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#2323](https://github.com/DEFRA/rod-licensing/pull/2323) Add AWS connector to interact with Parameter Store ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.68.0-rc.8 (2026-03-10)
 
 #### :bug: Bug Fix
