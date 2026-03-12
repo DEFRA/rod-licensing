@@ -55,6 +55,7 @@ describe.each`
   ${'s3'}             | ${'S3Client'}         | ${'s3'}             | ${'2006-03-01'}
   ${'secretsManager'} | ${'SecretsManager'}   | ${'secretsManager'} | ${'2017-10-17'}
   ${'docClient'}      | ${'DynamoDBDocument'} | ${'dynamodb'}       | ${'2012-08-10'}
+  ${'systemsManager'} | ${'SSMClient'}        | ${'systemsManager'} | ${'2014-11-06'}
 `('AWS connectors for $clientName', ({ name, clientName, configName, expectedAPIVersion }) => {
   beforeAll(() => {
     createDocumentClient.mockImplementation(options => {
