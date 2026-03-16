@@ -1,7 +1,6 @@
 /**
  * System constants and defaults
  */
-export const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 export const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
 export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const PORT_DEFAULT = 3000
