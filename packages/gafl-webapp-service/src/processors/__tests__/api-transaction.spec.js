@@ -5,12 +5,37 @@ import mockPermitsConcessions from '../../__mocks__/data/permit-concessions.js'
 import mockConcessions from '../../__mocks__/data/concessions.js'
 import mockDefraCountries from '../../__mocks__/data/defra-country.js'
 import { licenceToStart } from '../../pages/licence-details/licence-to-start/update-transaction.js'
+import * as concessionHelper from '../concession-helper.js'
+import { CONCESSION, CONCESSION_PROOF } from '../mapping-constants.js'
 
-jest.mock('@defra-fish/connectors-lib')
-salesApi.permits.getAll.mockResolvedValue(mockPermits)
-salesApi.permitConcessions.getAll.mockResolvedValue(mockPermitsConcessions)
-salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
-salesApi.countries.getAll.mockResolvedValue(mockDefraCountries)
+jest.mock('@defra-fish/connectors-lib', () => ({
+  salesApi: {
+    permits: {
+      getAll: jest.fn()
+    },
+    permitConcessions: {
+      getAll: jest.fn()
+    },
+    concessions: {
+      getAll: jest.fn()
+    },
+    countries: {
+      getAll: jest.fn()
+    }
+  }
+}))
+jest.mock('../concession-helper.js')
+
+beforeEach(() => {
+  salesApi.permits.getAll.mockResolvedValue(mockPermits)
+  salesApi.permitConcessions.getAll.mockResolvedValue(mockPermitsConcessions)
+  salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
+  salesApi.countries.getAll.mockResolvedValue(mockDefraCountries)
+
+  concessionHelper.hasDisabled.mockReturnValue(false)
+  concessionHelper.hasSenior.mockReturnValue(false)
+  concessionHelper.hasJunior.mockReturnValue(false)
+})
 
 describe('prepareApiTransactionPayload', () => {
   it('prepares when licence is set to start after payment', async () => {
@@ -77,6 +102,75 @@ describe('prepareApiTransactionPayload', () => {
     const payload = await prepareApiTransactionPayload(getMockRequest(), 'transaction_id', agreementId)
 
     expect(payload.recurringPayment.agreementId).toBe(agreementId)
+  })
+
+  it.each([
+    [
+      'disabled',
+      'hasDisabled',
+      'd1ece997-ef65-e611-80dc-c4346bad4004',
+      {
+        concessions: [
+          {
+            type: CONCESSION.DISABLED,
+            proof: { type: CONCESSION_PROOF.blueBadge, referenceNumber: 'BB123456' }
+          }
+        ]
+      },
+      { type: CONCESSION_PROOF.blueBadge, referenceNumber: 'BB123456' }
+    ],
+    ['senior', 'hasSenior', 'd0ece997-ef65-e611-80dc-c4346bad4004', {}, { type: CONCESSION_PROOF.none }],
+    ['junior', 'hasJunior', '3230c68f-ef65-e611-80dc-c4346bad4004', {}, { type: CONCESSION_PROOF.none }]
+  ])(
+    'adds %s concession when permission has %s concession',
+    async (concessionType, helperMethod, expectedId, requestOverrides, expectedProof) => {
+      concessionHelper[helperMethod].mockReturnValue(true)
+
+      const mockRequest = getMockRequest(requestOverrides)
+      const payload = await prepareApiTransactionPayload(mockRequest)
+
+      expect(payload.permissions[0].concessions).toEqual([
+        {
+          id: expectedId,
+          proof: expectedProof
+        }
+      ])
+    }
+  )
+
+  it.each([
+    [
+      'disabled over senior',
+      ['hasDisabled', 'hasSenior'],
+      'd1ece997-ef65-e611-80dc-c4346bad4004',
+      {
+        concessions: [{ type: CONCESSION.DISABLED, proof: { type: CONCESSION_PROOF.NI, referenceNumber: 'NI123' } }]
+      }
+    ],
+    [
+      'disabled over junior',
+      ['hasDisabled', 'hasJunior'],
+      'd1ece997-ef65-e611-80dc-c4346bad4004',
+      {
+        concessions: [{ type: CONCESSION.DISABLED, proof: { type: CONCESSION_PROOF.blueBadge } }]
+      }
+    ],
+    ['senior over junior', ['hasSenior', 'hasJunior'], 'd0ece997-ef65-e611-80dc-c4346bad4004', {}]
+  ])('prioritizes %s when both apply', async (description, helperMethods, expectedId, requestOverrides) => {
+    helperMethods.forEach(method => concessionHelper[method].mockReturnValue(true))
+
+    const mockRequest = getMockRequest(requestOverrides)
+    const payload = await prepareApiTransactionPayload(mockRequest)
+
+    expect(payload.permissions[0].concessions).toHaveLength(1)
+    expect(payload.permissions[0].concessions[0].id).toBe(expectedId)
+  })
+
+  it('does not add concessions when none apply', async () => {
+    const mockRequest = getMockRequest()
+    const payload = await prepareApiTransactionPayload(mockRequest)
+
+    expect(payload.permissions[0].concessions).toBeUndefined()
   })
 
   const getMockRequest = (overrides = {}, state = {}) => ({
