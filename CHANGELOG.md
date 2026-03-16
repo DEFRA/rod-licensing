@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.10 (2026-03-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2317](https://github.com/DEFRA/rod-licensing/pull/2317) GAFL: DEV - Implement OS API Postcode Lookup & Filter by House Name/Number (No Pagination) ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.68.0-rc.9 (2026-03-12)
 
 #### :bug: Bug Fix
