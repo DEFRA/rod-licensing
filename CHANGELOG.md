@@ -1,4 +1,13 @@
 
+## v1.68.0-rc.11 (2026-03-16)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2320](https://github.com/DEFRA/rod-licensing/pull/2320) Senior licences are being formatted incorrectly (with F not S) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.68.0-rc.10 (2026-03-16)
 
 #### :rocket: Enhancement
