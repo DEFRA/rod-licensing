@@ -76,8 +76,8 @@ describe('permissions service', () => {
 
       it('formats as F if startDate is on 17th birthday but issueDate is 1 week before', async () => {
         const birthDate = moment().subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
-        const issueDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').subtract(7, 'day').toISOString()
-        const startDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').toISOString()
+        const issueDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').add(1, 'year').subtract(7, 'day').toISOString()
+        const startDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').add(1, 'year').toISOString()
         const number = await generatePermissionNumber(
           {
             ...getSamplePermission({
@@ -89,7 +89,7 @@ describe('permissions service', () => {
           },
           'Web Sales'
         )
-        expect(number).toMatch(/-.*F.*-/)
+        expect(number).toMatch(/-[A-Z0-9]{4}F/)
       })
     })
 
@@ -116,7 +116,7 @@ describe('permissions service', () => {
           },
           'Web Sales'
         )
-        expect(number).toMatch(/-.*S.*-/)
+        expect(number).toMatch(/-[A-Z0-9]{4}S/)
       })
     })
 
@@ -150,7 +150,7 @@ describe('permissions service', () => {
           },
           'Web Sales'
         )
-        expect(number).toMatch(/-.*J.*-/)
+        expect(number).toMatch(/-[A-Z0-9]{4}J/)
       })
     })
   })
