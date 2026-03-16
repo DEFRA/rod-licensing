@@ -2,6 +2,8 @@ import Boom from '@hapi/boom'
 import { findByExample, SystemUser, SystemUserRole, Role } from '@defra-fish/dynamics-lib'
 import { getReferenceDataForEntity } from '../../services/reference-data.service.js'
 import { systemUsersRequestParamsSchema, systemUsersResponseSchema } from '../../schema/system-user.schema.js'
+import db from 'debug'
+const debug = db('sales:telesales-authentication')
 
 export default [
   {
@@ -10,12 +12,16 @@ export default [
     options: {
       handler: async (request, h) => {
         const matchedUsers = await findByExample(Object.assign(new SystemUser(), { oid: request.params.oid }))
+        debug(`Matched ${matchedUsers.length} system users for oid "${request.params.oid}"`, matchedUsers)
         if (matchedUsers.length !== 1) {
           throw Boom.notFound(`System user for oid "${request.params.oid}" not found`)
         }
         const user = matchedUsers[0]
+        debug(`Found system user`, user)
         const userRoles = await findByExample(Object.assign(new SystemUserRole(), { systemUserId: user.id }))
+        debug(`Found user roles for system user`, userRoles)
         const roles = await getReferenceDataForEntity(Role)
+        debug(`Found roles reference data`, roles)
         return h
           .response({
             ...user.toJSON(),

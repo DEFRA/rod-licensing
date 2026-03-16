@@ -87,13 +87,18 @@ export const signIn = async (request, h) => {
     const { oid, name, email, exp } = tokenSet.claims()
 
     const userDetails = await salesApi.getSystemUser(oid)
+    db('Retrieved user details from sales api:', userDetails)
     const hasTelesalesRole = !!userDetails?.roles.find(role => role.name === process.env.OIDC_REQUIRE_DYNAMICS_ROLE)
+    db('User has telesales role: %s', hasTelesalesRole)
 
     if (!userDetails || userDetails.isDisabled) {
+      db('user details not found or user is disabled')
       return h.redirectWithLanguageCode('/oidc/account-disabled')
     } else if (!hasTelesalesRole) {
+      db('user does not have required telesales role')
       return h.redirectWithLanguageCode('/oidc/role-required')
     } else {
+      db('user authenticated successfully, setting cookie and redirecting')
       request.cookieAuth.set({ oid, name, email })
 
       db('Token expires at: %s', moment.unix(exp).format())
