@@ -1,6 +1,6 @@
 import { AWS } from '@defra-fish/connectors-lib'
 
-const { secretsManager } = AWS()
+const { systemsManager } = AWS()
 const falseRegEx = /(false|0)/i
 const trueRegEx = /(true|1)/i
 const toBoolean = val => {
@@ -32,7 +32,7 @@ class Config {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
     this._pgp = {
-      publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID })).SecretString,
+      publicKey: (await systemsManager.getParameter({ Name: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID })).Value,
       sendUnencryptedFile: toBoolean(process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     }
   }
