@@ -26,10 +26,6 @@ describe('agreed-handler', () => {
     jest.clearAllMocks()
   })
 
-  /**
-   * Helper to create a mock request object
-   * Override any properties by passing an object with the desired values
-   */
   const getMockRequest = (overrides = {}) => {
     const defaults = {
       cache: () => ({
@@ -48,9 +44,6 @@ describe('agreed-handler', () => {
     return { ...defaults, ...overrides }
   }
 
-  /**
-   * Helper to create a mock response toolkit
-   */
   const getMockResponseToolkit = () => ({
     redirect: jest.fn(uri => ({ uri })),
     redirectWithLanguageCode: jest.fn(uri => ({ uri }))
@@ -100,11 +93,10 @@ describe('agreed-handler', () => {
         })
         const h = getMockResponseToolkit()
 
-        // Mock the API call so it doesn't fail
-        prepareApiTransactionPayload.mockResolvedValue({})
-        salesApi.createTransaction.mockResolvedValue({ cost: 0, permissions: [] })
-        prepareApiFinalisationPayload.mockResolvedValue({})
-        salesApi.finaliseTransaction.mockResolvedValue({ permissions: [] })
+        prepareApiTransactionPayload.mockResolvedValueOnce({})
+        salesApi.createTransaction.mockResolvedValueOnce({ cost: 0, permissions: [] })
+        prepareApiFinalisationPayload.mockResolvedValueOnce({})
+        salesApi.finaliseTransaction.mockResolvedValueOnce({ permissions: [] })
 
         await agreedHandler(request, h)
 
@@ -118,98 +110,74 @@ describe('agreed-handler', () => {
   })
 
   describe('zero-cost transaction journey', () => {
-    it('skips payment and goes straight to finalization', async () => {
-      const mockStatusSet = jest.fn(async () => {})
-      const mockTransactionSet = jest.fn(async () => {})
-      const request = getMockRequest({
-        cache: () => ({
-          helpers: {
-            transaction: {
-              get: jest.fn(async () => ({
-                id: 'test-id',
-                cost: 0,
-                permissions: [{ licensee: {} }]
-              })),
-              set: mockTransactionSet
-            },
-            status: {
-              get: jest.fn(async () => ({
-                [COMPLETION_STATUS.agreed]: true,
-                [COMPLETION_STATUS.posted]: false
-              })),
-              set: mockStatusSet
+    describe('skips payment and goes straight to finalization', () => {
+      let mockStatusSet, request, h
+
+      beforeEach(async () => {
+        mockStatusSet = jest.fn(async () => {})
+        const mockTransactionSet = jest.fn(async () => {})
+        request = getMockRequest({
+          cache: () => ({
+            helpers: {
+              transaction: {
+                get: jest.fn(async () => ({
+                  id: 'test-id',
+                  cost: 0,
+                  permissions: [{ licensee: {} }]
+                })),
+                set: mockTransactionSet
+              },
+              status: {
+                get: jest.fn(async () => ({
+                  [COMPLETION_STATUS.agreed]: true,
+                  [COMPLETION_STATUS.posted]: false
+                })),
+                set: mockStatusSet
+              }
             }
-          }
+          })
         })
-      })
-      const h = getMockResponseToolkit()
+        h = getMockResponseToolkit()
 
-      prepareApiTransactionPayload.mockResolvedValue({})
-      salesApi.createTransaction.mockResolvedValue({ cost: 0, permissions: [] })
-      prepareApiFinalisationPayload.mockResolvedValue({})
-      salesApi.finaliseTransaction.mockResolvedValue({
-        permissions: [
-          {
-            referenceNumber: 'REF123',
-            issueDate: '2024-01-01',
-            startDate: '2024-01-01',
-            endDate: '2024-12-31',
-            licensee: { obfuscatedDob: '01/01' }
-          }
-        ]
-      })
-
-      await agreedHandler(request, h)
-
-      expect(mockStatusSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          [COMPLETION_STATUS.posted]: true,
-          [COMPLETION_STATUS.finalised]: true
+        prepareApiTransactionPayload.mockResolvedValue({})
+        salesApi.createTransaction.mockResolvedValue({ cost: 0, permissions: [] })
+        prepareApiFinalisationPayload.mockResolvedValue({})
+        salesApi.finaliseTransaction.mockResolvedValue({
+          permissions: [
+            {
+              referenceNumber: 'REF123',
+              issueDate: '2024-01-01',
+              startDate: '2024-01-01',
+              endDate: '2024-12-31',
+              licensee: { obfuscatedDob: '01/01' }
+            }
+          ]
         })
-      )
-      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
+
+        await agreedHandler(request, h)
+      })
+
+      it('sets posted and finalised status flags', () => {
+        expect(mockStatusSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            [COMPLETION_STATUS.posted]: true,
+            [COMPLETION_STATUS.finalised]: true
+          })
+        )
+      })
+
+      it('redirects to order complete', () => {
+        expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
+      })
     })
 
-    it('does not create payment journal for zero-cost transaction', async () => {
-      const request = getMockRequest({
-        cache: () => ({
-          helpers: {
-            transaction: {
-              get: jest.fn(async () => ({ id: 'test-id', cost: 0, permissions: [{ licensee: {} }] })),
-              set: jest.fn(async () => {})
-            },
-            status: {
-              get: jest.fn(async () => ({
-                [COMPLETION_STATUS.agreed]: true,
-                [COMPLETION_STATUS.posted]: false
-              })),
-              set: jest.fn(async () => {})
-            }
-          }
-        })
-      })
-      const h = getMockResponseToolkit()
-
-      prepareApiTransactionPayload.mockResolvedValue({})
-      salesApi.createTransaction.mockResolvedValue({ cost: 0, permissions: [] })
-      prepareApiFinalisationPayload.mockResolvedValue({})
-      salesApi.finaliseTransaction.mockResolvedValue({ permissions: [{ licensee: {} }] })
-
-      await agreedHandler(request, h)
-
-      expect(salesApi.createPaymentJournal).not.toHaveBeenCalled()
-      expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('paid transaction journey', () => {
-    describe('initial call - creates payment', () => {
-      it('posts to sales API and creates payment', async () => {
+    describe('does not create payment journal for zero-cost transaction', () => {
+      beforeEach(async () => {
         const request = getMockRequest({
           cache: () => ({
             helpers: {
               transaction: {
-                get: jest.fn(async () => ({ id: 'test-id', cost: 100, permissions: [] })),
+                get: jest.fn(async () => ({ id: 'test-id', cost: 0, permissions: [{ licensee: {} }] })),
                 set: jest.fn(async () => {})
               },
               status: {
@@ -225,25 +193,77 @@ describe('agreed-handler', () => {
         const h = getMockResponseToolkit()
 
         prepareApiTransactionPayload.mockResolvedValue({})
-        salesApi.createTransaction.mockResolvedValue({ cost: 100, permissions: [] })
-        preparePayment.mockReturnValue({})
-        sendPayment.mockResolvedValue({
-          payment_id: 'pay123',
-          created_date: '2024-01-01',
-          state: { status: 'created' },
-          payment_provider: 'worldpay',
-          _links: {
-            next_url: { href: 'https://pay.gov.uk/payment' },
-            self: { href: 'https://api/payment' }
-          }
-        })
-        salesApi.getPaymentJournal.mockResolvedValue(false)
+        salesApi.createTransaction.mockResolvedValue({ cost: 0, permissions: [] })
+        prepareApiFinalisationPayload.mockResolvedValue({})
+        salesApi.finaliseTransaction.mockResolvedValue({ permissions: [{ licensee: {} }] })
 
         await agreedHandler(request, h)
+      })
 
-        expect(salesApi.createTransaction).toHaveBeenCalled()
-        expect(sendPayment).toHaveBeenCalled()
-        expect(h.redirect).toHaveBeenCalledWith('https://pay.gov.uk/payment')
+      it('does not call createPaymentJournal', () => {
+        expect(salesApi.createPaymentJournal).not.toHaveBeenCalled()
+      })
+
+      it('does not call updatePaymentJournal', () => {
+        expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('paid transaction journey', () => {
+    describe('initial call - creates payment', () => {
+      describe('posts to sales API and creates payment', () => {
+        let request, h
+
+        beforeEach(async () => {
+          request = getMockRequest({
+            cache: () => ({
+              helpers: {
+                transaction: {
+                  get: jest.fn(async () => ({ id: 'test-id', cost: 100, permissions: [] })),
+                  set: jest.fn(async () => {})
+                },
+                status: {
+                  get: jest.fn(async () => ({
+                    [COMPLETION_STATUS.agreed]: true,
+                    [COMPLETION_STATUS.posted]: false
+                  })),
+                  set: jest.fn(async () => {})
+                }
+              }
+            })
+          })
+          h = getMockResponseToolkit()
+
+          prepareApiTransactionPayload.mockResolvedValue({})
+          salesApi.createTransaction.mockResolvedValue({ cost: 100, permissions: [] })
+          preparePayment.mockReturnValue({})
+          sendPayment.mockResolvedValue({
+            payment_id: 'pay123',
+            created_date: '2024-01-01',
+            state: { status: 'created' },
+            payment_provider: 'worldpay',
+            _links: {
+              next_url: { href: 'https://pay.gov.uk/payment' },
+              self: { href: 'https://api/payment' }
+            }
+          })
+          salesApi.getPaymentJournal.mockResolvedValue(false)
+
+          await agreedHandler(request, h)
+        })
+
+        it('posts transaction to sales API', () => {
+          expect(salesApi.createTransaction).toHaveBeenCalled()
+        })
+
+        it('sends payment to GOV.UK Pay', () => {
+          expect(sendPayment).toHaveBeenCalled()
+        })
+
+        it('redirects to payment page', () => {
+          expect(h.redirect).toHaveBeenCalledWith('https://pay.gov.uk/payment')
+        })
       })
 
       it('creates payment journal when it does not exist', async () => {
@@ -266,17 +286,17 @@ describe('agreed-handler', () => {
         })
         const h = getMockResponseToolkit()
 
-        prepareApiTransactionPayload.mockResolvedValue({})
-        salesApi.createTransaction.mockResolvedValue({ cost: 100, permissions: [] })
-        preparePayment.mockReturnValue({})
-        sendPayment.mockResolvedValue({
+        prepareApiTransactionPayload.mockResolvedValueOnce({})
+        salesApi.createTransaction.mockResolvedValueOnce({ cost: 100, permissions: [] })
+        preparePayment.mockReturnValueOnce({})
+        sendPayment.mockResolvedValueOnce({
           payment_id: 'pay123',
           created_date: '2024-01-01T10:00:00Z',
           state: {},
           payment_provider: 'worldpay',
           _links: { next_url: { href: 'url' }, self: { href: 'self' } }
         })
-        salesApi.getPaymentJournal.mockResolvedValue(false)
+        salesApi.getPaymentJournal.mockResolvedValueOnce(false)
 
         await agreedHandler(request, h)
 
@@ -287,53 +307,62 @@ describe('agreed-handler', () => {
         })
       })
 
-      it('updates payment journal when it already exists', async () => {
-        const request = getMockRequest({
-          cache: () => ({
-            helpers: {
-              transaction: {
-                get: jest.fn(async () => ({ id: 'test-id', cost: 100, permissions: [] })),
-                set: jest.fn(async () => {})
-              },
-              status: {
-                get: jest.fn(async () => ({
-                  [COMPLETION_STATUS.agreed]: true,
-                  [COMPLETION_STATUS.posted]: false
-                })),
-                set: jest.fn(async () => {})
+      describe('updates payment journal when it already exists', () => {
+        beforeEach(async () => {
+          const request = getMockRequest({
+            cache: () => ({
+              helpers: {
+                transaction: {
+                  get: jest.fn(async () => ({ id: 'test-id', cost: 100, permissions: [] })),
+                  set: jest.fn(async () => {})
+                },
+                status: {
+                  get: jest.fn(async () => ({
+                    [COMPLETION_STATUS.agreed]: true,
+                    [COMPLETION_STATUS.posted]: false
+                  })),
+                  set: jest.fn(async () => {})
+                }
               }
-            }
+            })
+          })
+          const h = getMockResponseToolkit()
+
+          prepareApiTransactionPayload.mockResolvedValue({})
+          salesApi.createTransaction.mockResolvedValue({ cost: 100, permissions: [] })
+          preparePayment.mockReturnValue({})
+          sendPayment.mockResolvedValue({
+            payment_id: 'pay456',
+            created_date: '2024-01-02T10:00:00Z',
+            state: {},
+            payment_provider: 'worldpay',
+            _links: { next_url: { href: 'url' }, self: { href: 'self' } }
+          })
+          salesApi.getPaymentJournal.mockResolvedValue(true)
+
+          await agreedHandler(request, h)
+        })
+
+        it('updates the payment journal', () => {
+          expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('test-id', {
+            paymentReference: 'pay456',
+            paymentTimestamp: '2024-01-02T10:00:00Z',
+            paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
           })
         })
-        const h = getMockResponseToolkit()
 
-        prepareApiTransactionPayload.mockResolvedValue({})
-        salesApi.createTransaction.mockResolvedValue({ cost: 100, permissions: [] })
-        preparePayment.mockReturnValue({})
-        sendPayment.mockResolvedValue({
-          payment_id: 'pay456',
-          created_date: '2024-01-02T10:00:00Z',
-          state: {},
-          payment_provider: 'worldpay',
-          _links: { next_url: { href: 'url' }, self: { href: 'self' } }
+        it('does not create a new payment journal', () => {
+          expect(salesApi.createPaymentJournal).not.toHaveBeenCalled()
         })
-        salesApi.getPaymentJournal.mockResolvedValue(true)
-
-        await agreedHandler(request, h)
-
-        expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('test-id', {
-          paymentReference: 'pay456',
-          paymentTimestamp: '2024-01-02T10:00:00Z',
-          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
-        })
-        expect(salesApi.createPaymentJournal).not.toHaveBeenCalled()
       })
     })
 
     describe('return from payment - successful payment', () => {
-      it('finalizes transaction and redirects to order complete', async () => {
-        const mockStatusSet = jest.fn(async () => {})
-        const request = getMockRequest({
+      let mockStatusSet, request, h
+
+      beforeEach(async () => {
+        mockStatusSet = jest.fn(async () => {})
+        request = getMockRequest({
           cache: () => ({
             helpers: {
               transaction: {
@@ -356,7 +385,7 @@ describe('agreed-handler', () => {
             }
           })
         })
-        const h = getMockResponseToolkit()
+        h = getMockResponseToolkit()
 
         getPaymentStatus.mockResolvedValue({
           state: { status: 'success', finished: true }
@@ -375,24 +404,34 @@ describe('agreed-handler', () => {
         })
 
         await agreedHandler(request, h)
+      })
 
+      it('sets paymentCompleted and finalised status flags', () => {
         expect(mockStatusSet).toHaveBeenCalledWith(
           expect.objectContaining({
             [COMPLETION_STATUS.paymentCompleted]: true,
             [COMPLETION_STATUS.finalised]: true
           })
         )
+      })
+
+      it('updates payment journal as completed', () => {
         expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('test-id', {
           paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
         })
+      })
+
+      it('redirects to order complete', () => {
         expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
       })
     })
 
     describe('return from payment - cancelled payment', () => {
-      it('redirects to payment cancelled page', async () => {
-        const mockStatusSet = jest.fn(async () => {})
-        const request = getMockRequest({
+      let mockStatusSet, request, h
+
+      beforeEach(async () => {
+        mockStatusSet = jest.fn(async () => {})
+        request = getMockRequest({
           cache: () => ({
             helpers: {
               transaction: {
@@ -414,7 +453,7 @@ describe('agreed-handler', () => {
             }
           })
         })
-        const h = getMockResponseToolkit()
+        h = getMockResponseToolkit()
 
         getPaymentStatus.mockResolvedValue({
           state: {
@@ -425,113 +464,144 @@ describe('agreed-handler', () => {
         })
 
         await agreedHandler(request, h)
+      })
 
+      it('sets paymentCancelled status flag', () => {
         expect(mockStatusSet).toHaveBeenCalledWith(
           expect.objectContaining({
             [COMPLETION_STATUS.paymentCancelled]: true
           })
         )
+      })
+
+      it('updates payment journal as cancelled', () => {
         expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('test-id', {
           paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled
         })
+      })
+
+      it('redirects to payment cancelled page', () => {
         expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_CANCELLED.uri)
       })
     })
 
     describe('return from payment - failed payment', () => {
-      it.each([
+      describe.each([
         ['expired', GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED],
         ['rejected', GOVUK_PAY_ERROR_STATUS_CODES.REJECTED]
-      ])('redirects to payment failed page when payment is %s', async (description, code) => {
-        const mockStatusSet = jest.fn(async () => {})
-        const request = getMockRequest({
-          cache: () => ({
-            helpers: {
-              transaction: {
-                get: jest.fn(async () => ({
-                  id: 'test-id',
-                  cost: 100,
-                  payment: { payment_id: 'pay123' }
-                })),
-                set: jest.fn(async () => {})
-              },
-              status: {
-                get: jest.fn(async () => ({
-                  [COMPLETION_STATUS.agreed]: true,
-                  [COMPLETION_STATUS.posted]: true,
-                  [COMPLETION_STATUS.paymentCreated]: true
-                })),
-                set: mockStatusSet
+      ])('when payment is %s', (description, code) => {
+        let mockStatusSet, request, h
+
+        beforeEach(async () => {
+          mockStatusSet = jest.fn(async () => {})
+          request = getMockRequest({
+            cache: () => ({
+              helpers: {
+                transaction: {
+                  get: jest.fn(async () => ({
+                    id: 'test-id',
+                    cost: 100,
+                    payment: { payment_id: 'pay123' }
+                  })),
+                  set: jest.fn(async () => {})
+                },
+                status: {
+                  get: jest.fn(async () => ({
+                    [COMPLETION_STATUS.agreed]: true,
+                    [COMPLETION_STATUS.posted]: true,
+                    [COMPLETION_STATUS.paymentCreated]: true
+                  })),
+                  set: mockStatusSet
+                }
               }
-            }
+            })
+          })
+          h = getMockResponseToolkit()
+
+          getPaymentStatus.mockResolvedValue({
+            state: { status: 'failed', finished: true, code }
+          })
+
+          await agreedHandler(request, h)
+        })
+
+        it('sets paymentFailed status flag', () => {
+          expect(mockStatusSet).toHaveBeenCalledWith(
+            expect.objectContaining({
+              [COMPLETION_STATUS.paymentFailed]: true
+            })
+          )
+        })
+
+        it('updates payment journal as failed', () => {
+          expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('test-id', {
+            paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
           })
         })
-        const h = getMockResponseToolkit()
 
-        getPaymentStatus.mockResolvedValue({
-          state: { status: 'failed', finished: true, code }
+        it('redirects to payment failed page', () => {
+          expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_FAILED.uri)
         })
-
-        await agreedHandler(request, h)
-
-        expect(mockStatusSet).toHaveBeenCalledWith(
-          expect.objectContaining({
-            [COMPLETION_STATUS.paymentFailed]: true
-          })
-        )
-        expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('test-id', {
-          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
-        })
-        expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_FAILED.uri)
       })
 
-      it('redirects to payment failed page when status is error', async () => {
-        const mockStatusSet = jest.fn(async () => {})
-        const request = getMockRequest({
-          cache: () => ({
-            helpers: {
-              transaction: {
-                get: jest.fn(async () => ({
-                  id: 'test-id',
-                  cost: 100,
-                  payment: { payment_id: 'pay123' }
-                })),
-                set: jest.fn(async () => {})
-              },
-              status: {
-                get: jest.fn(async () => ({
-                  [COMPLETION_STATUS.agreed]: true,
-                  [COMPLETION_STATUS.posted]: true,
-                  [COMPLETION_STATUS.paymentCreated]: true
-                })),
-                set: mockStatusSet
+      describe('when status is error', () => {
+        let mockStatusSet, request, h
+
+        beforeEach(async () => {
+          mockStatusSet = jest.fn(async () => {})
+          request = getMockRequest({
+            cache: () => ({
+              helpers: {
+                transaction: {
+                  get: jest.fn(async () => ({
+                    id: 'test-id',
+                    cost: 100,
+                    payment: { payment_id: 'pay123' }
+                  })),
+                  set: jest.fn(async () => {})
+                },
+                status: {
+                  get: jest.fn(async () => ({
+                    [COMPLETION_STATUS.agreed]: true,
+                    [COMPLETION_STATUS.posted]: true,
+                    [COMPLETION_STATUS.paymentCreated]: true
+                  })),
+                  set: mockStatusSet
+                }
               }
-            }
+            })
           })
-        })
-        const h = getMockResponseToolkit()
+          h = getMockResponseToolkit()
 
-        getPaymentStatus.mockResolvedValue({
-          state: { status: 'error', finished: true, code: 'P0050' }
-        })
-
-        await agreedHandler(request, h)
-
-        expect(mockStatusSet).toHaveBeenCalledWith(
-          expect.objectContaining({
-            [COMPLETION_STATUS.paymentFailed]: true
+          getPaymentStatus.mockResolvedValue({
+            state: { status: 'error', finished: true, code: 'P0050' }
           })
-        )
-        expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_FAILED.uri)
+
+          await agreedHandler(request, h)
+        })
+
+        it('sets paymentFailed status flag', () => {
+          expect(mockStatusSet).toHaveBeenCalledWith(
+            expect.objectContaining({
+              [COMPLETION_STATUS.paymentFailed]: true
+            })
+          )
+        })
+
+        it('redirects to payment failed page', () => {
+          expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_FAILED.uri)
+        })
       })
     })
   })
 
   describe('recurring payment flow', () => {
-    it('creates recurring payment agreement before posting to sales API', async () => {
-      const mockStatusSet = jest.fn(async () => {})
-      const mockTransactionSet = jest.fn(async () => {})
-      const request = getMockRequest({
+    let mockStatusSet, mockTransactionSet, request, h
+
+    beforeEach(async () => {
+      mockStatusSet = jest.fn(async () => {})
+      mockTransactionSet = jest.fn(async () => {})
+      request = getMockRequest({
         cache: () => ({
           helpers: {
             transaction: {
@@ -549,7 +619,7 @@ describe('agreed-handler', () => {
           }
         })
       })
-      const h = getMockResponseToolkit()
+      h = getMockResponseToolkit()
 
       prepareRecurringPaymentAgreement.mockResolvedValue({})
       sendRecurringPayment.mockResolvedValue({ agreement_id: 'agr123' })
@@ -566,48 +636,68 @@ describe('agreed-handler', () => {
       salesApi.getPaymentJournal.mockResolvedValue(false)
 
       await agreedHandler(request, h)
+    })
 
+    it('sends recurring payment agreement', () => {
       expect(sendRecurringPayment).toHaveBeenCalled()
+    })
+
+    it('sets recurringAgreement status flag', () => {
       expect(mockStatusSet).toHaveBeenCalledWith(
         expect.objectContaining({
           [COMPLETION_STATUS.recurringAgreement]: true
         })
       )
+    })
+
+    it('stores agreement ID in transaction', () => {
       expect(mockTransactionSet).toHaveBeenCalledWith(
         expect.objectContaining({
           agreementId: 'agr123'
         })
       )
+    })
+
+    it('sends payment with recurring flag', () => {
       expect(sendPayment).toHaveBeenCalledWith(expect.anything(), true)
     })
   })
 
   describe('idempotency', () => {
-    it('redirects to order complete when already finalised', async () => {
-      const request = getMockRequest({
-        cache: () => ({
-          helpers: {
-            transaction: {
-              get: jest.fn(async () => ({ id: 'test-id', cost: 0, permissions: [] })),
-              set: jest.fn(async () => {})
-            },
-            status: {
-              get: jest.fn(async () => ({
-                [COMPLETION_STATUS.agreed]: true,
-                [COMPLETION_STATUS.posted]: true,
-                [COMPLETION_STATUS.finalised]: true
-              })),
-              set: jest.fn(async () => {})
+    describe('when already finalised', () => {
+      let request, h
+
+      beforeEach(async () => {
+        request = getMockRequest({
+          cache: () => ({
+            helpers: {
+              transaction: {
+                get: jest.fn(async () => ({ id: 'test-id', cost: 0, permissions: [] })),
+                set: jest.fn(async () => {})
+              },
+              status: {
+                get: jest.fn(async () => ({
+                  [COMPLETION_STATUS.agreed]: true,
+                  [COMPLETION_STATUS.posted]: true,
+                  [COMPLETION_STATUS.finalised]: true
+                })),
+                set: jest.fn(async () => {})
+              }
             }
-          }
+          })
         })
+        h = getMockResponseToolkit()
+
+        await agreedHandler(request, h)
       })
-      const h = getMockResponseToolkit()
 
-      await agreedHandler(request, h)
+      it('does not call finaliseTransaction', () => {
+        expect(salesApi.finaliseTransaction).not.toHaveBeenCalled()
+      })
 
-      expect(salesApi.finaliseTransaction).not.toHaveBeenCalled()
-      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
+      it('redirects to order complete', () => {
+        expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
+      })
     })
   })
 
@@ -632,8 +722,8 @@ describe('agreed-handler', () => {
       })
       const h = getMockResponseToolkit()
 
-      prepareApiTransactionPayload.mockResolvedValue({})
-      salesApi.createTransaction.mockRejectedValue(new Error('API Error'))
+      prepareApiTransactionPayload.mockResolvedValueOnce({})
+      salesApi.createTransaction.mockRejectedValueOnce(new Error('API Error'))
 
       await expect(agreedHandler(request, h)).rejects.toThrow('API Error')
     })
@@ -663,7 +753,7 @@ describe('agreed-handler', () => {
       })
       const h = getMockResponseToolkit()
 
-      getPaymentStatus.mockResolvedValue({
+      getPaymentStatus.mockResolvedValueOnce({
         state: { status: 'started', finished: false }
       })
 
