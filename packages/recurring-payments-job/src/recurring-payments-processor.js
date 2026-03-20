@@ -9,6 +9,8 @@ const debug = db('recurring-payments:processor')
 const SIGINT_CODE = 130
 const SIGTERM_CODE = 137
 const PAYMENT_STATUS_DELAY = 60000
+const MIN_CLIENT_SUCCESS = 200
+const MAX_CLIENT_SUCCESS = 299
 const MIN_CLIENT_ERROR = 400
 const MAX_CLIENT_ERROR = 499
 const MIN_SERVER_ERROR = 500
@@ -16,6 +18,7 @@ const MAX_SERVER_ERROR = 599
 
 const isClientError = code => code >= MIN_CLIENT_ERROR && code <= MAX_CLIENT_ERROR
 const isServerError = code => code >= MIN_SERVER_ERROR && code <= MAX_SERVER_ERROR
+const isSuccessfulResponse = code => code >= MIN_CLIENT_SUCCESS && code <= MAX_CLIENT_SUCCESS
 
 export const execute = async () => {
   airbrake.initialise()
@@ -100,6 +103,19 @@ const requestPayments = async dueRCPayments => {
     queueRecurringPayment(preparePayment(agreementId, transaction), batcher)
   }
   await batcher.fetch()
+
+  for (let x = 0; x < paymentsToRequest.length; x++) {
+    const { value: paymentToRequest } = paymentsToRequest[x]
+    if (isSuccessfulResponse(batcher.responses[x].status)) {
+      const paymentResponse = await batcher.responses[x].json()
+      await salesApi.createPaymentJournal(paymentToRequest.transaction.id, {
+        paymentReference: paymentResponse.payment_id,
+        paymentTimestamp: paymentResponse.created_date,
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })  
+    }
+  }
+
   // to do next - batcher responses actually returns the response, but not the value, so it may be an HTTPResponse or it may be an error
   // const successfulPaymentRequests = batcher.responses.filter(r => r.status) // await Promise.allSettled(paymentsToRequest.map({ agreementId, transaction, duePayment } => takeRecurringPayment(agreementId, transaction, batcher)))
   // const payments = paymentRequestResults.filter(prr => prr.status === 'fulfilled').map(p => p.value)
@@ -199,14 +215,15 @@ const checkPaymentStatuses = async payments => {
   for (const payment of payments) {
     queueRecurringPaymentStatusCheck(payment.payment_id, batcher)
   }
+  await batcher.fetch()
+  batcher.responses.forEach(async (response, index) => {
+    const payment = await response.json()
+    debug(`Payment status for ${payment.payment_id}: ${payment.state.status}`)
+  })
 }
 
 const processRecurringPaymentStatus = async payment => {
   //   try {
-  const batcher = new HTTPRequestBatcher({
-    batchSize: Number(process.env.GOV_PAY_GET_BATCH_SIZE),
-    delay: Number(process.env.GOV_PAY_BATCH_DELAY_MS)
-  })
   const {
     state: { status }
   } = await getPaymentStatus(payment.payment_id)
