@@ -1,4 +1,13 @@
 
+## v1.69.0-rc.1 (2026-03-20)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#2331](https://github.com/DEFRA/rod-licensing/pull/2331) Add GetParameterCommand to connectors-lib ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.69.0-rc.0 (2026-03-20)
 
 #### :bug: Bug Fix
