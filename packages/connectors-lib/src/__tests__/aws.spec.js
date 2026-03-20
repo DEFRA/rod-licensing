@@ -27,6 +27,16 @@ describe('AWS Special cases', () => {
     expect(ListObjectsV2Command).toBeDefined()
   })
 
+  it('exports GetObjectCommand from S3 SDK', () => {
+    const { GetObjectCommand } = AWS()
+    expect(GetObjectCommand).toBeDefined()
+  })
+
+  it('exports GetParameterCommand from ClientSSM SDK', () => {
+    const { GetParameterCommand } = AWS()
+    expect(GetParameterCommand).toBeDefined()
+  })
+
   describe('AWS connectors for S3Client', () => {
     it('has region set to eu-west-2', async () => {
       const { s3 } = AWS()
