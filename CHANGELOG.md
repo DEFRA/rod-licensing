@@ -1,4 +1,103 @@
 
+## v1.69.0-rc.0 (2026-03-20)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2330](https://github.com/DEFRA/rod-licensing/pull/2330) Reinstate upgrade to node 22 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.68.0-rc.11 (2026-03-16)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2320](https://github.com/DEFRA/rod-licensing/pull/2320) Senior licences are being formatted incorrectly (with F not S) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.68.0-rc.10 (2026-03-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2317](https://github.com/DEFRA/rod-licensing/pull/2317) GAFL: DEV - Implement OS API Postcode Lookup & Filter by House Name/Number (No Pagination) ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.68.0-rc.9 (2026-03-12)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#2323](https://github.com/DEFRA/rod-licensing/pull/2323) Add AWS connector to interact with Parameter Store ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.68.0-rc.8 (2026-03-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2324](https://github.com/DEFRA/rod-licensing/pull/2324) Amend bulletpoints on cookies page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.68.0-rc.6 (2026-03-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2319](https://github.com/DEFRA/rod-licensing/pull/2319) Allowing guidance links to be accessed out of sessions ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.68.0-rc.5 (2026-03-05)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2316](https://github.com/DEFRA/rod-licensing/pull/2316) Add RCR CRM Activity to dynamics-lib ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+
+## v1.68.0-rc.4 (2026-03-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2322](https://github.com/DEFRA/rod-licensing/pull/2322) GAFL: Dev – No Description List ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.68.0-rc.2 (2026-03-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2310](https://github.com/DEFRA/rod-licensing/pull/2310) Refactor easy renewals to use new renewals data service ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.68.0-rc.0 (2026-02-25)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2314](https://github.com/DEFRA/rod-licensing/pull/2314) RCP Cancellation journey - licence should be in caps ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.68.0-rc.11 (2026-03-16)
 
 #### :bug: Bug Fix
