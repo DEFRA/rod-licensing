@@ -44,7 +44,9 @@ const fetchPage = async url => {
  * @returns {Array} Filtered results
  */
 const filterByPremises = (results, premises) => {
-  if (!results || !premises) return results || []
+  if (!results || !premises) {
+    return results || []
+  }
 
   const normalizedPremises = premises.trim().replaceAll(/\s+/g, ' ').toLowerCase()
 
@@ -76,6 +78,42 @@ const mapResults = results => {
   }))
 }
 
+/**
+ * Fetch additional pages when pagination is needed
+ * @param {string} postcode - The postcode being searched
+ * @param {number} totalresults - Total results available from API
+ * @param {number} maxresults - Maximum results per page
+ * @param {number} cap - Maximum results to fetch (configurable limit)
+ * @returns {Promise<object>} Object containing additional results, failed pages, and page count
+ */
+const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => {
+  const effectiveTotal = Math.min(totalresults, cap)
+  const offsets = Array.from(
+    { length: Math.ceil((effectiveTotal - maxresults) / maxresults) },
+    (_, i) => maxresults + i * maxresults
+  ).filter(offset => offset < effectiveTotal)
+
+  if (offsets.length === 0) {
+    return { results: [], failedPages: [], pagesFetched: 0 }
+  }
+
+  const pageResults = await Promise.allSettled(offsets.map(offset => fetchPage(buildUrl(postcode, offset))))
+
+  const additionalResults = pageResults.filter(r => r.status === 'fulfilled' && r.value.results).flatMap(r => r.value.results)
+
+  const failedPages = pageResults
+    .map((result, idx) => ({ result, offset: offsets[idx] }))
+    .filter(({ result }) => result.status === 'rejected')
+    .map(({ result, offset }) => ({
+      offset,
+      error: result.reason?.message || 'Unknown error'
+    }))
+
+  const pagesFetched = pageResults.filter(r => r.status === 'fulfilled').length
+
+  return { results: additionalResults, failedPages, pagesFetched }
+}
+
 export default async (premises, postcode) => {
   const startTime = Date.now()
   const cap = parseInt(process.env.ADDRESS_LOOKUP_MAX_RESULTS) || ADDRESS_LOOKUP_MAX_RESULTS_DEFAULT
@@ -90,37 +128,25 @@ export default async (premises, postcode) => {
     return null
   })
 
-  if (!firstPage) return []
+  if (!firstPage) {
+    return []
+  }
 
   const { totalresults, maxresults } = firstPage.header || {}
   const needsPagination = totalresults && maxresults && totalresults > maxresults
 
-  // Calculate offsets for additional pages
-  const effectiveTotal = needsPagination ? Math.min(totalresults, cap) : 0
-  const offsets = needsPagination
-    ? Array.from({ length: Math.ceil((effectiveTotal - maxresults) / maxresults) }, (_, i) => maxresults + i * maxresults).filter(
-      offset => offset < effectiveTotal
-    )
-    : []
-
-  // Fetch all additional pages in parallel
-  const pageResults = offsets.length > 0 ? await Promise.allSettled(offsets.map(offset => fetchPage(buildUrl(postcode, offset)))) : []
-
-  // Extract successful page results
-  const additionalResults = pageResults.filter(r => r.status === 'fulfilled' && r.value.results).flatMap(r => r.value.results)
-
-  // Extract failed pages
-  const failedPages = pageResults
-    .map((result, idx) => ({ result, offset: offsets[idx] }))
-    .filter(({ result }) => result.status === 'rejected')
-    .map(({ result, offset }) => ({
-      offset,
-      error: result.reason?.message || 'Unknown error'
-    }))
+  // Fetch additional pages if needed
+  const {
+    results: additionalResults,
+    failedPages,
+    pagesFetched: additionalPagesFetched
+  } = needsPagination
+    ? await fetchAdditionalPages(postcode, totalresults, maxresults, cap)
+    : { results: [], failedPages: [], pagesFetched: 0 }
 
   // Aggregate all results
   const allResults = [...(firstPage.results || []), ...additionalResults]
-  const pagesFetched = 1 + pageResults.filter(r => r.status === 'fulfilled').length
+  const pagesFetched = 1 + additionalPagesFetched
 
   // Log partial failures
   if (failedPages.length > 0) {

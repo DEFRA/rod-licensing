@@ -529,6 +529,59 @@ describe('address-lookup-service', () => {
 
       expect(results).toEqual([])
     })
+
+    it('returns all results when premises parameter is null', async () => {
+      fetch.mockResolvedValueOnce({
+        json: () => ({
+          results: [
+            {
+              DPA: {
+                ADDRESS: '1 TEST STREET, BRISTOL, BS1 1AA',
+                POSTCODE: 'BS1 1AA',
+                BUILDING_NAME: '1 TEST STREET',
+                POST_TOWN: 'BRISTOL',
+                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+              }
+            }
+          ]
+        })
+      })
+
+      const results = await addressLookupService(null, 'BS1 1AA')
+
+      expect(results).toHaveLength(1)
+    })
+
+    it('returns all results when premises parameter is undefined', async () => {
+      fetch.mockResolvedValueOnce({
+        json: () => ({
+          results: [
+            {
+              DPA: {
+                ADDRESS: '1 TEST STREET, BRISTOL, BS1 1AA',
+                POSTCODE: 'BS1 1AA',
+                BUILDING_NAME: '1 TEST STREET',
+                POST_TOWN: 'BRISTOL',
+                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+              }
+            },
+            {
+              DPA: {
+                ADDRESS: '2 TEST STREET, BRISTOL, BS1 1AA',
+                POSTCODE: 'BS1 1AA',
+                BUILDING_NAME: '2 TEST STREET',
+                POST_TOWN: 'BRISTOL',
+                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+              }
+            }
+          ]
+        })
+      })
+
+      const results = await addressLookupService(undefined, 'BS1 1AA')
+
+      expect(results).toHaveLength(2)
+    })
   })
 
   describe('handles missing optional fields', () => {
@@ -738,6 +791,26 @@ describe('address-lookup-service', () => {
 
         expect(consoleWarnSpy).not.toHaveBeenCalled()
         consoleWarnSpy.mockRestore()
+      })
+
+      it('returns only first page results when cap is less than maxresults', async () => {
+        process.env.ADDRESS_LOOKUP_MAX_RESULTS = '50'
+        fetch.mockResolvedValueOnce(createMockResponse(200, 100, 0, 100))
+
+        const results = await addressLookupService('test', 'BS1 1AA')
+
+        expect(results).toHaveLength(100)
+        delete process.env.ADDRESS_LOOKUP_MAX_RESULTS
+      })
+
+      it('does not fetch additional pages when cap is less than maxresults', async () => {
+        process.env.ADDRESS_LOOKUP_MAX_RESULTS = '50'
+        fetch.mockResolvedValueOnce(createMockResponse(200, 100, 0, 100))
+
+        await addressLookupService('test', 'BS1 1AA')
+
+        expect(fetch).toHaveBeenCalledTimes(1)
+        delete process.env.ADDRESS_LOOKUP_MAX_RESULTS
       })
     })
 
