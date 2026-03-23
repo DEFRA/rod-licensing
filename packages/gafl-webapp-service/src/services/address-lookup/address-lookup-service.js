@@ -114,9 +114,52 @@ const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => 
   return { results: additionalResults, failedPages, pagesFetched }
 }
 
+/**
+ * Process and aggregate results from multiple pages
+ * @param {object} firstPage - First page response
+ * @param {Array} additionalResults - Results from additional pages
+ * @param {Array} failedPages - Failed page information
+ * @param {number} additionalPagesFetched - Count of additional pages fetched
+ * @param {string} postcode - Postcode being searched
+ * @param {number} cap - Maximum results cap
+ * @param {number} startTime - Start timestamp for telemetry
+ * @returns {Array} Aggregated results
+ */
+const processResults = (firstPage, additionalResults, failedPages, additionalPagesFetched, postcode, cap, startTime) => {
+  const allResults = [...(firstPage.results || []), ...additionalResults]
+  const pagesFetched = 1 + additionalPagesFetched
+  const { totalresults, maxresults } = firstPage.header || {}
+
+  if (failedPages.length > 0) {
+    console.error(`Failed to fetch ${failedPages.length} pages for postcode ${postcode}`, {
+      offsets: failedPages.map(f => f.offset),
+      errors: failedPages.map(f => f.error)
+    })
+  }
+
+  if (totalresults > cap) {
+    console.warn(
+      `Postcode ${postcode}: totalresults ${totalresults} exceeds cap ${cap}, retrieved ${pagesFetched} pages (${allResults.length} addresses)`
+    )
+  }
+
+  const duration = Date.now() - startTime
+  debug({
+    postcode,
+    totalresults: totalresults || allResults.length,
+    maxresults: maxresults || 100,
+    pagesFetched,
+    aggregatedCount: allResults.length,
+    failedPages: failedPages.length,
+    duration: `${duration}ms`
+  })
+
+  return allResults
+}
+
 export default async (premises, postcode) => {
   const startTime = Date.now()
-  const cap = parseInt(process.env.ADDRESS_LOOKUP_MAX_RESULTS) || ADDRESS_LOOKUP_MAX_RESULTS_DEFAULT
+  const cap = Number.parseInt(process.env.ADDRESS_LOOKUP_MAX_RESULTS) || ADDRESS_LOOKUP_MAX_RESULTS_DEFAULT
 
   // Fetch first page
   const firstUrl = buildUrl(postcode, 0)
@@ -144,42 +187,10 @@ export default async (premises, postcode) => {
     ? await fetchAdditionalPages(postcode, totalresults, maxresults, cap)
     : { results: [], failedPages: [], pagesFetched: 0 }
 
-  // Aggregate all results
-  const allResults = [...(firstPage.results || []), ...additionalResults]
-  const pagesFetched = 1 + additionalPagesFetched
-
-  // Log partial failures
-  if (failedPages.length > 0) {
-    console.error(`Failed to fetch ${failedPages.length} pages for postcode ${postcode}`, {
-      offsets: failedPages.map(f => f.offset),
-      errors: failedPages.map(f => f.error)
-    })
-  }
-
-  // Log if cap was reached
-  if (totalresults > cap) {
-    console.warn(
-      `Postcode ${postcode}: totalresults ${totalresults} exceeds cap ${cap}, retrieved ${pagesFetched} pages (${allResults.length} addresses)`
-    )
-  }
-
-  // Filter aggregated results
+  const allResults = processResults(firstPage, additionalResults, failedPages, additionalPagesFetched, postcode, cap, startTime)
   const filteredResults = filterByPremises(allResults, premises)
 
-  // Telemetry logging
-  const duration = Date.now() - startTime
-  debug({
-    postcode,
-    premises: premises || null,
-    totalresults: totalresults || allResults.length,
-    maxresults: maxresults || 100,
-    pagesFetched,
-    aggregatedCount: allResults.length,
-    filteredCount: filteredResults.length,
-    failedPages: failedPages.length,
-    duration: `${duration}ms`
-  })
+  debug({ premises: premises || null, filteredCount: filteredResults.length })
 
-  // Map and return results
   return mapResults(filteredResults)
 }
