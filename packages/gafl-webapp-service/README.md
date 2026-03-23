@@ -24,6 +24,7 @@ To run from this directory:
 | ADDRESS_LOOKUP_URL                | OS Places API endpoint URL                                       |    no    | https://api.os.uk/search/places/v1/postcode               |                               |
 | ADDRESS_LOOKUP_KEY                | The API key required by OS places                                |    no    |                                                           |                               |
 | ADDRESS_LOOKUP_TIMEOUT_MS         | The timeout in milliseconds for the lookup                       |    no    | 10000                                                     |                               |
+| ADDRESS_LOOKUP_MAX_RESULTS        | Maximum results to fetch from OS API (pagination cap)            |    no    | 5000                                                      |                               |
 | SALES_API_URL                     | The address of the sales api                                     |    no    | http://0.0.0.0:4000                                       |                               |
 | SALES_API_TIMEOUT_MS              | The timeout in milliseconds requests to the api                  |    no    | 10000                                                     |                               |
 | GOV_PAY_API_URL                   | The GOV.UK Pay API base url                                      |    no    | Yes                                                       |                               |
