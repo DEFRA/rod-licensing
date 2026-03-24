@@ -2,7 +2,7 @@ import updateTransaction from '../update-transaction.js'
 import { COMPLETION_STATUS } from '../../../../constants.js'
 
 describe('payment failed update-transaction', () => {
-  it.each([
+  const testScenarios = [
     [
       'resets paymentCreated and paymentFailed flags to enable retry',
       {
@@ -29,9 +29,11 @@ describe('payment failed update-transaction', () => {
         [COMPLETION_STATUS.paymentFailed]: false
       }
     ]
-  ])('%s', async (description, initialStatus, expectedStatus) => {
+  ]
+
+  const executeUpdateTransaction = async initialStatus => {
     const mockSet = jest.fn()
-    const mockGet = jest.fn().mockResolvedValue(initialStatus)
+    const mockGet = jest.fn().mockResolvedValueOnce(initialStatus)
 
     const request = {
       cache: () => ({
@@ -45,8 +47,16 @@ describe('payment failed update-transaction', () => {
     }
 
     await updateTransaction(request)
+    return { mockGet, mockSet }
+  }
 
+  it.each(testScenarios)('%s - calls get once', async (description, initialStatus) => {
+    const { mockGet } = await executeUpdateTransaction(initialStatus)
     expect(mockGet).toHaveBeenCalledTimes(1)
+  })
+
+  it.each(testScenarios)('%s - sets correct status', async (description, initialStatus, expectedStatus) => {
+    const { mockSet } = await executeUpdateTransaction(initialStatus)
     expect(mockSet).toHaveBeenCalledWith(expectedStatus)
   })
 })

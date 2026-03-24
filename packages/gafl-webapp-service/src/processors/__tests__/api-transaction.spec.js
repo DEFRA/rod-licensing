@@ -138,7 +138,7 @@ describe('prepareApiTransactionPayload', () => {
     }
   )
 
-  it.each([
+  const concessionPriorityScenarios = [
     [
       'disabled over senior',
       ['hasDisabled', 'hasSenior'],
@@ -156,15 +156,29 @@ describe('prepareApiTransactionPayload', () => {
       }
     ],
     ['senior over junior', ['hasSenior', 'hasJunior'], 'd0ece997-ef65-e611-80dc-c4346bad4004', {}]
-  ])('prioritizes %s when both apply', async (description, helperMethods, expectedId, requestOverrides) => {
+  ]
+
+  const prepareConcessionPriority = async (helperMethods, requestOverrides) => {
     helperMethods.forEach(method => concessionHelper[method].mockReturnValue(true))
-
     const mockRequest = getMockRequest(requestOverrides)
-    const payload = await prepareApiTransactionPayload(mockRequest)
+    return prepareApiTransactionPayload(mockRequest)
+  }
 
-    expect(payload.permissions[0].concessions).toHaveLength(1)
-    expect(payload.permissions[0].concessions[0].id).toBe(expectedId)
-  })
+  it.each(concessionPriorityScenarios)(
+    'prioritizes %s when both apply - adds one concession',
+    async (description, helperMethods, expectedId, requestOverrides) => {
+      const payload = await prepareConcessionPriority(helperMethods, requestOverrides)
+      expect(payload.permissions[0].concessions).toHaveLength(1)
+    }
+  )
+
+  it.each(concessionPriorityScenarios)(
+    'prioritizes %s when both apply - uses correct id',
+    async (description, helperMethods, expectedId, requestOverrides) => {
+      const payload = await prepareConcessionPriority(helperMethods, requestOverrides)
+      expect(payload.permissions[0].concessions[0].id).toBe(expectedId)
+    }
+  )
 
   it('does not add concessions when none apply', async () => {
     const mockRequest = getMockRequest()
