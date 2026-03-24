@@ -32,7 +32,6 @@ export default {
         LOCAL_CUSTODIAN_CODE: 1234,
         LOCAL_CUSTODIAN_CODE_DESCRIPTION: 'BRISTOL CITY COUNCIL',
         COUNTRY_CODE: 'E',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England',
         POSTAL_ADDRESS_CODE: 'D',
         POSTAL_ADDRESS_CODE_DESCRIPTION: 'A record which is linked to PAF',
         BLPU_STATE_CODE: '2',

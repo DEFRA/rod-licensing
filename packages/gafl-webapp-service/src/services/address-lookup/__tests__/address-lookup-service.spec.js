@@ -49,8 +49,7 @@ describe('address-lookup-service', () => {
                   THOROUGHFARE_NAME: thoroughfare,
                   DEPENDENT_LOCALITY: locality,
                   POST_TOWN: town,
-                  COUNTRY_CODE_DESCRIPTION: country
-                }
+              }
               }
             ]
           })
@@ -81,7 +80,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NAME: '1 SARK TOWER',
                 THOROUGHFARE_NAME: 'EREBUS DRIVE',
                 POST_TOWN: 'LONDON',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -91,7 +89,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NAME: '10 SARK TOWER',
                 THOROUGHFARE_NAME: 'EREBUS DRIVE',
                 POST_TOWN: 'LONDON',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -125,7 +122,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NAME: 'PEEL PARK QUARTER',
                 THOROUGHFARE_NAME: 'UNIVERSITY ROAD',
                 POST_TOWN: 'SALFORD',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -136,7 +132,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NAME: 'PEEL PARK QUARTER',
                 THOROUGHFARE_NAME: 'UNIVERSITY ROAD',
                 POST_TOWN: 'SALFORD',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -169,7 +164,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NUMBER: '14',
                 THOROUGHFARE_NAME: 'CHURCH STREET',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -179,7 +173,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NUMBER: '15',
                 THOROUGHFARE_NAME: 'CHURCH STREET',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -212,7 +205,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NAME: 'THE BARN',
                 ORGANISATION_NAME: 'ROSE FARM',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -222,7 +214,6 @@ describe('address-lookup-service', () => {
                 BUILDING_NAME: 'STABLE COTTAGE',
                 ORGANISATION_NAME: 'BLUE MEADOW',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -254,7 +245,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: 'THE BARN',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -276,7 +266,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '10 SARK TOWER',
                 POST_TOWN: 'LONDON',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -301,7 +290,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '1 SARK TOWER',
                 POST_TOWN: 'LONDON',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -310,7 +298,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '10 SARK TOWER',
                 POST_TOWN: 'LONDON',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -351,7 +338,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '1 SARK TOWER',
                 POST_TOWN: 'LONDON',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -373,7 +359,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: '1 ROSE FARM COTTAGES',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -382,7 +367,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: '1 SOUTH VIEW',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -391,7 +375,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: '2 ROSE FARM COTTAGES',
                 POST_TOWN: 'YORK',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -432,7 +415,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: 'THE BARN',
                 POST_TOWN: 'BRISTOL',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -464,7 +446,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: 'THE  BARN',
                 POST_TOWN: 'BRISTOL',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -496,7 +477,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: 'THE   OLD   BARN',
                 POST_TOWN: 'BRISTOL',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -540,7 +520,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: '1 TEST STREET',
                 POST_TOWN: 'BRISTOL',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -549,7 +528,17 @@ describe('address-lookup-service', () => {
 
       const results = await addressLookupService(null, 'BS1 1AA')
 
-      expect(results).toHaveLength(1)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: '1 test street, bristol, BS1 1AA',
+          premises: '1 TEST STREET',
+          street: '',
+          locality: '',
+          town: 'BRISTOL',
+          postcode: 'BS1 1AA'
+        }
+      ])
     })
 
     it('returns all results when premises parameter is undefined', async () => {
@@ -562,7 +551,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: '1 TEST STREET',
                 POST_TOWN: 'BRISTOL',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             },
             {
@@ -571,7 +559,6 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: '2 TEST STREET',
                 POST_TOWN: 'BRISTOL',
-                COUNTRY_CODE_DESCRIPTION: 'This record is within England'
               }
             }
           ]
@@ -580,7 +567,26 @@ describe('address-lookup-service', () => {
 
       const results = await addressLookupService(undefined, 'BS1 1AA')
 
-      expect(results).toHaveLength(2)
+      expect(results).toEqual([
+        {
+          id: 0,
+          address: '1 test street, bristol, BS1 1AA',
+          premises: '1 TEST STREET',
+          street: '',
+          locality: '',
+          town: 'BRISTOL',
+          postcode: 'BS1 1AA'
+        },
+        {
+          id: 1,
+          address: '2 test street, bristol, BS1 1AA',
+          premises: '2 TEST STREET',
+          street: '',
+          locality: '',
+          town: 'BRISTOL',
+          postcode: 'BS1 1AA'
+        }
+      ])
     })
   })
 
@@ -589,9 +595,9 @@ describe('address-lookup-service', () => {
       [
         'DEPENDENT_LOCALITY',
         'locality',
-        { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }
+        { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL' }
       ],
-      ['POST_TOWN', 'town', { BUILDING_NAME: '1 MAIN STREET', COUNTRY_CODE_DESCRIPTION: 'This record is within England' }]
+      ['POST_TOWN', 'town', { BUILDING_NAME: '1 MAIN STREET' }]
     ])('returns empty string when %s is missing', async (missingField, resultProperty, dpaData) => {
       fetch.mockResolvedValueOnce({
         json: () => ({

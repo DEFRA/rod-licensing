@@ -21,7 +21,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -32,7 +31,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -43,7 +41,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -54,7 +51,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -65,7 +61,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -76,7 +71,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -86,7 +80,6 @@ export default {
         BUILDING_NAME: '15 HOWECROFT COURT',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -98,7 +91,6 @@ export default {
         DEPENDENT_LOCALITY: 'Sneyd Park',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -109,7 +101,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -120,7 +111,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -131,7 +121,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -142,7 +131,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -153,7 +141,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -164,7 +151,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -175,7 +161,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -186,7 +171,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -197,7 +181,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -208,7 +191,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -219,7 +201,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -230,7 +211,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -241,7 +221,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -252,7 +231,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -263,7 +241,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -274,7 +251,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -285,7 +261,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -296,7 +271,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -307,7 +281,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -318,7 +291,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -329,7 +301,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     },
     {
@@ -340,7 +311,6 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
         POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
       }
     }
   ]

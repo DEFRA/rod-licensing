@@ -6,10 +6,10 @@ const debug = db('webapp:address-lookup-service')
 /**
  * Build URL for OS Places API with optional offset
  * @param {string} postcode - The postcode to search
- * @param {number} offset - Optional offset for pagination
+ * @param {number} offset - Offset for pagination
  * @returns {string} The complete URL
  */
-const buildUrl = (postcode, offset = 0) => {
+const buildUrl = (postcode, offset) => {
   const url = new URL(process.env.ADDRESS_LOOKUP_URL)
   const params = new URLSearchParams({
     postcode: postcode,
@@ -88,6 +88,9 @@ const mapResults = results => {
  */
 const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => {
   const effectiveTotal = Math.min(totalresults, cap)
+  
+  // Calculate offsets for additional pages (first page already fetched at offset 0)
+  // Example: if effectiveTotal=250 and maxresults=100, generates [100, 200] to fetch pages 2 and 3
   const offsets = Array.from(
     { length: Math.ceil((effectiveTotal - maxresults) / maxresults) },
     (_, i) => maxresults + i * maxresults
