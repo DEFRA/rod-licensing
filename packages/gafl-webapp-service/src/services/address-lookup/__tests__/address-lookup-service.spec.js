@@ -48,8 +48,8 @@ describe('address-lookup-service', () => {
                   BUILDING_NAME: buildingName,
                   THOROUGHFARE_NAME: thoroughfare,
                   DEPENDENT_LOCALITY: locality,
-                  POST_TOWN: town,
-              }
+                  POST_TOWN: town
+                }
               }
             ]
           })
@@ -79,7 +79,7 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '1 SARK TOWER',
                 THOROUGHFARE_NAME: 'EREBUS DRIVE',
-                POST_TOWN: 'LONDON',
+                POST_TOWN: 'LONDON'
               }
             },
             {
@@ -88,7 +88,7 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '10 SARK TOWER',
                 THOROUGHFARE_NAME: 'EREBUS DRIVE',
-                POST_TOWN: 'LONDON',
+                POST_TOWN: 'LONDON'
               }
             }
           ]
@@ -121,7 +121,7 @@ describe('address-lookup-service', () => {
                 SUB_BUILDING_NAME: 'FLAT 1-1 LOWRY 1',
                 BUILDING_NAME: 'PEEL PARK QUARTER',
                 THOROUGHFARE_NAME: 'UNIVERSITY ROAD',
-                POST_TOWN: 'SALFORD',
+                POST_TOWN: 'SALFORD'
               }
             },
             {
@@ -131,7 +131,7 @@ describe('address-lookup-service', () => {
                 SUB_BUILDING_NAME: 'FLAT 1-2 LOWRY 1',
                 BUILDING_NAME: 'PEEL PARK QUARTER',
                 THOROUGHFARE_NAME: 'UNIVERSITY ROAD',
-                POST_TOWN: 'SALFORD',
+                POST_TOWN: 'SALFORD'
               }
             }
           ]
@@ -163,7 +163,7 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO1 8BE',
                 BUILDING_NUMBER: '14',
                 THOROUGHFARE_NAME: 'CHURCH STREET',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             },
             {
@@ -172,7 +172,7 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO1 8BE',
                 BUILDING_NUMBER: '15',
                 THOROUGHFARE_NAME: 'CHURCH STREET',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             }
           ]
@@ -204,7 +204,7 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: 'THE BARN',
                 ORGANISATION_NAME: 'ROSE FARM',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             },
             {
@@ -213,7 +213,7 @@ describe('address-lookup-service', () => {
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: 'STABLE COTTAGE',
                 ORGANISATION_NAME: 'BLUE MEADOW',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             }
           ]
@@ -244,7 +244,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: 'THE BARN, YORK, YO60 7PD',
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: 'THE BARN',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             }
           ]
@@ -265,7 +265,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '10 SARK TOWER, LONDON, SE28 0GG',
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '10 SARK TOWER',
-                POST_TOWN: 'LONDON',
+                POST_TOWN: 'LONDON'
               }
             }
           ]
@@ -289,7 +289,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '1 SARK TOWER, LONDON, SE28 0GG',
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '1 SARK TOWER',
-                POST_TOWN: 'LONDON',
+                POST_TOWN: 'LONDON'
               }
             },
             {
@@ -297,7 +297,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '10 SARK TOWER, LONDON, SE28 0GG',
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '10 SARK TOWER',
-                POST_TOWN: 'LONDON',
+                POST_TOWN: 'LONDON'
               }
             }
           ]
@@ -337,7 +337,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '1 SARK TOWER, LONDON, SE28 0GG',
                 POSTCODE: 'SE28 0GG',
                 BUILDING_NAME: '1 SARK TOWER',
-                POST_TOWN: 'LONDON',
+                POST_TOWN: 'LONDON'
               }
             }
           ]
@@ -358,7 +358,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '1 ROSE FARM COTTAGES, YORK, YO60 7PD',
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: '1 ROSE FARM COTTAGES',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             },
             {
@@ -366,7 +366,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '1 SOUTH VIEW, YORK, YO60 7PD',
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: '1 SOUTH VIEW',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             },
             {
@@ -374,7 +374,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '2 ROSE FARM COTTAGES, YORK, YO60 7PD',
                 POSTCODE: 'YO60 7PD',
                 BUILDING_NAME: '2 ROSE FARM COTTAGES',
-                POST_TOWN: 'YORK',
+                POST_TOWN: 'YORK'
               }
             }
           ]
@@ -414,7 +414,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: 'THE BARN, MAIN STREET, BRISTOL, BS1 1AA',
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: 'THE BARN',
-                POST_TOWN: 'BRISTOL',
+                POST_TOWN: 'BRISTOL'
               }
             }
           ]
@@ -445,7 +445,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: 'THE  BARN, MAIN STREET, BRISTOL, BS1 1AA',
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: 'THE  BARN',
-                POST_TOWN: 'BRISTOL',
+                POST_TOWN: 'BRISTOL'
               }
             }
           ]
@@ -476,7 +476,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: 'THE   OLD   BARN, MAIN STREET, BRISTOL, BS1 1AA',
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: 'THE   OLD   BARN',
-                POST_TOWN: 'BRISTOL',
+                POST_TOWN: 'BRISTOL'
               }
             }
           ]
@@ -519,7 +519,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '1 TEST STREET, BRISTOL, BS1 1AA',
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: '1 TEST STREET',
-                POST_TOWN: 'BRISTOL',
+                POST_TOWN: 'BRISTOL'
               }
             }
           ]
@@ -550,7 +550,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '1 TEST STREET, BRISTOL, BS1 1AA',
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: '1 TEST STREET',
-                POST_TOWN: 'BRISTOL',
+                POST_TOWN: 'BRISTOL'
               }
             },
             {
@@ -558,7 +558,7 @@ describe('address-lookup-service', () => {
                 ADDRESS: '2 TEST STREET, BRISTOL, BS1 1AA',
                 POSTCODE: 'BS1 1AA',
                 BUILDING_NAME: '2 TEST STREET',
-                POST_TOWN: 'BRISTOL',
+                POST_TOWN: 'BRISTOL'
               }
             }
           ]
@@ -592,11 +592,7 @@ describe('address-lookup-service', () => {
 
   describe('handles missing optional fields', () => {
     it.each([
-      [
-        'DEPENDENT_LOCALITY',
-        'locality',
-        { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL' }
-      ],
+      ['DEPENDENT_LOCALITY', 'locality', { BUILDING_NAME: '1 MAIN STREET', POST_TOWN: 'BRISTOL' }],
       ['POST_TOWN', 'town', { BUILDING_NAME: '1 MAIN STREET' }]
     ])('returns empty string when %s is missing', async (missingField, resultProperty, dpaData) => {
       fetch.mockResolvedValueOnce({

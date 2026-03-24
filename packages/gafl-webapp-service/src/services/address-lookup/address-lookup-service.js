@@ -88,7 +88,7 @@ const mapResults = results => {
  */
 const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => {
   const effectiveTotal = Math.min(totalresults, cap)
-  
+
   // Calculate offsets for additional pages (first page already fetched at offset 0)
   // Example: if effectiveTotal=250 and maxresults=100, generates [100, 200] to fetch pages 2 and 3
   const offsets = Array.from(
