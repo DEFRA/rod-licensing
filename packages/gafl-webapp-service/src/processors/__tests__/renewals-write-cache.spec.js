@@ -263,6 +263,28 @@ describe('renewals-write-cache', () => {
       )
     })
 
+    it('should omit referenceNumber from concession proof when it is not present', async () => {
+      const setTransactionCache = jest.fn()
+      const preparedData = getPreparedPermissionData({
+        concessions: [
+          {
+            name: 'Senior',
+            id: 'senior-concession-id',
+            proof: {
+              type: 'No Proof'
+            }
+          }
+        ]
+      })
+      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
+      expect(setTransactionCache).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concessions: [{ type: 'Senior', proof: { type: 'No Proof' } }]
+        })
+      )
+    })
+
     it('should set renewal on the transaction cache', async () => {
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
