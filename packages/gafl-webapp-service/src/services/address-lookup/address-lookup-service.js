@@ -44,8 +44,8 @@ const fetchPage = async url => {
  * @returns {Array} Filtered results
  */
 const filterByPremises = (results, premises) => {
-  if (!results || !premises) {
-    return results || []
+  if (!premises) {
+    return results
   }
 
   const normalizedPremises = premises.trim().replaceAll(/\s+/g, ' ').toLowerCase()
