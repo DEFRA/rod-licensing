@@ -1,4 +1,13 @@
 
+## v1.69.0-rc.3 (2026-03-26)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2332](https://github.com/DEFRA/rod-licensing/pull/2332) GAFL: DEV - Handle Postcodes with >100 Results via Pagination (Offset) Before Filtering ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 ## v1.69.0-rc.2 (2026-03-26)
 
 #### :bug: Bug Fix
