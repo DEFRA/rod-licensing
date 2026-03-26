@@ -118,6 +118,42 @@ const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => 
 }
 
 /**
+ * Get the maximum results cap from environment or default
+ * @returns {number} Maximum results cap
+ */
+const getMaximumResultsCap = () => {
+  return Number.parseInt(process.env.ADDRESS_LOOKUP_MAX_RESULTS) || ADDRESS_LOOKUP_MAX_RESULTS_DEFAULT
+}
+
+/**
+ * Check if pagination is needed based on total results and page size
+ * @param {number} totalresults - Total results available
+ * @param {number} maxresults - Maximum results per page
+ * @returns {boolean} Whether pagination is needed
+ */
+const checkNeedsPagination = (totalresults, maxresults) => {
+  return totalresults && maxresults && totalresults > maxresults
+}
+
+/**
+ * Fetch the first page of results
+ * @param {string} postcode - The postcode to search
+ * @returns {Promise<object|null>} First page response or null on error
+ */
+const fetchFirstPage = async postcode => {
+  const firstUrl = buildUrl(postcode, 0)
+  debug({ url: firstUrl })
+
+  const firstPage = await fetchPage(firstUrl).catch(err => {
+    // On a failure to connect do not stop the user journey
+    console.error('Unable to connect to address lookup service', err)
+    return null
+  })
+
+  return firstPage
+}
+
+/**
  * Process and aggregate results from multiple pages
  * @param {object} firstPage - First page response
  * @param {Array} additionalResults - Results from additional pages
@@ -162,26 +198,18 @@ const processResults = (firstPage, additionalResults, failedPages, additionalPag
 
 export default async (premises, postcode) => {
   const startTime = Date.now()
-  const cap = Number.parseInt(process.env.ADDRESS_LOOKUP_MAX_RESULTS) || ADDRESS_LOOKUP_MAX_RESULTS_DEFAULT
 
-  // Fetch first page
-  const firstUrl = buildUrl(postcode, 0)
-  debug({ url: firstUrl })
-
-  const firstPage = await fetchPage(firstUrl).catch(err => {
-    // On a failure to connect do not stop the user journey
-    console.error('Unable to connect to address lookup service', err)
-    return null
-  })
+  const firstPage = await fetchFirstPage(postcode)
 
   if (!firstPage) {
     return []
   }
 
   const { totalresults, maxresults } = firstPage.header || {}
-  const needsPagination = totalresults && maxresults && totalresults > maxresults
+  const needsPagination = checkNeedsPagination(totalresults, maxresults)
 
   // Fetch additional pages if needed
+  const cap = getMaximumResultsCap()
   const {
     results: additionalResults,
     failedPages,
