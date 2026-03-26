@@ -30,22 +30,18 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.renewedEndDate = preparedData.renewedEndDate
   permission.renewedHasExpired = preparedData.renewedHasExpired
 
-  // Copy licensee data from prepared data
   permission.licensee = {
     ...preparedData.licensee,
-    // Convert concession format from Sales API to webapp format
     preferredMethodOfNewsletter: preparedData.licensee.preferredMethodOfNewsletter,
     preferredMethodOfConfirmation: preparedData.licensee.preferredMethodOfConfirmation,
     preferredMethodOfReminder: preparedData.licensee.preferredMethodOfReminder
   }
 
-  // Delete any licensee objects which are null
   Object.entries(permission.licensee)
     .filter(e => e[1] === null)
     .map(e => e[0])
     .forEach(k => delete permission.licensee[k])
 
-  // Map Sales API concessions to webapp format
   permission.concessions = preparedData.concessions.map(concession => ({
     type: concession.name,
     proof: {
