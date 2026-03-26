@@ -20,8 +20,7 @@ export default {
         BUILDING_NAME: '1 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -31,8 +30,7 @@ export default {
         BUILDING_NAME: '10 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -42,8 +40,7 @@ export default {
         BUILDING_NAME: '11 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -53,8 +50,7 @@ export default {
         BUILDING_NAME: '12 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -64,8 +60,7 @@ export default {
         BUILDING_NAME: '13 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -75,8 +70,7 @@ export default {
         BUILDING_NAME: '14 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -85,8 +79,7 @@ export default {
         ADDRESS: '15 HOWECROFT COURT, EASTMEAD LANE, BRISTOL, BS9 1HJ',
         BUILDING_NAME: '15 HOWECROFT COURT',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -97,8 +90,7 @@ export default {
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         DEPENDENT_LOCALITY: 'Sneyd Park',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -108,8 +100,7 @@ export default {
         BUILDING_NAME: '17 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -119,8 +110,7 @@ export default {
         BUILDING_NAME: '18 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -130,8 +120,7 @@ export default {
         BUILDING_NAME: '19 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -141,8 +130,7 @@ export default {
         BUILDING_NAME: '2 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -152,8 +140,7 @@ export default {
         BUILDING_NAME: '20 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -163,8 +150,7 @@ export default {
         BUILDING_NAME: '21 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -174,8 +160,7 @@ export default {
         BUILDING_NAME: '22 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -185,8 +170,7 @@ export default {
         BUILDING_NAME: '23 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -196,8 +180,7 @@ export default {
         BUILDING_NAME: '24 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -207,8 +190,7 @@ export default {
         BUILDING_NAME: '25 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -218,8 +200,7 @@ export default {
         BUILDING_NAME: '26 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -229,8 +210,7 @@ export default {
         BUILDING_NAME: '27 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -240,8 +220,7 @@ export default {
         BUILDING_NAME: '28 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -251,8 +230,7 @@ export default {
         BUILDING_NAME: '29 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -262,8 +240,7 @@ export default {
         BUILDING_NAME: '3 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -273,8 +250,7 @@ export default {
         BUILDING_NAME: '30 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -284,8 +260,7 @@ export default {
         BUILDING_NAME: '4 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -295,8 +270,7 @@ export default {
         BUILDING_NAME: '5 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -306,8 +280,7 @@ export default {
         BUILDING_NAME: '6 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -317,8 +290,7 @@ export default {
         BUILDING_NAME: '7 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -328,8 +300,7 @@ export default {
         BUILDING_NAME: '8 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     },
     {
@@ -339,8 +310,7 @@ export default {
         BUILDING_NAME: '9 HOWECROFT COURT',
         THOROUGHFARE_NAME: 'EASTMEAD LANE',
         POST_TOWN: 'BRISTOL',
-        POSTCODE: 'BS9 1HJ',
-        COUNTRY_CODE_DESCRIPTION: 'This record is within England'
+        POSTCODE: 'BS9 1HJ'
       }
     }
   ]
