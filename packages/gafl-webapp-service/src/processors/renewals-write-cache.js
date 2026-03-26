@@ -19,30 +19,17 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // Populate cache from prepared data
-  permission.isRenewal = preparedData.isRenewal
-  permission.licenceLength = preparedData.licenceLength
-  permission.licenceType = preparedData.licenceType
-  permission.numberOfRods = preparedData.numberOfRods
-  permission.isLicenceForYou = preparedData.isLicenceForYou
-  permission.licenceToStart = preparedData.licenceToStart
-  permission.licenceStartDate = preparedData.licenceStartDate
-  permission.licenceStartTime = preparedData.licenceStartTime
-  permission.renewedEndDate = preparedData.renewedEndDate
-  permission.renewedHasExpired = preparedData.renewedHasExpired
+  const { licensee, concessions, ...permissionData } = preparedData
+  Object.assign(permission, permissionData)
 
-  permission.licensee = {
-    ...preparedData.licensee,
-    preferredMethodOfNewsletter: preparedData.licensee.preferredMethodOfNewsletter,
-    preferredMethodOfConfirmation: preparedData.licensee.preferredMethodOfConfirmation,
-    preferredMethodOfReminder: preparedData.licensee.preferredMethodOfReminder
-  }
+  permission.licensee = { ...licensee }
 
   Object.entries(permission.licensee)
     .filter(e => e[1] === null)
     .map(e => e[0])
     .forEach(k => delete permission.licensee[k])
 
-  permission.concessions = preparedData.concessions.map(concession => ({
+  permission.concessions = concessions.map(concession => ({
     type: concession.name,
     proof: {
       type: concession.proof.type,

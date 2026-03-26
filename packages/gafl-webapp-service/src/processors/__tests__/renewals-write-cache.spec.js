@@ -70,7 +70,7 @@ describe('renewals-write-cache', () => {
 
     it('should store licenceLength from preparedData in the cache', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData())
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData())
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -81,7 +81,7 @@ describe('renewals-write-cache', () => {
 
     it('should store isRenewal as true', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData())
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData())
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -92,7 +92,7 @@ describe('renewals-write-cache', () => {
 
     it('should store licence type and number of rods from preparedData in the cache', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData())
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData())
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -111,7 +111,7 @@ describe('renewals-write-cache', () => {
         renewedEndDate: '2026-03-20T00:00:00.000Z',
         renewedHasExpired: true
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -126,7 +126,7 @@ describe('renewals-write-cache', () => {
 
     it('should map the licensee object correctly', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData())
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData())
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -153,7 +153,7 @@ describe('renewals-write-cache', () => {
             ...licenseeOverrides
           }
         })
-        salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+        salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
         await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
         return setTransactionCache
       }
@@ -183,7 +183,7 @@ describe('renewals-write-cache', () => {
 
     it('should map the contact preferences correctly', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData())
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData())
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -198,7 +198,7 @@ describe('renewals-write-cache', () => {
 
     it('should store countryCode within the licensee object', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData())
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData())
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       const [[{ licensee }]] = setTransactionCache.mock.calls
       expect(licensee).toEqual(expect.objectContaining({ countryCode: 'GB-ENG' }))
@@ -206,7 +206,7 @@ describe('renewals-write-cache', () => {
 
     it('should have an empty array if no concessions are present', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData({ concessions: [] }))
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData({ concessions: [] }))
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -229,7 +229,7 @@ describe('renewals-write-cache', () => {
           }
         ]
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -251,7 +251,7 @@ describe('renewals-write-cache', () => {
           }
         ]
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -268,7 +268,7 @@ describe('renewals-write-cache', () => {
           postalFulfilment: true
         }
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), getAuthenticationResult())
       expect(setStatusCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -285,7 +285,7 @@ describe('renewals-write-cache', () => {
           postalFulfilment: undefined
         }
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), getAuthenticationResult())
       expect(setStatusCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -302,7 +302,7 @@ describe('renewals-write-cache', () => {
           postalFulfilment: false
         }
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), getAuthenticationResult())
       expect(setStatusCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -313,7 +313,7 @@ describe('renewals-write-cache', () => {
 
     it('should store isLicenceForYou from preparedData in the cache', async () => {
       const setTransactionCache = jest.fn()
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(getPreparedPermissionData({ isLicenceForYou: true }))
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(getPreparedPermissionData({ isLicenceForYou: true }))
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -333,7 +333,7 @@ describe('renewals-write-cache', () => {
         licenceStartDate,
         licenceStartTime
       })
-      salesApi.preparePermissionDataForRenewal.mockResolvedValue(preparedData)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(preparedData)
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
