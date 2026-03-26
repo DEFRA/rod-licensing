@@ -1,4 +1,13 @@
 
+## v1.69.0-rc.2 (2026-03-26)
+
+#### :bug: Bug Fix
+* `fulfilment-job`
+  * [#2328](https://github.com/DEFRA/rod-licensing/pull/2328) Use Systems Manager API to configure fulfilment job ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.69.0-rc.1 (2026-03-20)
 
 #### :bug: Bug Fix
