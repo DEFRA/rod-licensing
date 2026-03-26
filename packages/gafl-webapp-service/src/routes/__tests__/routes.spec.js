@@ -17,7 +17,6 @@ jest.mock('../error-test-routes.js', () => mockErrorTestingRoutes)
 const mockTelesalesRoutes = [Symbol('telesales')]
 jest.mock('../telesales-routes.js', () => mockTelesalesRoutes)
 
-jest.mock('@defra-fish/connectors-lib')
 const getCancelRPURIs = () => [
   CANCEL_RP_IDENTIFY.uri,
   CANCEL_RP_DETAILS.uri,
