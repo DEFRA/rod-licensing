@@ -4,6 +4,7 @@ import {
   AUTHENTICATE,
   CONTROLLER,
   LICENCE_SUMMARY,
+  TEST_TRANSACTION,
   RENEWAL_PUBLIC,
   RENEWAL_INACTIVE,
   LICENCE_LENGTH,
@@ -18,6 +19,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../__mocks__/data/authentication-result.js'
 import * as constants from '../../../../processors/mapping-constants.js'
+import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import pageRoute from '../../../../routes/page-route.js'
@@ -27,11 +29,6 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
 }))
 jest.mock('../../../../routes/page-route.js', () => jest.fn(jest.requireActual('../../../../routes/page-route.js').default))
-
-jest.mock('../../../../processors/renewals-write-cache.js', () => ({
-  setUpCacheFromAuthenticationResult: async () => {},
-  setUpPayloads: async () => {}
-}))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -55,112 +52,88 @@ jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
 salesApi.countries.getAll = jest.fn(() => Promise.resolve(mockDefraCountries))
 
-const getPreparedRenewalData = authenticationResult => {
-  const { permission } = authenticationResult
-  const permitSubtypeDescription = permission?.permit?.permitSubtype?.description
-  const licenceType =
-    permitSubtypeDescription === 'S' ? constants.LICENCE_TYPE['salmon-and-sea-trout'] : constants.LICENCE_TYPE['trout-and-coarse']
-
-  return {
-    isRenewal: true,
-    licenceLength: '12M',
-    licenceType,
-    numberOfRods: permission?.permit?.numberOfRods,
-    isLicenceForYou: true,
-    licenceToStart: constants.LICENCE_TO_START.today,
-    licenceStartDate: null,
-    licenceStartTime: null,
-    renewedEndDate: permission.endDate,
-    renewedHasExpired: false,
-    licensee: {
-      firstName: permission?.licensee?.firstName,
-      lastName: permission?.licensee?.lastName,
-      birthDate: permission?.licensee?.birthDate,
-      premises: permission?.licensee?.premises,
-      postcode: permission?.licensee?.postcode,
-      email: permission?.licensee?.email,
-      mobilePhone: permission?.licensee?.mobilePhone,
-      postalFulfilment: permission?.licensee?.postalFulfilment,
-      preferredMethodOfNewsletter: permission?.licensee?.preferredMethodOfNewsletter,
-      preferredMethodOfConfirmation:
-        permission?.licensee?.preferredMethodOfConfirmation?.label || permission?.licensee?.preferredMethodOfConfirmation,
-      preferredMethodOfReminder: permission?.licensee?.preferredMethodOfReminder
-    },
-    concessions: permission?.concessions || []
-  }
-}
+const getDefaultPreparedData = (overrides = {}) => ({
+  isRenewal: true,
+  licenceLength: '12M',
+  licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'],
+  numberOfRods: '1',
+  isLicenceForYou: true,
+  licenceToStart: 'another-date',
+  licenceStartDate: moment().format('YYYY-MM-DD'),
+  licenceStartTime: 0,
+  renewedEndDate: moment().toISOString(),
+  renewedHasExpired: false,
+  licensee: {
+    birthDate: '1970-01-01',
+    country: 'England',
+    countryCode: 'GB-ENG',
+    email: 'angling@email.com',
+    mobilePhone: '07700 900 900',
+    firstName: 'Graham',
+    lastName: 'Willis',
+    premises: 'Howecroft Court',
+    street: '2 Eastmead Lane',
+    locality: '3',
+    town: 'Bristol',
+    postcode: 'BS9 1HJ',
+    preferredMethodOfConfirmation: 'Text',
+    preferredMethodOfNewsletter: 'Email',
+    preferredMethodOfReminder: 'Text',
+    postalFulfilment: false
+  },
+  concessions: [],
+  ...overrides
+})
 
 describe('The easy renewal identification page', () => {
-  it('redirects to identify page when called with an invalid permission reference', async () => {
+  it('redirects from identify to licence not found page when called with an invalid permission reference', async () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(IDENTIFY.uri)
-        })
-      })
-    )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('returns successfully when called with a valid reference ', async () => {
     const data = await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(IDENTIFY.uri)
-        })
-      })
-    )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('redirects back to itself on posting an invalid postcode', async () => {
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     const data = await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'HHHHH' }, dobHelper(ADULT_TODAY)))
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(IDENTIFY.uri)
-        })
-      })
-    )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
   })
 
   it('redirects back to itself on posting an invalid data of birth', async () => {
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     const data = await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobInvalid)))
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(IDENTIFY.uri)
-        })
-      })
-    )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
   })
 
   it('redirects to licence not found on posting valid but not authenticated details', async () => {
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(null))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC_URI)
     await injectWithCookies('GET', IDENTIFY.uri)
-    await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
-    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(LICENCE_NOT_FOUND.uri)
-        })
-      })
+    const data = await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
     )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(AUTHENTICATE.uri)
+    const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toHaveValidPathFor(LICENCE_NOT_FOUND.uri)
+    const data3 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   describe('getData', () => {
@@ -200,19 +173,18 @@ describe('The easy renewal identification page', () => {
     it('passes request to addLanguageCodeToUri', async () => {
       const request = getMockRequest()
       await getData(request)
-
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.any(String))
     })
 
     it('passes NEW_TRANSACTION.uri to addLanguageCodeToUri', async () => {
       await getData(getMockRequest())
-
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), NEW_TRANSACTION.uri)
     })
 
     it('sets uri.new to be result of addLanguageCodeToUri', async () => {
       const decoratedUri = Symbol('new transaction uri')
       addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+
       const data = await getData(getMockRequest())
 
       expect(data.uri.new).toEqual(decoratedUri)
@@ -230,9 +202,10 @@ describe('The easy renewal identification page', () => {
       newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
       newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
       salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-      salesApi.preparePermissionDataForRenewal.mockImplementation(
-        jest.fn(async () => new Promise(resolve => resolve(getPreparedRenewalData(newAuthenticationResult))))
+      salesApi.preparePermissionDataForRenewal.mockResolvedValue(
+        getDefaultPreparedData({ licensee: { ...getDefaultPreparedData().licensee, preferredMethodOfConfirmation: fn } })
       )
+
       await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
       await injectWithCookies('GET', IDENTIFY.uri)
     })
@@ -243,7 +216,6 @@ describe('The easy renewal identification page', () => {
         IDENTIFY.uri,
         Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
       )
-
       expect(data.statusCode).toBe(302)
     })
 
@@ -253,15 +225,7 @@ describe('The easy renewal identification page', () => {
         IDENTIFY.uri,
         Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
       )
-
-      expect(data).toEqual(
-        expect.objectContaining({
-          statusCode: 302,
-          headers: expect.objectContaining({
-            location: expect.toHaveValidPathFor(AUTHENTICATE.uri)
-          })
-        })
-      )
+      expect(data.headers.location).toHaveValidPathFor(AUTHENTICATE.uri)
     })
 
     it('returns a 302 status code on a GET request to the authenticate uri', async () => {
@@ -271,7 +235,6 @@ describe('The easy renewal identification page', () => {
         Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
       )
       const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
       expect(data.statusCode).toBe(302)
     })
 
@@ -282,11 +245,10 @@ describe('The easy renewal identification page', () => {
         Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
       )
       const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
       expect(data.headers.location).toHaveValidPathFor(CONTROLLER.uri)
     })
 
-    it('redirects on a GET request to the licence summary when cache is not populated', async () => {
+    it('returns a 200 status code on a GET request to the licence summary', async () => {
       await injectWithCookies(
         'POST',
         IDENTIFY.uri,
@@ -294,12 +256,13 @@ describe('The easy renewal identification page', () => {
       )
       await injectWithCookies('GET', AUTHENTICATE.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
+
       const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
-      expect(data.statusCode).toBe(302)
+      expect(data.statusCode).toBe(200)
     })
 
-    it('redirects on a GET request to the contact summary when cache is not populated', async () => {
+    it('returns a 200 status code on a GET request to the contact summary', async () => {
       await injectWithCookies(
         'POST',
         IDENTIFY.uri,
@@ -308,9 +271,10 @@ describe('The easy renewal identification page', () => {
       await injectWithCookies('GET', AUTHENTICATE.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
       await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+
       const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
-      expect(data.statusCode).toBe(302)
+      expect(data.statusCode).toBe(200)
     })
   })
 
@@ -345,39 +309,40 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.permit.permitSubtype = obj.subType
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    salesApi.preparePermissionDataForRenewal.mockReset()
+    salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(
+      getDefaultPreparedData({ numberOfRods: obj.numberOfRods, licenceType: obj.licenceType })
+    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
-    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(CONTROLLER.uri)
-        })
-      })
-    )
+    await injectWithCookies('GET', AUTHENTICATE.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].numberOfRods).toEqual(obj.numberOfRods)
+    expect(JSON.parse(payload).permissions[0].licenceType).toEqual(obj.licenceType)
   })
 
-  it('that an adult licence holder who is now over the senior concession date redirects to the controller', async () => {
+  it('that an adult licence holder who is now over the senior concession date gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     newAuthenticationResult.permission.licensee.birthDate = moment().add(-66, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+    salesApi.preparePermissionDataForRenewal.mockReset()
+    salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(
+      getDefaultPreparedData({
+        concessions: [{ name: 'Senior', id: 'senior-concession-id', proof: { type: 'No Proof' } }]
+      })
+    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
-    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(CONTROLLER.uri)
-        })
-      })
-    )
+    await injectWithCookies('GET', AUTHENTICATE.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(hasSenior(JSON.parse(payload).permissions[0])).toBeTruthy()
   })
 
   it('that an expiry too far in the future causes a redirect to the invalid renewal page', async () => {
@@ -387,35 +352,20 @@ describe('The easy renewal identification page', () => {
       .add(RENEW_BEFORE_DAYS + 1, 'days')
       .toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    salesApi.preparePermissionDataForRenewal.mockImplementation(
-      jest.fn(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              ...getPreparedRenewalData(newAuthenticationResult),
-              renewedEndDate: newAuthenticationResult.permission.endDate
-            })
-          )
-      )
-    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
-    const authResponse = await injectWithCookies('GET', AUTHENTICATE.uri)
-    const inactivePageResponse = await injectWithCookies('GET', RENEWAL_INACTIVE.uri)
-    const inactivePostResponse = await injectWithCookies('POST', RENEWAL_INACTIVE.uri, {})
+    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(RENEWAL_INACTIVE.uri)
 
-    expect({ authResponse, inactivePageResponse, inactivePostResponse }).toEqual({
-      authResponse: expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({ location: expect.toHaveValidPathFor(RENEWAL_INACTIVE.uri) })
-      }),
-      inactivePageResponse: expect.objectContaining({ statusCode: 200 }),
-      inactivePostResponse: expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({ location: expect.toHaveValidPathFor(LICENCE_LENGTH.uri) })
-      })
-    })
+    // Fetch the page
+    const data2 = await injectWithCookies('GET', RENEWAL_INACTIVE.uri)
+    expect(data2.statusCode).toBe(200)
+
+    const data3 = await injectWithCookies('POST', RENEWAL_INACTIVE.uri, {})
+    expect(data3.statusCode).toBe(302)
+    expect(data3.headers.location).toHaveValidPathFor(LICENCE_LENGTH.uri)
   })
 
   it('that an expiry that has expired causes a redirect to the invalid renewal page', async () => {
@@ -425,30 +375,12 @@ describe('The easy renewal identification page', () => {
       .add(-1 * (RENEW_AFTER_DAYS + 1), 'days')
       .toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    salesApi.preparePermissionDataForRenewal.mockImplementation(
-      jest.fn(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              ...getPreparedRenewalData(newAuthenticationResult),
-              renewedEndDate: newAuthenticationResult.permission.endDate
-            })
-          )
-      )
-    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(RENEWAL_INACTIVE.uri)
-        })
-      })
-    )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(RENEWAL_INACTIVE.uri)
   })
 
   it('that an expiry for a 1 or 8 day licence causes a redirect to the invalid renewal page', async () => {
@@ -456,29 +388,11 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.permit.durationMagnitude = 1
     newAuthenticationResult.permission.permit.durationDesignator.description = 'D'
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    salesApi.preparePermissionDataForRenewal.mockImplementation(
-      jest.fn(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              ...getPreparedRenewalData(newAuthenticationResult),
-              licenceLength: '1D'
-            })
-          )
-      )
-    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-
-    expect(data).toEqual(
-      expect.objectContaining({
-        statusCode: 302,
-        headers: expect.objectContaining({
-          location: expect.toHaveValidPathFor(RENEWAL_INACTIVE.uri)
-        })
-      })
-    )
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toHaveValidPathFor(RENEWAL_INACTIVE.uri)
   })
 })
