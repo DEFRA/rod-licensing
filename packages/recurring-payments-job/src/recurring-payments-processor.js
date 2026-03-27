@@ -102,6 +102,7 @@ const requestPayments = async dueRCPayments => {
     const { agreementId, transaction } = paymentToRequest.value
     queueRecurringPayment(preparePayment(agreementId, transaction), batcher)
   }
+
   await batcher.fetch()
 
   for (let x = 0; x < paymentsToRequest.length; x++) {
@@ -217,8 +218,18 @@ const checkPaymentStatuses = async payments => {
   }
   await batcher.fetch()
   batcher.responses.forEach(async (response, index) => {
-    const payment = await response.json()
-    debug(`Payment status for ${payment.payment_id}: ${payment.state.status}`)
+    const paymentStatusCheck = await response.json()
+    console.log('Payment status check response:', paymentStatusCheck)
+    debug(`Payment status for ${paymentStatusCheck.payment_id}: ${paymentStatusCheck.state.status}`)
+
+    if (paymentStatusCheck.state.status === PAYMENT_STATUS.Success) {
+      try {
+        await salesApi.processRPResult(paymentStatusCheck.reference, paymentStatusCheck.payment_id, paymentStatusCheck.created_date)
+        // debug(`Processed Recurring Payment for ${paymentStatusCheck.reference}`)
+      } catch (err) {
+        console.error(`Failed to process Recurring Payment for ${paymentStatusCheck.reference}`, err)
+      }
+    }
   })
 }
 
