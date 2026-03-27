@@ -113,7 +113,7 @@ const requestPayments = async dueRCPayments => {
         paymentReference: paymentResponse.payment_id,
         paymentTimestamp: paymentResponse.created_date,
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
-      })  
+      })
     }
   }
 

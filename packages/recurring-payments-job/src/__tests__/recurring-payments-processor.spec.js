@@ -94,7 +94,7 @@ const getMockSendPaymentResponse = ({ payment_id = 'pay-1', created_date = '2025
   state: { status: 'created' }
 })
 const getBatcherImplementation = (responses = []) => {
-  return function() {
+  return function () {
     this.addRequest = jest.fn()
     this.fetch = jest.fn(() => {
       this.responses = responses
@@ -518,14 +518,15 @@ describe('recurring-payments-processor', () => {
     }
     HTTPRequestBatcher.mockImplementationOnce(
       getBatcherImplementation([
-        { 
-          status: 200, 
-          json: () => Promise.resolve({
-            ...getPaymentStatusSuccess(),
-            payment_id: samplePayment.payment_id,
-            created_date: samplePayment.created_date,
-            reference: sampleTransaction.id
-          }) 
+        {
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              ...getPaymentStatusSuccess(),
+              payment_id: samplePayment.payment_id,
+              created_date: samplePayment.created_date,
+              reference: sampleTransaction.id
+            })
         }
       ])
     )
@@ -557,7 +558,7 @@ describe('recurring-payments-processor', () => {
       { status: 299, json: () => Promise.resolve(getMockSendPaymentResponse({ payment_id: paymentIds[4] })) }
     ]
     salesApi.getDueRecurringPayments.mockReturnValueOnce(
-      (new Array(responses.length)).fill(getMockDueRecurringPayment(), 0, responses.length)
+      new Array(responses.length).fill(getMockDueRecurringPayment(), 0, responses.length)
     )
     HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(responses))
     for (let x = 0; x < responses.length; x++) {
@@ -566,35 +567,40 @@ describe('recurring-payments-processor', () => {
 
     await execute()
 
-    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(1, 
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      1,
       'transaction-1',
       expect.objectContaining({
         paymentReference: paymentIds[0],
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
     )
-    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(2, 
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      2,
       'transaction-3',
       expect.objectContaining({
         paymentReference: paymentIds[1],
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
     )
-    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(3, 
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      3,
       'transaction-5',
       expect.objectContaining({
         paymentReference: paymentIds[2],
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
     )
-    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(4, 
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      4,
       'transaction-6',
       expect.objectContaining({
         paymentReference: paymentIds[3],
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
     )
-    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(5, 
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      5,
       'transaction-9',
       expect.objectContaining({
         paymentReference: paymentIds[4],
