@@ -94,22 +94,12 @@ describe('The easy renewal identification page', () => {
     expect(data2.statusCode).toBe(200)
   })
 
-  it('returns a 200 status code on the licence not found page after an invalid permission reference', async () => {
-    const data = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
   it('returns successfully when called with a valid reference ', async () => {
     const data = await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
     const data2 = await injectWithCookies('GET', IDENTIFY.uri)
     expect(data2.statusCode).toBe(200)
-  })
-
-  it('returns a 200 status code on the identify page after a valid reference', async () => {
-    const data = await injectWithCookies('GET', IDENTIFY.uri)
-    expect(data.statusCode).toBe(200)
   })
 
   it('redirects back to itself on posting an invalid postcode', async () => {
@@ -128,7 +118,7 @@ describe('The easy renewal identification page', () => {
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
   })
 
-  it('returns a 302 status code on a POST with valid but not authenticated details', async () => {
+  it('redirects to licence not found on posting valid but not authenticated details', async () => {
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(null))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC_URI)
     await injectWithCookies('GET', IDENTIFY.uri)
@@ -138,31 +128,12 @@ describe('The easy renewal identification page', () => {
       Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
     )
     expect(data.statusCode).toBe(302)
-  })
-
-  it('redirects to the authenticate uri on a POST with valid but not authenticated details', async () => {
-    const data = await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
     expect(data.headers.location).toHaveValidPathFor(AUTHENTICATE.uri)
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toHaveValidPathFor(LICENCE_NOT_FOUND.uri)
     const data3 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
     expect(data3.statusCode).toBe(200)
-  })
-
-  it('redirects to licence not found on GET authenticate when not authenticated', async () => {
-    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toHaveValidPathFor(LICENCE_NOT_FOUND.uri)
-  })
-
-  it('returns a 200 status code on the licence not found page after failed authentication', async () => {
-    const data = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
-    expect(data.statusCode).toBe(200)
   })
 
   describe('getData', () => {
