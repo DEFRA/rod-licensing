@@ -1,4 +1,13 @@
 
+## v1.69.0-rc.5 (2026-03-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2344](https://github.com/DEFRA/rod-licensing/pull/2344) GAFL: Dev – Cancellation page 1 Welsh translation ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
 
 ## v1.69.0-rc.3 (2026-03-26)
 
