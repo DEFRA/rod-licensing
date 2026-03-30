@@ -204,16 +204,19 @@ describe('The server', () => {
     })
 
     describe('feedback link', () => {
+      const sampleStandardFeedbackUrl = 'http://test-standard-survey.com'
+      const sampleCancelFeedbackUrl = 'http://test-cancel-survey.com'
+
       beforeEach(() => {
         delete process.env.FEEDBACK_URI
         delete process.env.FEEDBACK_URI_RCP_CANCEL
       })
 
       it('uses FEEDBACK_URI env var for non-cancellation pages', () => {
-        process.env.FEEDBACK_URI = 'http://test-standard-survey.com'
+        process.env.FEEDBACK_URI = sampleStandardFeedbackUrl
         const request = getSampleRequest({ path: '/buy/licence-type' })
         layoutContextAmalgamation(request, {})
-        expect(request.response.source.context._uri.feedback).toBe('http://test-standard-survey.com')
+        expect(request.response.source.context._uri.feedback).toBe(sampleStandardFeedbackUrl)
       })
 
       it.each([
@@ -222,10 +225,10 @@ describe('The server', () => {
         '/buy/cancel-recurring-payment/confirm',
         '/buy/cancel-recurring-payment/complete'
       ])('uses FEEDBACK_URI_RCP_CANCEL env var for cancellation page %s', path => {
-        process.env.FEEDBACK_URI_RCP_CANCEL = 'http://test-cancel-survey.com'
+        process.env.FEEDBACK_URI_RCP_CANCEL = sampleCancelFeedbackUrl
         const request = getSampleRequest({ path })
         layoutContextAmalgamation(request, {})
-        expect(request.response.source.context._uri.feedback).toBe('http://test-cancel-survey.com')
+        expect(request.response.source.context._uri.feedback).toBe(sampleCancelFeedbackUrl)
       })
 
       it('falls back to FEEDBACK_URI_DEFAULT when env var not set on standard pages', () => {
@@ -241,19 +244,19 @@ describe('The server', () => {
       })
 
       it('uses FEEDBACK_URI when both env vars set on non-cancellation page', () => {
-        process.env.FEEDBACK_URI = 'http://test-standard-survey.com'
-        process.env.FEEDBACK_URI_RCP_CANCEL = 'http://test-cancel-survey.com'
+        process.env.FEEDBACK_URI = sampleStandardFeedbackUrl
+        process.env.FEEDBACK_URI_RCP_CANCEL = sampleCancelFeedbackUrl
         const request = getSampleRequest({ path: '/buy/contact' })
         layoutContextAmalgamation(request, {})
-        expect(request.response.source.context._uri.feedback).toBe('http://test-standard-survey.com')
+        expect(request.response.source.context._uri.feedback).toBe(sampleStandardFeedbackUrl)
       })
 
       it('uses FEEDBACK_URI_RCP_CANCEL when both env vars set on cancellation page', () => {
-        process.env.FEEDBACK_URI = 'http://test-standard-survey.com'
-        process.env.FEEDBACK_URI_RCP_CANCEL = 'http://test-cancel-survey.com'
+        process.env.FEEDBACK_URI = sampleStandardFeedbackUrl
+        process.env.FEEDBACK_URI_RCP_CANCEL = sampleCancelFeedbackUrl
         const request = getSampleRequest({ path: '/buy/cancel-recurring-payment/complete' })
         layoutContextAmalgamation(request, {})
-        expect(request.response.source.context._uri.feedback).toBe('http://test-cancel-survey.com')
+        expect(request.response.source.context._uri.feedback).toBe(sampleCancelFeedbackUrl)
       })
     })
 
