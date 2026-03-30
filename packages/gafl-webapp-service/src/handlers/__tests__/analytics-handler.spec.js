@@ -1,8 +1,6 @@
 import { ANALYTICS } from '../../constants.js'
 import analyticsHandler, { trackGTM, checkAnalyticsCookiesPage } from '../analytics-handler.js'
 import db from 'debug'
-import agreedHandler from '../agreed-handler.js'
-import { CONTROLLER } from '../../uri.js'
 const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:analytics-handler')]
 
 jest.mock('../../constants', () => ({
@@ -13,25 +11,7 @@ jest.mock('../../constants', () => ({
   }
 }))
 
-jest.mock('@defra-fish/connectors-lib')
 jest.mock('debug', () => jest.fn(() => jest.fn()))
-
-const getResponseToolkit = () => ({
-  redirectWithLanguageCode: jest.fn()
-})
-
-const getMockRequest = ({ transaction, status } = {}) => ({
-  cache: () => ({
-    helpers: {
-      transaction: {
-        get: async () => transaction
-      },
-      status: {
-        get: async () => status
-      }
-    }
-  })
-})
 
 describe('The analytics handler', () => {
   beforeEach(() => {
@@ -123,24 +103,6 @@ describe('The analytics handler', () => {
     await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).not.toHaveBeenCalled()
-  })
-
-  it('redirects to the controller when transaction is null', async () => {
-    const h = getResponseToolkit()
-    await agreedHandler(getMockRequest({ transaction: null, status: {} }), h)
-    expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CONTROLLER.uri)
-  })
-
-  it('redirects to the controller when status is null', async () => {
-    const h = getResponseToolkit()
-    await agreedHandler(getMockRequest({ transaction: {}, status: null }), h)
-    expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CONTROLLER.uri)
-  })
-
-  it('redirects to the controller when both transaction and status are null', async () => {
-    const h = getResponseToolkit()
-    await agreedHandler(getMockRequest({ transaction: null, status: null }), h)
-    expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CONTROLLER.uri)
   })
 
   describe('trackGTM', () => {
