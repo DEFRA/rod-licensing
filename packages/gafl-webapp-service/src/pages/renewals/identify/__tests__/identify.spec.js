@@ -199,7 +199,6 @@ describe('The easy renewal identification page', () => {
   ])('valid response - (how contacted=%s)', (name, fn) => {
     beforeEach(async () => {
       const newAuthenticationResult = Object.assign({}, authenticationResult)
-      newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
       newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
       salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
       salesApi.preparePermissionDataForRenewal.mockResolvedValue(
@@ -278,35 +277,12 @@ describe('The easy renewal identification page', () => {
     })
   })
 
-  const salmonAndSeaTroutPermitSubtype = {
-    id: 910400000,
-    label: 'Salmon and sea trout',
-    description: 'S'
-  }
-
-  const troutAndCoarsePermitSubtype = {
-    id: 910400001,
-    label: 'Trout and coarse',
-    description: 'C'
-  }
-
   it.each([
-    [
-      'Trout and coarse - 2 rod',
-      { subType: troutAndCoarsePermitSubtype, numberOfRods: '2', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }
-    ],
-    [
-      'Trout and coarse - 3 rod',
-      { subType: troutAndCoarsePermitSubtype, numberOfRods: '3', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }
-    ],
-    [
-      'Salmon and sea trout',
-      { subType: salmonAndSeaTroutPermitSubtype, numberOfRods: '1', licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'] }
-    ]
+    ['Trout and coarse - 2 rod', { numberOfRods: '2', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }],
+    ['Trout and coarse - 3 rod', { numberOfRods: '3', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }],
+    ['Salmon and sea trout', { numberOfRods: '1', licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'] }]
   ])('redirects to the controller on posting a valid response - (licence type=%s)', async (name, obj) => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
-    newAuthenticationResult.permission.permit.numberOfRods = obj.numberOfRods
-    newAuthenticationResult.permission.permit.permitSubtype = obj.subType
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     salesApi.preparePermissionDataForRenewal.mockReset()
@@ -327,7 +303,6 @@ describe('The easy renewal identification page', () => {
   it('that an adult licence holder who is now over the senior concession date gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
-    newAuthenticationResult.permission.licensee.birthDate = moment().add(-66, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     salesApi.preparePermissionDataForRenewal.mockReset()
     salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(
