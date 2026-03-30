@@ -16,7 +16,7 @@ import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../
 import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../constants.js'
-import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
+import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, CONTROLLER } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { v4 as uuidv4 } from 'uuid'
 const debug = db('webapp:agreed-handler')
@@ -249,6 +249,12 @@ const finaliseTransaction = async (request, transaction, status) => {
 export default async (request, h) => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
+
+  if (!transaction || !status) {
+    debug('Session data missing in agreed handler - transaction: %s, status: %s', !!transaction, !!status)
+    return h.redirectWithLanguageCode(CONTROLLER.uri)
+  }
+
   if (!transaction.id) {
     transaction.id = uuidv4()
   }
