@@ -2,6 +2,7 @@
  * System constants and defaults
  */
 export const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
+export const ADDRESS_LOOKUP_MAX_RESULTS_DEFAULT = 5000
 export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const PORT_DEFAULT = 3000
 export const REDIS_PORT_DEFAULT = 6379
