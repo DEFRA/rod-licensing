@@ -90,6 +90,8 @@ describe('The easy renewal identification page', () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('returns a 200 status code on the licence not found page after an invalid permission reference', async () => {
@@ -101,6 +103,8 @@ describe('The easy renewal identification page', () => {
     const data = await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toHaveValidPathFor(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('returns a 200 status code on the identify page after a valid reference', async () => {
@@ -143,6 +147,11 @@ describe('The easy renewal identification page', () => {
       Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
     )
     expect(data.headers.location).toHaveValidPathFor(AUTHENTICATE.uri)
+    const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toHaveValidPathFor(LICENCE_NOT_FOUND.uri)
+    const data3 = await injectWithCookies('GET', LICENCE_NOT_FOUND.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('redirects to licence not found on GET authenticate when not authenticated', async () => {
