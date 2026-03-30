@@ -240,6 +240,19 @@ const finaliseTransaction = async (request, transaction, status) => {
   }
 }
 
+const postTransaction = async (request, transaction, status) => {
+  // Create the agreement if a recurring payment
+  if (status[RECURRING_PAYMENT] === true) {
+    await createRecurringPayment(request, transaction, status)
+  }
+  try {
+    await sendToSalesApi(request, transaction, status)
+  } catch (e) {
+    debug('Error sending transaction to Sales Api', JSON.stringify(transaction), JSON.stringify(status))
+    throw e
+  }
+}
+
 /**
  * Agreed route handler
  * @param request
@@ -266,16 +279,7 @@ export default async (request, h) => {
 
   // Send the transaction to the sales API and process the response
   if (!status[COMPLETION_STATUS.posted]) {
-    // Create the agreement if a recurring payment
-    if (status[RECURRING_PAYMENT] === true) {
-      await createRecurringPayment(request, transaction, status)
-    }
-    try {
-      await sendToSalesApi(request, transaction, status)
-    } catch (e) {
-      debug('Error sending transaction to Sales Api', JSON.stringify(transaction), JSON.stringify(status))
-      throw e
-    }
+    await postTransaction(request, transaction, status)
   }
 
   // The payment section is ignored for zero cost transactions
