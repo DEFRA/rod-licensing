@@ -65,7 +65,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
       )
     })
 
-    it('extracts the label from the preferredMethodOfConfirmation optionset into the licensee', async () => {
+    it('Adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
       const authResult = getSampleAuthResult({
