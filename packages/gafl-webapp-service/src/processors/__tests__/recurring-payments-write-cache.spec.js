@@ -5,7 +5,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     const defaults = {
       referenceNumber: '23270624-2WC3FSD-ABNCY4',
       endDate: '2024-12-31',
-      licensee: { firstName: 'Brenin', lastName: 'Pysgotwr' },
+      licensee: { firstName: 'Brenin', lastName: 'Pysgotwr', preferredMethodOfConfirmation: 'Email' },
       permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
@@ -44,7 +44,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     it.each([
       ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
       ['endDate', '2024-12-31'],
-      ['licensee', { firstName: 'John', lastName: 'Bull' }],
+      ['licensee', { firstName: 'John', lastName: 'Bull', preferredMethodOfConfirmation: 'Text' }],
       ['permit', { description: 'Coarse 12 month 2 Rod Licence (Full)' }]
     ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
