@@ -5,8 +5,12 @@ import moment from 'moment-timezone'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
 const getPreferredMethodOfContact = (preference, mssgs) => {
-  if (preference === HOW_CONTACTED.email) return mssgs.rp_cancel_complete_contact_method_email
-  if (preference === HOW_CONTACTED.text) return mssgs.rp_cancel_complete_contact_method_text
+  if (preference === HOW_CONTACTED.email) {
+    return mssgs.rp_cancel_complete_contact_method_email
+  }
+  if (preference === HOW_CONTACTED.text) {
+    return mssgs.rp_cancel_complete_contact_method_text
+  }
   return mssgs.rp_cancel_complete_contact_method_letter
 }
 
