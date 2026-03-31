@@ -1,4 +1,13 @@
 
+## v1.69.0-rc.6 (2026-03-31)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2335](https://github.com/DEFRA/rod-licensing/pull/2335) Bug/iwtf 4147 renewals service refactor ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.69.0-rc.5 (2026-03-30)
 
 #### :rocket: Enhancement
