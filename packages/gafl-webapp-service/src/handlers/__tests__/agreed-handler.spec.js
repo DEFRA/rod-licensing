@@ -8,8 +8,6 @@ import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@def
 import agreedHandler from '../agreed-handler.js'
 import Boom from '@hapi/boom'
 
-jest.mock('debug', () => jest.fn(() => jest.fn()))
-
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     createTransaction: jest.fn(),
