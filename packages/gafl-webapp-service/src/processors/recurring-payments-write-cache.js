@@ -9,7 +9,7 @@ export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, au
       licensee: {
         firstName: licensee.firstName,
         lastName: licensee.lastName,
-        preferredMethodOfConfirmation: licensee.preferredMethodOfConfirmation
+        preferredMethodOfConfirmation: licensee.preferredMethodOfConfirmation?.label
       },
       permit: { description: permit.description }
     },
