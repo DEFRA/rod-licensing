@@ -101,12 +101,22 @@ describe('completion handler', () => {
 })
 
 describe('getData', () => {
+  const mockMessages = {
+    rp_cancel_complete_contact_method_email: Symbol('email method'),
+    rp_cancel_complete_contact_method_text: Symbol('text method'),
+    rp_cancel_complete_contact_method_letter: Symbol('letter method')
+  }
+
   const getMockRequest = ({
     locale = 'cy',
     endDate = '2026-02-03',
+    preferredMethodOfConfirmation = 'Email',
     getCurrentPermission = jest.fn(() => ({
       permission: {
-        endDate
+        endDate,
+        licensee: {
+          preferredMethodOfConfirmation
+        }
       }
     }))
   } = {}) => ({
@@ -117,7 +127,10 @@ describe('getData', () => {
           getCurrentPermission
         }
       }
-    })
+    }),
+    i18n: {
+      getCatalog: jest.fn(() => mockMessages)
+    }
   })
 
   beforeEach(() => {
@@ -125,7 +138,9 @@ describe('getData', () => {
   })
 
   it('retrieves the current permission once', async () => {
-    const getCurrentPermission = jest.fn(() => ({ permission: { endDate: 'end date' } }))
+    const getCurrentPermission = jest.fn(() => ({
+      permission: { endDate: 'end date', licensee: { preferredMethodOfConfirmation: 'Email' } }
+    }))
     const request = getMockRequest({ getCurrentPermission })
 
     await getData(request)
@@ -158,6 +173,30 @@ describe('getData', () => {
 
     const data = await getData(getMockRequest())
 
-    expect(data).toEqual({ licenceExpiry: formattedLicenceExpiry })
+    expect(data).toEqual(expect.objectContaining({ licenceExpiry: formattedLicenceExpiry }))
+  })
+
+  it('returns email method when preferredMethodOfConfirmation is Email', async () => {
+    const data = await getData(getMockRequest({ preferredMethodOfConfirmation: 'Email' }))
+
+    expect(data.preferredMethodOfContact).toBe(mockMessages.rp_cancel_complete_contact_method_email)
+  })
+
+  it('returns text message method when preferredMethodOfConfirmation is Text', async () => {
+    const data = await getData(getMockRequest({ preferredMethodOfConfirmation: 'Text' }))
+
+    expect(data.preferredMethodOfContact).toBe(mockMessages.rp_cancel_complete_contact_method_text)
+  })
+
+  it('returns letter method when preferredMethodOfConfirmation is Letter', async () => {
+    const data = await getData(getMockRequest({ preferredMethodOfConfirmation: 'Letter' }))
+
+    expect(data.preferredMethodOfContact).toBe(mockMessages.rp_cancel_complete_contact_method_letter)
+  })
+
+  it('defaults to letter method for unknown preference', async () => {
+    const data = await getData(getMockRequest({ preferredMethodOfConfirmation: 'Prefer not to be contacted' }))
+
+    expect(data.preferredMethodOfContact).toBe(mockMessages.rp_cancel_complete_contact_method_letter)
   })
 })
