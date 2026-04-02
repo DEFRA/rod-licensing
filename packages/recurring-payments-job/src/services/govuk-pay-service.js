@@ -2,6 +2,9 @@ import { govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('recurring-payments:gov.uk-pay-service')
 
+export const queueRecurringPayment = (preparedPayment, batcher) => govUkPayApi.queueRecurringPayment(preparedPayment, batcher)
+export const queueRecurringPaymentStatusCheck = (paymentId, batcher) => govUkPayApi.queueRecurringPaymentStatusCheck(paymentId, batcher)
+
 export const sendPayment = async preparedPayment => {
   const createPayment = () => govUkPayApi.createPayment(preparedPayment, true)
   const response = await createPayment()
