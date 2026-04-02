@@ -19,6 +19,6 @@ export function getTempDir (...subfolders) {
 
 export function removeTemp () {
   if (processTemp) {
-    fs.rmdirSync(processTemp, { recursive: true })
+    fs.rmSync(processTemp, { recursive: true })
   }
 }

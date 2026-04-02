@@ -21,7 +21,7 @@ const getSampleRequest = referenceNumber => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
-        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber, endDate: '2025:10:03:03:33:33' } }))
+        getCurrentPermission: jest.fn(() => ({ payload: { referenceNumber: 'rp0310', endDate: '2025:10:03:03:33:33' } }))
       }
     }
   }))
@@ -102,6 +102,12 @@ describe('getData', () => {
         referenceNumber
       })
     )
+  })
+
+  it('capitalises reference number', async () => {
+    const request = getSampleRequest()
+    const data = await getData(request)
+    expect(data.referenceNumber).toEqual('RP0310')
   })
 
   it('transforms end date to display format', async () => {

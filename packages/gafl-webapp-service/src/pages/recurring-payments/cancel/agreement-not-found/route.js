@@ -6,7 +6,7 @@ const getData = async request => {
     payload: { referenceNumber }
   } = await request.cache().helpers.page.getCurrentPermission(CANCEL_RP_IDENTIFY.page)
   return {
-    referenceNumber,
+    referenceNumber: referenceNumber.toUpperCase(),
     links: {
       callCharges: 'https://www.gov.uk/call-charges',
       contactUs: 'mailto:enquiries@environment-agency.gov.uk'

@@ -27,6 +27,16 @@ describe('AWS Special cases', () => {
     expect(ListObjectsV2Command).toBeDefined()
   })
 
+  it('exports GetObjectCommand from S3 SDK', () => {
+    const { GetObjectCommand } = AWS()
+    expect(GetObjectCommand).toBeDefined()
+  })
+
+  it('exports GetParameterCommand from ClientSSM SDK', () => {
+    const { GetParameterCommand } = AWS()
+    expect(GetParameterCommand).toBeDefined()
+  })
+
   describe('AWS connectors for S3Client', () => {
     it('has region set to eu-west-2', async () => {
       const { s3 } = AWS()
@@ -55,6 +65,7 @@ describe.each`
   ${'s3'}             | ${'S3Client'}         | ${'s3'}             | ${'2006-03-01'}
   ${'secretsManager'} | ${'SecretsManager'}   | ${'secretsManager'} | ${'2017-10-17'}
   ${'docClient'}      | ${'DynamoDBDocument'} | ${'dynamodb'}       | ${'2012-08-10'}
+  ${'systemsManager'} | ${'SSMClient'}        | ${'systemsManager'} | ${'2014-11-06'}
 `('AWS connectors for $clientName', ({ name, clientName, configName, expectedAPIVersion }) => {
   beforeAll(() => {
     createDocumentClient.mockImplementation(options => {

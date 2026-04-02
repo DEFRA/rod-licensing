@@ -1,11 +1,16 @@
 export default {
   header: {
-    totalMatches: 0,
-    endMatch: 0,
-    query: 'postcode=BS9 1hJ',
-    language: 'EN',
+    uri: 'https://api.os.uk/search/places/v1/postcode?postcode=BS9%201HJ',
+    query: 'postcode=BS9 1HJ',
+    offset: 0,
+    totalresults: 0,
+    format: 'JSON',
     dataset: 'DPA',
-    epoch: '74'
+    lr: 'EN,CY',
+    maxresults: 100,
+    epoch: '125',
+    lastupdate: '2026-02-26',
+    output_srs: 'EPSG:27700'
   },
   results: []
 }
