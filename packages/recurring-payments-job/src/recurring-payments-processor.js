@@ -50,11 +50,19 @@ const processRecurringPayments = async () => {
     return
   }
 
-  const payments = await requestPayments(dueRCPayments)
+  const requestedPayments = await requestPayments(dueRCPayments)
+  const payments = requestedPayments.map((payment, index) => {
+    const duePayment = dueRCPayments.find(duePayment => duePayment.entity.agreementId === payment.agreement_id)
+    return {
+      paymentId: payment.payment_id,
+      agreementId: duePayment.entity.agreementId,
+      recurringPaymentId: duePayment.entity.id
+    }
+  })
 
-  // await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
+  await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
-  await checkPaymentStatuses(payments)
+  await checkPaymentStatuses(requestedPayments)
   // await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
 }
 
@@ -114,6 +122,8 @@ const requestPayments = async dueRCPayments => {
         paymentTimestamp: paymentResponse.created_date,
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
+    } else {
+
     }
   }
 
@@ -216,21 +226,41 @@ const checkPaymentStatuses = async payments => {
   for (const payment of payments) {
     queueRecurringPaymentStatusCheck(payment.payment_id, batcher)
   }
-  await batcher.fetch()
+  await batcher.fetch() 
   batcher.responses.forEach(async (response, index) => {
-    const paymentStatusCheck = await response.json()
-    console.log('Payment status check response:', paymentStatusCheck)
-    debug(`Payment status for ${paymentStatusCheck.payment_id}: ${paymentStatusCheck.state.status}`)
+    if (isSuccessfulResponse(response.status)) {
+      const paymentStatusCheck = await response.json()
+      const paymentStatus = paymentStatusCheck.state.status
+      debug(`Payment status for ${paymentStatusCheck.payment_id}: ${paymentStatusCheck.state.status}`)
 
-    if (paymentStatusCheck.state.status === PAYMENT_STATUS.Success) {
-      try {
-        await salesApi.processRPResult(paymentStatusCheck.reference, paymentStatusCheck.payment_id, paymentStatusCheck.created_date)
-        // debug(`Processed Recurring Payment for ${paymentStatusCheck.reference}`)
-      } catch (err) {
-        console.error(`Failed to process Recurring Payment for ${paymentStatusCheck.reference}`, err)
+      if (paymentStatus === PAYMENT_STATUS.Success) {
+        try {
+          await salesApi.processRPResult(paymentStatusCheck.reference, paymentStatusCheck.payment_id, paymentStatusCheck.created_date)
+          // debug(`Processed Recurring Payment for ${paymentStatusCheck.reference}`)
+        } catch (err) {
+          console.error(`Failed to process Recurring Payment for ${paymentStatusCheck.reference}`, err)
+        }
       }
+      if ([PAYMENT_STATUS.Failure, PAYMENT_STATUS.Error].includes(paymentStatus)) {
+        console.error(
+          `Payment failed. Recurring payment agreement for: ${payments[index].agreement_id} set to be cancelled. Updating payment journal.`
+        )
+        // await salesApi.cancelRecurringPayment(payments[index].recurringPaymentId)
+      }
+    } else if (isClientError(response.status)) {
+      console.error(`Failed to fetch status for payment ${payments[index].payment_id}, error ${response.status}`)
+    } else if (isServerError(response.status)) {
+      console.error(`Payment status API error for ${payments[index].payment_id}, error ${response.status}`)
+    } else {
+      console.error(`Unexpected error fetching payment status for ${payments[index].payment_id}.`)
     }
-  })
+  //     if (isClientError(status)) {
+  //       console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${status}`)
+  //     } else if (isServerError(status)) {
+  //       console.error(`Payment status API error for ${payment.paymentId}, error ${status}`)
+
+
+    })
 }
 
 const processRecurringPaymentStatus = async payment => {
