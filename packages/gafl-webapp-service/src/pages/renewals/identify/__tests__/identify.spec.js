@@ -52,39 +52,38 @@ jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
 salesApi.countries.getAll = jest.fn(() => Promise.resolve(mockDefraCountries))
 
-const buildPreparedPermissionFromAuthenticationResult = auth => ({
+const getDefaultPreparedData = (overrides = {}) => ({
   isRenewal: true,
   licenceLength: '12M',
-  licenceType: auth.permission.permit.permitSubtype.label,
-  numberOfRods: auth.permission.permit.numberOfRods.toString(),
+  licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'],
+  numberOfRods: '1',
   isLicenceForYou: true,
+  licenceToStart: 'another-date',
+  licenceStartDate: moment().format('YYYY-MM-DD'),
+  licenceStartTime: 0,
+  renewedEndDate: moment().toISOString(),
+  renewedHasExpired: false,
   licensee: {
-    postalFulfilment: auth.permission.licensee.postalFulfilment,
-    birthDate: auth.permission.licensee.birthDate,
-    countryCode: auth.permission.licensee.country.description,
-
-    email: auth.permission.licensee.email,
-    mobilePhone: auth.permission.licensee.mobilePhone,
-
-    firstName: auth.permission.licensee.firstName,
-    lastName: auth.permission.licensee.lastName,
-
-    premises: auth.permission.licensee.premises,
-    postcode: auth.permission.licensee.postcode,
-    street: auth.permission.licensee.street,
-    town: auth.permission.licensee.town,
-
-    preferredMethodOfNewsletter: auth.permission.licensee.preferredMethodOfNewsletter.label,
-    preferredMethodOfConfirmation: auth.permission.licensee.preferredMethodOfConfirmation.label,
-    preferredMethodOfReminder: auth.permission.licensee.preferredMethodOfReminder.label
+    birthDate: '1970-01-01',
+    country: 'England',
+    countryCode: 'GB-ENG',
+    email: 'angling@email.com',
+    mobilePhone: '07700 900 900',
+    firstName: 'Graham',
+    lastName: 'Willis',
+    premises: 'Howecroft Court',
+    street: '2 Eastmead Lane',
+    locality: '3',
+    town: 'Bristol',
+    postcode: 'BS9 1HJ',
+    preferredMethodOfConfirmation: 'Text',
+    preferredMethodOfNewsletter: 'Email',
+    preferredMethodOfReminder: 'Text',
+    postalFulfilment: false
   },
-  concessions: []
+  concessions: [],
+  ...overrides
 })
-
-const mockPreparePermissionDataForRenewal = auth =>
-  salesApi.preparePermissionDataForRenewal.mockResolvedValue({
-    permission: buildPreparedPermissionFromAuthenticationResult(auth)
-  })
 
 describe('The easy renewal identification page', () => {
   it('redirects from identify to licence not found page when called with an invalid permission reference', async () => {
@@ -200,10 +199,11 @@ describe('The easy renewal identification page', () => {
   ])('valid response - (how contacted=%s)', (name, fn) => {
     beforeEach(async () => {
       const newAuthenticationResult = Object.assign({}, authenticationResult)
-      newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
       newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
       salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-      mockPreparePermissionDataForRenewal(newAuthenticationResult)
+      salesApi.preparePermissionDataForRenewal.mockResolvedValue(
+        getDefaultPreparedData({ licensee: { ...getDefaultPreparedData().licensee, preferredMethodOfConfirmation: fn } })
+      )
 
       await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
       await injectWithCookies('GET', IDENTIFY.uri)
@@ -277,38 +277,18 @@ describe('The easy renewal identification page', () => {
     })
   })
 
-  const salmonAndSeaTroutPermitSubtype = {
-    id: 910400000,
-    label: 'Salmon and sea trout',
-    description: 'S'
-  }
-
-  const troutAndCoarsePermitSubtype = {
-    id: 910400001,
-    label: 'Trout and coarse',
-    description: 'C'
-  }
-
   it.each([
-    [
-      'Trout and coarse - 2 rod',
-      { subType: troutAndCoarsePermitSubtype, numberOfRods: '2', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }
-    ],
-    [
-      'Trout and coarse - 3 rod',
-      { subType: troutAndCoarsePermitSubtype, numberOfRods: '3', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }
-    ],
-    [
-      'Salmon and sea trout',
-      { subType: salmonAndSeaTroutPermitSubtype, numberOfRods: '1', licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'] }
-    ]
+    ['Trout and coarse - 2 rod', { numberOfRods: '2', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }],
+    ['Trout and coarse - 3 rod', { numberOfRods: '3', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }],
+    ['Salmon and sea trout', { numberOfRods: '1', licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'] }]
   ])('redirects to the controller on posting a valid response - (licence type=%s)', async (name, obj) => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
-    newAuthenticationResult.permission.permit.numberOfRods = obj.numberOfRods
-    newAuthenticationResult.permission.permit.permitSubtype = obj.subType
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    mockPreparePermissionDataForRenewal(newAuthenticationResult)
+    salesApi.preparePermissionDataForRenewal.mockReset()
+    salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(
+      getDefaultPreparedData({ numberOfRods: obj.numberOfRods, licenceType: obj.licenceType })
+    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -323,9 +303,13 @@ describe('The easy renewal identification page', () => {
   it('that an adult licence holder who is now over the senior concession date gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
-    newAuthenticationResult.permission.licensee.birthDate = moment().add(-66, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    mockPreparePermissionDataForRenewal(newAuthenticationResult)
+    salesApi.preparePermissionDataForRenewal.mockReset()
+    salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce(
+      getDefaultPreparedData({
+        concessions: [{ name: 'Senior', id: 'senior-concession-id', proof: { type: 'No Proof' } }]
+      })
+    )
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -343,7 +327,6 @@ describe('The easy renewal identification page', () => {
       .add(RENEW_BEFORE_DAYS + 1, 'days')
       .toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -367,7 +350,6 @@ describe('The easy renewal identification page', () => {
       .add(-1 * (RENEW_AFTER_DAYS + 1), 'days')
       .toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
@@ -381,7 +363,6 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.permit.durationMagnitude = 1
     newAuthenticationResult.permission.permit.durationDesignator.description = 'D'
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
-    mockPreparePermissionDataForRenewal(newAuthenticationResult)
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
