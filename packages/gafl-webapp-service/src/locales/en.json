@@ -804,7 +804,7 @@
   "role_required_body_1": "You were successfully signed in but you do not have the correct role assigned to access the telesales application.",
   "role_required_body_2": "Please contact your Microsoft Dynamics administrator to request access.",
   "role_required_title": "Role required",
-  "rp_cancel_already_cancelled_title": "Your recurring card payment agreement is already cancelled",
+  "rp_licence_already_cancelled_title": "Your recurring card payment agreement is already cancelled",
   "rp_licence_already_cancelled_body_1": "Licence ending ",
   "rp_licence_already_cancelled_body_1_1": " expires on ",
   "rp_licence_already_cancelled_body_1_2": " and will not renew automatically. To continue fishing after this date you need to ",

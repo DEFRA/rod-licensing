@@ -792,7 +792,7 @@
   "role_required_body_1": "You were successfully signed in but you do not have the correct role assigned to access the telesales application.",
   "role_required_body_2": "Please contact your Microsoft Dynamics administrator to request access.",
   "role_required_title": "Role required",
-  "rp_cancel_already_cancelled_title": "Mae eich cytundeb taliad cerdyn rheolaidd eisoes wedi’i ganslo",
+  "rp_licence_already_cancelled_title": "Mae eich cytundeb taliad cerdyn rheolaidd eisoes wedi’i ganslo",
   "rp_licence_already_cancelled_body_1": "Bydd y drwydded sy’n gorffen gyda ",
   "rp_licence_already_cancelled_body_1_1": " yn dod i ben ar ",
   "rp_licence_already_cancelled_body_1_2": " ac ni fydd yn adnewyddu’n awtomatig. I barhau i bysgota ar ôl y dyddiad hwn mae angen i chi ",
