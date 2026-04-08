@@ -1,4 +1,13 @@
 
+## v1.70.0-rc.6 (2026-04-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2346](https://github.com/DEFRA/rod-licensing/pull/2346) Cancellation page 2 Welsh translation (unhappy path) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.70.0-rc.4 (2026-04-07)
 
