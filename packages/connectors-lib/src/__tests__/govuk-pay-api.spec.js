@@ -203,4 +203,25 @@ describe('govuk-pay-api-connector', () => {
       expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
+
+  describe('cancelRecurringPaymentAgreement', () => {
+    it('cancels a recurring payment agreement', async () => {
+      fetch.mockReturnValueOnce({ ok: true, status: 204 })
+      await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).resolves.toEqual(expect.objectContaining({ ok: true, status: 204 }))
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/123/cancel', {
+        headers: recurringHeaders,
+        method: 'post',
+        timeout: 10000
+      })
+    })
+
+    it('logs and throws errors', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      fetch.mockImplementation(() => {
+        throw new Error('cancel error')
+      })
+      await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).rejects.toEqual(Error('cancel error'))
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+  })
 })
