@@ -208,6 +208,11 @@ describe('govuk-pay-api-connector', () => {
     it('cancels a recurring payment agreement', async () => {
       fetch.mockReturnValueOnce({ ok: true, status: 204 })
       await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).resolves.toEqual(expect.objectContaining({ ok: true, status: 204 }))
+    })
+
+    it('calls the correct endpoint with recurring headers', async () => {
+      fetch.mockReturnValueOnce({ ok: true, status: 204 })
+      await govUkPayApi.cancelRecurringPaymentAgreement(123)
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/123/cancel', {
         headers: recurringHeaders,
         method: 'post',
