@@ -1,4 +1,53 @@
 
+## v1.70.0-rc.6 (2026-04-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2346](https://github.com/DEFRA/rod-licensing/pull/2346) Cancellation page 2 Welsh translation (unhappy path) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.70.0-rc.4 (2026-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2349](https://github.com/DEFRA/rod-licensing/pull/2349) GAFL: Dev – Cancellation page 3 Welsh translation ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.70.0-rc.2 (2026-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2343](https://github.com/DEFRA/rod-licensing/pull/2343) GAFL:Dev - Different feedback link in RCP cancellation journey ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.70.0-rc.0 (2026-04-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2345](https://github.com/DEFRA/rod-licensing/pull/2345) Cannot read properties of undefined (reading 'id') ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.69.0-rc.6 (2026-03-31)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2335](https://github.com/DEFRA/rod-licensing/pull/2335) Bug/iwtf 4147 renewals service refactor ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.69.0-rc.5 (2026-03-30)
 
 #### :rocket: Enhancement

@@ -5,7 +5,11 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     const defaults = {
       referenceNumber: '23270624-2WC3FSD-ABNCY4',
       endDate: '2024-12-31',
-      licensee: { firstName: 'Brenin', lastName: 'Pysgotwr' },
+      licensee: {
+        firstName: 'Brenin',
+        lastName: 'Pysgotwr',
+        preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
+      },
       permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
@@ -44,7 +48,6 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     it.each([
       ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
       ['endDate', '2024-12-31'],
-      ['licensee', { firstName: 'John', lastName: 'Bull' }],
       ['permit', { description: 'Coarse 12 month 2 Rod Licence (Full)' }]
     ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
@@ -57,6 +60,28 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         expect.objectContaining({
           permission: expect.objectContaining({
             [fieldName]: fieldValue
+          })
+        })
+      )
+    })
+
+    it('Adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
+      const setCurrentPermission = jest.fn()
+      const mockRequest = getSampleRequest(setCurrentPermission)
+      const authResult = getSampleAuthResult({
+        licensee: {
+          firstName: 'John',
+          lastName: 'Bull',
+          preferredMethodOfConfirmation: { id: 910400001, label: 'Text', description: 'Text' }
+        }
+      })
+
+      await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
+
+      expect(setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({
+          permission: expect.objectContaining({
+            licensee: { firstName: 'John', lastName: 'Bull', preferredMethodOfConfirmation: 'Text' }
           })
         })
       )

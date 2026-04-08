@@ -13,6 +13,7 @@ import {
   CHANNEL_DEFAULT,
   CSRF_TOKEN_COOKIE_NAME_DEFAULT,
   FEEDBACK_URI_DEFAULT,
+  FEEDBACK_URI_RCP_CANCEL_DEFAULT,
   REDIS_PORT_DEFAULT,
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT
@@ -95,7 +96,9 @@ export const layoutContextAmalgamation = (request, h) => {
         refunds: `${REFUND_POLICY.uri}${queryString}`,
         accessibility: `${ACCESSIBILITY_STATEMENT.uri}${queryString}`,
         privacy: `${PRIVACY_POLICY.uri}${queryString}`,
-        feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
+        feedback: request.path.startsWith('/buy/cancel-recurring-payment/')
+          ? process.env.FEEDBACK_URI_RCP_CANCEL || FEEDBACK_URI_RCP_CANCEL_DEFAULT
+          : process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
         clear: `${NEW_TRANSACTION.uri}${queryString}`,
         newPrices: `${NEW_PRICES.uri}${queryString}`,
         queryParams: request.query
