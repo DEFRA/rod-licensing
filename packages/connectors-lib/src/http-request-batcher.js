@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 
 const debug = db('connectors:http-request-batcher')
 export default class HTTPRequestBatcher {
+  maxRequestAttempts = 2
   #batchSize
   #delay
   #requests = []
@@ -37,15 +38,16 @@ export default class HTTPRequestBatcher {
     this.#requests.push({ url, options })
   }
 
-  async _sendBatch (fetchRequests, sentRequests, requestQueue) {
-    const batchResponses = await Promise.all(fetchRequests)
-    this.#responses.push(...batchResponses)
-    for (let x = 0; x < batchResponses.length; x++) {
-      const response = batchResponses[x]
-      if (response.status === StatusCodes.TOO_MANY_REQUESTS && sentRequests[x].attempts < 2) {
+  async #processBatch (fetchRequests, sentRequests, requestQueue) {
+    const batchResponses = await Promise.allSettled(fetchRequests)
+    const successes = batchResponses.filter(r => r.status === 'fulfilled')
+    this.#responses.push(...batchResponses.map(r => r.value))
+    for (let x = 0; x < successes.length; x++) {
+      const { value: response } = successes[x]
+      if (response.status === StatusCodes.TOO_MANY_REQUESTS && sentRequests[x].attempts < this.maxRequestAttempts) {
         requestQueue.push({ ...sentRequests[x], attempts: sentRequests[x].attempts + 1 })
         this.#batchSize = Math.max(this.#batchSize - 1, 1)
-        debug(`429 response received for ${sentRequests[x].url}, reducing batch size to ${this.#batchSize}`)
+        debug(`${StatusCodes.TOO_MANY_REQUESTS} response received for ${sentRequests[x].url}, reducing batch size to ${this.#batchSize}`)
       }
     }
     fetchRequests.length = 0
@@ -69,8 +71,8 @@ export default class HTTPRequestBatcher {
       const request = requestQueue.shift()
       fetchRequests.push(fetch(request.url, request.options))
       sentRequests.push({ attempts: 1, ...request })
-      if (fetchRequests.length === this.#batchSize) {
-        await this._sendBatch(fetchRequests, sentRequests, requestQueue)
+      if (fetchRequests.length === this.#batchSize || requestQueue.length === 0) {
+        await this.#processBatch(fetchRequests, sentRequests, requestQueue)
       }
     }
     debug('Batched fetch complete')
