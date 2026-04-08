@@ -191,7 +191,7 @@ const cancelGovPayAgreement = async agreementId => {
   const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
   if (response.ok) {
     debug('Successfully cancelled GovPay agreement: %s', agreementId)
-  } else if (response.status === StatusCodes.BAD_REQUEST) {
+  } else if (response.status === StatusCodes.NOT_FOUND) {
     debug('GovPay agreement not found (already cancelled or does not exist): %s', agreementId)
   } else if (response.status === StatusCodes.BAD_REQUEST) {
     debug('GovPay agreement cannot be cancelled (invalid state): %s', agreementId)
