@@ -21,6 +21,7 @@ import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { StatusCodes } from 'http-status-codes'
 const debug = db('sales:recurring')
 const { sqs, docClient } = AWS()
 
@@ -170,18 +171,33 @@ export const cancelRecurringPayment = async (id, reason) => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
     const data = recurringPayment
-    const isUserCancelled = reason === 'User Cancelled'
 
-    if (!isUserCancelled) {
-      data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+
+    if (data.agreementId) {
+      await cancelGovPayAgreement(data.agreementId)
     }
 
-    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
     await persist([updatedRecurringPayment])
     return updatedRecurringPayment
   } else {
     throw new Error('Invalid id provided for recurring payment cancellation')
+  }
+}
+
+const cancelGovPayAgreement = async agreementId => {
+  const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
+  if (response.ok) {
+    debug('Successfully cancelled GovPay agreement: %s', agreementId)
+  } else if (response.status === StatusCodes.NOT_FOUND) {
+    debug('GovPay agreement not found (already cancelled or does not exist): %s', agreementId)
+  } else if (response.status === StatusCodes.BAD_REQUEST) {
+    debug('GovPay agreement cannot be cancelled (invalid state): %s', agreementId)
+  } else {
+    const body = await response.text().catch(() => 'Unable to read response body')
+    throw new Error(`Failed to cancel GovPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
 
