@@ -998,21 +998,37 @@ describe('recurring payments service', () => {
       expect(govUkPayApi.cancelRecurringPaymentAgreement).not.toHaveBeenCalled()
     })
 
-    it('should succeed when GovPay returns 404 (agreement already cancelled)', async () => {
+    it('should not throw when GovPay returns 404 (agreement already cancelled)', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
 
       await expect(cancelRecurringPayment('id', 'User Cancelled')).resolves.toBeDefined()
+    })
+
+    it('should still persist to CRM when GovPay returns 404', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
       expect(persist).toHaveBeenCalled()
     })
 
-    it('should succeed when GovPay returns 400 (agreement in invalid state)', async () => {
+    it('should not throw when GovPay returns 400 (agreement in invalid state)', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 400, statusText: 'Bad Request' })
 
       await expect(cancelRecurringPayment('id', 'User Cancelled')).resolves.toBeDefined()
+    })
+
+    it('should still persist to CRM when GovPay returns 400', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 400, statusText: 'Bad Request' })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
       expect(persist).toHaveBeenCalled()
     })
 
