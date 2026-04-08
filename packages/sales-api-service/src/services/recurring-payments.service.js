@@ -21,6 +21,7 @@ import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { StatusCodes } from 'http-status-codes'
 const debug = db('sales:recurring')
 const { sqs, docClient } = AWS()
 
@@ -190,9 +191,9 @@ const cancelGovPayAgreement = async agreementId => {
   const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
   if (response.ok) {
     debug('Successfully cancelled GovPay agreement: %s', agreementId)
-  } else if (response.status === 404) {
+  } else if (response.status === StatusCodes.BAD_REQUEST) {
     debug('GovPay agreement not found (already cancelled or does not exist): %s', agreementId)
-  } else if (response.status === 400) {
+  } else if (response.status === StatusCodes.BAD_REQUEST) {
     debug('GovPay agreement cannot be cancelled (invalid state): %s', agreementId)
   } else {
     const body = await response.text().catch(() => 'Unable to read response body')
