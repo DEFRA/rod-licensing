@@ -262,6 +262,8 @@ const postTransaction = async (request, transaction, status) => {
 export default async (request, h) => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
+  console.log(status)
+  console.log(transaction)
 
   if (!transaction || !status) {
     debug('Session data missing in agreed handler - transaction: %s, status: %s', !!transaction, !!status)
