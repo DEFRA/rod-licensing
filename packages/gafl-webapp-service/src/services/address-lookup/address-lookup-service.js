@@ -70,7 +70,7 @@ const mapResults = results => {
   return results.map((r, idx) => ({
     id: idx,
     address: `${r.DPA.ADDRESS.replace(r.DPA.POSTCODE, '').toLowerCase()}${r.DPA.POSTCODE}`,
-    premises: r.DPA.BUILDING_NAME || '',
+    premises: r.DPA.BUILDING_NAME || r.DPA.BUILDING_NUMBER || '',
     street: r.DPA.THOROUGHFARE_NAME || '',
     locality: r.DPA.DEPENDENT_LOCALITY || '',
     town: r.DPA.POST_TOWN || '',

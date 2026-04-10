@@ -66,6 +66,68 @@ describe('address-lookup-service', () => {
         })
       }
     )
+
+    it('maps BUILDING_NUMBER to premises when BUILDING_NAME is absent', async () => {
+      fetch.mockResolvedValue({
+        json: () => ({
+          results: [
+            {
+              DPA: {
+                ADDRESS: '19, CRABTREE AVENUE, WEMBLEY, HA0 1LW',
+                POSTCODE: 'HA0 1LW',
+                BUILDING_NUMBER: '19',
+                THOROUGHFARE_NAME: 'CRABTREE AVENUE',
+                POST_TOWN: 'WEMBLEY'
+              }
+            }
+          ]
+        })
+      })
+      const results = await addressLookupService()
+      expect(results[0].premises).toBe('19')
+    })
+
+    it('maps BUILDING_NAME to premises in preference to BUILDING_NUMBER when both exist', async () => {
+      fetch.mockResolvedValue({
+        json: () => ({
+          results: [
+            {
+              DPA: {
+                ADDRESS: 'THE LODGE, 5, CHURCH LANE, BRISTOL, BS1 1AA',
+                POSTCODE: 'BS1 1AA',
+                BUILDING_NAME: 'THE LODGE',
+                BUILDING_NUMBER: '5',
+                THOROUGHFARE_NAME: 'CHURCH LANE',
+                POST_TOWN: 'BRISTOL'
+              }
+            }
+          ]
+        })
+      })
+      const results = await addressLookupService()
+      expect(results[0].premises).toBe('THE LODGE')
+    })
+
+    it('maps SUB_BUILDING_NAME combined with BUILDING_NUMBER to premises when BUILDING_NAME is absent', async () => {
+      fetch.mockResolvedValue({
+        json: () => ({
+          results: [
+            {
+              DPA: {
+                ADDRESS: 'FLAT 1, 19, CRABTREE AVENUE, WEMBLEY, HA0 1LW',
+                POSTCODE: 'HA0 1LW',
+                SUB_BUILDING_NAME: 'FLAT 1',
+                BUILDING_NUMBER: '19',
+                THOROUGHFARE_NAME: 'CRABTREE AVENUE',
+                POST_TOWN: 'WEMBLEY'
+              }
+            }
+          ]
+        })
+      })
+      const results = await addressLookupService()
+      expect(results[0].premises).not.toBe('')
+    })
   })
 
   describe('filtering by premises', () => {
@@ -185,7 +247,7 @@ describe('address-lookup-service', () => {
         {
           id: 0,
           address: '14, church street, york, YO1 8BE',
-          premises: '',
+          premises: '14',
           street: 'CHURCH STREET',
           locality: '',
           town: 'YORK',
