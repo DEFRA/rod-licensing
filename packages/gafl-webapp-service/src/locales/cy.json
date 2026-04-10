@@ -152,6 +152,7 @@
   "cancel_rp_identify_postcode": "Cod post",
   "cancel_rp_identify_postcode_hint": "Er enghraifft, WA4 1AB",
   "cancel_rp_identify_postcode_error": "Nodwch god post",
+  "cancel_rp_identify_postcode_error_empty": "Nid ydych wedi nodi cod post",
   "cancel_rp_identify_postcode_pattern": "Nid yw’r cod post yn edrych yn gywir. Gwiriwch a rhowch gynnig arall arni",
   "change_licence_details_you": "Adolygu neu newid manylion eich trwydded",
   "change_licence_details_other": "Adolygu neu newid manylion y drwydded",
