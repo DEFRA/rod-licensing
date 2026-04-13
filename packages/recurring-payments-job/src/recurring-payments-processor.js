@@ -158,7 +158,9 @@ const processPaymentCreationResponse = async (response, metadata, transactionMap
       await salesApi.cancelRecurringPayment(transaction.recurringPayment?.id)
     } else {
       console.error(
-        `Unexpected response from GOV.UK Pay API. Status: ${response.status}, Response: ${JSON.stringify(body)}, Transaction ID: ${transaction.id}`
+        `Unexpected response from GOV.UK Pay API. Status: ${response.status}, Response: ${JSON.stringify(body)}, Transaction ID: ${
+          transaction.id
+        }`
       )
     }
     return
@@ -266,7 +268,9 @@ const processPaymentStatusResponse = async (response, paymentMap) => {
       return
     }
 
-    const { state: { status } } = await response.json()
+    const {
+      state: { status }
+    } = await response.json()
 
     debug(`Payment status for ${paymentId}: ${status}`)
 

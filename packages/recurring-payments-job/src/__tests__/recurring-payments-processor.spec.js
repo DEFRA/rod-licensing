@@ -56,8 +56,10 @@ const PAYMENT_STATUS_DELAY = 60000
 // ── Response factories ────────────────────────────────────────────────────────
 
 const mockCreationOkResponse = ({
+  // eslint-disable-next-line camelcase
   payment_id = 'pay-1',
   reference = 'test-transaction-id',
+  // eslint-disable-next-line camelcase
   created_date = '2025-01-01T00:00:00.000Z'
 } = {}) => ({
   ok: true,
@@ -116,7 +118,6 @@ const getMockPaymentRequestResponse = () => [
   }
 ]
 
-const getPaymentStatusSuccess = () => ({ state: { status: 'payment status success' } })
 const getPaymentStatusFailure = () => ({ state: { status: 'payment status failure' } })
 const getPaymentStatusError = () => ({ state: { status: 'payment status error' } })
 
@@ -132,6 +133,7 @@ const setupSinglePayment = ({
   referenceNumber = '123',
   transactionId = 'test-transaction-id',
   paymentId = 'pay-1',
+  // eslint-disable-next-line camelcase
   created_date = '2025-01-01T00:00:00.000Z',
   paymentStatus = 'payment status success',
   permissionData = { licensee: { countryCode: 'GB-ENG' } }
@@ -381,10 +383,7 @@ describe('recurring-payments-processor', () => {
         agreement_id: agreementId
       })
 
-      expect(creationBatcher.addRequest).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({ body: expectedBody })
-      )
+      expect(creationBatcher.addRequest).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ body: expectedBody }))
     })
 
     it('calls batcher.fetch() for payment creation', async () => {
@@ -410,9 +409,7 @@ describe('recurring-payments-processor', () => {
       const creationBatcher = makeBatcherMock(
         agreementIds.map((_, i) => mockCreationOkResponse({ payment_id: `pay-${i + 1}`, reference: `trans-${i + 1}` }))
       )
-      const statusBatcher = makeBatcherMock(
-        agreementIds.map((_, i) => mockStatusOkResponse(`pay-${i + 1}`, 'payment status success'))
-      )
+      const statusBatcher = makeBatcherMock(agreementIds.map((_, i) => mockStatusOkResponse(`pay-${i + 1}`, 'payment status success')))
       HTTPRequestBatcher.mockImplementationOnce(() => creationBatcher).mockImplementationOnce(() => statusBatcher)
 
       await execute()
@@ -534,7 +531,9 @@ describe('recurring-payments-processor', () => {
         paymentIds.map((pid, i) => mockCreationOkResponse({ payment_id: pid, reference: transactionIds[i] }))
       )
       const statusBatcher = makeBatcherMock(
-        paymentIds.map((pid, i) => ([1, 3].includes(i) ? mockStatusErrorResponse(pid, 500) : mockStatusOkResponse(pid, 'payment status success')))
+        paymentIds.map((pid, i) =>
+          [1, 3].includes(i) ? mockStatusErrorResponse(pid, 500) : mockStatusOkResponse(pid, 'payment status success')
+        )
       )
       HTTPRequestBatcher.mockImplementationOnce(() => creationBatcher).mockImplementationOnce(() => statusBatcher)
 
@@ -605,15 +604,14 @@ describe('recurring-payments-processor', () => {
 
   it('creates a payment journal entry', async () => {
     const paymentId = 'unique-payment-id-under-test'
+    // eslint-disable-next-line camelcase
     const created_date = Symbol('created-date')
     const transactionId = Symbol('transaction-id')
 
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     salesApi.createTransaction.mockReturnValueOnce({ id: transactionId, cost: 99, recurringPayment: { id: 'rp-1' } })
 
-    const creationBatcher = makeBatcherMock([
-      mockCreationOkResponse({ payment_id: paymentId, reference: transactionId, created_date })
-    ])
+    const creationBatcher = makeBatcherMock([mockCreationOkResponse({ payment_id: paymentId, reference: transactionId, created_date })])
     const statusBatcher = makeBatcherMock([mockStatusOkResponse(paymentId, 'payment status success')])
     HTTPRequestBatcher.mockImplementationOnce(() => creationBatcher).mockImplementationOnce(() => statusBatcher)
 
@@ -839,7 +837,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('should log errors from await salesApi.processRPResult', async () => {
-    const { paymentId, transactionId } = setupSinglePayment({ transactionId: 'trans-1', paymentId: 'pay-1' })
+    const { transactionId } = setupSinglePayment({ transactionId: 'trans-1', paymentId: 'pay-1' })
     const boom = new Error('boom')
     salesApi.processRPResult.mockImplementation(transId => (transId === transactionId ? Promise.reject(boom) : Promise.resolve()))
 
@@ -986,9 +984,11 @@ describe('recurring-payments-processor', () => {
   })
 
   it('calls processRPResult with transaction id, payment id and created date when payment is successful', async () => {
+    // eslint-disable-next-line camelcase
     const { paymentId, transactionId, created_date } = setupSinglePayment({
       transactionId: 'test-transaction-id',
       paymentId: 'test-payment-id',
+      // eslint-disable-next-line camelcase
       created_date: '2025-01-01T00:00:00.000Z'
     })
 
