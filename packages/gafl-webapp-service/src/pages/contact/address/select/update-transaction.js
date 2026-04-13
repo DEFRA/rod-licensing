@@ -10,7 +10,7 @@ export default async request => {
   const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
   const { addresses } = await request.cache().helpers.addressLookup.getCurrentPermission()
   const { premises, street, locality, town, postcode } = addresses.find(a => a.id === payload.address)
-  // All UK addresses from lookup default to GB
+  // Address lookup country is 'United Kingdom'
   Object.assign(licensee, { premises, town, postcode, countryCode: 'GB' })
 
   // Street and locality are optional
