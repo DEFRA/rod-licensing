@@ -5,6 +5,7 @@ import {
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
   persist,
+  Permission,
   RecurringPayment,
   findRecurringPaymentByPermissionId,
   retrieveGlobalOptionSets
@@ -180,11 +181,32 @@ export const cancelRecurringPayment = async (id, reason) => {
     }
 
     const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
-    await persist([updatedRecurringPayment])
+    const entitiesToPersist = [updatedRecurringPayment]
+
+    const linkedPermission = await getLinkedPermission(id)
+    if (linkedPermission) {
+      linkedPermission.isRecurringPayment = false
+      entitiesToPersist.push(linkedPermission)
+    }
+
+    await persist(entitiesToPersist)
     return updatedRecurringPayment
   } else {
     throw new Error('Invalid id provided for recurring payment cancellation')
   }
+}
+
+const getLinkedPermission = async recurringPaymentId => {
+  const record = await dynamicsClient.retrieveRequest({
+    key: recurringPaymentId,
+    collection: RecurringPayment.definition.dynamicsCollection,
+    select: ['_defra_activepermission_value']
+  })
+  const permissionId = record._defra_activepermission_value
+  if (permissionId) {
+    return findById(Permission, permissionId)
+  }
+  return null
 }
 
 const cancelGovPayAgreement = async agreementId => {
