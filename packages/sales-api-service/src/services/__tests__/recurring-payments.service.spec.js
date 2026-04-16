@@ -52,7 +52,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findDueRecurringPayments: jest.fn(),
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
-    retrieveMultipleRequest: jest.fn(() => ({ value: [] }))
+    retrieveMultipleRequest: jest.fn(() => ({ value: [] })),
+    retrieveRequest: jest.fn(() => ({ _defra_activepermission_value: 'mock-permission-id' }))
   },
   persist: jest.fn(),
   findRecurringPaymentByPermissionId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
@@ -896,8 +897,16 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
+    const mockPermission = new Permission()
+    mockPermission.isRecurringPayment = true
+
     beforeEach(() => {
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValue({ ok: true, status: 204 })
+      dynamicsClient.retrieveRequest.mockResolvedValue({ _defra_activepermission_value: 'mock-permission-id' })
+      findById.mockImplementation(entityType => {
+        if (entityType === Permission) return mockPermission
+        return null
+      })
     })
 
     it('should call findById with RecurringPayment and the provided id', async () => {
@@ -943,11 +952,12 @@ describe('recurring payments service', () => {
           ...recurringPayment,
           cancelledReason,
           cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
-        })
+        }),
+        mockPermission
       ])
     })
 
-    it('should not set cancelledDate when reason is User Cancelled', async () => {
+    it('should set cancelledDate when reason is User Cancelled', async () => {
       retrieveGlobalOptionSets.mockReturnValueOnce({
         cached: jest.fn().mockResolvedValue({
           defra_cancelledreasons: {
@@ -976,7 +986,8 @@ describe('recurring payments service', () => {
           ...recurringPayment,
           cancelledReason,
           cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
-        })
+        }),
+        mockPermission
       ])
     })
 
@@ -1043,6 +1054,57 @@ describe('recurring payments service', () => {
       })
 
       await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovPay agreement')
+    })
+
+    it('should set isRecurringPayment to false on the linked permission', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(mockPermission.isRecurringPayment).toBe(false)
+    })
+
+    it('should persist the linked permission alongside the recurring payment', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment), mockPermission])
+    })
+
+    it('should query dynamics for the active permission lookup value', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(dynamicsClient.retrieveRequest).toHaveBeenCalledWith({
+        key: 'id',
+        collection: RecurringPayment.definition.dynamicsCollection,
+        select: ['_defra_activepermission_value']
+      })
+    })
+
+    it('should look up the permission by the id returned from dynamics', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      dynamicsClient.retrieveRequest.mockResolvedValueOnce({ _defra_activepermission_value: 'specific-permission-id' })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(findById).toHaveBeenCalledWith(Permission, 'specific-permission-id')
+    })
+
+    it('should still persist when no linked permission is found', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      dynamicsClient.retrieveRequest.mockResolvedValueOnce({ _defra_activepermission_value: null })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment)])
     })
 
     it('should raise an error when there are no matches', async () => {
