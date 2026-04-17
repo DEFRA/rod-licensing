@@ -1,14 +1,18 @@
 {% extends "layout.njk" %}
+
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "date-input/macro.njk" import govukDateInput %}
 {% from "input/macro.njk" import govukInput %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "page-title.njk" import pageTitle %}
+
 {% set title = mssgs.identify_title %}
+
 {% block pageTitle %}
     {{ pageTitle(title, error, mssgs) }}
 {% endblock %}
+
 {% set errorMap = {
         'referenceNumber' : {
             'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
@@ -50,6 +54,7 @@
             'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
         }
     } %}
+
 {% set dateInputItems = [
     {
       label: mssgs.date_day,
@@ -73,22 +78,25 @@
       attributes: { maxlength : 4 }
     }
   ] %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
             <form method="post" class="govuk-!-margin-bottom-6">
                 {% call govukFieldset({
-              describedBy: "ref-hint date-of-birth-hint postcode-hint",
-              legend: {
-                text: title,
-                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-                isPageHeading: true
-              }
-            }) %}
+                    describedBy: "ref-hint date-of-birth-hint postcode-hint",
+                    legend: {
+                        text: title,
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                        isPageHeading: true
+                    }         
+                }) %}
+
                 <p class="govuk-body-m">{{ mssgs.identify_body_protect_info }}</p>
                 <h2 class="govuk-heading-m">{{ mssgs.identify_subheading_confirm }}</h2>
                 <div id="ref-rw" class="govuk-body-m">
+                    
                     {{ govukInput({
                       id: "ref",
                       name: "referenceNumber",
@@ -108,12 +116,14 @@
                       },
                       value: data.referenceNumber if data.referenceNumber else payload.referenceNumber
                     }) }}
+
                 </div>
                 <div id="ref-ro" class="govuk-body-m initially-hidden">
                     <span class="govuk-!-font-weight-bold">{{ mssgs.identify_label_licence_ending }}</span>
                     <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }} &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.change_licence_number }}</a>
                     </span>
                 </div>
+
                 {{ govukDateInput({
                         id: "date-of-birth",
                         namePrefix: "date-of-birth",
@@ -130,6 +140,7 @@
                             text: mssgs.enter_dob_example
                         }
                 }) }}
+
                 {{ govukInput({
                   label: {
                     text: mssgs.address_entry_content_postcode,
@@ -144,7 +155,9 @@
                   attributes: { maxlength: 10 },
                   errorMessage: { text: mssgs.enter_postcode } if error['postcode']
                 }) }}
+
                 {% endcall %}
+                
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
