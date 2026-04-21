@@ -5,7 +5,6 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
-import { runValidators } from '../../../../utils/validators.js'
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -36,22 +35,17 @@ export const getData = async request => {
 }
 
 export const validator = payload => {
-  runValidators(
-    [
-      p =>
-        Joi.assert(
-          {
-            postcode: p.postcode,
-            referenceNumber: p.referenceNumber
-          },
-          Joi.object({
-            referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
-            postcode: validation.contact.createOverseasPostcodeValidator(Joi)
-          }).options({ abortEarly: false })
-        ),
-      dateOfBirthValidator
-    ],
-    payload
+  dateOfBirthValidator(payload)
+
+  Joi.assert(
+    {
+      postcode: payload.postcode,
+      referenceNumber: payload.referenceNumber
+    },
+    Joi.object({
+      referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
+      postcode: validation.contact.createOverseasPostcodeValidator(Joi)
+    }).options({ abortEarly: false })
   )
 }
 
