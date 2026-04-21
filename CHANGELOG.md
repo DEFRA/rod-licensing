@@ -1,4 +1,13 @@
 
+## v1.70.0-rc.8 (2026-04-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2370](https://github.com/DEFRA/rod-licensing/pull/2370) Error validation for Welsh cancellation journey  ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.70.0-rc.7 (2026-04-13)
 
 #### :bug: Bug Fix
