@@ -19,7 +19,7 @@ export default {
     test: {
       node: [
         async () => {
-          return { connection: 'dynamics', status: 'ok', ...(await dynamicsClient.executeUnboundFunction('RetrieveVersion')) }
+          return { connection: 'dynamics', status: 'ok', ...(await dynamicsClient.callFunction('RetrieveVersion')) }
         },
         async () => {
           return { connection: 'dynamodb', status: 'ok', ...(await ddb.listTables()) }

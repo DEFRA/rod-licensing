@@ -1,4 +1,4 @@
-import DynamicsWebApi from 'dynamics-web-api'
+import { DynamicsWebApi } from 'dynamics-web-api'
 import SimpleOAuth2 from 'simple-oauth2'
 const PREEMPTIVE_TOKEN_EXPIRY_SECONDS = 60
 
@@ -21,7 +21,7 @@ export function config () {
 
   let accessToken = null
   return {
-    serverUrl: new URL(process.env.DYNAMICS_API_PATH).origin,
+    serverUrl: process.env.DYNAMICS_API_PATH ? new URL(process.env.DYNAMICS_API_PATH).origin : undefined,
     dataApi: {
       version: process.env.DYNAMICS_API_VERSION
     },

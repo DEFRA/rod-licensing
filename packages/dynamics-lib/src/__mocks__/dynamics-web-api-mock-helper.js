@@ -3,7 +3,7 @@ const { readFileSync } = jest.requireActual('fs')
 const Path = jest.requireActual('path')
 const optionSetDataPath = Path.join(Project.root, 'src', '__mocks__', 'option-set-data.json')
 
-export const configureDynamicsWebApiMock = (DynamicsWebApi = jest.genMockFromModule('dynamics-web-api')) => {
+export const configureDynamicsWebApiMock = (DynamicsWebApi) => {
   let expectedResponse = {}
   let nextResponses = {}
   let callError = {}
@@ -53,12 +53,14 @@ export const configureDynamicsWebApiMock = (DynamicsWebApi = jest.genMockFromMod
     }
   }
 
-  DynamicsWebApi.prototype.retrieveRequest = jest.fn(async () => responseCapableMethod('retrieveRequest'))
-  DynamicsWebApi.prototype.createRequest = jest.fn(async () => responseCapableMethod('createRequest'))
-  DynamicsWebApi.prototype.updateRequest = jest.fn(async () => responseCapableMethod('updateRequest'))
-  DynamicsWebApi.prototype.retrieveMultipleRequest = jest.fn(async () => responseCapableMethod('retrieveMultipleRequest'))
-  DynamicsWebApi.prototype.retrieveGlobalOptionSets = jest.fn(async () => responseCapableMethod('retrieveGlobalOptionSets'))
-  DynamicsWebApi.prototype.executeUnboundFunction = jest.fn(async functionName => {
+  DynamicsWebApi.prototype.retrieve = DynamicsWebApi.retrieve = jest.fn(async () => responseCapableMethod('retrieve'))
+  DynamicsWebApi.prototype.create = DynamicsWebApi.create = jest.fn(async () => responseCapableMethod('create'))
+  DynamicsWebApi.prototype.update = DynamicsWebApi.update = jest.fn(async () => responseCapableMethod('update'))
+  DynamicsWebApi.prototype.retrieveMultiple = DynamicsWebApi.retrieveMultiple = jest.fn(async () => responseCapableMethod('retrieveMultiple'))
+  DynamicsWebApi.prototype.retrieveGlobalOptionSets = DynamicsWebApi.retrieveGlobalOptionSets = jest.fn(async () =>
+    responseCapableMethod('retrieveGlobalOptionSets')
+  )
+  DynamicsWebApi.prototype.callFunction = DynamicsWebApi.callFunction = jest.fn(async functionName => {
     let returnValue = null
     if (functionName === 'RetrieveVersion') {
       returnValue = {
@@ -69,10 +71,10 @@ export const configureDynamicsWebApiMock = (DynamicsWebApi = jest.genMockFromMod
     return returnValue
   })
 
-  DynamicsWebApi.prototype.startBatch = jest.fn(() => {
+  DynamicsWebApi.prototype.startBatch = DynamicsWebApi.startBatch = jest.fn(() => {
     inBatchMode = true
   })
-  DynamicsWebApi.prototype.executeBatch = jest.fn(async () => {
+  DynamicsWebApi.prototype.executeBatch = DynamicsWebApi.executeBatch = jest.fn(async () => {
     inBatchMode = false
     return responseCapableMethod('executeBatch')
   })
