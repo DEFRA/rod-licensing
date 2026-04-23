@@ -1,6 +1,7 @@
 /**
  * System constants and defaults
  */
+export const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 export const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
 export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const PORT_DEFAULT = 3000
@@ -9,6 +10,7 @@ export const PAGE_STATE = { completed: true, error: false }
 export const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 export const CSRF_TOKEN_COOKIE_NAME_DEFAULT = 'rlsctkn'
 export const FEEDBACK_URI_DEFAULT = '#'
+export const FEEDBACK_URI_RCP_CANCEL_DEFAULT = 'https://www.smartsurvey.co.uk/s/1IB0U5/'
 export const CHANNEL_DEFAULT = 'websales'
 export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-fishing-licence'
 export const RENEWALS_CAMPAIGN_ID = 'renewals'

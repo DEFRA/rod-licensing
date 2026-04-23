@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT } from '../../constants.js'
+import { ADDRESS_LOOKUP_SERVICE, ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT } from '../../constants.js'
 import db from 'debug'
 const debug = db('webapp:address-lookup-service')
 
@@ -8,7 +8,10 @@ export default async (premises, postcode) => {
 
   const params = new URLSearchParams({
     postcode: postcode,
-    key: process.env.ADDRESS_LOOKUP_KEY
+    premises: premises,
+    key: process.env.ADDRESS_LOOKUP_KEY,
+    lang: ADDRESS_LOOKUP_SERVICE.lang,
+    dataset: ADDRESS_LOOKUP_SERVICE.dataset
   })
 
   url.search = params.toString()
@@ -29,38 +32,19 @@ export default async (premises, postcode) => {
     }
   })()
 
-  // Filter results by premises if provided
-  const filteredResults =
-    results && premises
-      ? results.filter(r => {
-        const normalizedPremises = premises.trim().replaceAll(/\s+/g, ' ').toLowerCase()
-        const searchText = [r.DPA.SUB_BUILDING_NAME, r.DPA.BUILDING_NUMBER, r.DPA.BUILDING_NAME, r.DPA.ORGANISATION_NAME]
-          .filter(Boolean)
-          .join(' ')
-          .replaceAll(/\s+/g, ' ')
-          .toLowerCase()
-
-        return searchText.includes(normalizedPremises)
-      })
-      : results
-
-  debug({
-    postcode,
-    premises: premises || null,
-    receivedCount: results?.length || 0,
-    filteredCount: filteredResults?.length || 0
-  })
+  debug({ results })
 
   // Map and enumerate the results
-  return filteredResults
-    ? filteredResults.map((r, idx) => ({
+  return results
+    ? results.map((r, idx) => ({
       id: idx,
-      address: `${r.DPA.ADDRESS.replace(r.DPA.POSTCODE, '').toLowerCase()}${r.DPA.POSTCODE}`,
-      premises: r.DPA.BUILDING_NAME || '',
-      street: r.DPA.THOROUGHFARE_NAME || '',
-      locality: r.DPA.DEPENDENT_LOCALITY || '',
-      town: r.DPA.POST_TOWN || '',
-      postcode: r.DPA.POSTCODE
+      address: `${r.address.replace(r.postcode, '').toLowerCase()}${r.postcode}`,
+      premises: r.premises,
+      street: r.street_address,
+      locality: r.locality,
+      town: r.city,
+      postcode: r.postcode,
+      country: r.country
     }))
     : []
 }
