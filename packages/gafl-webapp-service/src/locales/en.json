@@ -152,6 +152,7 @@
   "cancel_rp_identify_postcode": "Postcode",
   "cancel_rp_identify_postcode_hint": "For example, WA4 1AB",
   "cancel_rp_identify_postcode_error": "Enter a postcode",
+  "cancel_rp_identify_postcode_error_empty": "You did not enter a postcode",
   "cancel_rp_identify_postcode_pattern": "Your postcode doesn’t look right. Check and enter again",
   "change_licence_details_you": "Review or change the licence details",
   "change_licence_details_other": "Review or change the licence details",
