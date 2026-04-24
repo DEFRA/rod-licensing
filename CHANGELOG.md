@@ -1,4 +1,13 @@
 
+## v1.70.0-rc.12 (2026-04-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2339](https://github.com/DEFRA/rod-licensing/pull/2339) Make the existing Telesales cancellation journey available to the public ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.70.0-rc.11 (2026-04-23)
 
 #### :rocket: Enhancement
