@@ -61,7 +61,7 @@
     "nunjucks": "3.2.3",
     "openid-client": "4.9.1",
     "semver": "7.3.5",
-    "uuid": "8.3.2"
+    "uuid": "14.0.0"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "5.0.1",
