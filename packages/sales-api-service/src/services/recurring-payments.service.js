@@ -5,6 +5,7 @@ import {
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
   persist,
+  Permission,
   RecurringPayment,
   findRecurringPaymentByPermissionId,
   retrieveGlobalOptionSets
@@ -21,6 +22,7 @@ import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { StatusCodes } from 'http-status-codes'
 const debug = db('sales:recurring')
 const { sqs, docClient } = AWS()
 
@@ -170,18 +172,54 @@ export const cancelRecurringPayment = async (id, reason) => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (recurringPayment) {
     const data = recurringPayment
-    const isUserCancelled = reason === 'User Cancelled'
 
-    if (!isUserCancelled) {
-      data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+
+    if (data.agreementId) {
+      await cancelGovPayAgreement(data.agreementId)
     }
 
-    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
-    await persist([updatedRecurringPayment])
+    const entitiesToPersist = [updatedRecurringPayment]
+
+    const linkedPermission = await getLinkedPermission(id)
+    if (linkedPermission) {
+      linkedPermission.isRecurringPayment = false
+      entitiesToPersist.push(linkedPermission)
+    }
+
+    await persist(entitiesToPersist)
     return updatedRecurringPayment
   } else {
     throw new Error('Invalid id provided for recurring payment cancellation')
+  }
+}
+
+const getLinkedPermission = async recurringPaymentId => {
+  const record = await dynamicsClient.retrieveRequest({
+    key: recurringPaymentId,
+    collection: RecurringPayment.definition.dynamicsCollection,
+    select: ['_defra_activepermission_value']
+  })
+  const permissionId = record._defra_activepermission_value
+  if (permissionId) {
+    return findById(Permission, permissionId)
+  }
+  return null
+}
+
+const cancelGovPayAgreement = async agreementId => {
+  const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
+  if (response.ok) {
+    debug('Successfully cancelled GovPay agreement: %s', agreementId)
+  } else if (response.status === StatusCodes.NOT_FOUND) {
+    debug('GovPay agreement not found (already cancelled or does not exist): %s', agreementId)
+  } else if (response.status === StatusCodes.BAD_REQUEST) {
+    debug('GovPay agreement cannot be cancelled (invalid state): %s', agreementId)
+  } else {
+    const body = await response.text().catch(() => 'Unable to read response body')
+    throw new Error(`Failed to cancel GovPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
 
