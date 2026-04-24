@@ -84,7 +84,7 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status page returning a 500 error when unhealthy', async () => {
-    jest.spyOn(dynamicsClient, 'executeUnboundFunction').mockImplementation(async () => {
+    jest.spyOn(dynamicsClient, 'callFunction').mockImplementation(async () => {
       throw new Error('Simulated')
     })
     const result = await server.inject({ method: 'GET', url: '/service-status' })

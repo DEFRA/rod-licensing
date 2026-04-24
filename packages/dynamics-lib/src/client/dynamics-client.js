@@ -1,4 +1,4 @@
-import DynamicsWebApi from 'dynamics-web-api'
+import { DynamicsWebApi } from 'dynamics-web-api'
 import SimpleOAuth2 from 'simple-oauth2'
 const PREEMPTIVE_TOKEN_EXPIRY_SECONDS = 60
 
@@ -21,14 +21,16 @@ export function config () {
 
   let accessToken = null
   return {
-    webApiUrl: process.env.DYNAMICS_API_PATH,
-    webApiVersion: process.env.DYNAMICS_API_VERSION,
+    serverUrl: process.env.DYNAMICS_API_PATH ? new URL(process.env.DYNAMICS_API_PATH).origin : undefined,
+    dataApi: {
+      version: process.env.DYNAMICS_API_VERSION
+    },
     timeout: process.env.DYNAMICS_API_TIMEOUT || 90000,
-    onTokenRefresh: async dynamicsWebApiCallback => {
+    onTokenRefresh: async () => {
       if (!accessToken || accessToken.expired(PREEMPTIVE_TOKEN_EXPIRY_SECONDS)) {
         accessToken = await oauthClient.getToken({ scope: process.env.OAUTH_SCOPE })
       }
-      dynamicsWebApiCallback(accessToken.token.access_token)
+      return accessToken.token.access_token
     }
   }
 }

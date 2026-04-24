@@ -4,11 +4,13 @@ import { Permission } from '../../entities/permission.entity.js'
 import { PredefinedQuery } from '../predefined-query.js'
 
 jest.mock('dynamics-web-api', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      executeUnboundAction: jest.fn()
-    }
-  })
+  return {
+    DynamicsWebApi: jest.fn().mockImplementation(() => {
+      return {
+        callAction: jest.fn()
+      }
+    })
+  }
 })
 
 describe('Contact Queries', () => {

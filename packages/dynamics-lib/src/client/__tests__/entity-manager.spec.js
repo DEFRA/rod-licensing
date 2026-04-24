@@ -13,7 +13,7 @@ import {
 } from '../../index.js'
 import TestEntity from '../../__mocks__/TestEntity.js'
 import { v4 as uuidv4 } from 'uuid'
-import MockDynamicsWebApi from 'dynamics-web-api'
+import { DynamicsWebApi as MockDynamicsWebApi } from 'dynamics-web-api'
 import { PredefinedQuery } from '../../queries/predefined-query.js'
 import { BaseEntity, EntityDefinition } from '../../entities/base.entity.js'
 
@@ -33,7 +33,7 @@ describe('entity manager', () => {
       t.boolVal = true
 
       const result = await persist([t])
-      expect(MockDynamicsWebApi.prototype.createRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.create).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
@@ -54,7 +54,7 @@ describe('entity manager', () => {
       )
 
       const result = await persist([t])
-      expect(MockDynamicsWebApi.prototype.updateRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.update).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
@@ -69,7 +69,7 @@ describe('entity manager', () => {
       t.boolVal = true
 
       const result = await persist([t], 'foo')
-      expect(MockDynamicsWebApi.prototype.createRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.create).toHaveBeenCalled()
       expect(MockDynamicsWebApi.prototype.executeBatch).toHaveBeenCalledWith(
         expect.objectContaining({
           impersonateAAD: 'foo'
@@ -94,10 +94,10 @@ describe('entity manager', () => {
         {}
       )
       await expect(persist([newEntity, existingEntity])).rejects.toThrow('Test error')
-      // Expect the console error to contain details of the batch data (one createRequest, one updateRequest plus the exception object)
+      // Expect the console error to contain details of the batch data (one create, one update plus the exception object)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringMatching('Error persisting batch. Data: %j, Exception: %o'),
-        expect.arrayContaining([{ createRequest: expect.any(Object) }, { updateRequest: expect.any(Object) }]),
+        expect.arrayContaining([{ create: expect.any(Object) }, { update: expect.any(Object) }]),
         expect.any(Error)
       )
     })
@@ -332,14 +332,14 @@ describe('entity manager', () => {
 
   describe('findById', () => {
     it('finds by a primary key guid', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveRequest', {
+      MockDynamicsWebApi.__setResponse('retrieve', {
         '@odata.etag': 'W/"202465000"',
         idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         strval: 'example'
       })
 
       const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
-      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieve).toBeCalledWith({
         key: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -350,13 +350,13 @@ describe('entity manager', () => {
     it('returns null if not found', async () => {
       const notFoundError = new Error('Not found')
       notFoundError.status = 404
-      MockDynamicsWebApi.__throwWithErrorOn('retrieveRequest', notFoundError)
+      MockDynamicsWebApi.__throwWithErrorOn('retrieve', notFoundError)
       const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
       expect(result).toEqual(null)
     })
 
     it('throws an exception on general errors', async () => {
-      MockDynamicsWebApi.__throwWithErrorOn('retrieveRequest')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieve')
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')).rejects.toThrow('Test error')
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -365,13 +365,13 @@ describe('entity manager', () => {
 
   describe('findByAlternateKey', () => {
     it('finds by an alternate key', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveRequest', {
+      MockDynamicsWebApi.__setResponse('retrieve', {
         '@odata.etag': 'W/"202465000"',
         idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         strval: 'example'
       })
       const result = await findByAlternateKey(TestEntity, 'example')
-      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieve).toBeCalledWith({
         key: "strval='example'",
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -381,13 +381,13 @@ describe('entity manager', () => {
     })
 
     it('escapes special characters in the key', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveRequest', {
+      MockDynamicsWebApi.__setResponse('retrieve', {
         '@odata.etag': 'W/"202465000"',
         idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         strval: 'example'
       })
       const result = await findByAlternateKey(TestEntity, "test & example'")
-      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieve).toBeCalledWith({
         key: "strval='test %26 example'''",
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -399,7 +399,7 @@ describe('entity manager', () => {
 
   describe('findByExample', () => {
     it('builds a select statement appropriate to the type definition for each field', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
+      MockDynamicsWebApi.__setResponse('retrieveMultiple', { value: [{}] })
 
       const lookup = new TestEntity()
       lookup.strVal = 'StringData'
@@ -412,7 +412,7 @@ describe('entity manager', () => {
       const expectedLookupSelect =
         "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
       const result = await findByExample(lookup)
-      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveMultiple).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select,
         filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
@@ -422,7 +422,7 @@ describe('entity manager', () => {
     })
 
     it('does not require the entity to define a default filter', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
+      MockDynamicsWebApi.__setResponse('retrieveMultiple', { value: [{}] })
 
       class SameEntity extends BaseEntity {
         static _definition = new EntityDefinition(() => ({
@@ -458,7 +458,7 @@ describe('entity manager', () => {
       lookup.testVal = 'StringData'
       const expectedLookupSelect = "testval eq 'StringData'"
       const result = await findByExample(lookup)
-      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveMultiple).toBeCalledWith({
         collection: SameEntity.definition.dynamicsCollection,
         select: SameEntity.definition.select,
         filter: expect.stringMatching(`${expectedLookupSelect}`)
@@ -468,13 +468,13 @@ describe('entity manager', () => {
     })
 
     it('only serializes fields into the select statement if they are set', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
+      MockDynamicsWebApi.__setResponse('retrieveMultiple', { value: [{}] })
 
       const lookup = new TestEntity()
       lookup.strVal = 'StringData'
       const expectedLookupSelect = "strval eq 'StringData'"
       const result = await findByExample(lookup)
-      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveMultiple).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select,
         filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
@@ -484,7 +484,7 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultiple')
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(findByExample(new TestEntity())).rejects.toThrow('Test error')
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -492,8 +492,8 @@ describe('entity manager', () => {
   })
 
   describe('executeQuery', () => {
-    it('calls retrieveMultipleRequest on the Dynamics API with the request data', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', {
+    it('calls retrieveMultiple on the Dynamics API with the request data', async () => {
+      MockDynamicsWebApi.__setResponse('retrieveMultiple', {
         value: [
           {
             '@odata.etag': 'W/"202465000"',
@@ -504,7 +504,7 @@ describe('entity manager', () => {
       })
 
       const result = await executeQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }))
-      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveMultiple).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         filter: "strval eq 'example'",
         select: TestEntity.definition.select
@@ -516,7 +516,7 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultiple')
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(executeQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }))).rejects.toThrow('Test error')
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -527,7 +527,7 @@ describe('entity manager', () => {
     beforeEach(async () => {
       MockDynamicsWebApi.__reset()
       MockDynamicsWebApi.__setNextResponses(
-        'retrieveMultipleRequest',
+        'retrieveMultiple',
         {
           value: [
             {
@@ -592,7 +592,7 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultiple')
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(
         executePagedQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }), () => {}, 1)

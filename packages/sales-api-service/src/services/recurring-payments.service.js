@@ -158,7 +158,7 @@ export const processRPResult = async (transactionId, paymentId, createdDate) => 
 
 export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
   const query = findRecurringPaymentsByAgreementId(agreementId)
-  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  const response = await dynamicsClient.retrieveMultiple(query.toRetrieveRequest())
   if (response.value.length) {
     const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
     return RecurringPayment.fromResponse(rcpResponseData)
@@ -192,7 +192,7 @@ const determineRecurringPaymentName = (transactionRecord, contact) => {
 
 export const findLinkedRecurringPayment = async permissionId => {
   const query = findRecurringPaymentByPermissionId(permissionId)
-  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  const response = await dynamicsClient.retrieveMultiple(query.toRetrieveRequest())
   if (response.value.length) {
     const [rcpResponseData] = response.value.sort((a, b) => Date.parse(b.defra_enddate) - Date.parse(a.defra_enddate))
     const definition = await retrieveGlobalOptionSets().cached()
