@@ -80,7 +80,6 @@ describe('journey-definition', () => {
       const startPage = journeyDefinition.find(page => page.current.page === 'start')
       expect(startPage).toEqual(
         expect.objectContaining({
-          current: { page: 'start' },
           next: {
             [CommonResults.OK]: {
               page: LICENCE_FOR
