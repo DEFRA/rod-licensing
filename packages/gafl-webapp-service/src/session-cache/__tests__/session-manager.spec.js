@@ -29,7 +29,12 @@ describe('isStaticResource', () => {
 })
 
 describe('includesRegex', () => {
-  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/, /^\/renew-my-licence\/.*$/, /^\/buy\/cancel-recurring-payment\/identify$/]
+  const regexArray = [
+    /^\/buy\/renew\/identify$/,
+    /^\/renew\/.*$/,
+    /^\/renew-my-licence\/.*$/,
+    /^\/buy\/cancel-recurring-payment\/identify$/
+  ]
   it.each([
     '/buy/renew/identify',
     '/renew/ABC123',
