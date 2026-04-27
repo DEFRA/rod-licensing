@@ -29,7 +29,7 @@ describe('isStaticResource', () => {
 })
 
 describe('includesRegex', () => {
-  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/, /^\/renew-my-licence\/.*$/]
+  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/, /^\/renew-my-licence\/.*$/, /^\/buy\/cancel-recurring-payment\/identify$/]
   it.each([
     '/buy/renew/identify',
     '/renew/ABC123',
@@ -39,14 +39,18 @@ describe('includesRegex', () => {
     '/renew-my-licence/ABC123',
     '/renew-my-licence/123123',
     '/renew-my-licence/ABCDEF',
-    '/renew-my-licence/anytext'
+    '/renew-my-licence/anytext',
+    '/buy/cancel-recurring-payment/identify'
   ])('returns true if one of the regexes is matched %s', async path => {
     expect(includesRegex(path, regexArray)).toBeTruthy()
   })
 
-  it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete'])('returns false if one of the regexes is not matched %s', async path => {
-    expect(includesRegex(path, regexArray)).toBeFalsy()
-  })
+  it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete', '/buy/cancel-recurring-payment/details'])(
+    'returns false if one of the regexes is not matched %s',
+    async path => {
+      expect(includesRegex(path, regexArray)).toBeFalsy()
+    }
+  )
 })
 
 describe('Use session cookie', () => {
