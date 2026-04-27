@@ -13,9 +13,9 @@ export async function persist (entities, createdBy) {
     dynamicsClient.startBatch()
     entities.forEach(entity => {
       if (entity.isNew()) {
-        dynamicsClient.createRequest(entity.toPersistRequest())
+        dynamicsClient.create(entity.toPersistRequest())
       } else {
-        dynamicsClient.updateRequest(entity.toPersistRequest())
+        dynamicsClient.update(entity.toPersistRequest())
       }
     })
     return await dynamicsClient.executeBatch({
@@ -23,7 +23,7 @@ export async function persist (entities, createdBy) {
     })
   } catch (e) {
     const error = e.length ? e[0] : e
-    const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
+    const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'create' : 'update']: entity.toPersistRequest() }))
     console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
     throw error
   }
@@ -32,7 +32,7 @@ export async function persist (entities, createdBy) {
 const retrieveMultipleFetchOperation = async entityClasses => {
   try {
     dynamicsClient.startBatch()
-    entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
+    entityClasses.forEach(cls => dynamicsClient.retrieveMultiple(cls.definition.toRetrieveRequest()))
     return await dynamicsClient.executeBatch()
   } catch (e) {
     const error = e.length ? e[0] : e
@@ -131,7 +131,7 @@ export function retrieveGlobalOptionSets () {
  */
 export async function findById (entityType, key) {
   try {
-    const record = await dynamicsClient.retrieveRequest({ key: key, ...entityType.definition.toRetrieveRequest(null) })
+    const record = await dynamicsClient.retrieve({ key: key, ...entityType.definition.toRetrieveRequest(null) })
     const optionSetData = await retrieveGlobalOptionSets().cached()
     return entityType.fromResponse(record, optionSetData)
   } catch (e) {
@@ -179,7 +179,7 @@ export async function findByExample (entity) {
         return acc
       }, [])
     ].join(' and ')
-    const results = await dynamicsClient.retrieveMultipleRequest(entity.constructor.definition.toRetrieveRequest(filter))
+    const results = await dynamicsClient.retrieveMultiple(entity.constructor.definition.toRetrieveRequest(filter))
     const optionSetData = await retrieveGlobalOptionSets().cached()
     return results.value.map(result => entity.constructor.fromResponse(result, optionSetData))
   } catch (e) {
@@ -198,7 +198,7 @@ export async function findByExample (entity) {
  */
 export async function executeQuery (query) {
   try {
-    const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+    const response = await dynamicsClient.retrieveMultiple(query.toRetrieveRequest())
     const optionSetData = await retrieveGlobalOptionSets().cached()
     return query.fromResponse(response.value, optionSetData)
   } catch (e) {
@@ -225,7 +225,7 @@ export async function executePagedQuery (query, onPageReceived, maxPages) {
     const optionSetData = await retrieveGlobalOptionSets().cached()
     let nextLink = null
     do {
-      const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest(), nextLink)
+      const response = await dynamicsClient.retrieveMultiple(query.toRetrieveRequest(), nextLink)
       nextLink = response.oDataNextLink
       await onPageReceived(query.fromResponse(response.value, optionSetData))
       processed += response.value.length

@@ -1,4 +1,4 @@
-import DynamicsWebApi from 'dynamics-web-api'
+import { DynamicsWebApi } from 'dynamics-web-api'
 import SimpleOAuth2 from 'simple-oauth2'
 const PREEMPTIVE_TOKEN_EXPIRY_SECONDS = 60
 
