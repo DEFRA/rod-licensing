@@ -14,26 +14,24 @@ describe('dynamics-client', () => {
     const dynamicsApiConfig = config()
 
     expect(dynamicsApiConfig).toMatchObject({
-      webApiUrl: process.env.DYNAMICS_API_PATH,
-      webApiVersion: process.env.DYNAMICS_API_VERSION,
+      serverUrl: 'https://test-server',
+      dataApi: { version: process.env.DYNAMICS_API_VERSION },
       timeout: `${process.env.DYNAMICS_API_TIMEOUT}`,
       onTokenRefresh: expect.any(Function)
     })
-    const testCallback = jest.fn()
-    await dynamicsApiConfig.onTokenRefresh(testCallback)
-    expect(testCallback).toHaveBeenCalledWith('MOCK TOKEN')
+    const token = await dynamicsApiConfig.onTokenRefresh()
+    expect(token).toBe('MOCK TOKEN')
   })
 
   it('caches tokens until they expire', async () => {
     const dynamicsApiConfig = config()
-    const testCallback = jest.fn()
-    await dynamicsApiConfig.onTokenRefresh(testCallback)
-    expect(testCallback).toHaveBeenLastCalledWith('MOCK TOKEN')
+    let token = await dynamicsApiConfig.onTokenRefresh()
+    expect(token).toBe('MOCK TOKEN')
     SimpleOAuth2.__setMockTokenReturnValue('NEW MOCK TOKEN')
-    await dynamicsApiConfig.onTokenRefresh(testCallback)
-    expect(testCallback).toHaveBeenLastCalledWith('MOCK TOKEN')
+    token = await dynamicsApiConfig.onTokenRefresh()
+    expect(token).toBe('MOCK TOKEN')
     SimpleOAuth2.__setMockTokenExpired(true)
-    await dynamicsApiConfig.onTokenRefresh(testCallback)
-    expect(testCallback).toHaveBeenLastCalledWith('NEW MOCK TOKEN')
+    token = await dynamicsApiConfig.onTokenRefresh()
+    expect(token).toBe('NEW MOCK TOKEN')
   })
 })

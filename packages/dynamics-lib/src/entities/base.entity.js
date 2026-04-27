@@ -308,7 +308,7 @@ export class BaseEntity {
       ...(!this.isNew() && { key: this.id }),
       collection: this.constructor.definition.dynamicsCollection,
       contentId: this.uniqueContentId,
-      entity: this.toRequestBody()
+      data: this.toRequestBody()
     }
   }
 
