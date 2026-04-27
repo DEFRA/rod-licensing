@@ -21,7 +21,7 @@ export function config () {
 
   let accessToken = null
   return {
-    serverUrl: process.env.DYNAMICS_API_PATH ? new URL(process.env.DYNAMICS_API_PATH).origin : undefined,
+    serverUrl: process.env.DYNAMICS_API_HOST,
     dataApi: {
       version: process.env.DYNAMICS_API_VERSION
     },
