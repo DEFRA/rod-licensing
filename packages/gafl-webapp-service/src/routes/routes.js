@@ -84,7 +84,7 @@ const routes = [
   ...licenceNotFound
 ]
 
-if (process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC === 'TRUE') {
+if (process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC === 'true') {
   routes.push(
     ...cancelRPIdentify,
     ...cancelRPDetails,

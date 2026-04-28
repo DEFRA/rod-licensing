@@ -73,7 +73,7 @@ describe('route', () => {
 describe('cancellation route journey in websales behaves as expected', () => {
   beforeEach(jest.clearAllMocks)
   it('adds the cancellation route journey if SHOW_CANCELLATION_JOURNEY_PUBLIC is set to true', () => {
-    process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC = 'TRUE'
+    process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC = 'true'
     jest.isolateModules(() => {
       const routesPaths = require('../routes.js').default.map(route => route.path)
       expect(routesPaths).toEqual(expect.arrayContaining(getCancelRPURIs()))
@@ -81,7 +81,7 @@ describe('cancellation route journey in websales behaves as expected', () => {
   })
 
   it('omits the cancellation route journey if SHOW_CANCELLATION_JOURNEY_PUBLIC is set to false', () => {
-    process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC = 'FALSE'
+    process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC = 'false'
     jest.isolateModules(() => {
       const routes = require('../routes.js').default
       const cancelRPURIs = getCancelRPURIs()
