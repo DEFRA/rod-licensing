@@ -1,4 +1,13 @@
 
+## v1.70.0-rc.14 (2026-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2385](https://github.com/DEFRA/rod-licensing/pull/2385) IWTF-5045 rcp cancellation not showing in websales ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.70.0-rc.12 (2026-04-24)
 
