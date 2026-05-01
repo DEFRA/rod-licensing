@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 {% from "page-title.njk" import pageTitle %}
 {% from "panel/macro.njk" import govukPanel %}
-{% set title = mssgs.rp_cancel_complete_title %}
+{% set title = mssgs.rp_cancel_complete_panel_title %}
 {% block pageTitle %}
   {{ pageTitle(title, error, mssgs) }}
 {% endblock %}
@@ -12,7 +12,7 @@
         titleText: mssgs.rp_cancel_complete_panel_title,
         classes: "govuk-!-margin-bottom-9"
       }) }}
-      <p class="govuk-body">{{ mssgs.rp_cancel_complete_body_1 }}</p>
+      <p class="govuk-body">{{ mssgs.rp_cancel_complete_body_1 }}{{ data.preferredMethodOfContact }}</p>
       <p class="govuk-body">
         {{ mssgs.rp_cancel_complete_body_2_1 }} {{ data.licenceExpiry }} {{ mssgs.rp_cancel_complete_body_2_2 }}
         <a href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence" target="_blank" rel="noopener">{{ mssgs.rp_cancel_complete_body_2_link }}</a>.

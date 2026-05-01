@@ -1,4 +1,99 @@
 
+## v1.70.0-rc.14 (2026-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2385](https://github.com/DEFRA/rod-licensing/pull/2385) IWTF-5045 rcp cancellation not showing in websales ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.70.0-rc.12 (2026-04-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2339](https://github.com/DEFRA/rod-licensing/pull/2339) Make the existing Telesales cancellation journey available to the public ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.70.0-rc.11 (2026-04-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2357](https://github.com/DEFRA/rod-licensing/pull/2357) Cancellation page 1 Welsh translation ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.70.0-rc.10 (2026-04-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2347](https://github.com/DEFRA/rod-licensing/pull/2347) GAFL: Dev – Cancellation page 2 Welsh translation (happy path) ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.70.0-rc.8 (2026-04-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2370](https://github.com/DEFRA/rod-licensing/pull/2370) Error validation for Welsh cancellation journey  ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.70.0-rc.7 (2026-04-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2365](https://github.com/DEFRA/rod-licensing/pull/2365) Revert address lookup ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.70.0-rc.6 (2026-04-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2346](https://github.com/DEFRA/rod-licensing/pull/2346) Cancellation page 2 Welsh translation (unhappy path) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.70.0-rc.4 (2026-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2349](https://github.com/DEFRA/rod-licensing/pull/2349) GAFL: Dev – Cancellation page 3 Welsh translation ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.70.0-rc.2 (2026-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2343](https://github.com/DEFRA/rod-licensing/pull/2343) GAFL:Dev - Different feedback link in RCP cancellation journey ([@gkoos](https://github.com/gkoos))
+
+#### Committers: 1
+- Gabor Koos ([@gkoos](https://github.com/gkoos))
+
+
+## v1.70.0-rc.0 (2026-04-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2345](https://github.com/DEFRA/rod-licensing/pull/2345) Cannot read properties of undefined (reading 'id') ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.69.0-rc.6 (2026-03-31)
 

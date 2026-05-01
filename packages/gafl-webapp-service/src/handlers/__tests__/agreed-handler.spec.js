@@ -1,11 +1,11 @@
-import agreedHandler from '../agreed-handler.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../../processors/api-transaction.js'
 import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
-import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
+import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, CONTROLLER } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import agreedHandler from '../agreed-handler.js'
 import Boom from '@hapi/boom'
 
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -758,6 +758,26 @@ describe('agreed-handler', () => {
       })
 
       await expect(agreedHandler(request, h)).rejects.toThrow(Boom.Forbidden)
+    })
+  })
+
+  describe('missing session data', () => {
+    it.each([
+      ['transaction is null', null, {}],
+      ['status is null', {}, null],
+      ['both transaction and status are null', null, null]
+    ])('redirects to the controller when %s', async (_, transaction, status) => {
+      const h = getMockResponseToolkit()
+      const request = getMockRequest({
+        cache: () => ({
+          helpers: {
+            transaction: { get: async () => transaction },
+            status: { get: async () => status }
+          }
+        })
+      })
+      await agreedHandler(request, h)
+      expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CONTROLLER.uri)
     })
   })
 })

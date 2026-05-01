@@ -39,11 +39,12 @@ const agreedHandlerProtectionExemptSet = [
   NEW_PRICES.uri
 ]
 
-// regex for /renew/{referenceNumber?}, /buy/renew/identify, /renew-my-licence/{referenceNumber?}, and static guidance pages
+// regex for /renew/{referenceNumber?}, /buy/renew/identify, /renew-my-licence/{referenceNumber?}, /buy/cancel-recurring-payment/identify, and static guidance pages
 const startProtectionExemptSet = [
   /^\/renew\/.*$/,
   /^\/buy\/renew\/identify$/,
   /^\/renew-my-licence\/.*$/,
+  /^\/buy\/cancel-recurring-payment\/identify$/,
   /^\/guidance\/cookies$/,
   /^\/guidance\/accessibility-statement$/,
   /^\/guidance\/privacy-policy$/,

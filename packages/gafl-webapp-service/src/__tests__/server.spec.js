@@ -2,6 +2,7 @@ import { createServer, init, server, layoutContextAmalgamation } from '../server
 import CatboxMemory from '@hapi/catbox-memory'
 import uris from '../uri.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
+import { FEEDBACK_URI_DEFAULT, FEEDBACK_URI_RCP_CANCEL_DEFAULT } from '../constants.js'
 import fs from 'fs'
 
 jest.mock('../processors/uri-helper.js', () => ({
@@ -202,6 +203,63 @@ describe('The server', () => {
       expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
     })
 
+    describe('feedback link', () => {
+      const sampleStandardFeedbackUrl = 'http://test-standard-survey.com'
+      const sampleCancelFeedbackUrl = 'http://test-cancel-survey.com'
+
+      beforeEach(() => {
+        delete process.env.FEEDBACK_URI
+        delete process.env.FEEDBACK_URI_RCP_CANCEL
+      })
+
+      it('uses FEEDBACK_URI env var for non-cancellation pages', () => {
+        process.env.FEEDBACK_URI = sampleStandardFeedbackUrl
+        const request = getSampleRequest({ path: '/buy/licence-type' })
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context._uri.feedback).toBe(sampleStandardFeedbackUrl)
+      })
+
+      it.each([
+        '/buy/cancel-recurring-payment/identify',
+        '/buy/cancel-recurring-payment/details',
+        '/buy/cancel-recurring-payment/confirm',
+        '/buy/cancel-recurring-payment/complete'
+      ])('uses FEEDBACK_URI_RCP_CANCEL env var for cancellation page %s', path => {
+        process.env.FEEDBACK_URI_RCP_CANCEL = sampleCancelFeedbackUrl
+        const request = getSampleRequest({ path })
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context._uri.feedback).toBe(sampleCancelFeedbackUrl)
+      })
+
+      it('falls back to FEEDBACK_URI_DEFAULT when env var not set on standard pages', () => {
+        const request = getSampleRequest({ path: '/buy/licence-type' })
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context._uri.feedback).toBe(FEEDBACK_URI_DEFAULT)
+      })
+
+      it('falls back to FEEDBACK_URI_RCP_CANCEL_DEFAULT when env var not set on cancellation pages', () => {
+        const request = getSampleRequest({ path: '/buy/cancel-recurring-payment/details' })
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context._uri.feedback).toBe(FEEDBACK_URI_RCP_CANCEL_DEFAULT)
+      })
+
+      it('uses FEEDBACK_URI when both env vars set on non-cancellation page', () => {
+        process.env.FEEDBACK_URI = sampleStandardFeedbackUrl
+        process.env.FEEDBACK_URI_RCP_CANCEL = sampleCancelFeedbackUrl
+        const request = getSampleRequest({ path: '/buy/contact' })
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context._uri.feedback).toBe(sampleStandardFeedbackUrl)
+      })
+
+      it('uses FEEDBACK_URI_RCP_CANCEL when both env vars set on cancellation page', () => {
+        process.env.FEEDBACK_URI = sampleStandardFeedbackUrl
+        process.env.FEEDBACK_URI_RCP_CANCEL = sampleCancelFeedbackUrl
+        const request = getSampleRequest({ path: '/buy/cancel-recurring-payment/complete' })
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context._uri.feedback).toBe(sampleCancelFeedbackUrl)
+      })
+    })
+
     describe('logGtmConfig', () => {
       it('should log the gtmContainerId value if it is set', async () => {
         const expectedId = 'GTM-ABC1234'
@@ -226,6 +284,7 @@ describe('The server', () => {
     const getSampleRequest = (overrides = {}) => ({
       auth: {},
       method: 'get',
+      path: '/buy/licence-type',
       response: {
         variety: 'view',
         source: {
