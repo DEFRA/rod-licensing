@@ -3,7 +3,7 @@ import SimpleOAuth2 from 'simple-oauth2'
 
 describe('dynamics-client', () => {
   it('is configured via environment variables', async () => {
-    process.env.DYNAMICS_API_HOST = 'https://test-server'
+    process.env.DYNAMICS_API_PATH = 'https://test-server'
     process.env.DYNAMICS_API_VERSION = '9.1'
     process.env.DYNAMICS_API_TIMEOUT = 60000
     process.env.OAUTH_AUTHORITY_HOST_URL = 'https://test-authority/'
@@ -14,7 +14,7 @@ describe('dynamics-client', () => {
     const dynamicsApiConfig = config()
 
     expect(dynamicsApiConfig).toMatchObject({
-      serverUrl: process.env.DYNAMICS_API_HOST,
+      serverUrl: process.env.DYNAMICS_API_PATH,
       dataApi: { version: process.env.DYNAMICS_API_VERSION },
       timeout: `${process.env.DYNAMICS_API_TIMEOUT}`,
       onTokenRefresh: expect.any(Function)
