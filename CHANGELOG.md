@@ -1,4 +1,13 @@
 
+## v1.71.0-rc.0 (2026-05-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2377](https://github.com/DEFRA/rod-licensing/pull/2377) Error translation for rcp cancellation journey  ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.70.0-rc.14 (2026-04-28)
 
