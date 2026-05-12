@@ -162,12 +162,12 @@ describe('preparePermissionDataForRenewal', () => {
     })
 
     it("doesn't add senior concession if the licensee turns 66 during the licence period but is 65 at the start", async () => {
-      const startDate = moment()
-      const birthDate = moment(startDate).subtract(65, 'years').subtract(6, 'months').format('YYYY-MM-DD')
+      const endDate = moment('2026-05-11')
       const almostSeniorPermission = existingPermission({
+        endDate,
         licensee: {
           ...existingPermission().licensee,
-          birthDate
+          birthDate: '1960-09-01'
         }
       })
       const permission = await preparePermissionDataForRenewal(almostSeniorPermission)
