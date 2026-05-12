@@ -161,13 +161,17 @@ describe('preparePermissionDataForRenewal', () => {
       expect(permission.concessions).toEqual([])
     })
 
-    it("doesn't add senior concession if the licensee turns 66 during the licence period but is 65 at the start", async () => {
+    it.each([
+      ['1960-09-01', 'turns 66 in < 6 months'],
+      ['1960-05-13', 'turns 66 the day after licence start'],
+      ['1960-12-25', 'turns 66 in > 6 months']
+    ])("doesn't add senior concession if the licensee is 65 at licence start (DOB: %s, %s)", async birthDate => {
       const endDate = moment('2026-05-11')
       const almostSeniorPermission = existingPermission({
         endDate,
         licensee: {
           ...existingPermission().licensee,
-          birthDate: '1960-09-01'
+          birthDate
         }
       })
       const permission = await preparePermissionDataForRenewal(almostSeniorPermission)
