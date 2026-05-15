@@ -59,11 +59,11 @@ const processRecurringPayments = async () => {
       recurringPaymentId: duePayment.entity.id
     }
   })
-
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
 
-  await checkPaymentStatuses(requestedPayments)
-  // await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
+  await checkPaymentStatuses(payments)
+  
+  await Promise.allSettled(payments.map(p => processRecurringPaymentStatus(p)))
 }
 
 const fetchDueRecurringPayments = async date => {
@@ -80,7 +80,7 @@ const fetchDueRecurringPayments = async date => {
 const logErrors = (results, message) => {
   const failures = results.filter(r => r.status === 'rejected').map(r => r.reason)
   if (failures.length) {
-    console.error('Errors:', ...failures)
+    console.error(message, ...failures)
   }
 }
 
@@ -106,25 +106,45 @@ const requestPayments = async dueRCPayments => {
     batchSize: Number(process.env.GOV_PAY_GET_BATCH_SIZE),
     delay: Number(process.env.GOV_PAY_BATCH_DELAY_MS)
   })
-  for (const paymentToRequest of paymentsToRequest) {
-    const { agreementId, transaction } = paymentToRequest.value
+
+  for (const { value: { agreementId, transaction } } of paymentsToRequest) {
     queueRecurringPayment(preparePayment(agreementId, transaction), batcher)
   }
 
   await batcher.fetch()
 
+  logErrors(
+    batcher.responses, 
+    'Error requesting payments:'
+  )
+
   for (let x = 0; x < paymentsToRequest.length; x++) {
     const { value: paymentToRequest } = paymentsToRequest[x]
-    if (isSuccessfulResponse(batcher.responses[x].status)) {
-      const paymentResponse = await batcher.responses[x].json()
-      await salesApi.createPaymentJournal(paymentToRequest.transaction.id, {
-        paymentReference: paymentResponse.payment_id,
-        paymentTimestamp: paymentResponse.created_date,
-        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
-      })
-    } else {
-
-    }
+    const response = batcher.responses[x]
+    const paymentResponse = response.json ? await response.json() : {}
+    // n.b. 4xx and 5xx responses do not count as promise rejections
+    // what I'm doing: logging errors, but this may need to be changed, because
+    // of the above, and that we're concatenating create transaction errors as
+    // well as payment request errors
+      if (isSuccessfulResponse(response.status)) {
+        await salesApi.createPaymentJournal(paymentToRequest.transaction.id, {
+          paymentReference: paymentResponse.payment_id,
+          paymentTimestamp: paymentResponse.created_date,
+          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+        })
+      } else {
+        const description = paymentResponse.description || ''
+        if (description.match(new RegExp(`Invalid attribute value: ${paymentToRequest.agreementId}. Agreement (does not exist|must be active)`))) {
+          console.log('%s is an invalid agreementId. Recurring payment %s will be cancelled', paymentToRequest.agreementId, paymentToRequest.transaction.recurringPayment.id)
+          await salesApi.cancelRecurringPayment(paymentToRequest.transaction.recurringPayment.id)
+        }
+        console.error(`Unexpected response from GOV.UK Pay API. 
+          Status: ${response.status}, 
+          Response: ${JSON.stringify(paymentResponse)}
+          Transaction ID: ${paymentResponse.reference}
+          Payload: ${JSON.stringify(batcher.requestQueue[x].options.body)}
+        `)  
+      }  
   }
 
   // to do next - batcher responses actually returns the response, but not the value, so it may be an HTTPResponse or it may be an error
@@ -224,7 +244,7 @@ const checkPaymentStatuses = async payments => {
     delay: Number(process.env.GOV_PAY_BATCH_DELAY_MS)
   })
   for (const payment of payments) {
-    queueRecurringPaymentStatusCheck(payment.payment_id, batcher)
+    queueRecurringPaymentStatusCheck(payment.paymentId, batcher)
   }
   await batcher.fetch() 
   batcher.responses.forEach(async (response, index) => {
@@ -243,16 +263,16 @@ const checkPaymentStatuses = async payments => {
       }
       if ([PAYMENT_STATUS.Failure, PAYMENT_STATUS.Error].includes(paymentStatus)) {
         console.error(
-          `Payment failed. Recurring payment agreement for: ${payments[index].agreement_id} set to be cancelled. Updating payment journal.`
+          `Payment failed. Recurring payment agreement for: ${payments[index].agreementId} set to be cancelled. Updating payment journal.`
         )
-        // await salesApi.cancelRecurringPayment(payments[index].recurringPaymentId)
+        await salesApi.cancelRecurringPayment(payments[index].recurringPaymentId)
       }
     } else if (isClientError(response.status)) {
-      console.error(`Failed to fetch status for payment ${payments[index].payment_id}, error ${response.status}`)
+      console.error(`Failed to fetch status for payment ${payments[index].paymentId}, error ${response.status}`)
     } else if (isServerError(response.status)) {
-      console.error(`Payment status API error for ${payments[index].payment_id}, error ${response.status}`)
+      console.error(`Payment status API error for ${payments[index].paymentId}, error ${response.status}`)
     } else {
-      console.error(`Unexpected error fetching payment status for ${payments[index].payment_id}.`)
+      console.error(`Unexpected error fetching payment status for ${payments[index].paymentId}.`)
     }
   //     if (isClientError(status)) {
   //       console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${status}`)
@@ -260,7 +280,7 @@ const checkPaymentStatuses = async payments => {
   //       console.error(`Payment status API error for ${payment.paymentId}, error ${status}`)
 
 
-    })
+  })
 }
 
 const processRecurringPaymentStatus = async payment => {
@@ -273,7 +293,7 @@ const processRecurringPaymentStatus = async payment => {
 
   //     if (status === PAYMENT_STATUS.Success) {
   //       try {
-  //         await salesApi.processRPResult(payment.transaction.id, payment.paymentId, payment.created_date)
+          await salesApi.processRPResult(payment.transaction.id, payment.paymentId, payment.created_date)
   //         debug(`Processed Recurring Payment for ${payment.transaction.id}`)
   //       } catch (err) {
   //         console.error(`Failed to process Recurring Payment for ${payment.transaction.id}`, err)
