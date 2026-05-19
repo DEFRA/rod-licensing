@@ -1025,7 +1025,7 @@ describe('recurring payments service', () => {
         text: jest.fn().mockResolvedValue('Server error')
       })
 
-      await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovUKPay agreement')
+      await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovUkPay agreement')
     })
 
     it('should set isRecurringPayment to false on the linked permission', async () => {
