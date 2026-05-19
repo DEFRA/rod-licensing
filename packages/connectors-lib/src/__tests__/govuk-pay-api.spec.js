@@ -226,7 +226,10 @@ describe('govuk-pay-api-connector', () => {
         throw new Error('cancel error')
       })
       await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).rejects.toEqual(Error('cancel error'))
-      expect(consoleErrorSpy).toHaveBeenCalled()
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: 123',
+        Error('cancel error')
+      )
     })
   })
 })

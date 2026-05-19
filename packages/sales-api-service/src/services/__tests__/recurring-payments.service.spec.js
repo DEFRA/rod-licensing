@@ -3,6 +3,7 @@ import {
   executeQuery,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
+  findPermissionByRecurringPaymentId,
   findById,
   Permission,
   persist,
@@ -57,6 +58,7 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   },
   persist: jest.fn(),
   findRecurringPaymentByPermissionId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
+  findPermissionByRecurringPaymentId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   retrieveGlobalOptionSets: jest.fn()
 }))
 
@@ -902,7 +904,11 @@ describe('recurring payments service', () => {
 
     beforeEach(() => {
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValue({ ok: true, status: 204 })
-      dynamicsClient.retrieveRequest.mockResolvedValue({ _defra_activepermission_value: 'mock-permission-id' })
+      dynamicsClient.retrieveMultipleRequest.mockResolvedValue({
+        value: [{ defra_ActivePermission: { defra_permissionid: 'mock-permission-id' } }]
+      })
+      jest.spyOn(Permission, 'fromResponse').mockReturnValue(mockPermission)
+      retrieveGlobalOptionSets.mockReturnValue({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       findById.mockImplementation(entityType => {
         if (entityType === Permission) return mockPermission
         return null
@@ -910,7 +916,6 @@ describe('recurring payments service', () => {
     })
 
     it('should call findById with RecurringPayment and the provided id', async () => {
-      retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       findById.mockReturnValueOnce(getMockRecurringPayment())
       const id = 'abc123'
       await cancelRecurringPayment(id, 'Payment Failure')
@@ -918,60 +923,13 @@ describe('recurring payments service', () => {
     })
 
     it('should set the reason based on the provided argument', async () => {
-      retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       findById.mockReturnValueOnce(getMockRecurringPayment())
       const reason = Symbol('unique-reason')
       await cancelRecurringPayment('abc123', reason)
       expect(getGlobalOptionSetValue).toHaveBeenCalledWith(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     })
 
-    it('should set cancelledDate when reason is Payment Failure and call persist with the updated RecurringPayment', async () => {
-      retrieveGlobalOptionSets.mockReturnValueOnce({
-        cached: jest.fn().mockResolvedValue({
-          defra_cancelledreasons: {
-            options: {
-              910400002: {
-                id: 910400002,
-                label: 'Payment Failure',
-                description: 'Payment Failure'
-              }
-            }
-          }
-        })
-      })
-
-      const recurringPayment = getMockRecurringPayment()
-      findById.mockReturnValueOnce(recurringPayment)
-
-      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
-
-      await cancelRecurringPayment('id', 'Payment Failure')
-
-      expect(persist).toHaveBeenCalledWith([
-        expect.objectContaining({
-          ...recurringPayment,
-          cancelledReason,
-          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
-        }),
-        mockPermission
-      ])
-    })
-
-    it('should set cancelledDate when reason is User Cancelled', async () => {
-      retrieveGlobalOptionSets.mockReturnValueOnce({
-        cached: jest.fn().mockResolvedValue({
-          defra_cancelledreasons: {
-            options: {
-              910400003: {
-                id: 910400003,
-                label: 'User Cancelled',
-                description: 'User Cancelled'
-              }
-            }
-          }
-        })
-      })
-
+    it('should set cancelledDate and call persist with the updated RecurringPayment', async () => {
       const cancelledReason = { description: 'User Cancelled', id: 910400003, label: 'User Cancelled' }
 
       const recurringPayment = { ...getMockRecurringPayment(), cancelledDate: null }
@@ -991,7 +949,7 @@ describe('recurring payments service', () => {
       ])
     })
 
-    it('should call cancelRecurringPaymentAgreement on GovPay when agreementId exists', async () => {
+    it('should call cancelRecurringPaymentAgreement on GovUKPay when agreementId exists', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
 
@@ -1000,16 +958,16 @@ describe('recurring payments service', () => {
       expect(govUkPayApi.cancelRecurringPaymentAgreement).toHaveBeenCalledWith(recurringPayment.agreementId)
     })
 
-    it('should not call cancelRecurringPaymentAgreement on GovPay when agreementId does not exist', async () => {
+    it('should not call cancelRecurringPaymentAgreement on GovUKPay when agreementId does not exist', async () => {
       const recurringPayment = getMockRecurringPayment({ agreementId: undefined })
       findById.mockReturnValueOnce(recurringPayment)
 
-      await cancelRecurringPayment('id', 'Payment Failure')
-
-      expect(govUkPayApi.cancelRecurringPaymentAgreement).not.toHaveBeenCalled()
+      await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(
+        'Cannot cancel a recurring payment without an agreement ID'
+      )
     })
 
-    it('should not throw when GovPay returns 404 (agreement already cancelled)', async () => {
+    it('should not throw when GovUKPay returns 404 (agreement not found)', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
@@ -1017,16 +975,23 @@ describe('recurring payments service', () => {
       await expect(cancelRecurringPayment('id', 'User Cancelled')).resolves.toBeDefined()
     })
 
-    it('should still persist to CRM when GovPay returns 404', async () => {
+    it('should still persist to CRM when GovUKPay returns 404', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
 
       await cancelRecurringPayment('id', 'User Cancelled')
-      expect(persist).toHaveBeenCalled()
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+          cancelledReason: expect.any(Object)
+        }),
+        mockPermission
+      ])
     })
 
-    it('should not throw when GovPay returns 400 (agreement in invalid state)', async () => {
+    it('should not throw when GovUKPay returns 400 (agreement not in active status)', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 400, statusText: 'Bad Request' })
@@ -1034,16 +999,23 @@ describe('recurring payments service', () => {
       await expect(cancelRecurringPayment('id', 'User Cancelled')).resolves.toBeDefined()
     })
 
-    it('should still persist to CRM when GovPay returns 400', async () => {
+    it('should still persist to CRM when GovUKPay returns 400', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 400, statusText: 'Bad Request' })
 
       await cancelRecurringPayment('id', 'User Cancelled')
-      expect(persist).toHaveBeenCalled()
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+          cancelledReason: expect.any(Object)
+        }),
+        mockPermission
+      ])
     })
 
-    it('should throw when GovPay returns an unexpected error', async () => {
+    it('should throw when GovUKPay returns an unexpected error', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({
@@ -1053,7 +1025,7 @@ describe('recurring payments service', () => {
         text: jest.fn().mockResolvedValue('Server error')
       })
 
-      await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovPay agreement')
+      await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovUKPay agreement')
     })
 
     it('should set isRecurringPayment to false on the linked permission', async () => {
@@ -1074,33 +1046,43 @@ describe('recurring payments service', () => {
       expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment), mockPermission])
     })
 
-    it('should query dynamics for the active permission lookup value', async () => {
+    it('should pass the recurring payment id to findPermissionByRecurringPaymentId', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(dynamicsClient.retrieveRequest).toHaveBeenCalledWith({
-        key: 'id',
-        collection: RecurringPayment.definition.dynamicsCollection,
-        select: ['_defra_activepermission_value']
-      })
+      expect(findPermissionByRecurringPaymentId).toHaveBeenCalledWith('id')
     })
 
-    it('should look up the permission by the id returned from dynamics', async () => {
+    it('should pass the query to retrieveMultipleRequest', async () => {
+      const retrieveRequest = Symbol('retrieve request')
+      findPermissionByRecurringPaymentId.mockReturnValueOnce({ toRetrieveRequest: () => retrieveRequest })
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
-      dynamicsClient.retrieveRequest.mockResolvedValueOnce({ _defra_activepermission_value: 'specific-permission-id' })
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(findById).toHaveBeenCalledWith(Permission, 'specific-permission-id')
+      expect(dynamicsClient.retrieveMultipleRequest).toHaveBeenCalledWith(retrieveRequest)
+    })
+
+    it('should build the permission from the expanded response data', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      const permissionData = { defra_permissionid: 'specific-permission-id' }
+      dynamicsClient.retrieveMultipleRequest.mockResolvedValueOnce({
+        value: [{ defra_ActivePermission: permissionData }]
+      })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(Permission.fromResponse).toHaveBeenCalledWith(permissionData, expect.anything())
     })
 
     it('should still persist when no linked permission is found', async () => {
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
-      dynamicsClient.retrieveRequest.mockResolvedValueOnce({ _defra_activepermission_value: null })
+      dynamicsClient.retrieveMultipleRequest.mockResolvedValueOnce({ value: [] })
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
@@ -1113,6 +1095,32 @@ describe('recurring payments service', () => {
       await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(
         'Invalid id provided for recurring payment cancellation'
       )
+    })
+
+    it('should propagate the error when persist fails after GovUKPay cancellation succeeds', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: true, status: 204 })
+      persist.mockRejectedValueOnce(new Error('CRM unavailable'))
+
+      await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('CRM unavailable')
+    })
+
+    it('should succeed on retry after persist failure, handling GovUKPay 404 gracefully', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+          cancelledReason: expect.any(Object)
+        }),
+        mockPermission
+      ])
     })
   })
 

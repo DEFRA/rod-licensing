@@ -168,22 +168,6 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
   })
 })
 
-describe('cancelRecurringPaymentRequestParamsSchema', () => {
-  it('validates expected object', async () => {
-    const sampleData = { id: 'abc123' }
-    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
-  })
-
-  it('throws an error if id missing', async () => {
-    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync({}).rejects.toThrow())
-  })
-
-  it('throws an error if id is not the correct type', async () => {
-    const sampleData = { id: 99 }
-    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
-  })
-})
-
 describe('cancelRecurringPaymentRequestQuerySchema', () => {
   it('validates expected object if the reason is Payment Failure', async () => {
     const sampleData = { reason: 'Payment Failure' }
@@ -192,6 +176,11 @@ describe('cancelRecurringPaymentRequestQuerySchema', () => {
 
   it('validates expected object if the reason is User Cancelled', async () => {
     const sampleData = { reason: 'User Cancelled' }
+    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  })
+
+  it('validates expected object if the reason is Business Cancelled', async () => {
+    const sampleData = { reason: 'Business Cancelled' }
     expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
   })
 
