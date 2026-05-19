@@ -1,7 +1,8 @@
 import {
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
-  findRecurringPaymentByPermissionId
+  findRecurringPaymentByPermissionId,
+  findPermissionByRecurringPaymentId
 } from '../recurring-payments.queries.js'
 
 describe('Recurring Payment Queries', () => {
@@ -57,6 +58,21 @@ describe('Recurring Payment Queries', () => {
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
         filter: `_defra_activepermission_value eq ${permissionId} and statecode eq 0`,
+        select: baseSelection(),
+        expand: [{ property: 'defra_ActivePermission' }]
+      })
+    })
+  })
+
+  describe('findPermissionByRecurringPaymentId', () => {
+    it('builds a query to retrieve the active permission linked to a recurring payment', () => {
+      const recurringPaymentId = 'rcp-456'
+
+      const query = findPermissionByRecurringPaymentId(recurringPaymentId)
+
+      expect(query.toRetrieveRequest()).toEqual({
+        collection: 'defra_recurringpayments',
+        filter: `_defra_activepermission_value ne null and defra_recurringpaymentid eq ${recurringPaymentId} and statecode eq 0`,
         select: baseSelection(),
         expand: [{ property: 'defra_ActivePermission' }]
       })

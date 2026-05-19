@@ -4,6 +4,7 @@ import {
   findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
+  findPermissionByRecurringPaymentId,
   persist,
   Permission,
   RecurringPayment,
@@ -170,56 +171,57 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 
 export const cancelRecurringPayment = async (id, reason) => {
   const recurringPayment = await findById(RecurringPayment, id)
-  if (recurringPayment) {
-    const data = recurringPayment
-
-    data.cancelledDate = new Date().toISOString().split('T')[0]
-    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
-
-    if (data.agreementId) {
-      await cancelGovPayAgreement(data.agreementId)
-    }
-
-    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
-    const entitiesToPersist = [updatedRecurringPayment]
-
-    const linkedPermission = await getLinkedPermission(id)
-    if (linkedPermission) {
-      linkedPermission.isRecurringPayment = false
-      entitiesToPersist.push(linkedPermission)
-    }
-
-    await persist(entitiesToPersist)
-    return updatedRecurringPayment
-  } else {
+  if (!recurringPayment) {
     throw new Error('Invalid id provided for recurring payment cancellation')
   }
+  if (!recurringPayment.agreementId) {
+    throw new Error('Cannot cancel a recurring payment without an agreement ID')
+  }
+
+  const data = recurringPayment
+
+  data.cancelledDate = new Date().toISOString().split('T')[0]
+  data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+
+  await cancelGovUkPayAgreement(data.agreementId)
+
+  const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+  const entitiesToPersist = [updatedRecurringPayment]
+
+  const linkedPermission = await getLinkedPermission(id)
+  if (linkedPermission) {
+    linkedPermission.isRecurringPayment = false
+    entitiesToPersist.push(linkedPermission)
+  }
+
+  await persist(entitiesToPersist)
+  return updatedRecurringPayment
 }
 
 const getLinkedPermission = async recurringPaymentId => {
-  const record = await dynamicsClient.retrieveRequest({
-    key: recurringPaymentId,
-    collection: RecurringPayment.definition.dynamicsCollection,
-    select: ['_defra_activepermission_value']
-  })
-  const permissionId = record._defra_activepermission_value
-  if (permissionId) {
-    return findById(Permission, permissionId)
+  const query = findPermissionByRecurringPaymentId(recurringPaymentId)
+  const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  if (response.value.length) {
+    const [record] = response.value
+    if (record.defra_ActivePermission) {
+      const optionSetData = await retrieveGlobalOptionSets().cached()
+      return Permission.fromResponse(record.defra_ActivePermission, optionSetData)
+    }
   }
   return null
 }
 
-const cancelGovPayAgreement = async agreementId => {
+const cancelGovUkPayAgreement = async agreementId => {
   const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
   if (response.ok) {
-    debug('Successfully cancelled GovPay agreement: %s', agreementId)
+    debug('Successfully cancelled GovUkPay agreement: %s', agreementId)
   } else if (response.status === StatusCodes.NOT_FOUND) {
-    debug('GovPay agreement not found (already cancelled or does not exist): %s', agreementId)
+    debug('GovUkPay agreement not found (already cancelled or does not exist): %s', agreementId)
   } else if (response.status === StatusCodes.BAD_REQUEST) {
-    debug('GovPay agreement cannot be cancelled (invalid state): %s', agreementId)
+    debug('GovUkPay agreement cannot be cancelled (invalid state): %s', agreementId)
   } else {
     const body = await response.text().catch(() => 'Unable to read response body')
-    throw new Error(`Failed to cancel GovPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
+    throw new Error(`Failed to cancel GovUkPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
 
