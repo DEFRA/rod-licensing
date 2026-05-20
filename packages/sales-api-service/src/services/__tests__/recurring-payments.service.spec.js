@@ -1089,6 +1089,18 @@ describe('recurring payments service', () => {
       expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment)])
     })
 
+    it('should still persist without permission when record has no defra_ActivePermission', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      dynamicsClient.retrieveMultipleRequest.mockResolvedValueOnce({
+        value: [{ defra_ActivePermission: null }]
+      })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment)])
+    })
+
     it('should raise an error when there are no matches', async () => {
       findById.mockReturnValueOnce(undefined)
 
