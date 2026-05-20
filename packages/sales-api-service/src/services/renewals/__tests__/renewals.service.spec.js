@@ -166,6 +166,7 @@ describe('preparePermissionDataForRenewal', () => {
       ['1960-05-13', 'turns 66 the day after licence start'],
       ['1960-12-25', 'turns 66 in > 6 months']
     ])("doesn't add senior concession if the licensee is 65 at licence start (DOB: %s, %s)", async birthDate => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
       const endDate = moment('2026-05-11')
       const almostSeniorPermission = existingPermission({
         endDate,
@@ -176,6 +177,7 @@ describe('preparePermissionDataForRenewal', () => {
       })
       const permission = await preparePermissionDataForRenewal(almostSeniorPermission)
       expect(permission.concessions).toEqual([])
+      jest.useRealTimers()
     })
 
     it('should remove noLicenceRequired from licensee', async () => {
