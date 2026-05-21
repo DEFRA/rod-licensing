@@ -70,4 +70,23 @@ describe('journey-definition', () => {
       )
     })
   })
+
+  it('does not route websales users to journey goal even when SHOW_CANCELLATION_JOURNEY_PUBLIC is true', () => {
+    jest.isolateModules(() => {
+      process.env.CHANNEL = 'websales'
+      process.env.SHOW_CANCELLATION_JOURNEY_PUBLIC = 'true'
+
+      const journeyDefinition = require('../journey-definition.js').default
+      const startPage = journeyDefinition.find(page => page.current.page === 'start')
+      expect(startPage).toEqual(
+        expect.objectContaining({
+          next: {
+            [CommonResults.OK]: {
+              page: LICENCE_FOR
+            }
+          }
+        })
+      )
+    })
+  })
 })

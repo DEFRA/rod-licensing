@@ -66,13 +66,12 @@ const initialiseCrumbPlugin = () => ({
 })
 
 const initialiseHapiI18nPlugin = () => {
-  const showWelshContent = process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true'
   return {
     plugin: HapiI18n,
     options: {
-      locales: ['en', ...(showWelshContent ? ['cy'] : [])],
+      locales: ['en', 'cy'],
       directory: path.join(Dirname, 'src/locales'),
-      ...(showWelshContent && { queryParameter: 'lang' })
+      queryParameter: 'lang'
     }
   }
 }

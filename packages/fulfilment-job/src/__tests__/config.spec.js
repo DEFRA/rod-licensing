@@ -1,11 +1,12 @@
 import config from '../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
-const { secretsManager } = AWS.mock.results[0].value
+const { systemsManager, GetParameterCommand } = AWS.mock.results[0].value
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   AWS: jest.fn(() => ({
-    secretsManager: {
-      getSecretValue: jest.fn(() => ({ SecretString: 'test-ssh-key' }))
+    GetParameterCommand: jest.fn(),
+    systemsManager: {
+      send: jest.fn(() => ({ Value: 'test-ssh-key' }))
     }
   }))
 }))
@@ -52,28 +53,36 @@ describe('config', () => {
 
 describe('pgp config', () => {
   const init = async (samplePublicKey = 'sample-pgp-key') => {
-    secretsManager.getSecretValue.mockResolvedValueOnce({ SecretString: samplePublicKey })
+    systemsManager.send.mockResolvedValueOnce({ Value: samplePublicKey })
     await config.initialise()
   }
   beforeAll(setEnvVars)
   beforeEach(jest.clearAllMocks)
   afterAll(clearEnvVars)
 
-  it.each(['public-pgp-key', 'paragon-sample-key', 'keep-me-secret'])('gets pgp key (%s) from secrets manager', async sampleKey => {
-    await init(sampleKey)
-    expect(config.pgp.publicKey).toEqual(sampleKey)
-  })
-
   it.each(['secret-id-abc', 'pgp-public-key-secret-id', '123-secret-id'])(
-    'pgp key obtained from aws secrets manager (%s)',
-    async SecretId => {
-      process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID = SecretId
+    'prepares to request the pgp key (%s) from AWS Systems Manager',
+    async Name => {
+      process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID = Name
       await init()
-      expect(secretsManager.getSecretValue).toHaveBeenCalledWith(
+      expect(GetParameterCommand).toHaveBeenCalledWith(
         expect.objectContaining({
-          SecretId
+          Name
         })
       )
+    }
+  )
+
+  it('requests the pgp key from Systems Manager', async () => {
+    await init()
+    expect(systemsManager.send).toHaveBeenCalledWith(expect.any(GetParameterCommand))
+  })
+
+  it.each(['public-pgp-key', 'paragon-sample-key', 'keep-me-secret'])(
+    'uses the pgp key (%s) retrieved from Systems Manager',
+    async sampleKey => {
+      await init(sampleKey)
+      expect(config.pgp.publicKey).toEqual(sampleKey)
     }
   )
 

@@ -4,6 +4,7 @@ import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { SQS } from '@aws-sdk/client-sqs'
 import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3'
 import { SecretsManager } from '@aws-sdk/client-secrets-manager'
+import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'
 
 export default function () {
   return {
@@ -40,7 +41,15 @@ export default function () {
         endpoint: Config.aws.secretsManager.endpoint
       })
     }),
+    systemsManager: new SSMClient({
+      apiVersion: '2014-11-06',
+      region: 'eu-west-2',
+      ...(Config.aws.systemsManager.endpoint && {
+        endpoint: Config.aws.systemsManager.endpoint
+      })
+    }),
     ListObjectsV2Command,
-    GetObjectCommand
+    GetObjectCommand,
+    GetParameterCommand
   }
 }

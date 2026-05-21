@@ -58,40 +58,100 @@ describe('permissions service', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('generatePermissionNumber', () => {
-    it('generates a permission number for adults', async () => {
-      const number = await generatePermissionNumber(
-        getSamplePermission({
-          permitId: MOCK_12MONTH_DISABLED_PERMIT.id,
-          birthDate: moment()
-            .subtract(JUNIOR_MAX_AGE + 1, 'years')
-            .format('YYYY-MM-DD')
-        }),
-        'Telesales'
-      )
-      const block1 = moment().subtract(1, 'day').add(1, 'year').endOf('day').format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
-      expect(number).toMatch(expected)
+    describe('adult', () => {
+      it('generates a permission number for adults', async () => {
+        const number = await generatePermissionNumber(
+          getSamplePermission({
+            permitId: MOCK_12MONTH_DISABLED_PERMIT.id,
+            birthDate: moment()
+              .subtract(JUNIOR_MAX_AGE + 1, 'years')
+              .format('YYYY-MM-DD')
+          }),
+          'Telesales'
+        )
+        const block1 = moment().subtract(1, 'day').add(1, 'year').endOf('day').format('HHDDMMYY')
+        const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
+        expect(number).toMatch(expected)
+      })
+
+      it('formats as F if startDate is on 17th birthday but issueDate is 1 week before', async () => {
+        const birthDate = moment().subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
+        const issueDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').add(1, 'year').subtract(7, 'day').toISOString()
+        const startDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').add(1, 'year').toISOString()
+        const number = await generatePermissionNumber(
+          {
+            ...getSamplePermission({
+              permitId: MOCK_12MONTH_SENIOR_PERMIT.id,
+              birthDate
+            }),
+            startDate,
+            issueDate
+          },
+          'Web Sales'
+        )
+        expect(number).toMatch(/-[A-Z0-9]{4}F/)
+      })
     })
 
-    it('generates a permission number for juniors', async () => {
-      const number = await generatePermissionNumber(
-        getSamplePermission({
-          birthDate: moment()
-            .subtract(JUNIOR_MAX_AGE - 1, 'years')
-            .format('YYYY-MM-DD')
-        }),
-        'Web Sales'
-      )
-      const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-2WC1JFT-[A-Z0-9]{5}[0-9]$`)
-      expect(number).toMatch(expected)
+    describe('senior', () => {
+      it('generates a permission number for seniors', async () => {
+        const number = await generatePermissionNumber(getSamplePermission(), 'Web Sales')
+        const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
+        const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
+        expect(number).toMatch(expected)
+      })
+
+      it('formats as S if startDate is on 66th birthday but issueDate is 1 week before', async () => {
+        const birthDate = moment().subtract(SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
+        const issueDate = moment(birthDate).add(SENIOR_MIN_AGE, 'years').subtract(7, 'day').toISOString()
+        const startDate = moment(birthDate).add(SENIOR_MIN_AGE, 'years').toISOString()
+        const number = await generatePermissionNumber(
+          {
+            ...getSamplePermission({
+              permitId: MOCK_12MONTH_SENIOR_PERMIT.id,
+              birthDate
+            }),
+            startDate,
+            issueDate
+          },
+          'Web Sales'
+        )
+        expect(number).toMatch(/-[A-Z0-9]{4}S/)
+      })
     })
 
-    it('generates a permission number for seniors', async () => {
-      const number = await generatePermissionNumber(getSamplePermission(), 'Web Sales')
-      const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
-      expect(number).toMatch(expected)
+    describe('junior', () => {
+      it('generates a permission number for juniors', async () => {
+        const number = await generatePermissionNumber(
+          getSamplePermission({
+            birthDate: moment()
+              .subtract(JUNIOR_MAX_AGE - 1, 'years')
+              .format('YYYY-MM-DD')
+          }),
+          'Web Sales'
+        )
+        const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
+        const expected = new RegExp(`^${block1}-2WC1JFT-[A-Z0-9]{5}[0-9]$`)
+        expect(number).toMatch(expected)
+      })
+
+      it('formats as J if startDate is on 16th birthday but issueDate is 1 week before', async () => {
+        const birthDate = moment().subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
+        const startDate = moment(birthDate).add(JUNIOR_MAX_AGE, 'years').toISOString()
+        const issueDate = moment(startDate).subtract(7, 'day').toISOString()
+        const number = await generatePermissionNumber(
+          {
+            ...getSamplePermission({
+              permitId: MOCK_12MONTH_SENIOR_PERMIT.id,
+              birthDate
+            }),
+            startDate,
+            issueDate
+          },
+          'Web Sales'
+        )
+        expect(number).toMatch(/-[A-Z0-9]{4}J/)
+      })
     })
   })
 

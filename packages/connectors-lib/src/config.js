@@ -12,6 +12,9 @@ export default {
     },
     secretsManager: {
       endpoint: process.env.AWS_SECRETS_MANAGER_ENDPOINT
+    },
+    systemsManager: {
+      endpoint: process.env.AWS_SYSTEMS_MANAGER_ENDPOINT
     }
   }
 }

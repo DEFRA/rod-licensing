@@ -12,7 +12,7 @@ const getData = async request => {
   const endDateString = moment(endDate, cacheDateFormat).tz(SERVICE_LOCAL_TIME).format(dateDisplayFormat)
 
   return {
-    referenceNumber,
+    referenceNumber: referenceNumber.toUpperCase(),
     endDate: endDateString,
     uri: {
       new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)

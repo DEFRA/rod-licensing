@@ -97,9 +97,7 @@ const preparePermit = async existingPermission => {
 
 const prepareConcessionsData = async (existingPermission, dateData) => {
   delete existingPermission.licensee.noLicenceRequired
-  const ageAtLicenceStartDate = moment(dateData.licenceStartDate)
-    .add(1, 'year')
-    .diff(moment(existingPermission.licensee.birthDate), 'years')
+  const ageAtLicenceStartDate = moment(dateData.licenceStartDate).diff(moment(existingPermission.licensee.birthDate), 'years')
 
   if (isSenior(ageAtLicenceStartDate)) {
     await addSenior(existingPermission)

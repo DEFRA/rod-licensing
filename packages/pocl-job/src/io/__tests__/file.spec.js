@@ -1,4 +1,4 @@
-import { mkdtempSync, mkdirSync, rmdirSync } from 'fs'
+import { mkdtempSync, mkdirSync, rmSync } from 'fs'
 import mockPath from 'path'
 import os from 'os'
 import * as file from '../file.js'
@@ -6,7 +6,7 @@ import * as file from '../file.js'
 jest.mock('fs', () => ({
   mkdtempSync: jest.fn(prefix => mockPath.join(`${prefix}${String(Math.random()).slice(-6)}`)),
   mkdirSync: jest.fn(val => val),
-  rmdirSync: jest.fn()
+  rmSync: jest.fn()
 }))
 
 describe('file operations', () => {
@@ -45,7 +45,7 @@ describe('file operations', () => {
       const file = require('../file.js')
       const tmpDir = file.getTempDir()
       file.removeTemp()
-      expect(rmdirSync).toHaveBeenCalledWith(tmpDir, { recursive: true })
+      expect(rmSync).toHaveBeenCalledWith(tmpDir, { recursive: true })
     })
   })
 })

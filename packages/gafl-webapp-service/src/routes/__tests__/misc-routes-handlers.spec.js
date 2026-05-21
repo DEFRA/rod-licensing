@@ -318,26 +318,6 @@ describe('guidance page handlers', () => {
         )
       })
 
-      it.each([
-        ['true', true],
-        ['false', false],
-        [undefined, false]
-      ])('returns SHOW_WELSH_CONTENT correctly based on env variable', async (showWelsh, expected) => {
-        process.env.SHOW_WELSH_CONTENT = showWelsh
-
-        const request = getMockRequest()
-        const toolkit = getMockToolkit()
-
-        await cookiesPagePostHandler(request, toolkit)
-
-        expect(toolkit.view).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({
-            SHOW_WELSH_CONTENT: expected
-          })
-        )
-      })
-
       it.each([['csrf_token_cookie_name'], ['any_name'], ['token_cookie']])(
         'sets CSRF_TOKEN_NAME to match process.env.CSRF_TOKEN_COOKIE_NAME',
         async csrf => {
