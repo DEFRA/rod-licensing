@@ -97,7 +97,7 @@ export function retrieveGlobalOptionSets () {
     'dynamics_optionsetmap',
     async () => {
       try {
-        const data = await dynamicsClient.retrieveGlobalOptionSets('Microsoft.Dynamics.CRM.OptionSetMetadata', ['Name', 'Options'])
+        const data = await dynamicsClient.retrieveGlobalOptionSets({ castType: 'Microsoft.Dynamics.CRM.OptionSetMetadata', select: ['Name', 'Options'] })
         return data.value.reduce((acc, { Name: name, Options: options }) => {
           acc[name] = {
             name,
