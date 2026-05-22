@@ -446,23 +446,23 @@ describe('recurring-payments-processor', () => {
       4,
       'errors',
       [
-        { status: 200, paymentId: Symbol('pay-1') },
-        { status: 200, paymentId: Symbol('pay-2') },
+        { status: 200, paymentId: 'aab5a964-7b4b-42f9-b9a9-bf97e9789739' },
+        { status: 200, paymentId: '903edb3d-85e5-40b2-9027-12b7b91329c9' },
         new Error('Payment request failed'),
-        { status: 200, paymentId: Symbol('pay-3') },
+        { status: 200, paymentId: 'a7bffcac-c4c5-463a-ad23-d6ed6b2c96f7' },
         new Error('Payment request failed'),
-        { status: 200, paymentId: Symbol('pay-4') }
+        { status: 200, paymentId: '821d2705-7eb5-4e43-9d71-9ae899981cf3' }
       ]
     ],
     [
       3,
       '429 and 500 responses',
       [
-        { status: 200, paymentId: Symbol('pay-5') },
+        { status: 200, paymentId: '92972d0a-5f88-4ea6-b594-3f9ad84a99c3' },
         { status: 429 },
         { status: 500 },
-        { status: 200, paymentId: Symbol('pay-6') },
-        { status: 201, paymentId: Symbol('pay-7') }
+        { status: 200, paymentId: '524485f9-8fc4-4cba-8b9e-39d111b66014' },
+        { status: 201, paymentId: 'a8f79b64-e5cb-4ad9-b31e-fca64d0dd709' }
       ]
     ]
   ])(
@@ -504,7 +504,7 @@ describe('recurring-payments-processor', () => {
   )
 
   it('prepares the data for found recurring payments', async () => {
-    const referenceNumber = Symbol('reference')
+    const referenceNumber = 'aefcd534-d2f8-422a-b959-70ee6bc1ead2'
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber })])
 
     await execute()
@@ -513,16 +513,16 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a transaction with the correct data', async () => {
-    const id = Symbol('recurring-payment-id')
-    const agreementId = Symbol('agreement-id')
+    const id = 'f7a3e603-1206-4ed3-afc3-80342075f5fc'
+    const agreementId = '77c2c30c-b7b3-42eb-8919-ce9b157b7c9c'
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, id })])
 
-    const isLicenceForYou = Symbol('isLicenceForYou')
-    const isRenewal = Symbol('isRenewal')
-    const country = Symbol('country')
-    const permitId = Symbol('permitId')
-    const firstName = Symbol('firstName')
-    const lastName = Symbol('lastName')
+    const isLicenceForYou = 'f824e9b2-d2ee-449b-9c06-2bd9e60a797b'
+    const isRenewal = 'c5d5e46b-3a98-4512-b6ec-435b32f011c2'
+    const country = 'ee6c7fc5-dd90-49f7-8b87-a301fb4abc45'
+    const permitId = 'b4fe7675-29d4-4372-aa3a-7b09c59381b6'
+    const firstName = 'cd775e3c-6215-423e-9582-73e4aac02177'
+    const lastName = '9b3ae360-0388-46ed-90d2-a51d540ea7e8'
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       isLicenceForYou,
@@ -568,11 +568,11 @@ describe('recurring-payments-processor', () => {
   it('creates a payment journal entry', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const samplePayment = {
-      payment_id: Symbol('payment-id'),
-      created_date: Symbol('created-date')
+      payment_id: '29144939-421d-4717-b085-9c06abf08845',
+      created_date: 'eef03cd5-ef79-4319-8fa7-250cd7d8d54f'
     }
     const sampleTransaction = {
-      id: Symbol('transaction-id'),
+      id: '53e15493-9e69-401d-b53e-09e8cde3edb3',
       cost: 99
     }
     HTTPRequestBatcher.mockImplementationOnce(
@@ -607,7 +607,13 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a payment journal entry that corresponds to the correct payment and transaction when any 2xx response received', async () => {
-    const paymentIds = [Symbol('pay-1'), Symbol('pay-3'), Symbol('pay-5'), Symbol('pay-6'), Symbol('pay-9')]
+    const paymentIds = [
+      '561ba547-9d22-45e5-a879-ce1c4656be37',
+      '51006b9f-f974-467a-a6c0-fad176b4e507',
+      '522bca2a-441d-43ef-9313-cef4916f41f0',
+      'cc7bea1f-8180-4e0f-8aac-9a25fccffdd2',
+      'b2bd701d-26fb-487a-bc43-c844cd648237'
+    ]
     const responses = [
       { status: 200, json: () => Promise.resolve(getMockSendPaymentResponse({ payment_id: paymentIds[0] })) },
       new Error('Payment request failed'),
@@ -763,7 +769,9 @@ describe('recurring-payments-processor', () => {
     const duePayment = getMockDueRecurringPayment()
     salesApi.getDueRecurringPayments.mockReturnValueOnce([duePayment])
     HTTPRequestBatcher.mockImplementationOnce(
-      getBatcherImplementation([{ json: Promise.resolve({ payment_id: 'test-payment-id', agreement_id: duePayment.entity.agreementId }) }])
+      getBatcherImplementation([
+        { json: () => Promise.resolve({ payment_id: 'test-payment-id', agreement_id: duePayment.entity.agreementId }) }
+      ])
     )
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' }
@@ -1001,7 +1009,7 @@ describe('recurring-payments-processor', () => {
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
-    const referenceNumber = Symbol('reference')
+    const referenceNumber = '243d0b59-ad08-408d-81df-37aff0aebab2'
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment({ referenceNumber })])
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
     mockBatchers({
@@ -1128,7 +1136,7 @@ describe('recurring-payments-processor', () => {
     ['an error', 'test-agreement-id', getPaymentStatusError()],
     ['an error', 'another-agreement-id', getPaymentStatusError()]
   ])('cancelRecurringPayment is called when payment is %s', async (_status, agreementId, mockStatus) => {
-    const id = Symbol('recurring-payment-id')
+    const id = '8c6392f2-4dc7-4fb9-b197-d116c0e6409d'
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, id })])
     salesApi.createTransaction.mockReturnValueOnce({
       id: 'test-transaction-id',
@@ -1237,6 +1245,7 @@ describe('recurring-payments-processor', () => {
     const callLog = []
     const ids = ['a1-b2', 'b1-c2', 'c1-d2', 'd1-e2']
     const dueRecurringPayments = []
+    const paymentResponses = []
     for (const id of ids) {
       salesApi.createTransaction.mockImplementationOnce(() => {
         callLog.push('createTransaction')
@@ -1252,8 +1261,13 @@ describe('recurring-payments-processor', () => {
         callLog.push('queueRecurringPayment')
       })
       dueRecurringPayments.push(getMockDueRecurringPayment({ id }))
+      paymentResponses.push({
+        status: 400,
+        json: () => Promise.resolve({ description: 'fail' })
+      })
     }
     salesApi.getDueRecurringPayments.mockReturnValueOnce(dueRecurringPayments)
+    HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(paymentResponses))
 
     await execute()
 
@@ -1269,13 +1283,17 @@ describe('recurring-payments-processor', () => {
     ])
   })
 
-  // it('payment requests are only made when create transaction request succeeded', async () => {})
-
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
+    const mockBatcher = () => {
+      HTTPRequestBatcher.mockImplementationOnce(
+        getBatcherImplementation(Array(count).fill({ status: 400, json: () => Promise.resolve({ description: 'Failure' }) }))
+      )
+    }
+
     it('prepares the data for each one', async () => {
       const references = []
       for (let i = 0; i < count; i++) {
-        references.push(Symbol('reference' + i))
+        references.push(`298ea261-3d61-4f77-add1-91ea136405f${i}`)
       }
       const mockGetDueRecurringPayments = []
       references.forEach(referenceNumber => {
@@ -1286,6 +1304,7 @@ describe('recurring-payments-processor', () => {
       references.forEach(reference => {
         expectedData.push([reference])
       })
+      mockBatcher()
 
       await execute()
 
@@ -1296,40 +1315,33 @@ describe('recurring-payments-processor', () => {
       const mockGetDueRecurringPayments = []
       const agreementIds = []
       const ids = []
+      const permits = []
+      const expectedData = []
       for (let i = 0; i < count; i++) {
-        const agreementId = Symbol(`agreement-id-${i}`)
-        const id = Symbol(`recurring-payment-${i}`)
+        const agreementId = `77126ef9-69a1-4412-93e5-6d4d5d011c7${i}`
+        const id = `bf21de64-c4e1-48fc-a71e-ce959352943${i}`
+        const permit = `ddcd80df-0569-4615-8d69-d47b02c0fd0${i}`
         agreementIds.push(agreementId)
         ids.push(id)
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId, id, referenceNumber: i }))
-      }
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
-
-      const permits = []
-      for (let i = 0; i < count; i++) {
-        permits.push(Symbol(`permit${i}`))
-      }
-
-      permits.forEach(permit => {
+        permits.push(permit)
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
           licensee: { countryCode: 'GB-ENG' },
           permitId: permit
         })
-      })
-
-      const expectedData = []
-      permits.forEach((permit, i) => {
         expectedData.push([
           {
             dataSource: 'Recurring Payment',
             recurringPayment: {
-              agreementId: agreementIds[i],
-              id: ids[i]
+              agreementId: agreementId,
+              id: id
             },
             permissions: [expect.objectContaining({ permitId: permit })]
           }
         ])
-      })
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+      mockBatcher()
 
       await execute()
 
@@ -1343,7 +1355,7 @@ describe('recurring-payments-processor', () => {
       const expectedData = []
       for (let i = 0; i < count; i++) {
         const agreementId = `f2532882-3560-400d-8583-0e6f87e15ea${i}`
-        const permit = Symbol(`permit${i}`)
+        const permit = `bc6d2c2e-6c30-401d-b55d-69012b96f11${i}`
         agreementIds.push(agreementId)
         permits.push(permit)
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId }))
@@ -1363,6 +1375,7 @@ describe('recurring-payments-processor', () => {
         })
       }
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+      mockBatcher()
 
       await execute()
       expectedData.forEach(expectedCall => {
@@ -1378,7 +1391,7 @@ describe('recurring-payments-processor', () => {
       const expectedData = []
       for (let i = 0; i < count; i++) {
         const agreementId = `f2532882-3560-400d-8583-0e6f87e15ea${i}`
-        const permit = Symbol(`permit${i}`)
+        const permit = `bc9b0e08-16a5-4683-9217-9a19f396d31${i}`
         const paymentId = `payment-id-${i}`
         const mockPaymentResponse = { payment_id: paymentId, agreement_id: agreementId }
         agreementIds.push(agreementId)

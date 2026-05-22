@@ -114,7 +114,14 @@ const requestPayments = async dueRCPayments => {
   await batcher.fetch()
 
   logErrors(batcher.responses, 'Error requesting payments:')
+  await processPaymentResponses(paymentsToRequest, batcher)
 
+  return Promise.all(
+    batcher.responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.json())
+  )
+}
+
+const processPaymentResponses = async (paymentsToRequest, batcher) => {
   for (let x = 0; x < paymentsToRequest.length; x++) {
     const { value: paymentToRequest } = paymentsToRequest[x]
     const response = batcher.responses[x]
@@ -145,10 +152,6 @@ const requestPayments = async dueRCPayments => {
         `)
     }
   }
-
-  return Promise.all(
-    batcher.responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.json())
-  )
 }
 
 const createNewTransaction = async (referenceNumber, recurringPayment) => {
