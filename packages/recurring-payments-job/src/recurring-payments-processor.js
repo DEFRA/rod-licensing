@@ -52,7 +52,7 @@ const processRecurringPayments = async () => {
 
   const requestedPayments = await requestPayments(dueRCPayments)
   const payments = requestedPayments.map(payment => {
-    const duePayment = dueRCPayments.find(duePayment => duePayment.entity.agreementId === payment.agreement_id)
+    const duePayment = dueRCPayments.find(dueRCPayment => dueRCPayment.entity.agreementId === payment.agreement_id)
     return {
       paymentId: payment.payment_id,
       agreementId: duePayment.entity.agreementId,
