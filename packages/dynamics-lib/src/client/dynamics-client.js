@@ -20,7 +20,10 @@ export function config () {
   })
 
   let accessToken = null
-  console.log('DYNAMICS CONFIG DEBUG:', { DYNAMICS_API_PATH: process.env.DYNAMICS_API_PATH, DYNAMICS_API_VERSION: process.env.DYNAMICS_API_VERSION })
+  console.log('DYNAMICS CONFIG DEBUG:', {
+    DYNAMICS_API_PATH: process.env.DYNAMICS_API_PATH,
+    DYNAMICS_API_VERSION: process.env.DYNAMICS_API_VERSION
+  })
   return {
     serverUrl: process.env.DYNAMICS_API_PATH,
     dataApi: {
