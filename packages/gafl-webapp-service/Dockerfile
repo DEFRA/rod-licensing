@@ -11,6 +11,12 @@ COPY packages/gafl-webapp-service/build /app/build
 
 RUN npm install --workspaces=false && npm run prepare
 
+# Override workspace packages with branch versions
+COPY packages/dynamics-lib/ /app/node_modules/@defra-fish/dynamics-lib/
+COPY packages/connectors-lib/ /app/node_modules/@defra-fish/connectors-lib/
+COPY packages/business-rules-lib/ /app/node_modules/@defra-fish/business-rules-lib/
+RUN cd /app/node_modules/@defra-fish/dynamics-lib && npm install --production --workspaces=false 2>/dev/null && cd /app
+
 # Bundle app source
 COPY packages/gafl-webapp-service/ /app
 
