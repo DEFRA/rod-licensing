@@ -15,13 +15,8 @@ export const SERVER = validateAndConvert(
     KeepAliveTimeout: process.env.HAPI_KEEP_ALIVE_TIMEOUT_MS || 60000
   },
   Joi.object({
-    Port: Joi.number()
-      .min(1)
-      .max(65535)
-      .required(),
-    KeepAliveTimeout: Joi.number()
-      .min(0)
-      .required()
+    Port: Joi.number().min(1).max(65535).required(),
+    KeepAliveTimeout: Joi.number().min(0).required()
   }).required()
 )
 
@@ -31,13 +26,8 @@ export const PAYMENTS_TABLE = validateAndConvert(
     Ttl: process.env.PAYMENT_JOURNALS_TABLE_TTL || defaultStagingTtl
   },
   Joi.object({
-    TableName: Joi.string()
-      .trim()
-      .min(1)
-      .required(),
-    Ttl: Joi.number()
-      .min(1)
-      .required()
+    TableName: Joi.string().trim().min(1).required(),
+    Ttl: Joi.number().min(1).required()
   }).required()
 )
 
@@ -48,16 +38,9 @@ export const TRANSACTION_STAGING_TABLE = validateAndConvert(
     StagingErrorsTtl: 60 * 60 * 24 * 365
   },
   Joi.object({
-    TableName: Joi.string()
-      .trim()
-      .min(1)
-      .required(),
-    Ttl: Joi.number()
-      .min(1)
-      .required(),
-    StagingErrorsTtl: Joi.number()
-      .min(1)
-      .required()
+    TableName: Joi.string().trim().min(1).required(),
+    Ttl: Joi.number().min(1).required(),
+    StagingErrorsTtl: Joi.number().min(1).required()
   }).required()
 )
 
@@ -67,13 +50,8 @@ export const TRANSACTION_STAGING_HISTORY_TABLE = validateAndConvert(
     Ttl: process.env.TRANSACTION_STAGING_HISTORY_TABLE_TTL || 60 * 60 * 24 * 90
   },
   Joi.object({
-    TableName: Joi.string()
-      .trim()
-      .min(1)
-      .required(),
-    Ttl: Joi.number()
-      .min(1)
-      .required()
+    TableName: Joi.string().trim().min(1).required(),
+    Ttl: Joi.number().min(1).required()
   }).required()
 )
 

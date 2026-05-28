@@ -3,13 +3,8 @@ import { optionSetOption } from './option-set.schema.js'
 import { v4 as uuid } from 'uuid'
 
 export const permitSchema = Joi.object({
-  id: Joi.string()
-    .guid()
-    .required()
-    .example(uuid()),
-  description: Joi.string()
-    .required()
-    .example('Coarse 12 month 3 Rod Licence (Senior, Disabled)'),
+  id: Joi.string().guid().required().example(uuid()),
+  description: Joi.string().required().example('Coarse 12 month 3 Rod Licence (Senior, Disabled)'),
   permitType: optionSetOption,
   permitSubtype: optionSetOption,
   durationMagnitude: 12,
@@ -28,10 +23,6 @@ export const permitSchema = Joi.object({
   isForFulfilment: Joi.boolean().required(),
   isCounterSales: Joi.boolean().required(),
   isRecurringPaymentSupported: Joi.boolean().required(),
-  cost: Joi.number()
-    .integer()
-    .example(30),
-  itemId: Joi.number()
-    .integer()
-    .example('42347')
+  cost: Joi.number().integer().example(30),
+  itemId: Joi.number().integer().example('42347')
 }).label('permit')

@@ -6,16 +6,10 @@ import { v4 as uuid } from 'uuid'
 export const concessionProofSchema = Joi.array()
   .items(
     Joi.object({
-      id: Joi.string()
-        .guid()
-        .external(createReferenceDataEntityValidator(Concession))
-        .required()
-        .example(uuid()),
+      id: Joi.string().guid().external(createReferenceDataEntityValidator(Concession)).required().example(uuid()),
       proof: Joi.object({
         type: buildJoiOptionSetValidator('defra_concessionproof', 'National Insurance Number'),
-        referenceNumber: Joi.string()
-          .optional()
-          .example('QQ 12 34 56 C')
+        referenceNumber: Joi.string().optional().example('QQ 12 34 56 C')
       })
         .label('concession-proof-details')
         .required()

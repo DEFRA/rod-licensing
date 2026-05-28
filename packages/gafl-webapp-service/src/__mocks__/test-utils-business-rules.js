@@ -24,9 +24,7 @@ export const ADULT_TOMORROW = moment()
 
 export const SENIOR_TODAY = moment().add(-SENIOR_MIN_AGE, 'years')
 
-export const SENIOR_TOMORROW = moment()
-  .add(-SENIOR_MIN_AGE, 'years')
-  .add(1, 'day')
+export const SENIOR_TOMORROW = moment().add(-SENIOR_MIN_AGE, 'years').add(1, 'day')
 
 export const postDateHelper = (d, prefix) => ({
   [`${prefix}-day`]: d.date().toString(),

@@ -18,42 +18,25 @@ export const commonContactSchema = {
   birthDate: validation.contact.createBirthDateValidator(Joi),
   email: validation.contact.createEmailValidator(Joi).allow(null),
   mobilePhone: validation.contact.createMobilePhoneValidator(Joi).allow(null),
-  organisation: Joi.string()
-    .trim()
-    .min(1)
-    .optional()
-    .allow(null)
-    .example('Example Organisation'),
+  organisation: Joi.string().trim().min(1).optional().allow(null).example('Example Organisation'),
   premises: Joi.when(Joi.ref(DATASOURCE_REF), {
     is: Joi.string().valid(...POCL_TRANSACTION_SOURCES),
-    then: validation.contact
-      .createPremisesValidator(Joi)
-      .optional()
-      .allow(null, ''),
+    then: validation.contact.createPremisesValidator(Joi).optional().allow(null, ''),
     otherwise: validation.contact.createPremisesValidator(Joi)
   }).example('Example House'),
   street: validation.contact.createStreetValidator(Joi).allow(null),
   locality: validation.contact.createLocalityValidator(Joi).allow(null),
   town: Joi.when(Joi.ref(DATASOURCE_REF), {
     is: Joi.string().valid(...POCL_TRANSACTION_SOURCES),
-    then: validation.contact
-      .createTownValidator(Joi)
-      .optional()
-      .allow(null, ''),
+    then: validation.contact.createTownValidator(Joi).optional().allow(null, ''),
     otherwise: validation.contact.createTownValidator(Joi)
   }).example('Exampleton'),
   postcode: Joi.when(Joi.ref(DATASOURCE_REF), {
     is: Joi.string().valid(...POCL_TRANSACTION_SOURCES),
     then: Joi.alternatives().conditional('country', {
       is: Joi.string().valid(...UK_COUNTRIES),
-      then: validation.contact
-        .createUKPostcodeValidator(Joi)
-        .optional()
-        .allow(null, ''),
-      otherwise: validation.contact
-        .createOverseasPostcodeValidator(Joi)
-        .optional()
-        .allow(null, '')
+      then: validation.contact.createUKPostcodeValidator(Joi).optional().allow(null, ''),
+      otherwise: validation.contact.createOverseasPostcodeValidator(Joi).optional().allow(null, '')
     }),
     otherwise: Joi.alternatives().conditional('country', {
       is: Joi.string().valid('GB', 'United Kingdom'),
@@ -61,14 +44,8 @@ export const commonContactSchema = {
       otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
     })
   }).example('AB12 3CD'),
-  postalFulfilment: Joi.boolean()
-    .optional()
-    .allow(null)
-    .example('true'),
-  obfuscatedDob: Joi.string()
-    .optional()
-    .max(14)
-    .example('12123456781234')
+  postalFulfilment: Joi.boolean().optional().allow(null).example('true'),
+  obfuscatedDob: Joi.string().optional().max(14).example('12123456781234')
 }
 
 export const contactRequestSchema = Joi.object({

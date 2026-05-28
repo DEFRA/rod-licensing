@@ -38,9 +38,7 @@ export default [
       tags: ['api', 'option-sets'],
       validate: {
         params: Joi.object({
-          setName: Joi.string()
-            .required()
-            .description('the name of the option-set to retrieve')
+          setName: Joi.string().required().description('the name of the option-set to retrieve')
         })
       },
       plugins: {

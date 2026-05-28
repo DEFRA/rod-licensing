@@ -26,37 +26,22 @@ const environment = (e, receiverName) => {
 
   // Create the joi validation schemas
   const schema = Joi.object({
-    URL: Joi.string()
-      .uri()
-      .required(),
-    SUBSCRIBER: Joi.string()
-      .uri()
-      .required(),
+    URL: Joi.string().uri().required(),
+    SUBSCRIBER: Joi.string().uri().required(),
     MAX_POLLING_INTERVAL_MS: Joi.number()
       .integer()
       .required()
       .min(1)
       .max(60 * 60 * 1000),
-    ATTEMPTS_WITH_NO_DELAY: Joi.number()
-      .integer()
-      .required()
-      .min(1),
+    ATTEMPTS_WITH_NO_DELAY: Joi.number().integer().required().min(1),
     VISIBILITY_TIMEOUT_MS: Joi.number()
       .integer()
       .required()
       .greater(Joi.ref('SUBSCRIBER_TIMEOUT_MS'))
       .min(1)
       .max(12 * 60 * 60 * 1000),
-    WAIT_TIME_MS: Joi.number()
-      .integer()
-      .required()
-      .min(1)
-      .max(20000),
-    SUBSCRIBER_TIMEOUT_MS: Joi.number()
-      .integer()
-      .required()
-      .min(0)
-      .max(300000)
+    WAIT_TIME_MS: Joi.number().integer().required().min(1).max(20000),
+    SUBSCRIBER_TIMEOUT_MS: Joi.number().integer().required().min(0).max(300000)
   })
 
   // Validate

@@ -12,21 +12,13 @@ const getData = async request => {
 }
 
 const validator = Joi.object({
-  newsletter: Joi.string()
-    .valid('yes', 'no')
-    .required(),
-  'email-entry': Joi.string()
-    .valid('yes', 'no')
-    .required(),
+  newsletter: Joi.string().valid('yes', 'no').required(),
+  'email-entry': Joi.string().valid('yes', 'no').required(),
   email: Joi.alternatives().conditional('newsletter', {
     is: 'yes',
     then: Joi.alternatives().conditional('email-entry', {
       is: 'yes',
-      then: Joi.string()
-        .trim()
-        .email({ minDomainSegments: 2 })
-        .max(50)
-        .required(),
+      then: Joi.string().trim().email({ minDomainSegments: 2 }).max(50).required(),
       otherwise: Joi.string().empty('')
     }),
     otherwise: Joi.string().empty('')
