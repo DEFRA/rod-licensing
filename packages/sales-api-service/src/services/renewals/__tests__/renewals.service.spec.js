@@ -237,7 +237,7 @@ describe('preparePermissionDataForRenewal', () => {
         jest.useRealTimers()
       })
 
-      it(`should add junior and keep disabled concessions if ${description} and the user has an existing disability concession`, async () => {
+      it(`should keep existing disabled concession and add junior concession if ${description}`, async () => {
         jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
         const endDate = moment(oldEndDate)
         const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
@@ -273,7 +273,7 @@ describe('preparePermissionDataForRenewal', () => {
       ${'the user is renewing the day after their 17th birthday a licence that expires today'}                         | ${'2009-03-31'} | ${'2026-04-01'}
       ${'the user is renewing the day after their 17th birthday with a licence that expired a week ago'}               | ${'2009-03-31'} | ${'2026-03-25'}
     `('expected junior licenses', ({ description, birthDate, oldEndDate }) => {
-      it(`should remove junior concession licence if ${description}`, async () => {
+      it(`should remove junior concession if ${description}`, async () => {
         jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
         const endDate = moment(oldEndDate)
         const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
@@ -291,7 +291,7 @@ describe('preparePermissionDataForRenewal', () => {
         jest.useRealTimers()
       })
 
-      it(`should not add junior concession but keep disabled concession if ${description} and the user has an existing disability concession`, async () => {
+      it(`should keep disabled concession and not add junior concession if ${description}`, async () => {
         jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
         const endDate = moment(oldEndDate)
         const disabled = {
