@@ -237,7 +237,7 @@ describe('preparePermissionDataForRenewal', () => {
         jest.useRealTimers()
       })
 
-      it(`should keep junior and disabled concessions if ${description} and the user has an existing disability concession`, async () => {
+      it(`should add junior and keep disabled concessions if ${description} and the user has an existing disability concession`, async () => {
         jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
         const endDate = moment(oldEndDate)
         const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
@@ -252,11 +252,11 @@ describe('preparePermissionDataForRenewal', () => {
             ...existingPermission().licensee,
             birthDate
           },
-          concessions: [junior, disabled]
+          concessions: [disabled]
         })
 
         const ppd = await preparePermissionDataForRenewal(stillJuniorPermission)
-        expect(ppd.concessions).toEqual([junior, disabled])
+        expect(ppd.concessions).toEqual([disabled, junior])
         jest.useRealTimers()
       })
     })
@@ -291,10 +291,9 @@ describe('preparePermissionDataForRenewal', () => {
         jest.useRealTimers()
       })
 
-      it(`should remove junior concession but keep disabled concession if ${description} and the user has an existing disability concession`, async () => {
+      it(`should not add junior concession but keep disabled concession if ${description} and the user has an existing disability concession`, async () => {
         jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
         const endDate = moment(oldEndDate)
-        const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
         const disabled = {
           name: 'Disabled',
           id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
@@ -306,7 +305,7 @@ describe('preparePermissionDataForRenewal', () => {
             ...existingPermission().licensee,
             birthDate
           },
-          concessions: [junior, disabled]
+          concessions: [disabled]
         })
 
         const ppd = await preparePermissionDataForRenewal(nowAdultPermission)
