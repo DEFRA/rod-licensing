@@ -185,7 +185,7 @@ describe('preparePermissionDataForRenewal', () => {
 
   describe('Senior', () => {
     describe('addSenior', () => {
-      it('add concession', async () => {
+      it('adds a senior concession', async () => {
         const permission = getMockPermission()
         await concessionService.addSenior(permission)
         expect(permission.concessions).toContainEqual(getSeniorConcession())
@@ -199,7 +199,15 @@ describe('preparePermissionDataForRenewal', () => {
         expect(permission.concessions).toEqual([expect.objectContaining(seniorConcession)])
       })
 
-      it('add senior to blue badge', async () => {
+      it('adds a junior concession and keeps existing Blue Badge concession', async () => {
+        const permission = getMockPermission()
+        const disabledConcession = getDisabledBlueBadgeConcession()
+        permission.concessions = [disabledConcession]
+        await concessionService.addSenior(permission)
+        expect(permission.concessions).toEqual([disabledConcession, getSeniorConcession()])
+      })
+
+      it('adds a junior concession and keeps existing NI concession', async () => {
         const permission = getMockPermission()
         const disabledConcession = getDisabledNiConcession()
         permission.concessions = [disabledConcession]
@@ -207,12 +215,12 @@ describe('preparePermissionDataForRenewal', () => {
         expect(permission.concessions).toEqual([disabledConcession, getSeniorConcession()])
       })
 
-      it('add senior to NI', async () => {
+      it('removes any existing junior concession', async () => {
         const permission = getMockPermission()
-        const disabledConcession = getDisabledBlueBadgeConcession()
-        permission.concessions = [disabledConcession]
+        const juniorConcession = getJuniorConcession()
+        permission.concessions = [juniorConcession]
         await concessionService.addSenior(permission)
-        expect(permission.concessions).toEqual([disabledConcession, getSeniorConcession()])
+        expect(permission.concessions).toEqual([getSeniorConcession()])
       })
     })
 
@@ -265,6 +273,46 @@ describe('preparePermissionDataForRenewal', () => {
   })
 
   describe('Junior', () => {
+    describe('addJunior', () => {
+      it('adds a junior concession', async () => {
+        const permission = getMockPermission()
+        await concessionService.addJunior(permission)
+        expect(permission.concessions).toContainEqual(getJuniorConcession())
+      })
+
+      it("doesn't add second junior concession if one's already present", async () => {
+        const juniorConcession = getJuniorConcession()
+        const permission = getMockPermission()
+        permission.concessions = [juniorConcession]
+        await concessionService.addJunior(permission)
+        expect(permission.concessions).toEqual([expect.objectContaining(juniorConcession)])
+      })
+
+      it('adds a junior concession and keeps existing Blue Badge concession', async () => {
+        const permission = getMockPermission()
+        const disabledConcession = getDisabledBlueBadgeConcession()
+        permission.concessions = [disabledConcession]
+        await concessionService.addJunior(permission)
+        expect(permission.concessions).toEqual([disabledConcession, getJuniorConcession()])
+      })
+
+      it('adds a junior concession and keeps existing NI concession', async () => {
+        const permission = getMockPermission()
+        const disabledConcession = getDisabledNiConcession()
+        permission.concessions = [disabledConcession]
+        await concessionService.addJunior(permission)
+        expect(permission.concessions).toEqual([disabledConcession, getJuniorConcession()])
+      })
+
+      it('removes any existing senior concession', async () => {
+        const permission = getMockPermission()
+        const seniorConcession = getSeniorConcession()
+        permission.concessions = [seniorConcession]
+        await concessionService.addJunior(permission)
+        expect(permission.concessions).toEqual([getJuniorConcession()])
+      })
+    })
+
     describe('removeJunior', () => {
       it.each([
         ['has only a junior concession', [getJuniorConcession()], []],
