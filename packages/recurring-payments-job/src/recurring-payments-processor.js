@@ -117,7 +117,7 @@ const requestPayments = async dueRCPayments => {
   await processPaymentResponses(paymentsToRequest, batcher)
 
   return Promise.all(
-    batcher.responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.json())
+    batcher.responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.jsonValue)
   )
 }
 
@@ -125,15 +125,16 @@ const processPaymentResponses = async (paymentsToRequest, batcher) => {
   for (let x = 0; x < paymentsToRequest.length; x++) {
     const { value: paymentToRequest } = paymentsToRequest[x]
     const response = batcher.responses[x]
-    const paymentResponse = response.json ? await response.json() : {}
+    response.jsonValue = response.json ? await response.json() : {}
+
     if (isSuccessfulResponse(response.status)) {
       await salesApi.createPaymentJournal(paymentToRequest.transaction.id, {
-        paymentReference: paymentResponse.payment_id,
-        paymentTimestamp: paymentResponse.created_date,
+        paymentReference: response.jsonValue.payment_id,
+        paymentTimestamp: response.jsonValue.created_date,
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
     } else {
-      const description = paymentResponse.description || ''
+      const description = response.jsonValue.description || ''
       if (
         description.match(new RegExp(`Invalid attribute value: ${paymentToRequest.agreementId}. Agreement (does not exist|must be active)`))
       ) {
@@ -146,8 +147,8 @@ const processPaymentResponses = async (paymentsToRequest, batcher) => {
       }
       console.error(`Unexpected response from GOV.UK Pay API. 
           Status: ${response.status}, 
-          Response: ${JSON.stringify(paymentResponse)}
-          Transaction ID: ${paymentResponse.reference}
+          Response: ${JSON.stringify(response.jsonValue)}
+          Transaction ID: ${response.jsonValue.reference}
           Payload: ${JSON.stringify(batcher.requestQueue[x].options.body)}
         `)
     }
