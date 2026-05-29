@@ -204,6 +204,29 @@ describe('preparePermissionDataForRenewal', () => {
       const preparedPermission = await preparePermissionDataForRenewal(permission)
       expect(preparedPermission.concessions).toEqual(expect.arrayContaining([expect.objectContaining(disabledConcession)]))
     })
+
+    it('should remove incorrect senior concession if the licensee is not a senior', async () => {
+      const senior = { name: 'Senior', id: 'd0ece997-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+      const notReallyASeniorPermission = existingPermission({
+        concessions: [senior]
+      })
+      const ppd = await preparePermissionDataForRenewal(notReallyASeniorPermission)
+      expect(ppd.concessions).toEqual([])
+    })
+
+    it('should remove incorrect senior concession but keep disabled concession if the licensee is disabled but is not a senior', async () => {
+      const senior = { name: 'Senior', id: 'd0ece997-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+      const disabled = {
+        name: 'Disabled',
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        proof: { type: 'Blue Badge', referenceNumber: '123' }
+      }
+      const notReallyASeniorPermission = existingPermission({
+        concessions: [senior, disabled]
+      })
+      const ppd = await preparePermissionDataForRenewal(notReallyASeniorPermission)
+      expect(ppd.concessions).toEqual([disabled])
+    })
   })
 
   describe('junior to adult transition', () => {

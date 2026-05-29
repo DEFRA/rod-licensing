@@ -199,7 +199,7 @@ describe('preparePermissionDataForRenewal', () => {
         expect(permission.concessions).toEqual([expect.objectContaining(seniorConcession)])
       })
 
-      it('adds a junior concession and keeps existing Blue Badge concession', async () => {
+      it('adds a senior concession and keeps existing Blue Badge concession', async () => {
         const permission = getMockPermission()
         const disabledConcession = getDisabledBlueBadgeConcession()
         permission.concessions = [disabledConcession]
@@ -207,7 +207,7 @@ describe('preparePermissionDataForRenewal', () => {
         expect(permission.concessions).toEqual([disabledConcession, getSeniorConcession()])
       })
 
-      it('adds a junior concession and keeps existing NI concession', async () => {
+      it('adds a senior concession and keeps existing NI concession', async () => {
         const permission = getMockPermission()
         const disabledConcession = getDisabledNiConcession()
         permission.concessions = [disabledConcession]

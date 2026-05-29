@@ -1,6 +1,6 @@
 import { isJunior, isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
-import { addSenior, addJunior, removeJunior } from '../concession.service.js'
+import { addJunior, addSenior, removeJunior, removeSenior } from '../concession.service.js'
 import { findPermit } from '../permit.service.js'
 
 // Replicated from GAFL - need to decide whether to move
@@ -105,6 +105,7 @@ const prepareConcessionsData = async (existingPermission, dateData) => {
     await addJunior(existingPermission)
   } else {
     await removeJunior(existingPermission)
+    await removeSenior(existingPermission)
   }
 
   return existingPermission.concessions
