@@ -1,4 +1,13 @@
 
+## v1.72.0-rc.1 (2026-06-04)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2410](https://github.com/DEFRA/rod-licensing/pull/2410) Refactored renewal service doesn't handle junior concessions properly ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 
