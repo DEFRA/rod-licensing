@@ -53,15 +53,3 @@ export const recurringLicenceTypeDisplay = (permission, mssgs) => {
   }
   return mssgs.recurring_payment_set_up_bulletpoint_1_salmon
 }
-
-// export const permitTypeDisplay = (permission, mssgs) => {
-//   const concession = permit.description?.match(/\(([^)]+)\)$/)?.[1] || 'Full'
-//   const type = permit.permitSubtype?.label === 'Salmon and sea trout' ? 'salmon' : 'trout'
-//   const concessionKey = concession.toLowerCase().replace(', ', '_')
-
-//   const key = type === 'salmon'
-//     ? `permit_desc_salmon_${concessionKey}`
-//     : `permit_desc_trout_${permit.numberOfRods}_rod_${concessionKey}`
-
-//   return mssgs[key] || permit.description
-// }

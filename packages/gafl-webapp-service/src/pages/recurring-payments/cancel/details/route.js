@@ -3,6 +3,7 @@ import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat, dateDisplayFormat } from '../../../../processors/date-and-time-display.js'
+
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 
 const getLicenseeDetailsSummaryRows = (currentPermission, mssgs, locale) => [
