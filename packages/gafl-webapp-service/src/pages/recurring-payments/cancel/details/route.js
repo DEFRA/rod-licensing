@@ -10,7 +10,18 @@ const getLicenseeDetailsSummaryRows = (currentPermission, mssgs, locale) => [
     key: { text: mssgs.rp_cancel_details_licence_holder },
     value: { text: `${currentPermission.permission.licensee.firstName} ${currentPermission.permission.licensee.lastName}` }
   },
-  { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: licenceTypeDisplay({ licenceType: currentPermission.permission.permit.permitSubtype?.label, numberOfRods: String(currentPermission.permission.permit.numberOfRods) }, mssgs) } },
+  {
+    key: { text: mssgs.rp_cancel_details_licence_type },
+    value: {
+      text: licenceTypeDisplay(
+        {
+          licenceType: currentPermission.permission.permit.permitSubtype?.label,
+          numberOfRods: String(currentPermission.permission.permit.numberOfRods)
+        },
+        mssgs
+      )
+    }
+  },
   {
     key: { text: mssgs.rp_cancel_details_payment_card },
     value: { text: `**** **** **** ${currentPermission.recurringPayment.lastDigitsCardNumbers}` }
