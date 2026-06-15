@@ -8,7 +8,7 @@ export default class HTTPRequestBatcher {
   #batchSize
   #delay
   #requests = []
-  #responses = []
+  #responseDetails = []
 
   constructor ({ batchSize = 50, delay = 1000 } = {}) {
     this.#batchSize = batchSize
@@ -23,8 +23,8 @@ export default class HTTPRequestBatcher {
     return this.#requests
   }
 
-  get responses () {
-    return this.#responses
+  get responseDetails () {
+    return this.#responseDetails
   }
 
   get delay () {
@@ -35,23 +35,31 @@ export default class HTTPRequestBatcher {
     if (!url) {
       throw new Error('URL is required')
     }
-    this.#requests.push({ url, options })
+    this.#requests.push({
+      url,
+      options,
+      responses: []
+    })
   }
 
-  async #processBatch (fetchRequests, sentRequests, requestQueue) {
-    const batchResponses = await Promise.allSettled(fetchRequests)
-    const successes = batchResponses.filter(r => r.status === 'fulfilled')
-    this.#responses.push(...batchResponses.map(r => r.value))
-    for (let x = 0; x < successes.length; x++) {
-      const { value: response } = successes[x]
-      if (response.status === StatusCodes.TOO_MANY_REQUESTS && sentRequests[x].attempts < this.maxRequestAttempts) {
-        requestQueue.push({ ...sentRequests[x], attempts: sentRequests[x].attempts + 1 })
+  async #processBatch (fetchRequests, requestQueue) {
+    for (const fetchRequest of fetchRequests) {
+      const response = await (async () => {
+        try {
+          return await fetchRequest.responsePromise
+        } catch (e) {
+          return e
+        }
+      })()
+      fetchRequest.responses.push(response)
+      if (fetchRequest.responses[fetchRequest.responses.length - 1].status === StatusCodes.TOO_MANY_REQUESTS && fetchRequest.responses.length < this.maxRequestAttempts) {
+        requestQueue.push(fetchRequest)
         this.#batchSize = Math.max(this.#batchSize - 1, 1)
-        debug(`${StatusCodes.TOO_MANY_REQUESTS} response received for ${sentRequests[x].url}, reducing batch size to ${this.#batchSize}`)
+        debug(`${StatusCodes.TOO_MANY_REQUESTS} response received for ${fetchRequest.url}, reducing batch size to ${this.#batchSize}`)
       }
     }
+    this.#responseDetails.push(...fetchRequests) // think this might cause a problem, as it exists on the requestQueue as well, so could get double entries
     fetchRequests.length = 0
-    sentRequests.length = 0
     if (requestQueue.length) {
       // don't wait if this is the last batch
       await new Promise(resolve => setTimeout(resolve, this.#delay))
@@ -65,14 +73,13 @@ export default class HTTPRequestBatcher {
       } and delay between batches of ${this.#delay}ms`
     )
     const requestQueue = [...this.#requests]
-    const sentRequests = []
     const fetchRequests = []
     while (requestQueue.length) {
       const request = requestQueue.shift()
-      fetchRequests.push(fetch(request.url, request.options))
-      sentRequests.push({ attempts: 1, ...request })
+      request.responsePromise = fetch(request.url, request.options)
+      fetchRequests.push(request)
       if (fetchRequests.length === this.#batchSize || requestQueue.length === 0) {
-        await this.#processBatch(fetchRequests, sentRequests, requestQueue)
+        await this.#processBatch(fetchRequests, requestQueue)
       }
     }
     debug('Batched fetch complete')

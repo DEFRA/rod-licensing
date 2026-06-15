@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import db from 'debug'
 const [{ value: debug }] = db.mock.results
 
-jest.mock('node-fetch', () => jest.fn(() => ({ status: 200 })))
+jest.mock('node-fetch', () => jest.fn(() => Promise.resolve({ status: 200 })))
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 describe('HTTP Request Batcher', () => {
@@ -34,7 +34,7 @@ describe('HTTP Request Batcher', () => {
 
   it('initialises with an empty response queue', () => {
     const batcher = new HTTPRequestBatcher()
-    expect(batcher.responses).toEqual([])
+    expect(batcher.responseDetails).toEqual([])
   })
 
   it('initialises with a custom batch size', () => {
@@ -50,9 +50,9 @@ describe('HTTP Request Batcher', () => {
     batcher.addRequest('https://api-three.example.com', { method: 'PUT' })
 
     expect(batcher.requestQueue).toEqual([
-      { url: 'https://api-one.example.com', options: { method: 'GET' } },
-      { url: 'https://api-b.example.com', options: { method: 'POST' } },
-      { url: 'https://api-three.example.com', options: { method: 'PUT' } }
+      expect.objectContaining({ url: 'https://api-one.example.com', options: { method: 'GET' } }),
+      expect.objectContaining({ url: 'https://api-b.example.com', options: { method: 'POST' } }),
+      expect.objectContaining({ url: 'https://api-three.example.com', options: { method: 'PUT' } })
     ])
   })
 
@@ -99,7 +99,19 @@ describe('HTTP Request Batcher', () => {
     }
     await batcher.fetch()
 
-    expect(batcher.responses).toEqual([{ status: 200 }, { status: 200 }])
+    expect(batcher.responseDetails.map(rd => rd.responses[0])).toEqual([{ status: 200 }, { status: 200 }])
+  })
+
+  it('pairs responses with the corresponding request', async () => {
+    const batcher = new HTTPRequestBatcher({ batchSize: 2 })
+    batcher.addRequest('https://api-one.example.com', { method: 'GET' })
+    batcher.addRequest('https://api-two.example.com', { method: 'POST' })
+    await batcher.fetch()
+
+    expect(batcher.responseDetails).toEqual([
+      expect.objectContaining({ responses: [{ status: 200 }], url: 'https://api-one.example.com', options: { method: 'GET' } }),
+      expect.objectContaining({ responses: [{ status: 200 }], url: 'https://api-two.example.com', options: { method: 'POST' } })
+    ])
   })
 
   describe('multiple batches', () => {
@@ -168,7 +180,7 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://api.example.com')
       batcher.addRequest('https://alt-api.example.com')
       await batcher.fetch()
-      expect(batcher.responses).toEqual([{ status: 200 }, { status: 200 }])
+      expect(batcher.responseDetails.map(rd => rd.responses[0])).toEqual([{ status: 200 }, { status: 200 }])
     })
 
     it('retries requests that received a 429 response', async () => {
@@ -188,6 +200,21 @@ describe('HTTP Request Batcher', () => {
       batcher.addRequest('https://api.example.com')
       await batcher.fetch()
       expect(fetch).toHaveBeenCalledTimes(maxRequestAttempts)
+    })
+
+    // it.each([10, 7])('only retries until a successful response is received when maxRequestAttempts is set to %i', async maxRequestAttempts => {
+    it.each([7])('only retries until a successful response is received when maxRequestAttempts is set to %i', async maxRequestAttempts => {
+      const batcher = new HTTPRequestBatcher({ batchSize: 1 })
+      batcher.maxRequestAttempts = maxRequestAttempts
+      for (let x = 0; x < maxRequestAttempts - 3; x++) {
+        fetch.mockImplementationOnce(() => ({ status: 429 }))
+      }
+      fetch.mockResolvedValueOnce({ status: 200 })
+      batcher.addRequest('https://api.example.com')
+
+      await batcher.fetch()
+
+      expect(fetch).toHaveBeenCalledTimes(maxRequestAttempts - 3 + 1)
     })
 
     it('stops retrying requests that received a 429 response once a successful response is received', async () => {
@@ -269,15 +296,20 @@ describe('HTTP Request Batcher', () => {
         .mockResolvedValueOnce({ ok: true, status: 200, json: () => {} })
         .mockResolvedValueOnce({ ok: true, status: 200, json: () => {} })
       const batcher = new HTTPRequestBatcher()
-      batcher.addRequest('https://api.example.com', { method: 'GET' })
-      batcher.addRequest('https://api.example.com', { method: 'GET' })
-      batcher.addRequest('https://api.example.com', { method: 'GET' })
-      batcher.addRequest('https://api.example.com', { method: 'GET' })
-      batcher.addRequest('https://api.example.com', { method: 'GET' })
+      batcher.addRequest('https://api.example.com/endpoint-1', { method: 'GET' })
+      batcher.addRequest('https://api.example.com/endpoint-3', { method: 'GET' })
+      batcher.addRequest('https://api.example.com/endpoint-2', { method: 'GET' })
+      batcher.addRequest('https://api.example.com/endpoint-gamma', { method: 'GET' })
+      batcher.addRequest('https://api.example.com/endpoint-alpha', { method: 'GET' })
 
       await batcher.fetch()
 
       expect(fetch).toHaveBeenCalledTimes(5)
+      expect(fetch).toHaveBeenNthCalledWith(1, 'https://api.example.com/endpoint-1', { method: 'GET' })
+      expect(fetch).toHaveBeenNthCalledWith(2, 'https://api.example.com/endpoint-3', { method: 'GET' })
+      expect(fetch).toHaveBeenNthCalledWith(3, 'https://api.example.com/endpoint-2', { method: 'GET' })
+      expect(fetch).toHaveBeenNthCalledWith(4, 'https://api.example.com/endpoint-gamma', { method: 'GET' })
+      expect(fetch).toHaveBeenNthCalledWith(5, 'https://api.example.com/endpoint-alpha', { method: 'GET' })
     })
   })
 })
