@@ -10,7 +10,12 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         lastName: 'Pysgotwr',
         preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
       },
-      permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
+      // permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
+      permit: { 
+        description: 'Coarse 6 month 15 Rod Licence (Half)', 
+        permitSubtype: { label: 'Salmon and sea trout' }, 
+        numberOfRods: 3 
+      },
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
 
@@ -45,10 +50,56 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
   })
 
   describe('permission caching', () => {
+    // it.each([
+    //   ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
+    //   ['endDate', '2024-12-31'],
+    //   ['permit', { description: 'Coarse 12 month 2 Rod Licence (Full)' }]
+    // ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
+    //   const setCurrentPermission = jest.fn()
+    //   const mockRequest = getSampleRequest(setCurrentPermission)
+    //   const authResult = getSampleAuthResult({ [fieldName]: fieldValue })
+
+    //   await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
+
+    //   expect(setCurrentPermission).toHaveBeenCalledWith(
+    //     expect.objectContaining({
+    //       permission: expect.objectContaining({
+    //         [fieldName]: fieldValue
+    //       })
+    //     })
+    //   )
+    // })
+
+    // it.each([
+    //   ['permitSubtype and numberOfRods', 
+    //     { label: 'Salmon and sea trout' }
+    //     , 3
+    //   ]
+    // ])('stores permit %s together in the cache', async (_desc, permitSubtype, numberOfRods) => {
+    //   const setCurrentPermission = jest.fn()
+    //   const mockRequest = getSampleRequest(setCurrentPermission)
+    //   const authResult = getSampleAuthResult({ permit: { permitSubtype, numberOfRods} })
+
+    //   await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
+
+    //   expect(setCurrentPermission).toHaveBeenCalledWith(
+    //     expect.objectContaining({
+    //       permission: expect.objectContaining({
+    //         permit: expect.objectContaining({
+    //           permitSubtype, numberOfRods})
+    //       })
+    //     })
+    //   )
+    // })
+
     it.each([
       ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
       ['endDate', '2024-12-31'],
-      ['permit', { description: 'Coarse 12 month 2 Rod Licence (Full)' }]
+      ['permit', { 
+        description: 'Coarse 6 month 15 Rod Licence (Half)',
+        permitSubtype: { label: 'Salmon and sea trout' }, 
+        numberOfRods: 3
+      }]
     ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
@@ -63,7 +114,32 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
           })
         })
       )
+    })    
+
+
+    it.each([
+      ['adds senior concession when description contains Senior', 
+        'Coarse 12 month 2 Rod Licence (Senior)', 
+        [{ type: 'Senior', proof: { type: 'No Proof' } }]],
+      ['stores empty concessions when description has no Senior', 
+        'Coarse 12 month 2 Rod Licence (Full)', []]
+    ])('%s', async (_desc, description, expectedConcessions) => {
+      const setCurrentPermission = jest.fn()
+      const mockRequest = getSampleRequest(setCurrentPermission)
+      const authResult = getSampleAuthResult({ 
+        permit: { description } })
+
+      await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
+
+      expect(setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({
+          permission: expect.objectContaining({
+            concessions: expectedConcessions
+          })
+        })
+      )
     })
+
 
     it('Adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
       const setCurrentPermission = jest.fn()

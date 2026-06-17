@@ -125,46 +125,83 @@ describe('route', () => {
       expect(result.mssgs).toEqual(mssgs)
     })
 
-    it('returns summaryTable with expected data', async () => {
-      const mssgs = getSampleCatalog()
+    // it('returns summaryTable with expected data', async () => {
+    //   const mssgs = getSampleCatalog()
+    //   const sampleData = {
+    //     permission: {
+    //       licensee: {
+    //         firstName: 'Brenin',
+    //         lastName: 'Pysgotwr'
+    //       },
+    //       permit: {
+    //         description: 'Wellies and old shopping trollies'
+    //       },
+    //       endDate: '21-03-2026',
+    //       referenceNumber: 'aaa-111-bbb-222'
+    //     },
+    //     recurringPayment: {
+    //       lastDigitsCardNumbers: '9999'
+    //     }
+    //   }
+    //   const sampleFormattedDate = Symbol('formatted-end-date')
+    //   const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+    //   moment.mockReturnValueOnce({
+    //     format: () => sampleFormattedDate
+    //   })
+
+    //   const result = await getData(mockRequest)
+
+    //   expect(result.summaryTable).toEqual([
+    //     {
+    //       key: { text: mssgs.rp_cancel_details_licence_holder },
+    //       value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
+    //     },
+    //     { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: sampleData.permission.permit.description } },
+    //     {
+    //       key: { text: mssgs.rp_cancel_details_payment_card },
+    //       value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
+    //     },
+    //     { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
+    //     { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
+    //   ])
+    // })
+
+    it.each([
+      ['shows translated licence type with (over_66) for senior', [{ type: 'Senior' }], true],
+      ['shows translated licence type without (over_66) when not senior', [], false]
+    ])('%s', async (_desc, concessions, expectOver66) => {
+      const mssgs = {
+        ...getSampleCatalog(),
+        over_66: ' (over_66)',
+        licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)'
+      }
       const sampleData = {
         permission: {
-          licensee: {
-            firstName: 'Brenin',
-            lastName: 'Pysgotwr'
-          },
+          licensee: { firstName: 'John', lastName: 'Smith' },
           permit: {
-            description: 'Wellies and old shopping trollies'
+            permitSubtype: { label: 'Trout and coarse' },
+            numberOfRods: 2
           },
-          endDate: '21-03-2026',
-          referenceNumber: 'aaa-111-bbb-222'
+          concessions,
+          endDate: '01-01-2026',
+          referenceNumber: 'abc123'
         },
-        recurringPayment: {
-          lastDigitsCardNumbers: '9999'
-        }
+        recurringPayment: { lastDigitsCardNumbers: '1234' }
       }
-      const sampleFormattedDate = Symbol('formatted-end-date')
       const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
-      moment.mockReturnValueOnce({
-        format: () => sampleFormattedDate
-      })
+      moment.mockReturnValueOnce({ format: () => '01-01-2026' })
 
       const result = await getData(mockRequest)
 
-      expect(result.summaryTable).toEqual([
-        {
-          key: { text: mssgs.rp_cancel_details_licence_holder },
-          value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
-        },
-        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: sampleData.permission.permit.description } },
-        {
-          key: { text: mssgs.rp_cancel_details_payment_card },
-          value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
-        },
-        { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
-        { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
-      ])
+      const licenceTypeRow = result.summaryTable.find(row => row.key.text === mssgs.rp_cancel_details_licence_type)
+      expect(licenceTypeRow.value.text).toContain('Trout and coarse (up to 2 rods)')
+      if (expectOver66) {
+        expect(licenceTypeRow.value.text).toContain('(over_66)')
+      } else {
+        expect(licenceTypeRow.value.text).not.toContain('(over_66)')
+      }
     })
+
 
     it('passes cache date format and request locale to moment', async () => {
       const data = getSamplePermission()

@@ -17,7 +17,8 @@ const getLicenseeDetailsSummaryRows = (currentPermission, mssgs, locale) => [
       text: licenceTypeDisplay(
         {
           licenceType: currentPermission.permission.permit.permitSubtype?.label,
-          numberOfRods: String(currentPermission.permission.permit.numberOfRods)
+          numberOfRods: String(currentPermission.permission.permit.numberOfRods),
+          concessions: currentPermission.permission.concessions
         },
         mssgs
       )
