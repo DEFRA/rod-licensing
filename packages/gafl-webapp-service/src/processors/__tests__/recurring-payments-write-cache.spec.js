@@ -11,10 +11,10 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
       },
       // permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
-      permit: { 
-        description: 'Coarse 6 month 15 Rod Licence (Half)', 
-        permitSubtype: { label: 'Salmon and sea trout' }, 
-        numberOfRods: 3 
+      permit: {
+        description: 'Coarse 6 month 15 Rod Licence (Half)',
+        permitSubtype: { label: 'Salmon and sea trout' },
+        numberOfRods: 3
       },
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
@@ -71,7 +71,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     // })
 
     // it.each([
-    //   ['permitSubtype and numberOfRods', 
+    //   ['permitSubtype and numberOfRods',
     //     { label: 'Salmon and sea trout' }
     //     , 3
     //   ]
@@ -95,11 +95,14 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     it.each([
       ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
       ['endDate', '2024-12-31'],
-      ['permit', { 
-        description: 'Coarse 6 month 15 Rod Licence (Half)',
-        permitSubtype: { label: 'Salmon and sea trout' }, 
-        numberOfRods: 3
-      }]
+      [
+        'permit',
+        {
+          description: 'Coarse 6 month 15 Rod Licence (Half)',
+          permitSubtype: { label: 'Salmon and sea trout' },
+          numberOfRods: 3
+        }
+      ]
     ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
@@ -114,20 +117,21 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
           })
         })
       )
-    })    
-
+    })
 
     it.each([
-      ['adds senior concession when description contains Senior', 
-        'Coarse 12 month 2 Rod Licence (Senior)', 
-        [{ type: 'Senior', proof: { type: 'No Proof' } }]],
-      ['stores empty concessions when description has no Senior', 
-        'Coarse 12 month 2 Rod Licence (Full)', []]
+      [
+        'adds senior concession when description contains Senior',
+        'Coarse 12 month 2 Rod Licence (Senior)',
+        [{ type: 'Senior', proof: { type: 'No Proof' } }]
+      ],
+      ['stores empty concessions when description has no Senior', 'Coarse 12 month 2 Rod Licence (Full)', []]
     ])('%s', async (_desc, description, expectedConcessions) => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
-      const authResult = getSampleAuthResult({ 
-        permit: { description } })
+      const authResult = getSampleAuthResult({
+        permit: { description }
+      })
 
       await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
 
@@ -139,7 +143,6 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         })
       )
     })
-
 
     it('Adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
       const setCurrentPermission = jest.fn()

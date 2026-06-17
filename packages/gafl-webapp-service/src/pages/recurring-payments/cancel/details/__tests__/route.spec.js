@@ -202,7 +202,6 @@ describe('route', () => {
       }
     })
 
-
     it('passes cache date format and request locale to moment', async () => {
       const data = getSamplePermission()
       data.permission.endDate = Symbol('end-date')
