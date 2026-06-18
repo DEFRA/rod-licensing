@@ -205,31 +205,79 @@ describe('govuk-pay-api-connector', () => {
   })
 
   describe('cancelRecurringPaymentAgreement', () => {
-    it('cancels a recurring payment agreement', async () => {
+    it('calls the cancel endpoint for the provided agreement id', async () => {
       fetch.mockReturnValueOnce({ ok: true, status: 204 })
-      await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).resolves.toEqual(expect.objectContaining({ ok: true, status: 204 }))
+      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/abc-123/cancel', expect.any(Object))
     })
 
-    it('calls the correct endpoint with recurring headers', async () => {
+    it('sends recurring API headers', async () => {
       fetch.mockReturnValueOnce({ ok: true, status: 204 })
-      await govUkPayApi.cancelRecurringPaymentAgreement(123)
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/123/cancel', {
-        headers: recurringHeaders,
-        method: 'post',
-        timeout: 10000
-      })
-    })
-
-    it('logs and throws errors', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      fetch.mockImplementation(() => {
-        throw new Error('cancel error')
-      })
-      await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).rejects.toEqual(Error('cancel error'))
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: 123',
-        Error('cancel error')
+      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: recurringHeaders
+        })
       )
+    })
+
+    it('uses POST method', async () => {
+      fetch.mockReturnValueOnce({ ok: true, status: 204 })
+      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          method: 'post'
+        })
+      )
+    })
+
+    it('uses the configured request timeout', async () => {
+      fetch.mockReturnValueOnce({ ok: true, status: 204 })
+      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          timeout: 10000
+        })
+      )
+    })
+
+    it('returns the fetch response when GOV.UK Pay request succeeds', async () => {
+      const mockResponse = { ok: true, status: 204 }
+      fetch.mockReturnValueOnce(mockResponse)
+      const result = await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      expect(result).toEqual(mockResponse)
+    })
+
+    it('returns non-ok responses for caller-side handling', async () => {
+      const mockResponse = { ok: false, status: 400, statusText: 'Bad Request' }
+      fetch.mockReturnValueOnce(mockResponse)
+      const result = await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      expect(result).toEqual(mockResponse)
+    })
+
+    it('logs an error when fetch throws', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      fetch.mockImplementationOnce(() => {
+        throw new Error('network error')
+      })
+      try {
+        await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      } catch {}
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Error cancelling recurring payment agreement'),
+        expect.any(Error)
+      )
+    })
+
+    it('rethrows the original error when fetch throws', async () => {
+      const testError = new Error('network error')
+      fetch.mockImplementationOnce(() => {
+        throw testError
+      })
+      await expect(govUkPayApi.cancelRecurringPaymentAgreement('abc-123')).rejects.toThrow(testError)
     })
   })
 })

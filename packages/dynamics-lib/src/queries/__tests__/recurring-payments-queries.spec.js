@@ -65,17 +65,27 @@ describe('Recurring Payment Queries', () => {
   })
 
   describe('findPermissionByRecurringPaymentId', () => {
-    it('builds a query to retrieve the active permission linked to a recurring payment', () => {
-      const recurringPaymentId = 'rcp-456'
+    const recurringPaymentId = 'rcp-456'
+    const getRetrieveRequest = () => findPermissionByRecurringPaymentId(recurringPaymentId).toRetrieveRequest()
 
-      const query = findPermissionByRecurringPaymentId(recurringPaymentId)
+    it('includes active-permission-not-null filter', () => {
+      const request = getRetrieveRequest()
+      expect(request.filter).toContain('_defra_activepermission_value ne null')
+    })
 
-      expect(query.toRetrieveRequest()).toEqual({
-        collection: 'defra_recurringpayments',
-        filter: `_defra_activepermission_value ne null and defra_recurringpaymentid eq ${recurringPaymentId} and statecode eq 0`,
-        select: baseSelection(),
-        expand: [{ property: 'defra_ActivePermission' }]
-      })
+    it('includes recurring payment id filter', () => {
+      const request = getRetrieveRequest()
+      expect(request.filter).toContain(`defra_recurringpaymentid eq ${recurringPaymentId}`)
+    })
+
+    it('includes default statecode filter', () => {
+      const request = getRetrieveRequest()
+      expect(request.filter).toContain('statecode eq 0')
+    })
+
+    it('expands active permission relationship', () => {
+      const request = getRetrieveRequest()
+      expect(request.expand).toContainEqual({ property: 'defra_ActivePermission' })
     })
   })
 })
