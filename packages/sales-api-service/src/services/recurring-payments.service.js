@@ -180,7 +180,7 @@ export const cancelRecurringPayment = async (id, reason) => {
 
   const data = recurringPayment
 
-  data.cancelledDate = new Date().toISOString().split('T')[0]
+  data.cancelledDate = new Date().toISOString()
   data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
 
   await cancelGovUkPayAgreement(data.agreementId)
