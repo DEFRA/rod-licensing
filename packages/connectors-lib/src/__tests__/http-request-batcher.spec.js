@@ -311,5 +311,19 @@ describe('HTTP Request Batcher', () => {
       expect(fetch).toHaveBeenNthCalledWith(4, 'https://api.example.com/endpoint-gamma', { method: 'GET' })
       expect(fetch).toHaveBeenNthCalledWith(5, 'https://api.example.com/endpoint-alpha', { method: 'GET' })
     })
+
+    it('does not add more than one entry in responseDetails array for the same request when retrying a request', async () => {
+      fetch
+        .mockResolvedValueOnce({ ok: true, status: 200, json: () => {} })
+        .mockResolvedValueOnce({ ok: false, status: 429, json: () => {} })
+      const batcher = new HTTPRequestBatcher()
+      batcher.addRequest('https://api.example.com/endpoint-1', { method: 'GET' })
+      batcher.addRequest('https://api.example.com/endpoint-2', { method: 'GET' })
+
+      await batcher.fetch()
+
+      expect(batcher.responseDetails.length).toBe(2)
+      expect(batcher.responseDetails[0]).not.toBe(batcher.responseDetails[1])
+    })
   })
 })

@@ -52,13 +52,18 @@ export default class HTTPRequestBatcher {
         }
       })()
       fetchRequest.responses.push(response)
-      if (fetchRequest.responses[fetchRequest.responses.length - 1].status === StatusCodes.TOO_MANY_REQUESTS && fetchRequest.responses.length < this.maxRequestAttempts) {
+      if (
+        fetchRequest.responses[fetchRequest.responses.length - 1].status === StatusCodes.TOO_MANY_REQUESTS &&
+        fetchRequest.responses.length < this.maxRequestAttempts
+      ) {
         requestQueue.push(fetchRequest)
         this.#batchSize = Math.max(this.#batchSize - 1, 1)
         debug(`${StatusCodes.TOO_MANY_REQUESTS} response received for ${fetchRequest.url}, reducing batch size to ${this.#batchSize}`)
       }
+      if (!this.#responseDetails.includes(fetchRequest)) {
+        this.#responseDetails.push(fetchRequest)
+      }
     }
-    this.#responseDetails.push(...fetchRequests) // think this might cause a problem, as it exists on the requestQueue as well, so could get double entries
     fetchRequests.length = 0
     if (requestQueue.length) {
       // don't wait if this is the last batch
