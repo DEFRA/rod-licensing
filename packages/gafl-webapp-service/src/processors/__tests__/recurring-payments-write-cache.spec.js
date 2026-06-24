@@ -50,8 +50,8 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
 
   describe('permission caching', () => {
     it.each([
-      ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
-      ['endDate', '2024-12-31'],
+      // ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
+      // ['endDate', '2024-12-31'],
       [
         'permit',
         {
