@@ -57,5 +57,21 @@ export const addSenior = async permission => {
 export const removeSenior = permission => removeConcessionType(permission, CONCESSION.SENIOR)
 export const hasSenior = permission => hasConcessionType(permission, CONCESSION.SENIOR)
 
+export const addJunior = async permission => {
+  if (!(await hasJunior(permission))) {
+    await removeSenior(permission)
+    if (!permission.concessions) {
+      permission.concessions = []
+    }
+    permission.concessions.push({
+      id: await getTypeConcessionId(CONCESSION.JUNIOR),
+      name: CONCESSION.JUNIOR,
+      proof: {
+        type: CONCESSION_PROOF.none
+      }
+    })
+  }
+}
+
 export const removeJunior = permission => removeConcessionType(permission, CONCESSION.JUNIOR)
 export const hasJunior = permission => hasConcessionType(permission, CONCESSION.JUNIOR)
