@@ -1,14 +1,15 @@
 import { CONCESSION, CONCESSION_PROOF } from './mapping-constants.js'
 
 const concessionsFromPermitDescription = description => {
-  const concessions = []
-  if (description && description.includes('Senior')) {
-    concessions.push({
+  if (description?.includes('Senior')) {
+    return [
+    {
       type: CONCESSION.SENIOR,
       proof: { type: CONCESSION_PROOF.none }
-    })
+    }
+  ]
   }
-  return concessions
+   return []
 }
 
 export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, authenticationResult) => {
