@@ -53,7 +53,7 @@ export default class HTTPRequestBatcher {
       })()
       fetchRequest.responses.push(response)
       if (
-        fetchRequest.responses[fetchRequest.responses.length - 1].status === StatusCodes.TOO_MANY_REQUESTS &&
+        fetchRequest.responses.at(-1).status === StatusCodes.TOO_MANY_REQUESTS &&
         fetchRequest.responses.length < this.maxRequestAttempts
       ) {
         requestQueue.push(fetchRequest)
