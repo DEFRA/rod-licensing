@@ -51,13 +51,15 @@ const processRecurringPayments = async () => {
   }
 
   const requestedPayments = await requestPayments(dueRCPayments)
-  const payments = requestedPayments.map(payment => {
-    const duePayment = dueRCPayments.find(dueRCPayment => dueRCPayment.entity.agreementId === payment.agreement_id)
+  const payments = requestedPayments.map(requestedPayment => {
+    const duePayment = dueRCPayments.find(dueRCPayment => dueRCPayment.entity.agreementId === requestedPayment.agreement_id)
     return {
-      paymentId: payment.payment_id,
+      paymentId: requestedPayment.payment_id,
       agreementId: duePayment.entity.agreementId,
       recurringPaymentId: duePayment.entity.id,
-      transactionId: payment.reference
+      transactionId: requestedPayment.reference,
+      duePayment,
+      requestedPayment
     }
   })
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
@@ -113,18 +115,19 @@ const requestPayments = async dueRCPayments => {
 
   await batcher.fetch()
 
-  logErrors(batcher.responses, 'Error requesting payments:')
+  logErrors(batcher.responseDetails, 'Error requesting payments:')
   await processPaymentResponses(paymentsToRequest, batcher)
 
-  return Promise.all(
-    batcher.responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.jsonValue)
-  )
+  const responses = batcher.responseDetails.map(r => r.responses.at(-1))
+
+  return Promise.all(responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.jsonValue))
 }
 
 const processPaymentResponses = async (paymentsToRequest, batcher) => {
   for (let x = 0; x < paymentsToRequest.length; x++) {
     const { value: paymentToRequest } = paymentsToRequest[x]
-    const response = batcher.responses[x]
+    const responseDetail = batcher.responseDetails[x]
+    const response = responseDetail.responses.at(-1)
     response.jsonValue = response.json ? await response.json() : {}
 
     if (isSuccessfulResponse(response.status)) {
@@ -204,8 +207,8 @@ const preparePayment = (agreementId, transaction) => {
 
 const checkPaymentStatuses = async payments => {
   const batcher = await queuePaymentStatusChecks(payments)
-  for (let index = 0; index < batcher.responses.length; index++) {
-    const response = batcher.responses[index]
+  for (let index = 0; index < batcher.responseDetails.length; index++) {
+    const response = batcher.responseDetails[index].responses.at(-1)
     if (isSuccessfulResponse(response.status)) {
       const paymentStatusCheck = await response.json()
       const paymentStatus = paymentStatusCheck.state.status
@@ -232,13 +235,16 @@ const queuePaymentStatusChecks = async payments => {
     batchSize: Number(process.env.GOV_PAY_GET_BATCH_SIZE),
     delay: Number(process.env.GOV_PAY_BATCH_DELAY_MS)
   })
+
   for (const payment of payments) {
     queueRecurringPaymentStatusCheck(payment.paymentId, batcher)
   }
+
   await batcher.fetch()
 
   return batcher
 }
+
 const handlePaymentStatusSuccess = async paymentStatusCheck => {
   try {
     await salesApi.processRPResult(paymentStatusCheck.reference, paymentStatusCheck.payment_id, paymentStatusCheck.created_date)
@@ -246,8 +252,10 @@ const handlePaymentStatusSuccess = async paymentStatusCheck => {
     console.error(`Failed to process Recurring Payment for ${paymentStatusCheck.reference}`, err)
   }
 }
+
 const handlePaymentStatusFailure = async payment => {
   console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+
   if (await salesApi.getPaymentJournal(payment.transactionId)) {
     await salesApi.updatePaymentJournal(payment.transactionId, {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
