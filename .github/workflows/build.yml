@@ -18,12 +18,12 @@ jobs:
       TZ: Europe/London
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@b9e0990d219a03df7633c93f6f005a8fecbcab22
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@6a61c0375d66246de94630495909f12cf8dac84d
         with:
           node-version: '22.x'
       - name: Install NPM
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --workspaces --include=dev --include-workspace-root
       - name: Shai-hulud scan
-        uses: gensecaihq/Shai-Hulud-2.0-Detector@v2
+        uses: gensecaihq/Shai-Hulud-2.0-Detector@50ede91dd311e86216cd11d75acfbf7232ef1416
         with:
           working-directory: '.'
           scan-lockfiles: true
@@ -42,7 +42,7 @@ jobs:
         run: |
           sed -i 's/\/home\/runner\/work\/rod-licensing\/rod-licensing\//\/github\/workspace\//g' lcov.info
       - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@master
+        uses: sonarsource/sonarqube-scan-action@45f27363d4ff7d6b16baa0516490f10c52bdd5fc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -57,9 +57,9 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@b9e0990d219a03df7633c93f6f005a8fecbcab22
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@6a61c0375d66246de94630495909f12cf8dac84d
         with:
           node-version: '22.x'
       - name: Install NPM
