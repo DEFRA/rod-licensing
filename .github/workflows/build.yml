@@ -18,12 +18,12 @@ jobs:
       TZ: Europe/London
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b9e0990d219a03df7633c93f6f005a8fecbcab22
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
       - name: Install node
-        uses: actions/setup-node@6a61c0375d66246de94630495909f12cf8dac84d
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
         with:
           node-version: '22.x'
       - name: Install NPM
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --workspaces --include=dev --include-workspace-root
       - name: Shai-hulud scan
-        uses: gensecaihq/Shai-Hulud-2.0-Detector@50ede91dd311e86216cd11d75acfbf7232ef1416
+        uses: gensecaihq/Shai-Hulud-2.0-Detector@85d0ad15eed5c2274e5606949735b59751a0bc61 #v2
         with:
           working-directory: '.'
           scan-lockfiles: true
@@ -42,7 +42,7 @@ jobs:
         run: |
           sed -i 's/\/home\/runner\/work\/rod-licensing\/rod-licensing\//\/github\/workspace\//g' lcov.info
       - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@45f27363d4ff7d6b16baa0516490f10c52bdd5fc
+        uses: sonarsource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -57,9 +57,9 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b9e0990d219a03df7633c93f6f005a8fecbcab22
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
       - name: Install node
-        uses: actions/setup-node@6a61c0375d66246de94630495909f12cf8dac84d
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
         with:
           node-version: '22.x'
       - name: Install NPM
