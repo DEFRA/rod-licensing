@@ -31,13 +31,14 @@ export default class HTTPRequestBatcher {
     return this.#delay
   }
 
-  addRequest (url, options) {
+  addRequest (url, options, reference = null) {
     if (!url) {
       throw new Error('URL is required')
     }
     this.#requests.push({
       url,
       options,
+      reference,
       responses: []
     })
   }

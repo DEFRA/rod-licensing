@@ -56,6 +56,36 @@ describe('HTTP Request Batcher', () => {
     ])
   })
 
+  it('allows an optional reference to be added to a request', () => {
+    const reference1 = Symbol('ref-1')
+    const reference2 = Symbol('ref-2')
+    const batcher = new HTTPRequestBatcher()
+
+    batcher.addRequest('https://api-one.example.com', { method: 'GET' }, reference1)
+    batcher.addRequest('https://api-b.example.com', { method: 'POST' }, reference2)
+
+    expect(batcher.requestQueue).toEqual([
+      expect.objectContaining({ url: 'https://api-one.example.com', options: { method: 'GET' }, reference: reference1 }),
+      expect.objectContaining({ url: 'https://api-b.example.com', options: { method: 'POST' }, reference: reference2 })
+    ])
+  })
+
+  it('persists the reference in the responseDetails array after fetch', async () => {
+    const reference1 = Symbol('ref-1')
+    const reference2 = Symbol('ref-2')
+    const batcher = new HTTPRequestBatcher()
+
+    batcher.addRequest('https://api-one.example.com', { method: 'GET' }, reference1)
+    batcher.addRequest('https://api-b.example.com', { method: 'POST' }, reference2)
+
+    await batcher.fetch()
+
+    expect(batcher.responseDetails).toEqual([
+      expect.objectContaining({ url: 'https://api-one.example.com', options: { method: 'GET' }, reference: reference1 }),
+      expect.objectContaining({ url: 'https://api-b.example.com', options: { method: 'POST' }, reference: reference2 })
+    ])
+  })
+
   it('throws an error if url is not provided when adding a request', () => {
     const batcher = new HTTPRequestBatcher()
     expect(() => batcher.addRequest()).toThrow('URL is required')
