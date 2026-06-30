@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.5 (2026-06-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2394](https://github.com/DEFRA/rod-licensing/pull/2394) RP cancellation journey allows same agreement to be cancelled twice ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.73.0-rc.3 (2026-06-30)
 
