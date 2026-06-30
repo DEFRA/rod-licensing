@@ -1,4 +1,14 @@
 
+## v1.73.0-rc.3 (2026-06-30)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2435](https://github.com/DEFRA/rod-licensing/pull/2435) Database connection error when trying to findByExample ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.73.0-rc.2 (2026-06-30)
 
 #### :rocket: Enhancement
