@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.1 (2026-06-30)
+
+#### :memo: Documentation
+* `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2412](https://github.com/DEFRA/rod-licensing/pull/2412) update README about the value of NODE_ENV ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.73.0-rc.0 (2026-06-30)
 
 #### :bug: Bug Fix
