@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.0 (2026-06-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2402](https://github.com/DEFRA/rod-licensing/pull/2402) Corrected link colours in RCP journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.72.0-rc.1 (2026-06-04)
 
