@@ -899,6 +899,7 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
+<<<<<<< HEAD
     const mockPermission = new Permission()
     mockPermission.isRecurringPayment = true
 
@@ -916,6 +917,14 @@ describe('recurring payments service', () => {
     })
 
     it('calls findById with RecurringPayment and provided id', async () => {
+=======
+    beforeEach(() => {
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValue({ ok: true, status: 204 })
+    })
+
+    it('should call findById with RecurringPayment and the provided id', async () => {
+      retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
       findById.mockReturnValueOnce(getMockRecurringPayment())
       const id = 'abc123'
       await cancelRecurringPayment(id, 'Payment Failure')
@@ -929,7 +938,56 @@ describe('recurring payments service', () => {
       expect(getGlobalOptionSetValue).toHaveBeenCalledWith(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
     })
 
+<<<<<<< HEAD
     it('sets cancelledReason on the persisted recurring payment', async () => {
+=======
+    it('should set cancelledDate when reason is Payment Failure and call persist with the updated RecurringPayment', async () => {
+      retrieveGlobalOptionSets.mockReturnValueOnce({
+        cached: jest.fn().mockResolvedValue({
+          defra_cancelledreasons: {
+            options: {
+              910400002: {
+                id: 910400002,
+                label: 'Payment Failure',
+                description: 'Payment Failure'
+              }
+            }
+          }
+        })
+      })
+
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+
+      const cancelledReason = { description: 'Payment Failure', id: 910400002, label: 'Payment Failure' }
+
+      await cancelRecurringPayment('id', 'Payment Failure')
+
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledReason,
+          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
+        })
+      ])
+    })
+
+    it('should not set cancelledDate when reason is User Cancelled', async () => {
+      retrieveGlobalOptionSets.mockReturnValueOnce({
+        cached: jest.fn().mockResolvedValue({
+          defra_cancelledreasons: {
+            options: {
+              910400003: {
+                id: 910400003,
+                label: 'User Cancelled',
+                description: 'User Cancelled'
+              }
+            }
+          }
+        })
+      })
+
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
       const cancelledReason = { description: 'User Cancelled', id: 910400003, label: 'User Cancelled' }
 
       const recurringPayment = { ...getMockRecurringPayment(), cancelledDate: null }
@@ -942,6 +1000,7 @@ describe('recurring payments service', () => {
       expect(persist).toHaveBeenCalledWith([
         expect.objectContaining({
           ...recurringPayment,
+<<<<<<< HEAD
           cancelledReason
         }),
         mockPermission
@@ -981,6 +1040,15 @@ describe('recurring payments service', () => {
     )
 
     it('calls GovUKPay cancellation with agreement id', async () => {
+=======
+          cancelledReason,
+          cancelledDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
+        })
+      ])
+    })
+
+    it('should call cancelRecurringPaymentAgreement on GovPay when agreementId exists', async () => {
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
 
@@ -989,6 +1057,7 @@ describe('recurring payments service', () => {
       expect(govUkPayApi.cancelRecurringPaymentAgreement).toHaveBeenCalledWith(recurringPayment.agreementId)
     })
 
+<<<<<<< HEAD
     it('throws when recurring payment has no agreement id', async () => {
       const recurringPayment = getMockRecurringPayment({ agreementId: undefined })
       findById.mockReturnValueOnce(recurringPayment)
@@ -1030,6 +1099,36 @@ describe('recurring payments service', () => {
     })
 
     it('throws when GovUKPay returns unexpected status', async () => {
+=======
+    it('should not call cancelRecurringPaymentAgreement on GovPay when agreementId does not exist', async () => {
+      const recurringPayment = getMockRecurringPayment({ agreementId: undefined })
+      findById.mockReturnValueOnce(recurringPayment)
+
+      await cancelRecurringPayment('id', 'Payment Failure')
+
+      expect(govUkPayApi.cancelRecurringPaymentAgreement).not.toHaveBeenCalled()
+    })
+
+    it('should succeed when GovPay returns 404 (agreement already cancelled)', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+
+      await expect(cancelRecurringPayment('id', 'User Cancelled')).resolves.toBeDefined()
+      expect(persist).toHaveBeenCalled()
+    })
+
+    it('should succeed when GovPay returns 400 (agreement in invalid state)', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      findById.mockReturnValueOnce(recurringPayment)
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({ ok: false, status: 400, statusText: 'Bad Request' })
+
+      await expect(cancelRecurringPayment('id', 'User Cancelled')).resolves.toBeDefined()
+      expect(persist).toHaveBeenCalled()
+    })
+
+    it('should throw when GovPay returns an unexpected error', async () => {
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({
@@ -1039,6 +1138,7 @@ describe('recurring payments service', () => {
         text: jest.fn().mockResolvedValue('Server error')
       })
 
+<<<<<<< HEAD
       await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovUkPay agreement')
     })
 
@@ -1116,6 +1216,12 @@ describe('recurring payments service', () => {
     })
 
     it('throws when recurring payment id is invalid', async () => {
+=======
+      await expect(cancelRecurringPayment('id', 'User Cancelled')).rejects.toThrow('Failed to cancel GovPay agreement')
+    })
+
+    it('should raise an error when there are no matches', async () => {
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
       findById.mockReturnValueOnce(undefined)
 
       await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(

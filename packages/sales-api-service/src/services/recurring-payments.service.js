@@ -171,7 +171,24 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 
 export const cancelRecurringPayment = async (id, reason) => {
   const recurringPayment = await findById(RecurringPayment, id)
+<<<<<<< HEAD
   if (!recurringPayment) {
+=======
+  if (recurringPayment) {
+    const data = recurringPayment
+
+    data.cancelledDate = new Date().toISOString().split('T')[0]
+    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+
+    if (data.agreementId) {
+      await cancelGovPayAgreement(data.agreementId)
+    }
+
+    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+    await persist([updatedRecurringPayment])
+    return updatedRecurringPayment
+  } else {
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
     throw new Error('Invalid id provided for recurring payment cancellation')
   }
   if (!recurringPayment.agreementId) {
@@ -222,6 +239,20 @@ const cancelGovUkPayAgreement = async agreementId => {
   } else {
     const body = await response.text().catch(() => 'Unable to read response body')
     throw new Error(`Failed to cancel GovUkPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
+  }
+}
+
+const cancelGovPayAgreement = async agreementId => {
+  const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
+  if (response.ok) {
+    debug('Successfully cancelled GovPay agreement: %s', agreementId)
+  } else if (response.status === 404) {
+    debug('GovPay agreement not found (already cancelled or does not exist): %s', agreementId)
+  } else if (response.status === 400) {
+    debug('GovPay agreement cannot be cancelled (invalid state): %s', agreementId)
+  } else {
+    const body = await response.text().catch(() => 'Unable to read response body')
+    throw new Error(`Failed to cancel GovPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
 

@@ -205,6 +205,7 @@ describe('govuk-pay-api-connector', () => {
   })
 
   describe('cancelRecurringPaymentAgreement', () => {
+<<<<<<< HEAD
     it('calls the cancel endpoint for the provided agreement id', async () => {
       fetch.mockReturnValueOnce({ ok: true, status: 204 })
       await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
@@ -278,6 +279,25 @@ describe('govuk-pay-api-connector', () => {
         throw testError
       })
       await expect(govUkPayApi.cancelRecurringPaymentAgreement('abc-123')).rejects.toThrow(testError)
+=======
+    it('cancels a recurring payment agreement', async () => {
+      fetch.mockReturnValueOnce({ ok: true, status: 204 })
+      await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).resolves.toEqual(expect.objectContaining({ ok: true, status: 204 }))
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/123/cancel', {
+        headers: recurringHeaders,
+        method: 'post',
+        timeout: 10000
+      })
+    })
+
+    it('logs and throws errors', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      fetch.mockImplementation(() => {
+        throw new Error('cancel error')
+      })
+      await expect(govUkPayApi.cancelRecurringPaymentAgreement(123)).rejects.toEqual(Error('cancel error'))
+      expect(consoleErrorSpy).toHaveBeenCalled()
+>>>>>>> e45e3911 (Cancel agreement via Sales API)
     })
   })
 })
