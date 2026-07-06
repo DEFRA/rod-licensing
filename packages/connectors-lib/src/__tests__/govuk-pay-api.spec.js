@@ -157,55 +157,71 @@ describe('govuk-pay-api-connector', () => {
   })
 
   describe('queueRecurringPayment', () => {
+    const getSamplePreparedPayment = (overrides = {}) => ({
+      agreement_id: 'agreement_id',
+      ...overrides
+    })
+
     it('queues a recurring payment', async () => {
-      const GOV_PAY_API_URL = 'GovPay API URL'
+      const GOV_PAY_RCP_API_URL = 'GovPay RCP API URL'
       const GOV_PAY_REQUEST_TIMEOUT_MS = '12345'
       const GOV_PAY_RECURRING_APIKEY = 'GovPay Recurring API Key'
-      process.env.GOV_PAY_API_URL = GOV_PAY_API_URL
+      process.env.GOV_PAY_RCP_API_URL = GOV_PAY_RCP_API_URL
       process.env.GOV_PAY_REQUEST_TIMEOUT_MS = GOV_PAY_REQUEST_TIMEOUT_MS
       process.env.GOV_PAY_RECURRING_APIKEY = GOV_PAY_RECURRING_APIKEY
       const batcher = { addRequest: jest.fn() }
-      govUkPayApi.queueRecurringPayment({ cost: 0 }, batcher)
+      const preparedPayment = getSamplePreparedPayment({ cost: 0 })
+      govUkPayApi.queueRecurringPayment(preparedPayment, batcher)
 
       expect(batcher.addRequest).toHaveBeenCalledWith(
-        GOV_PAY_API_URL,
+        GOV_PAY_RCP_API_URL,
         expect.objectContaining({
           headers: recurringHeaders(),
           method: 'post',
-          body: JSON.stringify({ cost: 0 }),
+          body: JSON.stringify(preparedPayment),
           timeout: GOV_PAY_REQUEST_TIMEOUT_MS
-        })
+        }),
+        expect.anything()
       )
+    })
+
+    it('adds agreement id as a reference', async () => {
+      // eslint-disable-next-line camelcase
+      const agreement_id = Symbol('agreement_id')
+      const batcher = { addRequest: jest.fn() }
+      govUkPayApi.queueRecurringPayment({ cost: 0, reference: '123', agreement_id }, batcher)
+      expect(batcher.addRequest).toHaveBeenCalledWith(expect.any(String), expect.any(Object), agreement_id)
     })
 
     it("uses default timeout of 10000ms if GOV_PAY_REQUEST_TIMEOUT_MS isn't set", async () => {
       delete process.env.GOV_PAY_REQUEST_TIMEOUT_MS
       const batcher = { addRequest: jest.fn() }
 
-      govUkPayApi.queueRecurringPayment({ cost: 0 }, batcher)
+      govUkPayApi.queueRecurringPayment(getSamplePreparedPayment({ cost: 0 }), batcher)
 
       expect(batcher.addRequest).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           timeout: 10000
-        })
+        }),
+        expect.anything()
       )
     })
   })
 
   describe('queueRecurringPaymentStatusCheck', () => {
     it.each(['abc-123', 'def-456'])('queues a recurring payment status check with payment id %s', async paymentId => {
-      const GOV_PAY_API_URL = 'GovPay API URL'
+      const GOV_PAY_RCP_API_URL = 'GovPay RCP API URL'
       const GOV_PAY_REQUEST_TIMEOUT_MS = '12345'
       const GOV_PAY_RECURRING_APIKEY = 'GovPay Recurring API Key'
-      process.env.GOV_PAY_API_URL = GOV_PAY_API_URL
+      process.env.GOV_PAY_RCP_API_URL = GOV_PAY_RCP_API_URL
       process.env.GOV_PAY_REQUEST_TIMEOUT_MS = GOV_PAY_REQUEST_TIMEOUT_MS
       process.env.GOV_PAY_RECURRING_APIKEY = GOV_PAY_RECURRING_APIKEY
       const batcher = { addRequest: jest.fn() }
       govUkPayApi.queueRecurringPaymentStatusCheck(paymentId, batcher)
 
       expect(batcher.addRequest).toHaveBeenCalledWith(
-        `${GOV_PAY_API_URL}/${paymentId}`,
+        `${GOV_PAY_RCP_API_URL}/${paymentId}`,
         expect.objectContaining({
           headers: recurringHeaders(),
           method: 'get',

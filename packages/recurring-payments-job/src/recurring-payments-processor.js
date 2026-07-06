@@ -44,7 +44,6 @@ const processRecurringPayments = async () => {
 
   debug('Recurring Payments job enabled')
   const date = new Date().toISOString().split('T')[0]
-
   const dueRCPayments = await fetchDueRecurringPayments(date)
   if (dueRCPayments.length === 0) {
     return
@@ -69,6 +68,7 @@ const processRecurringPayments = async () => {
 const fetchDueRecurringPayments = async date => {
   try {
     const duePayments = await salesApi.getDueRecurringPayments(date)
+
     debug('Recurring Payments found:', duePayments)
     return duePayments
   } catch (error) {
@@ -100,19 +100,16 @@ const requestPayments = async dueRCPayments => {
     })
   )
   logErrors(createTransactionResults, 'Error creating transactions:')
-  const paymentsToRequest = createTransactionResults.filter(ctr => ctr.status === 'fulfilled')
+  const paymentsToRequest = createTransactionResults.filter(ctr => ctr.status === 'fulfilled').map(ctr => ctr.value)
 
   const batcher = new HTTPRequestBatcher({
     batchSize: Number(process.env.GOV_PAY_GET_BATCH_SIZE),
     delay: Number(process.env.GOV_PAY_BATCH_DELAY_MS)
   })
 
-  for (const {
-    value: { agreementId, transaction }
-  } of paymentsToRequest) {
+  for (const { agreementId, transaction } of paymentsToRequest) {
     queueRecurringPayment(preparePayment(agreementId, transaction), batcher)
   }
-
   await batcher.fetch()
 
   logErrors(batcher.responseDetails, 'Error requesting payments:')
@@ -124,9 +121,8 @@ const requestPayments = async dueRCPayments => {
 }
 
 const processPaymentResponses = async (paymentsToRequest, batcher) => {
-  for (let x = 0; x < paymentsToRequest.length; x++) {
-    const { value: paymentToRequest } = paymentsToRequest[x]
-    const responseDetail = batcher.responseDetails[x]
+  for (const paymentToRequest of paymentsToRequest) {
+    const responseDetail = batcher.responseDetails.find(rd => rd.reference === paymentToRequest.agreementId)
     const response = responseDetail.responses.at(-1)
     response.jsonValue = response.json ? await response.json() : {}
 
@@ -152,7 +148,7 @@ const processPaymentResponses = async (paymentsToRequest, batcher) => {
           Status: ${response.status}, 
           Response: ${JSON.stringify(response.jsonValue)}
           Transaction ID: ${response.jsonValue.reference}
-          Payload: ${JSON.stringify(batcher.requestQueue[x].options.body)}
+          Payload: ${JSON.stringify(responseDetail.options.body)}
         `)
     }
   }

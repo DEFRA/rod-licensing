@@ -33,16 +33,20 @@ export const createRecurringPaymentAgreement = async preparedPayment => {
 }
 
 export const queueRecurringPayment = (preparedPayment, batcher) => {
-  batcher.addRequest(process.env.GOV_PAY_API_URL, {
-    headers: headers(true),
-    method: 'post',
-    body: JSON.stringify(preparedPayment),
-    timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
-  })
+  batcher.addRequest(
+    process.env.GOV_PAY_RCP_API_URL,
+    {
+      headers: headers(true),
+      method: 'post',
+      body: JSON.stringify(preparedPayment),
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+    },
+    preparedPayment.agreement_id
+  )
 }
 
 export const queueRecurringPaymentStatusCheck = (paymentId, batcher) => {
-  batcher.addRequest(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
+  batcher.addRequest(`${process.env.GOV_PAY_RCP_API_URL}/${paymentId}`, {
     headers: headers(true),
     method: 'get',
     timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
