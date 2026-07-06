@@ -124,7 +124,7 @@ const getJSONImplementation = responseJSON => {
     return Promise.reject(new TypeError('body used already'))
   }
 }
-// have to go through all tests and check due payments are matching HTTP batcher responses
+
 describe('recurring-payments-processor', () => {
   const [{ value: debugLogger }] = db.mock.results
 

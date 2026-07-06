@@ -50,17 +50,7 @@ const processRecurringPayments = async () => {
   }
 
   const requestedPayments = await requestPayments(dueRCPayments)
-  const payments = requestedPayments.map(requestedPayment => {
-    const duePayment = dueRCPayments.find(dueRCPayment => dueRCPayment.entity.agreementId === requestedPayment.agreement_id)
-    return {
-      paymentId: requestedPayment.payment_id,
-      agreementId: duePayment.entity.agreementId,
-      recurringPaymentId: duePayment.entity.id,
-      transactionId: requestedPayment.reference,
-      duePayment,
-      requestedPayment
-    }
-  })
+  const payments = pairDuePaymentsWithRequestedPayments(dueRCPayments, requestedPayments)
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
   await checkPaymentStatuses(payments)
 }
@@ -77,6 +67,20 @@ const fetchDueRecurringPayments = async date => {
   }
 }
 
+const pairDuePaymentsWithRequestedPayments = (dueRCPayments, requestedPayments) => {
+  return requestedPayments.map(requestedPayment => {
+    const duePayment = dueRCPayments.find(dueRCPayment => dueRCPayment.entity.agreementId === requestedPayment.agreement_id)
+    return {
+      paymentId: requestedPayment.payment_id,
+      agreementId: duePayment.entity.agreementId,
+      recurringPaymentId: duePayment.entity.id,
+      transactionId: requestedPayment.reference,
+      duePayment,
+      requestedPayment
+    }
+  })
+}
+
 const logErrors = (results, message) => {
   const failures = results.filter(r => r.status === 'rejected').map(r => r.reason)
   if (failures.length) {
@@ -85,20 +89,7 @@ const logErrors = (results, message) => {
 }
 
 const requestPayments = async dueRCPayments => {
-  const createTransactionResults = await Promise.allSettled(
-    dueRCPayments.map(async duePayment => {
-      const {
-        entity: { agreementId, id },
-        expanded: {
-          activePermission: {
-            entity: { referenceNumber }
-          }
-        }
-      } = duePayment
-      const transaction = await createNewTransaction(referenceNumber, { agreementId, id })
-      return { agreementId, transaction }
-    })
-  )
+  const createTransactionResults = await createTransactions(dueRCPayments)
   logErrors(createTransactionResults, 'Error creating transactions:')
   const paymentsToRequest = createTransactionResults.filter(ctr => ctr.status === 'fulfilled').map(ctr => ctr.value)
 
@@ -117,7 +108,32 @@ const requestPayments = async dueRCPayments => {
 
   const responses = batcher.responseDetails.map(r => r.responses.at(-1))
 
-  return Promise.all(responses.filter(r => r.status && !isClientError(r.status) && !isServerError(r.status)).map(async r => r.jsonValue))
+  const successfulPaymentPayloads = responses
+    .filter(r => !!r.status && !isClientError(r.status) && !isServerError(r.status))
+    .map(r => r.jsonValue)
+
+  return successfulPaymentPayloads
+}
+
+const createTransactions = async dueRCPayments =>
+  await Promise.allSettled(
+    dueRCPayments.map(async duePayment => {
+      const {
+        entity: { agreementId, id },
+        expanded: {
+          activePermission: {
+            entity: { referenceNumber }
+          }
+        }
+      } = duePayment
+      const transaction = await createNewTransaction(referenceNumber, { agreementId, id })
+      return { agreementId, transaction }
+    })
+  )
+
+const createNewTransaction = async (referenceNumber, recurringPayment) => {
+  const transactionData = await processPermissionData(referenceNumber, recurringPayment)
+  return salesApi.createTransaction(transactionData)
 }
 
 const processPaymentResponses = async (paymentsToRequest, batcher) => {
@@ -152,11 +168,6 @@ const processPaymentResponses = async (paymentsToRequest, batcher) => {
         `)
     }
   }
-}
-
-const createNewTransaction = async (referenceNumber, recurringPayment) => {
-  const transactionData = await processPermissionData(referenceNumber, recurringPayment)
-  return salesApi.createTransaction(transactionData)
 }
 
 const processPermissionData = async (referenceNumber, recurringPayment) => {
