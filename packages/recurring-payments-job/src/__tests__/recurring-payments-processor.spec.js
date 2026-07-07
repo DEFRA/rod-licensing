@@ -873,6 +873,14 @@ describe('recurring-payments-processor', () => {
     expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
   })
 
+  it.only('calls batcher fetch if there is at least one due payment', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+
+    await execute()
+
+    expect(HTTPRequestBatcher.mock.instances[0].fetch).toHaveBeenCalled()
+  })
+
   it('should log errors from salesApi.processRPResult', async () => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment()])
     salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 })
