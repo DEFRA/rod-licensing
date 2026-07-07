@@ -313,7 +313,7 @@ describe('recurring-payments-processor', () => {
       )
     })
 
-    it('logs an error for create transaction failures', async () => {
+    it('logs an error for data preparation and create transaction failures', async () => {
       jest.spyOn(console, 'error')
       const errors = [new Error('error 1'), new Error('error 2')]
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
@@ -519,7 +519,7 @@ describe('recurring-payments-processor', () => {
         HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(responses))
 
         await execute()
-        const [, paymentStatusBatcher] = HTTPRequestBatcher.mock.instances
+        const paymentStatusBatcher = HTTPRequestBatcher.mock.instances[1]
         expect(paymentStatusBatcher.fetch).toHaveBeenCalled()
       })
     }
@@ -585,6 +585,15 @@ describe('recurring-payments-processor', () => {
     await execute()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
+  })
+
+  it('only creates payments for transactions that are successfully created', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(), getMockDueRecurringPayment()])
+    salesApi.createTransaction.mockRejectedValueOnce(new Error('Transaction creation failed'))
+
+    await execute()
+
+    expect(queueRecurringPayment).toHaveBeenCalledTimes(1)
   })
 
   it('creates a payment journal entry', async () => {
@@ -947,7 +956,7 @@ describe('recurring-payments-processor', () => {
       })
     })
 
-    it('does not abort when getPaymentStatus rejects for one payment (allSettled at status stage)', async () => {
+    it('does not abort when call to get payment status rejects for one payment', async () => {
       const firstPayment = getMockSendPaymentResponse({
         payment_id: 'pay-1',
         agreement_id: 'agr-1',
