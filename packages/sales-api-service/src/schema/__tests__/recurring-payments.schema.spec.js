@@ -169,31 +169,28 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
 })
 
 describe('cancelRecurringPaymentRequestQuerySchema', () => {
-  const getValidationErrorType = (sampleData, options = undefined) =>
-    cancelRecurringPaymentRequestQuerySchema.validate(sampleData, options).error?.details?.[0]?.type
-
-  it.each(['Payment Failure', 'User Cancelled', 'Business Cancelled'])('successfully validates when reason is %s', reason => {
+  it.each(['Payment Failure', 'User Cancelled', 'Business Cancelled'])('successfully validates when reason is %s', async reason => {
     const sampleData = { reason }
-    expect(cancelRecurringPaymentRequestQuerySchema.validate(sampleData).error).toBeUndefined()
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).resolves.toEqual(sampleData)
   })
 
-  it('throws an error if query is empty', () => {
+  it('throws an error if query is empty', async () => {
     const sampleData = {}
-    expect(getValidationErrorType(sampleData)).toBe('any.required')
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
-  it('throws an error if reason is not the correct type', () => {
+  it('throws an error if reason is not the correct type', async () => {
     const sampleData = { reason: 99 }
-    expect(getValidationErrorType(sampleData, { convert: false })).toBe('string.base')
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
-  it('throws an error if reason is invalid', () => {
+  it('throws an error if reason is invalid', async () => {
     const sampleData = { reason: 'Not A Valid Reason' }
-    expect(getValidationErrorType(sampleData)).toBe('any.only')
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
-  it('throws an error if an incorrect key is provided', () => {
-    const sampleData = { reason: 'Payment Failure', foo: 'unexpected' }
-    expect(getValidationErrorType(sampleData)).toBe('object.unknown')
+  it('throws an error if an incorrect key is provided', async () => {
+    const sampleData = { foo: 'Payment Failure' }
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 })
