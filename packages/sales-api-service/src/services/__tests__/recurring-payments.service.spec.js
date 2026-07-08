@@ -899,20 +899,32 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
-    const mockPermission = new Permission()
-    mockPermission.isRecurringPayment = true
+    const testState = {
+      linkedPermission: null
+    }
 
-    beforeEach(() => {
+    const createLinkedPermission = (overrides = {}) => {
+      const permission = new Permission()
+      permission.isRecurringPayment = true
+      return Object.assign(permission, overrides)
+    }
+
+    const setupCancelRecurringPaymentMocks = permission => {
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValue({ ok: true, status: 204 })
       dynamicsClient.retrieveMultipleRequest.mockResolvedValue({
         value: [{ defra_ActivePermission: { defra_permissionid: 'mock-permission-id' } }]
       })
-      jest.spyOn(Permission, 'fromResponse').mockReturnValue(mockPermission)
+      jest.spyOn(Permission, 'fromResponse').mockReturnValue(permission)
       retrieveGlobalOptionSets.mockReturnValue({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       findById.mockImplementation(entityType => {
-        if (entityType === Permission) return mockPermission
+        if (entityType === Permission) return permission
         return null
       })
+    }
+
+    beforeEach(() => {
+      testState.linkedPermission = createLinkedPermission()
+      setupCancelRecurringPaymentMocks(testState.linkedPermission)
     })
 
     it('calls findById with RecurringPayment and provided id', async () => {
@@ -944,7 +956,7 @@ describe('recurring payments service', () => {
           ...recurringPayment,
           cancelledReason
         }),
-        mockPermission
+        testState.linkedPermission
       ])
     })
 
@@ -972,7 +984,7 @@ describe('recurring payments service', () => {
               ...recurringPayment,
               cancelledDate: nowIsoString
             }),
-            mockPermission
+            testState.linkedPermission
           ])
         } finally {
           jest.useRealTimers()
@@ -1025,7 +1037,7 @@ describe('recurring payments service', () => {
           cancelledDate: expect.any(String),
           cancelledReason: expect.any(Object)
         }),
-        mockPermission
+        testState.linkedPermission
       ])
     })
 
@@ -1048,7 +1060,7 @@ describe('recurring payments service', () => {
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(mockPermission.isRecurringPayment).toBe(false)
+      expect(testState.linkedPermission.isRecurringPayment).toBe(false)
     })
 
     it('persists linked permission alongside recurring payment', async () => {
@@ -1057,7 +1069,7 @@ describe('recurring payments service', () => {
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment), mockPermission])
+      expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment), testState.linkedPermission])
     })
 
     it('passes recurring payment id to findPermissionByRecurringPaymentId', async () => {
