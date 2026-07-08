@@ -899,6 +899,12 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
+    const cancelRecurringPaymentIds = [
+      '92207e2c-0aa2-4600-a9c4-a7eb2276e404',
+      'f794dd0d-b80a-4d51-b738-479c87b4765b',
+      'b437d543-430f-4eb1-830d-539148c8b440'
+    ]
+
     const testState = {
       linkedPermission: null
     }
@@ -927,9 +933,8 @@ describe('recurring payments service', () => {
       setupCancelRecurringPaymentMocks(testState.linkedPermission)
     })
 
-    it('calls findById with RecurringPayment and provided id', async () => {
+    it.each(cancelRecurringPaymentIds)('calls findById with RecurringPayment and provided id when id is %s', async id => {
       findById.mockReturnValueOnce(getMockRecurringPayment())
-      const id = 'abc123'
       await cancelRecurringPayment(id, 'Payment Failure')
       expect(findById).toHaveBeenCalledWith(RecurringPayment, id)
     })
@@ -1072,14 +1077,17 @@ describe('recurring payments service', () => {
       expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment), testState.linkedPermission])
     })
 
-    it('passes recurring payment id to findPermissionByRecurringPaymentId', async () => {
-      const recurringPayment = getMockRecurringPayment()
-      findById.mockReturnValueOnce(recurringPayment)
+    it.each(cancelRecurringPaymentIds)(
+      'passes recurring payment id to findPermissionByRecurringPaymentId when id is %s',
+      async recurringPaymentId => {
+        const recurringPayment = getMockRecurringPayment()
+        findById.mockReturnValueOnce(recurringPayment)
 
-      await cancelRecurringPayment('id', 'User Cancelled')
+        await cancelRecurringPayment(recurringPaymentId, 'User Cancelled')
 
-      expect(findPermissionByRecurringPaymentId).toHaveBeenCalledWith('id')
-    })
+        expect(findPermissionByRecurringPaymentId).toHaveBeenCalledWith(recurringPaymentId)
+      }
+    )
 
     it('passes query to retrieveMultipleRequest', async () => {
       const retrieveRequest = Symbol('retrieve request')
