@@ -169,28 +169,30 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
 })
 
 describe('cancelRecurringPaymentRequestQuerySchema', () => {
-  it.each(['Payment Failure', 'User Cancelled', 'Business Cancelled'])('successfully validates when reason is %s', async reason => {
+  const getValidationErrorType = sampleData => cancelRecurringPaymentRequestQuerySchema.validate(sampleData).error?.details?.[0]?.type
+
+  it.each(['Payment Failure', 'User Cancelled', 'Business Cancelled'])('successfully validates when reason is %s', reason => {
     const sampleData = { reason }
-    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).resolves.toEqual(sampleData)
+    expect(cancelRecurringPaymentRequestQuerySchema.validate(sampleData).error).toBeUndefined()
   })
 
-  it('throws an error if query is empty', async () => {
+  it('throws an error if query is empty', () => {
     const sampleData = {}
-    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+    expect(getValidationErrorType(sampleData)).toBe('any.required')
   })
 
-  it('throws an error if reason is not the correct type', async () => {
+  it('throws an error if reason is not the correct type', () => {
     const sampleData = { reason: 99 }
-    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+    expect(getValidationErrorType(sampleData)).toBe('string.base')
   })
 
-  it('throws an error if reason is invalid', async () => {
+  it('throws an error if reason is invalid', () => {
     const sampleData = { reason: 'Not A Valid Reason' }
-    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+    expect(getValidationErrorType(sampleData)).toBe('any.only')
   })
 
-  it('throws an error if an incorrect key is provided', async () => {
+  it('throws an error if an incorrect key is provided', () => {
     const sampleData = { foo: 'Payment Failure' }
-    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+    expect(getValidationErrorType(sampleData)).toBe('object.unknown')
   })
 })
