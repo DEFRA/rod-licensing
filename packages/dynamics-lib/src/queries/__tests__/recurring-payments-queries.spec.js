@@ -4,6 +4,7 @@ import {
   findRecurringPaymentByPermissionId,
   findPermissionByRecurringPaymentId
 } from '../recurring-payments.queries.js'
+import { RecurringPayment } from '../../entities/recurring-payment.entity.js'
 
 describe('Recurring Payment Queries', () => {
   const baseSelection = () => [
@@ -65,26 +66,22 @@ describe('Recurring Payment Queries', () => {
   })
 
   describe('findPermissionByRecurringPaymentId', () => {
-    const recurringPaymentId = 'rcp-456'
-    const getRetrieveRequest = () => findPermissionByRecurringPaymentId(recurringPaymentId).toRetrieveRequest()
+    it.each(['rcp-456', 'rcp-789'])('builds full filter with conjunctions when recurring payment id is %s', recurringPaymentId => {
+      const mockDefaultFilter = 'mock_default_filter'
+      const defaultFilterSpy = jest.spyOn(RecurringPayment.definition, 'defaultFilter', 'get').mockReturnValue(mockDefaultFilter)
 
-    it('includes active-permission-not-null filter', () => {
-      const request = getRetrieveRequest()
-      expect(request.filter).toContain('_defra_activepermission_value ne null')
-    })
-
-    it('includes recurring payment id filter', () => {
-      const request = getRetrieveRequest()
-      expect(request.filter).toContain(`defra_recurringpaymentid eq ${recurringPaymentId}`)
-    })
-
-    it('includes default statecode filter', () => {
-      const request = getRetrieveRequest()
-      expect(request.filter).toContain('statecode eq 0')
+      try {
+        const request = findPermissionByRecurringPaymentId(recurringPaymentId).toRetrieveRequest()
+        expect(request.filter).toBe(
+          `_defra_activepermission_value ne null and defra_recurringpaymentid eq ${recurringPaymentId} and ${mockDefaultFilter}`
+        )
+      } finally {
+        defaultFilterSpy.mockRestore()
+      }
     })
 
     it('expands active permission relationship', () => {
-      const request = getRetrieveRequest()
+      const request = findPermissionByRecurringPaymentId('rcp-456').toRetrieveRequest()
       expect(request.expand).toContainEqual({ property: 'defra_ActivePermission' })
     })
   })
