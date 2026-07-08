@@ -169,7 +169,8 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
 })
 
 describe('cancelRecurringPaymentRequestQuerySchema', () => {
-  const getValidationErrorType = sampleData => cancelRecurringPaymentRequestQuerySchema.validate(sampleData).error?.details?.[0]?.type
+  const getValidationErrorType = (sampleData, options = undefined) =>
+    cancelRecurringPaymentRequestQuerySchema.validate(sampleData, options).error?.details?.[0]?.type
 
   it.each(['Payment Failure', 'User Cancelled', 'Business Cancelled'])('successfully validates when reason is %s', reason => {
     const sampleData = { reason }
@@ -183,7 +184,7 @@ describe('cancelRecurringPaymentRequestQuerySchema', () => {
 
   it('throws an error if reason is not the correct type', () => {
     const sampleData = { reason: 99 }
-    expect(getValidationErrorType(sampleData)).toBe('string.base')
+    expect(getValidationErrorType(sampleData, { convert: false })).toBe('string.base')
   })
 
   it('throws an error if reason is invalid', () => {
@@ -192,7 +193,7 @@ describe('cancelRecurringPaymentRequestQuerySchema', () => {
   })
 
   it('throws an error if an incorrect key is provided', () => {
-    const sampleData = { foo: 'Payment Failure' }
+    const sampleData = { reason: 'Payment Failure', foo: 'unexpected' }
     expect(getValidationErrorType(sampleData)).toBe('object.unknown')
   })
 })
