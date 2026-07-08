@@ -15,6 +15,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         permitSubtype: { label: 'Salmon and sea trout' },
         numberOfRods: 3
       },
+      concessions: [],
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
 
@@ -29,7 +30,8 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         permit: {
           ...defaults.permit,
           ...(overrides.permit ? overrides.permit : {})
-        }
+        },
+        concessions: overrides.concessions ?? defaults.concessions
       },
       recurringPayment: {
         ...defaults.recurringPayment,
@@ -77,17 +79,15 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     })
 
     it.each([
-      [
-        'adds senior concession when description contains Senior',
-        'Coarse 12 month 2 Rod Licence (Senior)',
-        [{ type: 'Senior', proof: { type: 'No Proof' } }]
-      ],
-      ['stores empty concessions when description has no Senior', 'Coarse 12 month 2 Rod Licence (Full)', []]
-    ])('%s', async (_desc, description, expectedConcessions) => {
+      ['stores concessions from permission', [{ type: 'Senior', proof: { type: 'No Proof' } }]],
+      ['stores empty concessions when permission has no concessions', []]
+    ])('%s', async (_desc, concessions) => {
       const setCurrentPermission = jest.fn()
+
       const mockRequest = getSampleRequest(setCurrentPermission)
+
       const authResult = getSampleAuthResult({
-        permit: { description }
+        concessions
       })
 
       await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
@@ -95,7 +95,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
       expect(setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({
           permission: expect.objectContaining({
-            concessions: expectedConcessions
+            concessions
           })
         })
       )

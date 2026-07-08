@@ -77,7 +77,9 @@ describe('route', () => {
     rp_cancel_details_licence_type: 'Licence type',
     rp_cancel_details_payment_card: 'Payment card',
     rp_cancel_details_last_purchased: 'Last purchased',
-    rp_cancel_details_licence_valid_until: 'Valid until'
+    rp_cancel_details_licence_valid_until: 'Valid until',
+    licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)',
+    over_66: ' (over_66)'
   })
 
   const getSamplePermission = () => ({
@@ -87,8 +89,11 @@ describe('route', () => {
         lastName: 'Smith'
       },
       permit: {
-        description: 'Salmon and sea trout'
+        description: 'Salmon and sea trout',
+        permitSubtype: { label: 'Trout and coarse' },
+        numberOfRods: 2
       },
+      concessions: [],
       endDate: '01-01-2026',
       referenceNumber: 'abc123'
     },
@@ -125,35 +130,59 @@ describe('route', () => {
       expect(result.mssgs).toEqual(mssgs)
     })
 
+    it('returns summaryTable with expected data', async () => {
+      const mssgs = getSampleCatalog()
+      const sampleData = getSamplePermission()
+      const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+
+      const sampleFormattedDate = '01-01-2026'
+      moment.mockReturnValueOnce({
+        format: () => sampleFormattedDate
+      })
+
+      const result = await getData(mockRequest)
+
+      expect(result.summaryTable).toEqual([
+        {
+          key: { text: mssgs.rp_cancel_details_licence_holder },
+          value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
+        },
+        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: mssgs.licence_type_radio_trout_two_rod_payment_summary } },
+        {
+          key: { text: mssgs.rp_cancel_details_payment_card },
+          value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
+        },
+        { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
+        { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
+      ])
+    })
+
     it.each([
       ['shows translated licence type with (over_66) for senior', [{ type: 'Senior' }], true],
       ['shows translated licence type without (over_66) when not senior', [], false]
     ])('%s', async (_desc, concessions, expectOver66) => {
-      const mssgs = {
-        ...getSampleCatalog(),
-        over_66: ' (over_66)',
-        licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)'
-      }
-      const sampleData = {
-        permission: {
-          licensee: { firstName: 'John', lastName: 'Smith' },
-          permit: {
-            permitSubtype: { label: 'Trout and coarse' },
-            numberOfRods: 2
-          },
-          concessions,
-          endDate: '01-01-2026',
-          referenceNumber: 'abc123'
-        },
-        recurringPayment: { lastDigitsCardNumbers: '1234' }
-      }
-      const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
-      moment.mockReturnValueOnce({ format: () => '01-01-2026' })
+      const mssgs = getSampleCatalog()
+
+      const sampleData = getSamplePermission()
+      sampleData.permission.concessions = concessions
+
+      const mockRequest = createMockRequest({
+        catalog: mssgs,
+        currentPermission: sampleData
+      })
+
+      moment.mockReturnValueOnce({
+        format: () => '01-01-2026'
+      })
 
       const result = await getData(mockRequest)
 
       const licenceTypeRow = result.summaryTable.find(row => row.key.text === mssgs.rp_cancel_details_licence_type)
-      expect(licenceTypeRow.value.text).toContain('Trout and coarse (up to 2 rods)')
+
+      expect(licenceTypeRow).toBeDefined()
+
+      expect(licenceTypeRow.value.text).toContain(mssgs.licence_type_radio_trout_two_rod_payment_summary)
+
       if (expectOver66) {
         expect(licenceTypeRow.value.text).toContain('(over_66)')
       } else {
