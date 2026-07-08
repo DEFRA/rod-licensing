@@ -178,14 +178,12 @@ export const cancelRecurringPayment = async (id, reason) => {
     throw new Error('Cannot cancel a recurring payment without an agreement ID')
   }
 
-  const data = recurringPayment
+  recurringPayment.cancelledDate = new Date().toISOString()
+  recurringPayment.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
 
-  data.cancelledDate = new Date().toISOString()
-  data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+  await cancelGovUkPayAgreement(recurringPayment.agreementId)
 
-  await cancelGovUkPayAgreement(data.agreementId)
-
-  const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
+  const updatedRecurringPayment = Object.assign(new RecurringPayment(), recurringPayment)
   const entitiesToPersist = [updatedRecurringPayment]
 
   const linkedPermission = await getLinkedPermission(id)
