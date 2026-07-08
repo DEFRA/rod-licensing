@@ -94,12 +94,14 @@ const getBatcherImplementation = (responses = []) => {
   return function () {
     this.addRequest = jest.fn()
     this.fetch = jest.fn(() => {
-      this.responseDetails = responses.map(({ reference, ...response }) => ({
-        url: 'url',
-        options: {},
-        reference: reference || 'test-agreement-id',
-        responses: Array.isArray(response) ? response : [response]
-      }))
+      this.responseDetails = responses.map(response => {
+        return {
+          url: 'url',
+          options: {},
+          reference: response.reference || 'test-agreement-id',
+          responses: Array.isArray(response) ? response : [response]
+        }
+      })
     })
     Object.defineProperty(this, 'requestQueue', {
       get: () => {
@@ -262,6 +264,40 @@ describe('recurring-payments-processor', () => {
   })
 
   describe('When payment request throws an error...', () => {
+    it('lack of a json function on the error response is handled gracefully', async () => {
+      jest.spyOn(console, 'error')
+      const mockPayment = getMockDueRecurringPayment()
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([mockPayment])
+      const errorResponse = new Error('Network error')
+      errorResponse.reference = mockPayment.agreementId
+      mockBatchers({ paymentResponses: [errorResponse] })
+
+      await execute()
+
+      expect(console.error).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringMatching(/response\.json is not a function.*/)
+        })
+      )
+    })
+
+    it.each(['cd068c00-638f-49d9-baa8-fc7aa3022698', '003d1230-3746-47a8-9778-0c4cfb7438f4'])(
+      'logs an error for the failed payment request including agreement id %s',
+      async agreementId => {
+        jest.spyOn(console, 'error')
+        salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId })])
+        const errorResponse = new Error('Server down')
+        errorResponse.reference = agreementId
+        mockBatchers({
+          paymentResponses: [errorResponse]
+        })
+
+        await execute()
+
+        expect(console.error).toHaveBeenCalledWith(`Error when calling GOV.UK Pay API for agreement ${agreementId}:`, errorResponse)
+      }
+    )
+
     it('subsequent payment requests are still sent', async () => {
       const agreementIds = [
         '45f0ac55-9638-426f-b8f6-154cd8eda5fc',
@@ -340,7 +376,7 @@ describe('recurring-payments-processor', () => {
       expect(console.error).toHaveBeenCalledWith(expect.any(String), ...errors)
     })
 
-    it('logs an error for every failed payment', async () => {
+    it('logs an error when a payment fails', async () => {
       jest.spyOn(console, 'error')
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
         getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: 'a1' }),
@@ -353,7 +389,7 @@ describe('recurring-payments-processor', () => {
       mockBatchers({
         paymentResponses: [
           { status: 200, reference: 'a1', json: getJSONImplementation(getMockSendPaymentResponse({ agreement_id: 'a1' })) },
-          errorResponse,
+          { status: 500, reference: 'a2', json: getJSONImplementation({ code: 'B00M', description: 'Something dreadful happened' }) },
           { status: 200, reference: 'a3', json: getJSONImplementation(getMockSendPaymentResponse({ agreement_id: 'a3' })) },
           { status: 200, reference: 'a4', json: getJSONImplementation(getMockSendPaymentResponse({ agreement_id: 'a4' })) }
         ],
@@ -365,6 +401,7 @@ describe('recurring-payments-processor', () => {
       })
 
       await execute()
+
       expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unexpected response from GOV.UK Pay API\..*/))
     })
 
@@ -496,7 +533,7 @@ describe('recurring-payments-processor', () => {
 
         await execute()
 
-        const [, paymentStatusBatcher] = HTTPRequestBatcher.mock.instances
+        const paymentStatusBatcher = HTTPRequestBatcher.mock.instances[1]
         paymentIds.forEach((paymentId, idx) => {
           expect(queueRecurringPaymentStatusCheck).toHaveBeenNthCalledWith(idx + 1, paymentId, paymentStatusBatcher)
         })
@@ -873,7 +910,7 @@ describe('recurring-payments-processor', () => {
     expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
   })
 
-  it.only('calls batcher fetch if there is at least one due payment', async () => {
+  it('calls batcher fetch if there is at least one due payment', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
     await execute()

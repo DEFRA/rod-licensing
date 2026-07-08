@@ -51,6 +51,7 @@ const processRecurringPayments = async () => {
 
   const requestedPayments = await requestPayments(dueRCPayments)
   const payments = pairDuePaymentsWithRequestedPayments(dueRCPayments, requestedPayments)
+
   await new Promise(resolve => setTimeout(resolve, PAYMENT_STATUS_DELAY))
   await checkPaymentStatuses(payments)
 }
@@ -70,6 +71,7 @@ const fetchDueRecurringPayments = async date => {
 const pairDuePaymentsWithRequestedPayments = (dueRCPayments, requestedPayments) => {
   return requestedPayments.map(requestedPayment => {
     const duePayment = dueRCPayments.find(dueRCPayment => dueRCPayment.entity.agreementId === requestedPayment.agreement_id)
+
     return {
       paymentId: requestedPayment.payment_id,
       agreementId: duePayment.entity.agreementId,
@@ -103,7 +105,6 @@ const requestPayments = async dueRCPayments => {
   }
   await batcher.fetch()
 
-  logErrors(batcher.responseDetails, 'Error requesting payments:')
   await processPaymentResponses(paymentsToRequest, batcher)
 
   const responses = batcher.responseDetails.map(r => r.responses.at(-1))
@@ -160,12 +161,16 @@ const processPaymentResponses = async (paymentsToRequest, batcher) => {
         )
         await salesApi.cancelRecurringPayment(paymentToRequest.transaction.recurringPayment.id)
       }
-      console.error(`Unexpected response from GOV.UK Pay API. 
+      if (response instanceof Error) {
+        console.error(`Error when calling GOV.UK Pay API for agreement ${response.reference}:`, response)
+      } else {
+        console.error(`Unexpected response from GOV.UK Pay API. 
           Status: ${response.status}, 
           Response: ${JSON.stringify(response.jsonValue)}
           Transaction ID: ${response.jsonValue.reference}
           Payload: ${JSON.stringify(responseDetail.options.body)}
         `)
+      }
     }
   }
 }
