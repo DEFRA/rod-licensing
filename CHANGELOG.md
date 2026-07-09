@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.6 (2026-07-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2434](https://github.com/DEFRA/rod-licensing/pull/2434) Dev - Ammend content in telesales first page ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.73.0-rc.5 (2026-06-30)
 
 #### :bug: Bug Fix
