@@ -226,9 +226,19 @@ describe('govuk-pay-api-connector', () => {
           headers: recurringHeaders(),
           method: 'get',
           timeout: GOV_PAY_REQUEST_TIMEOUT_MS
-        })
+        }),
+        expect.any(String)
       )
     })
+
+    it.each(['3c726d49-a1c0-42f0-88ca-78c0b9932bcd', '4122f2d9-b6ae-47ee-9590-c5d7f45fd9da'])(
+      'adds payment id %s as a reference',
+      async paymentId => {
+        const batcher = { addRequest: jest.fn() }
+        govUkPayApi.queueRecurringPaymentStatusCheck(paymentId, batcher)
+        expect(batcher.addRequest).toHaveBeenCalledWith(expect.any(String), expect.any(Object), paymentId)
+      }
+    )
 
     it("uses default timeout of 10000ms if GOV_PAY_REQUEST_TIMEOUT_MS isn't set", async () => {
       delete process.env.GOV_PAY_REQUEST_TIMEOUT_MS
@@ -240,7 +250,8 @@ describe('govuk-pay-api-connector', () => {
         expect.any(String),
         expect.objectContaining({
           timeout: 10000
-        })
+        }),
+        expect.any(String)
       )
     })
   })

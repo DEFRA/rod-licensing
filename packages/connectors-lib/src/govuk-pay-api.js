@@ -46,11 +46,15 @@ export const queueRecurringPayment = (preparedPayment, batcher) => {
 }
 
 export const queueRecurringPaymentStatusCheck = (paymentId, batcher) => {
-  batcher.addRequest(`${process.env.GOV_PAY_RCP_API_URL}/${paymentId}`, {
-    headers: headers(true),
-    method: 'get',
-    timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
-  })
+  batcher.addRequest(
+    `${process.env.GOV_PAY_RCP_API_URL}/${paymentId}`,
+    {
+      headers: headers(true),
+      method: 'get',
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+    },
+    paymentId
+  )
 }
 
 /**
