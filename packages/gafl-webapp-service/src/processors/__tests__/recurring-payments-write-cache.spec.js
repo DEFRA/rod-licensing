@@ -10,7 +10,12 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         lastName: 'Pysgotwr',
         preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
       },
-      permit: { description: 'Coarse 6 month 15 Rod Licence (Half)' },
+      permit: {
+        description: 'Trout and coarse 12 month 2 Rod Licence (Full)',
+        permitSubtype: { label: 'Trout and coarse' },
+        numberOfRods: 2,
+        concessions: [{ type: 'Senior' }]
+      },
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
 
@@ -48,7 +53,15 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     it.each([
       ['referenceNumber', '23270624-2WC3FSD-ABNCY4'],
       ['endDate', '2024-12-31'],
-      ['permit', { description: 'Coarse 12 month 2 Rod Licence (Full)' }]
+      [
+        'permit',
+        {
+          description: 'Salmon and sea trout 12 month 2 Rod Licence (Full)',
+          permitSubtype: { label: 'Salmon and sea trout' },
+          numberOfRods: 2,
+          concessions: [{ type: 'Senior' }]
+        }
+      ]
     ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
@@ -82,6 +95,28 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         expect.objectContaining({
           permission: expect.objectContaining({
             licensee: { firstName: 'John', lastName: 'Bull', preferredMethodOfConfirmation: 'Text' }
+          })
+        })
+      )
+    })
+
+    it.each([
+      ['permitSubtype', { label: 'Salmon and sea trout' }],
+      ['numberOfRods', 3],
+      ['concessions', [{ type: 'Senior', proof: { type: 'none' } }]]
+    ])('Adds permit %s to transaction cache', async (fieldName, fieldValue) => {
+      const setCurrentPermission = jest.fn()
+      const mockRequest = getSampleRequest(setCurrentPermission)
+      const authResult = getSampleAuthResult({ permit: { [fieldName]: fieldValue } })
+
+      await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
+
+      expect(setCurrentPermission).toHaveBeenCalledWith(
+        expect.objectContaining({
+          permission: expect.objectContaining({
+            permit: expect.objectContaining({
+              [fieldName]: fieldValue
+            })
           })
         })
       )

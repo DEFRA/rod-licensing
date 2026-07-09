@@ -4,6 +4,7 @@ import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat, dateDisplayFormat } from '../../../../../processors/date-and-time-display.js'
+import { licenceTypeDisplay } from '../../../../../processors/licence-type-display.js'
 
 jest.mock('../../../../../routes/page-route.js')
 jest.mock('../../../../../uri.js', () => ({
@@ -156,7 +157,19 @@ describe('route', () => {
           key: { text: mssgs.rp_cancel_details_licence_holder },
           value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
         },
-        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: sampleData.permission.permit.description } },
+        {
+          key: { text: mssgs.rp_cancel_details_licence_type },
+          value: {
+            text: licenceTypeDisplay(
+              {
+                licenceType: sampleData.permission.permit.permitSubtype?.label,
+                numberOfRods: String(sampleData.permission.permit.numberOfRods),
+                concessions: sampleData.permission.permit.concessions
+              },
+              mssgs
+            )
+          }
+        },
         {
           key: { text: mssgs.rp_cancel_details_payment_card },
           value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
@@ -164,6 +177,41 @@ describe('route', () => {
         { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
         { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
       ])
+    })
+
+    it.each([
+      ['includes (over_66) when senior concession present', [{ type: 'Senior' }], true],
+      ['excludes (over_66) when no senior concession', [], false]
+    ])('%s', async (_description, concessions, expectOver66) => {
+      const mssgs = {
+        ...getSampleCatalog(),
+        over_66: ' (over_66)',
+        licence_type_radio_salmon_payment_summary: 'Salmon and sea trout'
+      }
+      const sampleData = {
+        permission: {
+          licensee: { firstName: 'John', lastName: 'Smith' },
+          permit: {
+            permitSubtype: { label: 'Salmon and sea trout' },
+            numberOfRods: 2,
+            concessions
+          },
+          endDate: '01-01-2026',
+          referenceNumber: 'abc123'
+        },
+        recurringPayment: { lastDigitsCardNumbers: '1234' }
+      }
+      const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+      moment.mockReturnValueOnce({ format: () => '01-01-2026' })
+
+      const result = await getData(mockRequest)
+
+      const licenceTypeRow = result.summaryTable.find(row => row.key.text === mssgs.rp_cancel_details_licence_type)
+      if (expectOver66) {
+        expect(licenceTypeRow.value.text).toContain('(over_66)')
+      } else {
+        expect(licenceTypeRow.value.text).not.toContain('(over_66)')
+      }
     })
 
     it('passes cache date format and request locale to moment', async () => {
