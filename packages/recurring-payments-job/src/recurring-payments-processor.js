@@ -219,8 +219,9 @@ const preparePayment = (agreementId, transaction) => {
 
 const checkPaymentStatuses = async payments => {
   const batcher = await queuePaymentStatusChecks(payments)
-  for (let index = 0; index < batcher.responseDetails.length; index++) {
-    const response = batcher.responseDetails[index].responses.at(-1)
+  for (const payment of payments) {
+    const responseDetail = batcher.responseDetails.find(rd => rd.reference === payment.paymentId)
+    const response = responseDetail.responses.at(-1)
     if (isSuccessfulResponse(response.status)) {
       const paymentStatusCheck = await response.json()
       const paymentStatus = paymentStatusCheck.state.status
@@ -230,14 +231,14 @@ const checkPaymentStatuses = async payments => {
         await handlePaymentStatusSuccess(paymentStatusCheck)
       }
       if ([PAYMENT_STATUS.Failure, PAYMENT_STATUS.Error].includes(paymentStatus)) {
-        await handlePaymentStatusFailure(payments[index])
+        await handlePaymentStatusFailure(payment)
       }
     } else if (isClientError(response.status)) {
-      console.error(`Failed to fetch status for payment ${payments[index].paymentId}, error ${response.status}`)
+      console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${response.status}`)
     } else if (isServerError(response.status)) {
-      console.error(`Payment status API error for ${payments[index].paymentId}, error ${response.status}`)
+      console.error(`Payment status API error for ${payment.paymentId}, error ${response.status}`)
     } else {
-      console.error(`Unexpected error fetching payment status for ${payments[index].paymentId}.`)
+      console.error(`Unexpected error fetching payment status for ${payment.paymentId}.`)
     }
   }
 }
