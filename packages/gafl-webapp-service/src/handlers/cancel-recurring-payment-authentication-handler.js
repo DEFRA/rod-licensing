@@ -48,7 +48,7 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_AGREEMENT_NOT_FOUND.uri
     context.errorPageName = CANCEL_RP_AGREEMENT_NOT_FOUND.page
-  } else if (authenticationResult.recurringPayment.cancelledDate) {
+  } else if (recurringPaymentAlreadyCancelled(authenticationResult.recurringPayment)) {
     context.pageData.errorRedirect = true
     context.redirectUri = CANCEL_RP_ALREADY_CANCELLED.uri
     context.errorPageName = CANCEL_RP_ALREADY_CANCELLED.page
@@ -70,5 +70,7 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
 
   return h.redirectWithLanguageCode(CANCEL_RP_DETAILS.uri)
 }
+
+const recurringPaymentAlreadyCancelled = rp => rp.cancelledDate || rp.cancelledReason
 
 export default cancelRecurringPaymentAuthenticationHandler
