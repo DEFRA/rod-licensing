@@ -117,7 +117,7 @@ const requestPayments = async dueRCPayments => {
 }
 
 const createTransactions = async dueRCPayments =>
-  await Promise.allSettled(
+  Promise.allSettled(
     dueRCPayments.map(async duePayment => {
       const {
         entity: { agreementId, id },
