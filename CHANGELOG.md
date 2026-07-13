@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.7 (2026-07-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2438](https://github.com/DEFRA/rod-licensing/pull/2438) update privacy policy ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.73.0-rc.6 (2026-07-09)
 
 #### :rocket: Enhancement
