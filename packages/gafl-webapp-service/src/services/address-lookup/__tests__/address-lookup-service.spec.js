@@ -1,7 +1,10 @@
 import addressLookupService from '../address-lookup-service.js'
 import fetch from 'node-fetch'
+import db from 'debug'
 
 jest.mock('node-fetch')
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:address-lookup-service')]
 
 describe('address-lookup-service', () => {
   beforeAll(() => {
@@ -69,6 +72,50 @@ describe('address-lookup-service', () => {
   })
 
   describe('filtering by premises', () => {
+    describe('refactored premises field', () => {
+      it.each`
+        desc                                                                   | expected                                    | classificationCode | poBoxNumber  | subBuildingName | buildingName     | buildingNumber | organisationName
+        ${'everything but ORGANISATION_NAME is blank'}                         | ${'FishCorp'}                               | ${undefined}       | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+        ${'everything but ORGANISATION_NAME and CLASSIFICATION CODE is blank'} | ${''}                                       | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+        ${'CLASSIFICATION_CODE is blank'}                                      | ${'12345, Flat 3A, Fish Towers, 42'}        | ${undefined}       | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+        ${'CLASSIFICATION_CODE is for PO box'}                                 | ${'PO BOX 12345'}                           | ${'OR3'}           | ${'12345'}   | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+        ${'CLASSIFICATION_CODE is for PO box but other fields are present'}    | ${'PO BOX 12345, Flat 3A, Fish Towers, 42'} | ${'OR3'}           | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+        ${'CLASSIFICATION_CODE is for PO box but PO_BOX_NUMBER is blank'}      | ${'Flat 3A, Fish Towers, 42'}               | ${'OR3'}           | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+        ${'SUB_BUILDING_NAME, BUILDING_NAME and BUILDING_NUMBER are present'}  | ${'Flat 3A, Fish Towers, 42'}               | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+        ${'SUB_BUILDING_NAME and BUILDING_NAME are present'}                   | ${'Flat 3A, Fish Towers'}                   | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
+        ${'SUB_BUILDING_NAME and BUILDING_NUMBER are present'}                 | ${'Flat 3A, 42'}                            | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+        ${'BUILDING_NAME and BUILDING_NUMBER are present'}                     | ${'Fish Towers, 42'}                        | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+        ${'BUILDING_NAME is present'}                                          | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
+        ${'BUILDING_NUMBER is present'}                                        | ${'42'}                                     | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+      `(
+        'when $desc it logs a premises field with correct value',
+        async ({ expected, classificationCode, poBoxNumber, subBuildingName, buildingName, buildingNumber, organisationName }) => {
+          fetch.mockResolvedValueOnce({
+            json: () => ({
+              results: [
+                {
+                  DPA: {
+                    ADDRESS: 'FISHCORP, FISH BOULEVARD, FISHBOROUGH, FI1 5SH',
+                    BUILDING_NAME: buildingName,
+                    BUILDING_NUMBER: buildingNumber,
+                    CLASSIFICATION_CODE: classificationCode,
+                    ORGANISATION_NAME: organisationName,
+                    PO_BOX_NUMBER: poBoxNumber,
+                    POST_TOWN: 'FISHBOROUGH',
+                    POSTCODE: 'FI1 5SH',
+                    SUB_BUILDING_NAME: subBuildingName,
+                    THOROUGHFARE_NAME: 'FISH BOULEVARD'
+                  }
+                }
+              ]
+            })
+          })
+          await addressLookupService('Flat 3A', 'FI1 5SH')
+          expect(debug).toHaveBeenCalledWith('Refactored premises field will be:', expected)
+        }
+      )
+    })
+
     it('filters results by BUILDING_NAME substring match', async () => {
       fetch.mockResolvedValueOnce({
         json: () => ({

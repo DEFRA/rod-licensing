@@ -37,6 +37,35 @@ const fetchPage = async url => {
   return response.json()
 }
 
+const buildPremises = result => {
+  if (shouldBeOrganisationOnly(result)) {
+    return result.ORGANISATION_NAME
+  }
+
+  const premisesFields = []
+  if (isPoBoxAddress(result)) {
+    premisesFields.push('PO BOX ' + result.PO_BOX_NUMBER)
+  } else {
+    premisesFields.push(result.PO_BOX_NUMBER)
+  }
+  premisesFields.push(result.SUB_BUILDING_NAME, result.BUILDING_NAME, result.BUILDING_NUMBER)
+
+  return premisesFields.filter(Boolean).join(', ')
+}
+
+const shouldBeOrganisationOnly = result => {
+  const fieldsToCheck = [
+    result.CLASSIFICATION_CODE,
+    result.PO_BOX_NUMBER,
+    result.SUB_BUILDING_NAME,
+    result.BUILDING_NAME,
+    result.BUILDING_NUMBER
+  ]
+  return fieldsToCheck.filter(Boolean).length === 0
+}
+
+const isPoBoxAddress = result => result.CLASSIFICATION_CODE === 'OR3' && result.PO_BOX_NUMBER
+
 /**
  * Filter results by premises search term
  * @param {Array} results - Array of address results
@@ -51,6 +80,8 @@ const filterByPremises = (results, premises) => {
   const normalizedPremises = premises.trim().replaceAll(/\s+/g, ' ').toLowerCase()
 
   return results.filter(r => {
+    debug('Refactored premises field will be:', buildPremises(r.DPA))
+
     const searchText = [r.DPA.SUB_BUILDING_NAME, r.DPA.BUILDING_NUMBER, r.DPA.BUILDING_NAME, r.DPA.ORGANISATION_NAME]
       .filter(Boolean)
       .join(' ')
