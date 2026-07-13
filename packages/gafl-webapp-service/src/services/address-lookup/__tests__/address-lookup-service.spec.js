@@ -87,6 +87,11 @@ describe('address-lookup-service', () => {
         ${'BUILDING_NAME and BUILDING_NUMBER are present'}                     | ${'Fish Towers, 42'}                        | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
         ${'BUILDING_NAME is present'}                                          | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
         ${'BUILDING_NUMBER is present'}                                        | ${'42'}                                     | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+        ${'BUILDING_NAME is present and BUILDING_NUMBER is an empty string'}   | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${''}          | ${'FishCorp'}
+        ${'BUILDING_NAME is present and BUILDING_NUMBER is spaces'}            | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'  '}        | ${'FishCorp'}
+        ${'BUILDING_NAME is present and BUILDING_NUMBER is null'}              | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${null}        | ${'FishCorp'}
+        ${'BUILDING_NUMBER is 0 string'}                                       | ${'0'}                                      | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'0'}         | ${'FishCorp'}
+        ${'BUILDING_NUMBER is 0 integer'}                                      | ${'0'}                                      | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${0}           | ${'FishCorp'}
       `(
         'when $desc it logs a premises field with correct value',
         async ({ expected, classificationCode, poBoxNumber, subBuildingName, buildingName, buildingNumber, organisationName }) => {

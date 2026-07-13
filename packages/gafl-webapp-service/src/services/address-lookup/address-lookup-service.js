@@ -50,7 +50,7 @@ const buildPremises = result => {
   }
   premisesFields.push(result.SUB_BUILDING_NAME, result.BUILDING_NAME, result.BUILDING_NUMBER)
 
-  return premisesFields.filter(Boolean).join(', ')
+  return removeMissingOrBlankFields(premisesFields).join(', ')
 }
 
 const shouldBeOrganisationOnly = result => {
@@ -61,10 +61,14 @@ const shouldBeOrganisationOnly = result => {
     result.BUILDING_NAME,
     result.BUILDING_NUMBER
   ]
-  return fieldsToCheck.filter(Boolean).length === 0
+  return removeMissingOrBlankFields(fieldsToCheck).length === 0
 }
 
 const isPoBoxAddress = result => result.CLASSIFICATION_CODE === 'OR3' && result.PO_BOX_NUMBER
+
+const removeMissingOrBlankFields = array => array.map(e => removeTrailingWhitespace(e)).filter(e => isNotNullOrUndefinedOrEmpty(e))
+const removeTrailingWhitespace = value => (typeof value === 'string' ? value.trim() : value)
+const isNotNullOrUndefinedOrEmpty = value => value !== null && value !== undefined && String(value).length
 
 /**
  * Filter results by premises search term
