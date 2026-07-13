@@ -11,7 +11,7 @@ to maintain state during the import process.
 
 | name                      | description                                               | required | default   | valid                                           | notes |
 | ------------------------- | --------------------------------------------------------- | :------: | --------- | ----------------------------------------------- | ----- |
-| NODE_ENV                  | Node environment                                          |    no    |           | development, test, production                   |       |
+| NODE_ENV                  | Node environment                                          |    no    |           | development, fsh-{env}                          |       |
 | POCL_FILE_STAGING_TABLE   | The DynamoDB table used for staging POCL files            |   yes    |           |                                                 |       |
 | POCL_RECORD_STAGING_TABLE | The DynamoDB table used for staging POCL records          |   yes    |           |                                                 |       |
 | POCL_STAGING_TTL          | The time to live for records in either staging table      |    no    | 168 hours |                                                 |       |

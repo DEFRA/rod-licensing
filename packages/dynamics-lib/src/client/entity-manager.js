@@ -1,6 +1,7 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
 import { escapeODataStringValue } from './util.js'
 import { CacheableOperation } from './cache.js'
+
 /**
  * Persist the provided entities.  Uses a create or update request as appropriate based on the state of the entity.
  *
@@ -186,6 +187,7 @@ export async function findByExample (entity) {
     const optionSetData = await retrieveGlobalOptionSets().cached()
     return results.value.map(result => entity.constructor.fromResponse(result, optionSetData))
   } catch (e) {
+    console.trace('Error when trying to findByExample for entity: %s', JSON.stringify(entity))
     console.error('Unable to findByExample:', e)
     throw e
   }

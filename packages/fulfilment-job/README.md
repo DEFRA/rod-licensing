@@ -21,7 +21,7 @@ provider.
 
 | name                                | description                                                                   | required | default | valid                                                                   | notes |
 | ----------------------------------- | ----------------------------------------------------------------------------- | :------: | ------- | ----------------------------------------------------------------------- | ----- |
-| NODE_ENV                            | Node environment                                                              |    no    |         | development, test, production                                           |       |
+| NODE_ENV                            | Node environment                                                              |    no    |         | development, fsh-{env}                                                  |       |
 | FULFILMENT_FILE_SIZE                | The maximum number of records written to an aggregated fulfilment file        |   yes    |         |                                                                         |       |
 | FULFILMENT_S3_BUCKET                | The name of the AWS S3 bucket in which to stage and aggregate fulfilment data |   yes    |         |                                                                         |       |
 | FULFILMENT_SEND_UNENCRYPTED_FILE    | Flag for whether to send the unencrypted fulfilment file                      |    no    | false   | true, false, 0, 1                                                       |       |

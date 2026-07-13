@@ -161,6 +161,25 @@ describe('preparePermissionDataForRenewal', () => {
       expect(permission.concessions).toEqual([])
     })
 
+    it.each([
+      ['1960-09-01', 'turns 66 in < 6 months'],
+      ['1960-05-13', 'turns 66 the day after licence start'],
+      ['1960-12-25', 'turns 66 in > 6 months']
+    ])("doesn't add senior concession if the licensee is 65 at licence start (DOB: %s, %s)", async birthDate => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
+      const endDate = moment('2026-05-11')
+      const almostSeniorPermission = existingPermission({
+        endDate,
+        licensee: {
+          ...existingPermission().licensee,
+          birthDate
+        }
+      })
+      const permission = await preparePermissionDataForRenewal(almostSeniorPermission)
+      expect(permission.concessions).toEqual([])
+      jest.useRealTimers()
+    })
+
     it('should remove noLicenceRequired from licensee', async () => {
       const permission = existingPermission()
       permission.licensee.noLicenceRequired = true
@@ -184,6 +203,138 @@ describe('preparePermissionDataForRenewal', () => {
 
       const preparedPermission = await preparePermissionDataForRenewal(permission)
       expect(preparedPermission.concessions).toEqual(expect.arrayContaining([expect.objectContaining(disabledConcession)]))
+    })
+
+    it('should remove incorrect senior concession if the licensee is not a senior', async () => {
+      const senior = { name: 'Senior', id: 'd0ece997-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+      const notReallyASeniorPermission = existingPermission({
+        concessions: [senior]
+      })
+      const ppd = await preparePermissionDataForRenewal(notReallyASeniorPermission)
+      expect(ppd.concessions).toEqual([])
+    })
+
+    it('should remove incorrect senior concession but keep disabled concession if the licensee is disabled but is not a senior', async () => {
+      const senior = { name: 'Senior', id: 'd0ece997-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+      const disabled = {
+        name: 'Disabled',
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        proof: { type: 'Blue Badge', referenceNumber: '123' }
+      }
+      const notReallyASeniorPermission = existingPermission({
+        concessions: [senior, disabled]
+      })
+      const ppd = await preparePermissionDataForRenewal(notReallyASeniorPermission)
+      expect(ppd.concessions).toEqual([disabled])
+    })
+  })
+
+  describe('junior to adult transition', () => {
+    describe.each`
+      description                                                                                            | birthDate       | oldEndDate
+      ${'the user is renewing at age 14 with a licence that will expire while they are 14'}                  | ${'2012-01-01'} | ${'2026-04-15'}
+      ${'the user is renewing at age 14 with a licence that expires today'}                                  | ${'2012-01-01'} | ${'2026-04-01'}
+      ${'the user is renewing at age 14 with a licence that expired while they were 14'}                     | ${'2012-01-01'} | ${'2026-03-31'}
+      ${'the user is renewing at age 16 with a licence that will expire while they are 16'}                  | ${'2010-01-01'} | ${'2026-04-15'}
+      ${'the user is renewing at age 16 with a licence that expires today'}                                  | ${'2010-01-01'} | ${'2026-04-01'}
+      ${'the user is renewing at age 16 with a licence that expired while they were 16'}                     | ${'2010-01-01'} | ${'2026-03-31'}
+      ${'the user is renewing the day before their 17th birthday with a licence that expired yesterday'}     | ${'2009-04-02'} | ${'2026-03-31'}
+      ${'the user is renewing the day before their 17th birthday with a licence that expires today'}         | ${'2009-04-02'} | ${'2026-04-01'}
+      ${'the user is renewing at age 16 with a licence that will expire the day before their 17th birthday'} | ${'2009-04-15'} | ${'2026-04-14'}
+    `('expected junior licenses', ({ description, birthDate, oldEndDate }) => {
+      it(`should keep junior concession if ${description}`, async () => {
+        jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
+        const endDate = moment(oldEndDate)
+        const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+        const stillJuniorPermission = existingPermission({
+          endDate,
+          licensee: {
+            ...existingPermission().licensee,
+            birthDate
+          },
+          concessions: [junior]
+        })
+
+        const ppd = await preparePermissionDataForRenewal(stillJuniorPermission)
+        expect(ppd.concessions[0]).toEqual(junior)
+        jest.useRealTimers()
+      })
+
+      it(`should keep existing disabled concession and add junior concession if ${description}`, async () => {
+        jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
+        const endDate = moment(oldEndDate)
+        const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+        const disabled = {
+          name: 'Disabled',
+          id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+          proof: { type: 'Blue Badge', referenceNumber: '123' }
+        }
+        const stillJuniorPermission = existingPermission({
+          endDate,
+          licensee: {
+            ...existingPermission().licensee,
+            birthDate
+          },
+          concessions: [disabled]
+        })
+
+        const ppd = await preparePermissionDataForRenewal(stillJuniorPermission)
+        expect(ppd.concessions).toEqual([disabled, junior])
+        jest.useRealTimers()
+      })
+    })
+
+    describe.each`
+      description                                                                                                      | birthDate       | oldEndDate
+      ${'the user is renewing at age 16 with a licence that will expire on their 17th birthday'}                       | ${'2009-04-10'} | ${'2026-04-10'}
+      ${'the user is renewing at age 16 with a licence that will expire the day after their 17th birthday'}            | ${'2009-04-10'} | ${'2026-04-11'}
+      ${'the user is renewing on the day of their 17th birthday a licence that expired yesterday'}                     | ${'2009-04-01'} | ${'2026-03-31'}
+      ${'the user is renewing on the day of their 17th birthday a licence that expires today'}                         | ${'2009-04-01'} | ${'2026-04-01'}
+      ${'the user is renewing on the day of their 17th birthday with a licence that expired a week ago'}               | ${'2009-04-01'} | ${'2026-03-25'}
+      ${'the user is renewing the day after their 17th birthday a licence that expired the day before their birthday'} | ${'2009-03-31'} | ${'2026-03-30'}
+      ${'the user is renewing the day after their 17th birthday a licence that expired on their birthday'}             | ${'2009-03-31'} | ${'2026-03-31'}
+      ${'the user is renewing the day after their 17th birthday a licence that expires today'}                         | ${'2009-03-31'} | ${'2026-04-01'}
+      ${'the user is renewing the day after their 17th birthday with a licence that expired a week ago'}               | ${'2009-03-31'} | ${'2026-03-25'}
+    `('expected junior licenses', ({ description, birthDate, oldEndDate }) => {
+      it(`should remove junior concession if ${description}`, async () => {
+        jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
+        const endDate = moment(oldEndDate)
+        const junior = { name: 'Junior', id: '3230c68f-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+        const nowAdultPermission = existingPermission({
+          endDate,
+          licensee: {
+            ...existingPermission().licensee,
+            birthDate
+          },
+          concessions: [junior]
+        })
+
+        const ppd = await preparePermissionDataForRenewal(nowAdultPermission)
+        expect(ppd.concessions).toEqual([])
+        jest.useRealTimers()
+      })
+
+      it(`should keep disabled concession and not add junior concession if ${description}`, async () => {
+        jest.useFakeTimers().setSystemTime(new Date('2026-04-01'))
+        const endDate = moment(oldEndDate)
+        const disabled = {
+          name: 'Disabled',
+          id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+          proof: { type: 'Blue Badge', referenceNumber: '123' }
+        }
+        const nowAdultPermission = existingPermission({
+          endDate,
+          licensee: {
+            ...existingPermission().licensee,
+            birthDate
+          },
+          concessions: [disabled]
+        })
+
+        const ppd = await preparePermissionDataForRenewal(nowAdultPermission)
+        expect(ppd.concessions).toEqual([disabled])
+        jest.useRealTimers()
+      })
     })
   })
 
