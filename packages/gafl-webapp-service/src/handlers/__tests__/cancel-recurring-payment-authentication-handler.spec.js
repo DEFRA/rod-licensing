@@ -193,10 +193,13 @@ describe('Cancel RP Authentication Handler', () => {
     })
   })
 
-  describe('Unsuccessful authentication - RCP already cancelled', () => {
+  describe.each([
+    ['cancelledDate', { cancelledDate: '2024-01-01' }],
+    ['cancelledReason', { cancelledReason: { label: 'User Cancelled' } }]
+  ])('Unsuccessful authentication - RCP has a %s', (_field, data) => {
     it('redirects to the CANCEL_RP_ALREADY_CANCELLED.uri', async () => {
       const { h } = await invokeHandlerWithMocks({
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, ...data } }
       })
       expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(CANCEL_RP_ALREADY_CANCELLED.uri)
     })
@@ -207,14 +210,14 @@ describe('Cancel RP Authentication Handler', () => {
       h.redirectWithLanguageCode.mockReturnValueOnce(redirectResult)
       const { result } = await invokeHandlerWithMocks({
         h,
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, ...data } }
       })
       expect(result).toBe(redirectResult)
     })
 
     it('sets page cache for RCP already cancelled', async () => {
       const { request } = await invokeHandlerWithMocks({
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, ...data } }
       })
       expect(request.cache().helpers.page.setCurrentPermission).toHaveBeenCalledWith(
         CANCEL_RP_IDENTIFY.page,
@@ -227,7 +230,7 @@ describe('Cancel RP Authentication Handler', () => {
 
     it('marks status as unauthorised', async () => {
       const { request } = await invokeHandlerWithMocks({
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, ...data } }
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({ authentication: { authorised: false } })
@@ -236,7 +239,7 @@ describe('Cancel RP Authentication Handler', () => {
 
     it('sets currentPage to error page name', async () => {
       const { request } = await invokeHandlerWithMocks({
-        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, cancelledDate: '2024-01-01' } }
+        salesApiResponse: { permission: { id: 'perm-id' }, recurringPayment: { id: 'rcp-id', status: 1, ...data } }
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({

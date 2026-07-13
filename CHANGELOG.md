@@ -1,4 +1,70 @@
 
+## v1.73.0-rc.6 (2026-07-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2434](https://github.com/DEFRA/rod-licensing/pull/2434) Dev - Ammend content in telesales first page ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+## v1.73.0-rc.5 (2026-06-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2394](https://github.com/DEFRA/rod-licensing/pull/2394) RP cancellation journey allows same agreement to be cancelled twice ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.73.0-rc.3 (2026-06-30)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#2435](https://github.com/DEFRA/rod-licensing/pull/2435) Database connection error when trying to findByExample ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.73.0-rc.2 (2026-06-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2405](https://github.com/DEFRA/rod-licensing/pull/2405) Update privacy policy ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+## v1.73.0-rc.1 (2026-06-30)
+
+#### :memo: Documentation
+* `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2412](https://github.com/DEFRA/rod-licensing/pull/2412) update README about the value of NODE_ENV ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+## v1.73.0-rc.0 (2026-06-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2402](https://github.com/DEFRA/rod-licensing/pull/2402) Corrected link colours in RCP journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.72.0-rc.1 (2026-06-04)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`, `sales-api-service`
+  * [#2410](https://github.com/DEFRA/rod-licensing/pull/2410) Refactored renewal service doesn't handle junior concessions properly ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 
