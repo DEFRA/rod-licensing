@@ -120,14 +120,17 @@ export const getRecurringPaymentAgreementInformation = async agreementId => {
  * @returns {Promise<*>}
  */
 export const cancelRecurringPaymentAgreement = async agreementId => {
+  console.log(`[cancelRecurringPaymentAgreement] Calling GOV.UK Pay cancel endpoint for agreementId: ${agreementId}, URL: ${process.env.GOV_PAY_RCP_API_URL}/${agreementId}/cancel`)
   try {
-    return fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}/cancel`, {
+    const response = await fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}/cancel`, {
       headers: headers(true),
       method: 'post',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
+    console.log(`[cancelRecurringPaymentAgreement] GOV.UK Pay response: ${response.status} ${response.statusText}`)
+    return response
   } catch (err) {
-    console.error(`Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: ${agreementId}`, err)
+    console.error(`[cancelRecurringPaymentAgreement] Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: ${agreementId}`, err)
     throw err
   }
 }

@@ -170,16 +170,22 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 }
 
 export const cancelRecurringPayment = async (id, reason) => {
+  console.log(`[cancelRecurringPayment] Called with id: ${id}, reason: ${reason}`)
   const recurringPayment = await findById(RecurringPayment, id)
   if (!recurringPayment) {
+    console.log(`[cancelRecurringPayment] No recurring payment found for id: ${id}`)
     throw new Error('Invalid id provided for recurring payment cancellation')
   }
   if (!recurringPayment.agreementId) {
+    console.log(`[cancelRecurringPayment] Recurring payment ${id} has no agreementId`)
     throw new Error('Cannot cancel a recurring payment without an agreement ID')
   }
 
+  console.log(`[cancelRecurringPayment] Found recurring payment, agreementId: ${recurringPayment.agreementId}`)
+
   recurringPayment.cancelledDate = new Date().toISOString()
   recurringPayment.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+  console.log(`[cancelRecurringPayment] Set cancelledDate: ${recurringPayment.cancelledDate}, cancelledReason: ${JSON.stringify(recurringPayment.cancelledReason)}`)
 
   await cancelGovUkPayAgreement(recurringPayment.agreementId)
 
@@ -188,37 +194,52 @@ export const cancelRecurringPayment = async (id, reason) => {
 
   const linkedPermission = await getLinkedPermission(id)
   if (linkedPermission) {
+    console.log(`[cancelRecurringPayment] Found linked permission, setting isRecurringPayment = false`)
     linkedPermission.isRecurringPayment = false
     entitiesToPersist.push(linkedPermission)
+  } else {
+    console.log(`[cancelRecurringPayment] No linked permission found for recurring payment id: ${id}`)
   }
 
+  console.log(`[cancelRecurringPayment] Persisting ${entitiesToPersist.length} entity/entities`)
   await persist(entitiesToPersist)
+  console.log(`[cancelRecurringPayment] Done`)
   return updatedRecurringPayment
 }
 
 const getLinkedPermission = async recurringPaymentId => {
+  console.log(`[getLinkedPermission] Querying for permission linked to recurringPaymentId: ${recurringPaymentId}`)
   const query = findPermissionByRecurringPaymentId(recurringPaymentId)
   const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+  console.log(`[getLinkedPermission] Query returned ${response.value.length} record(s)`)
   if (response.value.length) {
     const [record] = response.value
     if (record.defra_ActivePermission) {
+      console.log(`[getLinkedPermission] Found active permission on record`)
       const optionSetData = await retrieveGlobalOptionSets().cached()
       return Permission.fromResponse(record.defra_ActivePermission, optionSetData)
     }
+    console.log(`[getLinkedPermission] Record found but no defra_ActivePermission present`)
   }
   return null
 }
 
 const cancelGovUkPayAgreement = async agreementId => {
+  console.log(`[cancelGovUkPayAgreement] Sending cancel request to GOV.UK Pay for agreementId: ${agreementId}`)
   const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
+  console.log(`[cancelGovUkPayAgreement] Response status: ${response.status} ${response.statusText}`)
   if (response.ok) {
+    console.log(`[cancelGovUkPayAgreement] Successfully cancelled GovUkPay agreement: ${agreementId}`)
     debug('Successfully cancelled GovUkPay agreement: %s', agreementId)
   } else if (response.status === StatusCodes.NOT_FOUND) {
+    console.log(`[cancelGovUkPayAgreement] GovUkPay agreement not found (already cancelled or does not exist): ${agreementId}`)
     debug('GovUkPay agreement not found (already cancelled or does not exist): %s', agreementId)
   } else if (response.status === StatusCodes.BAD_REQUEST) {
+    console.log(`[cancelGovUkPayAgreement] GovUkPay agreement cannot be cancelled (invalid state): ${agreementId}`)
     debug('GovUkPay agreement cannot be cancelled (invalid state): %s', agreementId)
   } else {
     const body = await response.text().catch(() => 'Unable to read response body')
+    console.log(`[cancelGovUkPayAgreement] Unexpected error cancelling agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
     throw new Error(`Failed to cancel GovUkPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
