@@ -232,20 +232,22 @@ describe('HTTP Request Batcher', () => {
       expect(fetch).toHaveBeenCalledTimes(maxRequestAttempts)
     })
 
-    // it.each([10, 7])('only retries until a successful response is received when maxRequestAttempts is set to %i', async maxRequestAttempts => {
-    it.each([7])('only retries until a successful response is received when maxRequestAttempts is set to %i', async maxRequestAttempts => {
-      const batcher = new HTTPRequestBatcher({ batchSize: 1 })
-      batcher.maxRequestAttempts = maxRequestAttempts
-      for (let x = 0; x < maxRequestAttempts - 3; x++) {
-        fetch.mockImplementationOnce(() => ({ status: 429 }))
+    it.each([10, 7])(
+      'only retries until a successful response is received when maxRequestAttempts is set to %i',
+      async maxRequestAttempts => {
+        const batcher = new HTTPRequestBatcher({ batchSize: 1 })
+        batcher.maxRequestAttempts = maxRequestAttempts
+        for (let x = 0; x < maxRequestAttempts - 3; x++) {
+          fetch.mockImplementationOnce(() => ({ status: 429 }))
+        }
+        fetch.mockResolvedValueOnce({ status: 200 })
+        batcher.addRequest('https://api.example.com')
+
+        await batcher.fetch()
+
+        expect(fetch).toHaveBeenCalledTimes(maxRequestAttempts - 3 + 1)
       }
-      fetch.mockResolvedValueOnce({ status: 200 })
-      batcher.addRequest('https://api.example.com')
-
-      await batcher.fetch()
-
-      expect(fetch).toHaveBeenCalledTimes(maxRequestAttempts - 3 + 1)
-    })
+    )
 
     it('stops retrying requests that received a 429 response once a successful response is received', async () => {
       const batcher = new HTTPRequestBatcher({ batchSize: 1 })
