@@ -8,18 +8,18 @@ When the RP job runs, all RP entries with an nextDueDate of the current date, a 
 
 # Environment variables
 
-| name                           | description                                                     | required | default             | valid                         | notes |
-| ------------------------------ | --------------------------------------------------------------- | :------: | ------------------- | ----------------------------- | ----- |
-| NODE_ENV                       | Node environment                                                |    no    |                     | development, fsh-{env}.       |       |
-| RUN_RECURRING_PAYMENTS         | Determine whether to run recurring payments job or not          |   yes    |                     |                               |       |
-| SALES_API_URL                  | URL for the sales API                                           |    no    | http://0.0.0.0:4000 |                               |       |
-| SALES_API_TIMEOUT_MS           | The timeout in milliseconds requests to the API                 |    no    | 10000               |                               |       |
-| RECURRING_PAYMENTS_LOCAL_DELAY | Delay for running recurring payments until sales api is running |    no    |                     |                               |       |
-| GOV_PAY_API_URL                | Gov.UK Pay API URL                                              |   yes    |                     |                               |       |
-| GOV_PAY_HEALTH_CHECK_URL       | Gov.UK Pay health check URL                                     |   yes    |                     |                               |       |
-| GOV_PAY_GET_BATCH_SIZE         | Gov.UK Pay batch size for HTTP GET requests                     |   yes    |                     |                               |       |
-| GOV_PAY_POST_BATCH_SIZE        | Gov.UK Pay batch size for HTTP POST requests                    |   yes    |                     |                               |       |
-| GOV_PAY_BATCH_DELAY_MS         | Millisecond delay before checking payment status                |   yes    |                     |                               |       |
+| name                           | description                                                     | required | default             | valid                  | notes |
+| ------------------------------ | --------------------------------------------------------------- | :------: | ------------------- | ---------------------- | ----- |
+| NODE_ENV                       | Node environment                                                |    no    |                     | development, fsh-{env} |       |
+| RUN_RECURRING_PAYMENTS         | Determine whether to run recurring payments job or not          |   yes    |                     |                        |       |
+| SALES_API_URL                  | URL for the sales API                                           |    no    | http://0.0.0.0:4000 |                        |       |
+| SALES_API_TIMEOUT_MS           | The timeout in milliseconds requests to the API                 |    no    | 10000               |                        |       |
+| RECURRING_PAYMENTS_LOCAL_DELAY | Delay for running recurring payments until sales api is running |    no    |                     |                        |       |
+| GOV_PAY_API_URL                | Gov.UK Pay API URL                                              |   yes    |                     |                        |       |
+| GOV_PAY_HEALTH_CHECK_URL       | Gov.UK Pay health check URL                                     |   yes    |                     |                        |       |
+| GOV_PAY_GET_BATCH_SIZE         | Gov.UK Pay batch size for HTTP GET requests                     |   yes    |                     |                        |       |
+| GOV_PAY_POST_BATCH_SIZE        | Gov.UK Pay batch size for HTTP POST requests                    |   yes    |                     |                        |       |
+| GOV_PAY_BATCH_DELAY_MS         | Millisecond delay before checking payment status                |   yes    |                     |                        |       |
 
 ### See also:
 
