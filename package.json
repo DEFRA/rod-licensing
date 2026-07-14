@@ -86,6 +86,12 @@
     "collectCoverageFrom": [
       "**/src/**/*.js"
     ],
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@defra-fish/)"
+    ],
     "coverageReporters": [
       "lcov",
       "text"
