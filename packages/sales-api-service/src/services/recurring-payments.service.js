@@ -185,7 +185,11 @@ export const cancelRecurringPayment = async (id, reason) => {
 
   recurringPayment.cancelledDate = new Date().toISOString()
   recurringPayment.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
-  console.log(`[cancelRecurringPayment] Set cancelledDate: ${recurringPayment.cancelledDate}, cancelledReason: ${JSON.stringify(recurringPayment.cancelledReason)}`)
+  console.log(
+    `[cancelRecurringPayment] Set cancelledDate: ${recurringPayment.cancelledDate}, cancelledReason: ${JSON.stringify(
+      recurringPayment.cancelledReason
+    )}`
+  )
 
   await cancelGovUkPayAgreement(recurringPayment.agreementId)
 
@@ -194,7 +198,7 @@ export const cancelRecurringPayment = async (id, reason) => {
 
   const linkedPermission = await getLinkedPermission(id)
   if (linkedPermission) {
-    console.log(`[cancelRecurringPayment] Found linked permission, setting isRecurringPayment = false`)
+    console.log('[cancelRecurringPayment] Found linked permission, setting isRecurringPayment = false')
     linkedPermission.isRecurringPayment = false
     entitiesToPersist.push(linkedPermission)
   } else {
@@ -203,7 +207,7 @@ export const cancelRecurringPayment = async (id, reason) => {
 
   console.log(`[cancelRecurringPayment] Persisting ${entitiesToPersist.length} entity/entities`)
   await persist(entitiesToPersist)
-  console.log(`[cancelRecurringPayment] Done`)
+  console.log('[cancelRecurringPayment] Done')
   return updatedRecurringPayment
 }
 
@@ -215,11 +219,11 @@ const getLinkedPermission = async recurringPaymentId => {
   if (response.value.length) {
     const [record] = response.value
     if (record.defra_ActivePermission) {
-      console.log(`[getLinkedPermission] Found active permission on record`)
+      console.log('[getLinkedPermission] Found active permission on record')
       const optionSetData = await retrieveGlobalOptionSets().cached()
       return Permission.fromResponse(record.defra_ActivePermission, optionSetData)
     }
-    console.log(`[getLinkedPermission] Record found but no defra_ActivePermission present`)
+    console.log('[getLinkedPermission] Record found but no defra_ActivePermission present')
   }
   return null
 }
@@ -239,7 +243,9 @@ const cancelGovUkPayAgreement = async agreementId => {
     debug('GovUkPay agreement cannot be cancelled (invalid state): %s', agreementId)
   } else {
     const body = await response.text().catch(() => 'Unable to read response body')
-    console.log(`[cancelGovUkPayAgreement] Unexpected error cancelling agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
+    console.log(
+      `[cancelGovUkPayAgreement] Unexpected error cancelling agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`
+    )
     throw new Error(`Failed to cancel GovUkPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
