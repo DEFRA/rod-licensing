@@ -101,10 +101,12 @@ const getBatcherImplementation = (responses = []) => {
     this.addRequest = jest.fn()
     this.fetch = jest.fn(() => {
       this.responseDetails = responses.map(response => {
+        const reference = response.reference
+        delete response.reference
         return {
           url: 'url',
           options: {},
-          reference: response.reference || 'test-agreement-id',
+          reference: reference || 'test-agreement-id',
           responses: Array.isArray(response) ? response : [response]
         }
       })
@@ -821,12 +823,12 @@ describe('recurring-payments-processor', () => {
   })
 
   describe.each([
-    ['request payment', 1],
-    ['get payment status', 2]
-  ])('HTTPRequestBatcher instantiation for %s', (_d, callNumber) => {
+    ['request payment', 1, 'GOV_PAY_POST_BATCH_SIZE'],
+    ['get payment status', 2, 'GOV_PAY_GET_BATCH_SIZE']
+  ])('HTTPRequestBatcher instantiation for %s', (_d, callNumber, envVarName) => {
     it.each([23, 202, 1])('has expected batch size (%i)', async batchSize => {
       salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
-      process.env.GOV_PAY_GET_BATCH_SIZE = batchSize
+      process.env[envVarName] = batchSize
       await execute()
       expect(HTTPRequestBatcher).toHaveBeenNthCalledWith(callNumber, expect.objectContaining({ batchSize }))
     })

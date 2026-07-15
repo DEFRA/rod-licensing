@@ -96,7 +96,7 @@ const requestPayments = async dueRCPayments => {
   const paymentsToRequest = createTransactionResults.filter(ctr => ctr.status === 'fulfilled').map(ctr => ctr.value)
 
   const batcher = new HTTPRequestBatcher({
-    batchSize: Number(process.env.GOV_PAY_GET_BATCH_SIZE),
+    batchSize: Number(process.env.GOV_PAY_POST_BATCH_SIZE),
     delay: Number(process.env.GOV_PAY_BATCH_DELAY_MS)
   })
 
@@ -162,7 +162,7 @@ const processPaymentResponses = async (paymentsToRequest, batcher) => {
         await salesApi.cancelRecurringPayment(paymentToRequest.transaction.recurringPayment.id)
       }
       if (response instanceof Error) {
-        console.error(`Error when calling GOV.UK Pay API for agreement ${response.reference}:`, response)
+        console.error(`Error when calling GOV.UK Pay API for agreement ${responseDetail.reference}:`, response)
       } else {
         console.error(`Unexpected response from GOV.UK Pay API. 
           Status: ${response.status}, 

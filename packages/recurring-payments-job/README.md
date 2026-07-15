@@ -15,11 +15,12 @@ When the RP job runs, all RP entries with an nextDueDate of the current date, a 
 | SALES_API_URL                  | URL for the sales API                                           |    no    | http://0.0.0.0:4000 |                        |       |
 | SALES_API_TIMEOUT_MS           | The timeout in milliseconds requests to the API                 |    no    | 10000               |                        |       |
 | RECURRING_PAYMENTS_LOCAL_DELAY | Delay for running recurring payments until sales api is running |    no    |                     |                        |       |
-| GOV_PAY_API_URL                | Gov.UK Pay API URL                                              |   yes    |                     |                        |       |
+| GOV_PAY_RCP_API_URL            | Gov.UK Pay API URL                                              |   yes    |                     |                        |       |
 | GOV_PAY_HEALTH_CHECK_URL       | Gov.UK Pay health check URL                                     |   yes    |                     |                        |       |
-| GOV_PAY_GET_BATCH_SIZE         | Gov.UK Pay batch size for HTTP GET requests                     |   yes    |                     |                        |       |
-| GOV_PAY_POST_BATCH_SIZE        | Gov.UK Pay batch size for HTTP POST requests                    |   yes    |                     |                        |       |
-| GOV_PAY_BATCH_DELAY_MS         | Millisecond delay before checking payment status                |   yes    |                     |                        |       |
+| GOV_PAY_GET_BATCH_SIZE         | Gov.UK Pay batch size for HTTP GET requests (payment status)    |   yes    |                     |                        |       |
+| GOV_PAY_POST_BATCH_SIZE        | Gov.UK Pay batch size for HTTP POST requests (payment request)  |   yes    |                     |                        |       |
+| GOV_PAY_BATCH_DELAY_MS         | Delay between batches used by the HTTPRequestBatcher            |   yes    |                     |                        |       |
+| GOV_PAY_REQUEST_TIMEOUT_MS     | Timeout for Gov.UK Pay HTTP requests                            |    no    | 10000               |                        |       |
 
 ### See also:
 
