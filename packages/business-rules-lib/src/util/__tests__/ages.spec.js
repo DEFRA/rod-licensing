@@ -25,7 +25,7 @@ describe('age determination', () => {
       expect(isAdult(age)).toBeFalsy()
     })
     it(`${ADULT_MIN_AGE} is an adult`, () => {
-      expect(isAdult(ADULT_MIN_AGE1)).toBeTruthy()
+      expect(isAdult(ADULT_MIN_AGE)).toBeTruthy()
     })
     it(`${ADULT_MIN_AGE + 1} is an adult`, () => {
       expect(isAdult(ADULT_MIN_AGE + 1)).toBeTruthy()

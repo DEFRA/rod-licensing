@@ -1,5 +1,5 @@
 import { HOW_CONTACTED } from './mapping-constants.js'
-import { JUNIOR_MAX_AGE, SERVICE_LOCAL_TIME, ADULT_MIN_AGE } from '@defra-fish/business-rules-lib'
+import { SERVICE_LOCAL_TIME, ADULT_MIN_AGE } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
 export const recurringPayReminderDisplay = (permission, mssgs) => {
