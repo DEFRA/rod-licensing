@@ -38,6 +38,8 @@ describe('validForRecurringPayment', () => {
     ${false} | ${'1D'}  | ${true}    | ${'not telesales'} | ${69} // 1 day licence - not valid
     ${false} | ${'12M'} | ${false}   | ${'not telesales'} | ${69} // not licence for you - not valid
     ${false} | ${'12M'} | ${true}    | ${'telesales'}     | ${69} // telesales - not valid
+    ${false}  | ${'12M'} | ${true}    | ${'not telesales'} | ${17} // minor, under 18
+    ${true}  | ${'12M'} | ${true}    | ${'not telesales'} | ${18} // adult, over 18
   `(
     'should return $expected as licence length is $length, licence for you is $licenceFor, journey is $telesales, and age is $age',
     ({ expected, length, licenceFor, telesales, age }) => {
