@@ -163,10 +163,10 @@ describe('govuk-pay-api-connector', () => {
     })
 
     it('queues a recurring payment', async () => {
-      const GOV_PAY_RCP_API_URL = 'GovPay RCP API URL'
+      const GOV_PAY_API_URL = 'GovPay API URL'
       const GOV_PAY_REQUEST_TIMEOUT_MS = '12345'
       const GOV_PAY_RECURRING_APIKEY = 'GovPay Recurring API Key'
-      process.env.GOV_PAY_RCP_API_URL = GOV_PAY_RCP_API_URL
+      process.env.GOV_PAY_API_URL = GOV_PAY_API_URL
       process.env.GOV_PAY_REQUEST_TIMEOUT_MS = GOV_PAY_REQUEST_TIMEOUT_MS
       process.env.GOV_PAY_RECURRING_APIKEY = GOV_PAY_RECURRING_APIKEY
       const batcher = { addRequest: jest.fn() }
@@ -174,7 +174,7 @@ describe('govuk-pay-api-connector', () => {
       govUkPayApi.queueRecurringPayment(preparedPayment, batcher)
 
       expect(batcher.addRequest).toHaveBeenCalledWith(
-        GOV_PAY_RCP_API_URL,
+        GOV_PAY_API_URL,
         expect.objectContaining({
           headers: recurringHeaders(),
           method: 'post',
@@ -211,17 +211,17 @@ describe('govuk-pay-api-connector', () => {
 
   describe('queueRecurringPaymentStatusCheck', () => {
     it.each(['abc-123', 'def-456'])('queues a recurring payment status check with payment id %s', async paymentId => {
-      const GOV_PAY_RCP_API_URL = 'GovPay RCP API URL'
+      const GOV_PAY_API_URL = 'GovPay API URL'
       const GOV_PAY_REQUEST_TIMEOUT_MS = '12345'
       const GOV_PAY_RECURRING_APIKEY = 'GovPay Recurring API Key'
-      process.env.GOV_PAY_RCP_API_URL = GOV_PAY_RCP_API_URL
+      process.env.GOV_PAY_API_URL = GOV_PAY_API_URL
       process.env.GOV_PAY_REQUEST_TIMEOUT_MS = GOV_PAY_REQUEST_TIMEOUT_MS
       process.env.GOV_PAY_RECURRING_APIKEY = GOV_PAY_RECURRING_APIKEY
       const batcher = { addRequest: jest.fn() }
       govUkPayApi.queueRecurringPaymentStatusCheck(paymentId, batcher)
 
       expect(batcher.addRequest).toHaveBeenCalledWith(
-        `${GOV_PAY_RCP_API_URL}/${paymentId}`,
+        `${GOV_PAY_API_URL}/${paymentId}`,
         expect.objectContaining({
           headers: recurringHeaders(),
           method: 'get',
