@@ -2,7 +2,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { salesApi, airbrake, DistributedLock } from '@defra-fish/connectors-lib'
-import { sendNotification, getNotificationMethod, PREFERRED_METHOD_OF_REMINDER } from './services/govuk-notify-service.js'
+import { sendNotification, getNotificationMethod } from './services/govuk-notify-service.js'
 import db from 'debug'
 
 const debug = db('notification:processor')
@@ -10,7 +10,6 @@ const debug = db('notification:processor')
 const SIGINT_CODE = 130
 const SIGTERM_CODE = 137
 const LOCK_TTL_MS = 5 * 60 * 1000
-const TWELVE_MONTH_DURATION_MAGNITUDE = 12
 const EXPIRY_REMINDER_DAYS = 30
 const EXPIRED_NOTICE_DAYS = 1
 
@@ -59,28 +58,14 @@ const processNotifications = async () => {
 
 const processExpiryReminders = async date => {
   const permissions = await salesApi.getPermissionsExpiringOnDate(date)
-  debug('Found %d permissions expiring on %s', permissions.length, date)
-  const eligible = filterEligiblePermissions(permissions)
-  debug('Filtered to %d eligible 12-month permissions', eligible.length)
-  await sendNotificationsForPermissions(eligible, 'expiry_reminder')
+  debug('Found %d eligible permissions expiring on %s', permissions.length, date)
+  await sendNotificationsForPermissions(permissions, 'expiry_reminder')
 }
 
 const processExpiredNotices = async date => {
   const permissions = await salesApi.getPermissionsExpiredOnDate(date)
-  debug('Found %d permissions expired on %s', permissions.length, date)
-  const eligible = filterEligiblePermissions(permissions)
-  debug('Filtered to %d eligible 12-month permissions', eligible.length)
-  await sendNotificationsForPermissions(eligible, 'expired_notice')
-}
-
-const filterEligiblePermissions = permissions => {
-  return permissions.filter(permission => {
-    const permit = permission.expanded?.permit?.entity
-    if (!permit) {
-      return false
-    }
-    return permit.durationMagnitude === TWELVE_MONTH_DURATION_MAGNITUDE
-  })
+  debug('Found %d eligible permissions expired on %s', permissions.length, date)
+  await sendNotificationsForPermissions(permissions, 'expired_notice')
 }
 
 const sendNotificationsForPermissions = async (permissions, notificationType) => {
@@ -102,13 +87,7 @@ const sendNotificationForPermission = async (permission, notificationType) => {
     return false
   }
 
-  const preferredMethod = contact.entity.preferredMethodOfReminder
-  if (preferredMethod?.id === PREFERRED_METHOD_OF_REMINDER.DO_NOT_CONTACT) {
-    debug('Contact %s prefers not to be contacted, skipping', contact.entity.id)
-    return false
-  }
-
-  const method = getNotificationMethod(preferredMethod)
+  const method = getNotificationMethod(contact.entity.preferredMethodOfReminder)
   if (!method) {
     debug('No valid notification method for contact %s, skipping', contact.entity.id)
     return false

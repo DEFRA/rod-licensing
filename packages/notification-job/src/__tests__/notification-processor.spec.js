@@ -48,8 +48,7 @@ const buildMockPermission = ({
   lastName = 'Smith',
   email = 'john@example.com',
   mobilePhone = '07700900000',
-  preferredMethodId = 910400000,
-  durationMagnitude = 12
+  preferredMethodId = 910400000
 } = {}) => ({
   entity: { id: permissionId, referenceNumber, endDate },
   expanded: {
@@ -64,7 +63,7 @@ const buildMockPermission = ({
       }
     },
     permit: {
-      entity: { durationMagnitude }
+      entity: { durationMagnitude: 12 }
     }
   }
 })
@@ -120,14 +119,7 @@ describe('notification-processor', () => {
     expect(salesApi.getPermissionsExpiredOnDate).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/))
   })
 
-  it('filters out non-12-month permits', async () => {
-    const nonTwelveMonth = buildMockPermission({ durationMagnitude: 1 })
-    salesApi.getPermissionsExpiringOnDate.mockResolvedValueOnce([nonTwelveMonth])
-    await execute()
-    expect(sendNotification).not.toHaveBeenCalled()
-  })
-
-  it('sends notification for eligible 12-month permission', async () => {
+  it('sends notification for eligible permission', async () => {
     const permission = buildMockPermission()
     salesApi.getPermissionsExpiringOnDate.mockResolvedValueOnce([permission])
     await execute()
@@ -146,14 +138,6 @@ describe('notification-processor', () => {
       status: 'sent',
       method: 'email'
     })
-  })
-
-  it('skips contacts who prefer not to be contacted', async () => {
-    const permission = buildMockPermission({ preferredMethodId: 910400003 })
-    getNotificationMethod.mockReturnValueOnce(null)
-    salesApi.getPermissionsExpiringOnDate.mockResolvedValueOnce([permission])
-    await execute()
-    expect(sendNotification).not.toHaveBeenCalled()
   })
 
   it('skips permissions that already have a notification recorded', async () => {
