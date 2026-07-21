@@ -122,3 +122,17 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+
+  ##############################################################################################################
+  # rod_licensing notification_job
+  ##############################################################################################################
+  notification_job:
+    image: rod_licensing/notification_job:${TAG:-latest}
+    env_file:
+      - ./env/.notification_job.env
+      - ./env/.notification_job.secrets.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure

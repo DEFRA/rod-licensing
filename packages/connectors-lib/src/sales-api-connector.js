@@ -351,3 +351,40 @@ export const cancelRecurringPayment = async (id, reason = 'Payment Failure') => 
 export const retrieveStagedTransaction = async id => {
   return exec2xxOrThrow(call(new URL(`/retrieveStagedTransaction/${id}`, urlBase), 'get'))
 }
+
+/**
+ * Retrieve permissions expiring on the given date
+ *
+ * @param date the date to check (ISO format YYYY-MM-DD)
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const getPermissionsExpiringOnDate = async date => exec2xxOrThrow(call(new URL(`/notifications/expiring/${date}`, urlBase), 'get'))
+
+/**
+ * Retrieve permissions that expired on the given date
+ *
+ * @param date the date to check (ISO format YYYY-MM-DD)
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const getPermissionsExpiredOnDate = async date => exec2xxOrThrow(call(new URL(`/notifications/expired/${date}`, urlBase), 'get'))
+
+/**
+ * Check if a notification has already been sent for a permission
+ *
+ * @param permissionId the permission ID
+ * @param notificationType the type of notification
+ * @returns {Promise<*|null>}
+ */
+export const getNotificationStatus = async (permissionId, notificationType) =>
+  exec2xxOrNull(call(new URL(`/notifications/status/${permissionId}/${notificationType}`, urlBase), 'get'))
+
+/**
+ * Record a notification as sent
+ *
+ * @param data the notification status payload
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const createNotificationStatus = async data => exec2xxOrThrow(call(new URL('/notifications/status', urlBase), 'post', data))

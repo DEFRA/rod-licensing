@@ -17,6 +17,7 @@ export * from './entities/rcr-activity.entity.js'
 export * from './entities/recurring-payment.entity.js'
 export * from './entities/recurring-payment-instruction.entity.js'
 export * from './entities/staging-exception.entity.js'
+export * from './entities/notification-status.entity.js'
 
 export * from './entities/role.entity.js'
 export * from './entities/system-user-role.entity.js'
@@ -30,6 +31,7 @@ export * from './queries/pocl-validation-error.queries.js'
 export * from './queries/recurring-payments.queries.js'
 export * from './queries/contact.queries.js'
 export * from './queries/rcr-activity.queries.js'
+export * from './queries/notification.queries.js'
 
 // Framework functionality
 export * from './client/util.js'

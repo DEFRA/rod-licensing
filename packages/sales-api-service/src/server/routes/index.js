@@ -8,6 +8,7 @@ import Authenticate from './authenticate.js'
 import Users from './system-users.js'
 import RecurringPayment from './recurring-payments.js'
 import Renewals from './renewals.js'
+import Notifications from './notifications.js'
 
 import Static from './static.js'
 
@@ -22,5 +23,6 @@ export default [
   ...Authenticate,
   ...Users,
   ...RecurringPayment,
-  ...Renewals
+  ...Renewals,
+  ...Notifications
 ]

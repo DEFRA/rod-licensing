@@ -91,3 +91,12 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/recurring-payments-job/${PROJECT_DOCKERFILE:-Dockerfile}
+
+  ##############################################################################################################
+  # rod-licensing notification_job
+  ##############################################################################################################
+  notification_job:
+    image: rod_licensing/notification_job:${TAG:-latest}
+    build:
+      <<: *common-build-options
+      dockerfile: packages/notification-job/${PROJECT_DOCKERFILE:-Dockerfile}
