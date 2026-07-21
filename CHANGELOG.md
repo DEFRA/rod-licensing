@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.9 (2026-07-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `sales-api-service`
+  * [#2383](https://github.com/DEFRA/rod-licensing/pull/2383) Upgrade dynamics-web-api package (#2378) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.73.0-rc.8 (2026-07-21)
 
 #### :bug: Bug Fix
