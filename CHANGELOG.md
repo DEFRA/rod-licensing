@@ -1,4 +1,13 @@
 
+## v1.73.0-rc.8 (2026-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2439](https://github.com/DEFRA/rod-licensing/pull/2439) update content on "How should we contact you" page ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.73.0-rc.7 (2026-07-13)
 
 #### :bug: Bug Fix
