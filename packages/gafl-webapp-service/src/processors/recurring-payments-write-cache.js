@@ -1,3 +1,12 @@
+const normaliseConcessions = concessions =>
+  (concessions ?? []).map(concession => ({
+    type: concession?.name || concession?.type?.label || concession?.type,
+    proof: {
+      type: concession?.proof?.type?.label || concession?.proof?.type,
+      ...(concession?.proof?.referenceNumber ? { referenceNumber: concession.proof.referenceNumber } : {})
+    }
+  }))
+
 export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, authenticationResult) => {
   const { permission, recurringPayment } = authenticationResult
   const { referenceNumber, endDate, licensee, permit, concessions } = permission
@@ -16,7 +25,7 @@ export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, au
         permitSubtype: permit.permitSubtype,
         numberOfRods: permit.numberOfRods
       },
-      concessions: concessions ?? []
+      concessions: normaliseConcessions(concessions)
     },
     recurringPayment: {
       id: recurringPayment.id,
