@@ -203,13 +203,13 @@ export const findLinkedRecurringPayment = async permissionId => {
 }
 
 export const preparePermissionDataForRcpCancellation = async existingPermission => {
-  if (!existingPermission?.startDate || !existingPermission?.licensee?.birthDate) {
-    return existingPermission
-  }
+  const ageKnown = !!existingPermission?.startDate && !!existingPermission?.licensee?.birthDate
+  const isSeniorByAge = ageKnown
+    ? isSenior(moment(existingPermission.startDate).diff(moment(existingPermission.licensee.birthDate), 'years'))
+    : false
+  const isSeniorByPermitDescription = existingPermission?.permit?.description?.toLowerCase().includes('senior')
 
-  const ageAtLicenceStartDate = moment(existingPermission.startDate).diff(moment(existingPermission.licensee.birthDate), 'years')
-
-  if (isSenior(ageAtLicenceStartDate)) {
+  if (isSeniorByAge || isSeniorByPermitDescription) {
     await addSenior(existingPermission)
   } else {
     await removeSenior(existingPermission)

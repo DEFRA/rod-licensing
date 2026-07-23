@@ -1065,7 +1065,7 @@ describe('recurring payments service', () => {
       isSenior.mockReset()
     })
 
-    it('returns permission unchanged when startDate is missing', async () => {
+    it('returns permission object when startDate is missing', async () => {
       const permission = { concessions: [] }
 
       const result = await preparePermissionDataForRcpCancellation(permission)
@@ -1073,22 +1073,34 @@ describe('recurring payments service', () => {
       expect(result).toBe(permission)
     })
 
-    it('does not add senior when startDate is missing', async () => {
-      await preparePermissionDataForRcpCancellation({ concessions: [] })
+    it('adds senior when startDate is missing and permit description indicates senior', async () => {
+      const permission = {
+        concessions: [],
+        permit: { description: 'Salmon and sea trout 3-rod senior' }
+      }
 
-      expect(addSenior).not.toHaveBeenCalled()
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(addSenior).toHaveBeenCalledWith(permission)
     })
 
-    it('does not remove senior when startDate is missing', async () => {
-      await preparePermissionDataForRcpCancellation({ concessions: [] })
+    it('removes senior when startDate is missing and permit description is not senior', async () => {
+      const permission = {
+        concessions: [],
+        permit: { description: 'Salmon and sea trout 3-rod' }
+      }
 
-      expect(removeSenior).not.toHaveBeenCalled()
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(removeSenior).toHaveBeenCalledWith(permission)
     })
 
-    it('does not remove junior when startDate is missing', async () => {
-      await preparePermissionDataForRcpCancellation({ concessions: [] })
+    it('removes junior when startDate is missing', async () => {
+      const permission = { concessions: [] }
 
-      expect(removeJunior).not.toHaveBeenCalled()
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(removeJunior).toHaveBeenCalledWith(permission)
     })
 
     it('adds senior when licensee is senior at licence start', async () => {
