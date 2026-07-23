@@ -89,6 +89,32 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         [{ name: 'Senior', proof: { type: 'No Proof' } }],
         [{ type: 'Senior', proof: { type: 'No Proof' } }]
       ],
+      [
+        'normalises realistic sales-api auth concessions including option-set labels',
+        [
+          {
+            id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+            name: 'Senior',
+            proof: {
+              id: 'proof-id',
+              type: { id: 910400004, label: 'No Proof', description: 'No Proof' }
+            }
+          },
+          {
+            id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+            name: 'Disabled',
+            proof: {
+              id: 'proof-id-2',
+              type: { id: 910400000, label: 'Blue Badge', description: 'Blue Badge' },
+              referenceNumber: 'BB-123'
+            }
+          }
+        ],
+        [
+          { type: 'Senior', proof: { type: 'No Proof' } },
+          { type: 'Disabled', proof: { type: 'Blue Badge', referenceNumber: 'BB-123' } }
+        ]
+      ],
       ['stores empty concessions when permission has no concessions', [], []]
     ])('%s', async (_desc, concessions, expectedConcessions) => {
       const setCurrentPermission = jest.fn()

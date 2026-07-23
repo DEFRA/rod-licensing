@@ -8,7 +8,7 @@ import {
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 import authenticate from '../authenticate.js'
-import { findLinkedRecurringPayment } from '../../../services/recurring-payments.service.js'
+import { findLinkedRecurringPayment, preparePermissionDataForRcpCancellation } from '../../../services/recurring-payments.service.js'
 
 const [
   {
@@ -24,7 +24,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 }))
 
 jest.mock('../../../services/recurring-payments.service.js', () => ({
-  findLinkedRecurringPayment: jest.fn()
+  findLinkedRecurringPayment: jest.fn(),
+  preparePermissionDataForRcpCancellation: jest.fn(async permission => permission)
 }))
 
 let server = null
@@ -39,7 +40,8 @@ describe('authenticate handler', () => {
   })
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
+    preparePermissionDataForRcpCancellation.mockImplementation(async permission => permission)
   })
 
   describe('authenticateRenewal', () => {
@@ -259,6 +261,65 @@ describe('authenticate handler', () => {
       })
     })
 
+    it('passes authenticated permission to preparePermissionDataForRcpCancellation', async () => {
+      executeQuery
+        .mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }])
+        .mockResolvedValueOnce([
+          {
+            entity: MOCK_EXISTING_PERMISSION_ENTITY,
+            expanded: {
+              licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+              concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
+              permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+            }
+          }
+        ])
+        .mockResolvedValueOnce([{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }])
+
+      findLinkedRecurringPayment.mockResolvedValueOnce({
+        id: 'rcp-prepare-call',
+        status: 1
+      })
+
+      await server.inject({ method: 'GET', url: baseUrl })
+
+      expect(preparePermissionDataForRcpCancellation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
+          licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+          permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+        })
+      )
+    })
+
+    it('returns prepared permission from preparePermissionDataForRcpCancellation', async () => {
+      executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
+        {
+          entity: MOCK_EXISTING_PERMISSION_ENTITY,
+          expanded: {
+            licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+            concessionProofs: [],
+            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+          }
+        }
+      ])
+
+      preparePermissionDataForRcpCancellation.mockImplementationOnce(async permission => ({
+        ...permission,
+        concessions: [{ name: 'Senior', proof: { type: 'No Proof' } }]
+      }))
+
+      findLinkedRecurringPayment.mockResolvedValueOnce({
+        id: 'rcp-prepared',
+        status: 1
+      })
+
+      const result = await server.inject({ method: 'GET', url: baseUrl })
+      const body = JSON.parse(result.payload)
+
+      expect(body.permission.concessions).toEqual([{ name: 'Senior', proof: { type: 'No Proof' } }])
+    })
+
     it('calls findLinkedRecurringPayment with permission id', async () => {
       executeQuery.mockResolvedValueOnce([{ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} }]).mockResolvedValueOnce([
         {
@@ -394,7 +455,6 @@ describe('authenticate handler', () => {
               concessions: [],
               permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
             }),
-            name: MOCK_CONCESSION.name,
             recurringPayment: expect.objectContaining({ id: 'rcp-789', status: 1 })
           }
         })

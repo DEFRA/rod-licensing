@@ -159,6 +159,11 @@ describe('route', () => {
 
     it.each([
       ['shows translated licence type with (over_66) for senior', [{ type: 'Senior' }], true],
+      [
+        'shows translated licence type with (over_66) for senior when disabled is also present',
+        [{ type: 'Senior' }, { type: 'Disabled' }],
+        true
+      ],
       ['shows translated licence type without (over_66) when not senior', [], false]
     ])('%s', async (_desc, concessions, expectOver66) => {
       const mssgs = getSampleCatalog()

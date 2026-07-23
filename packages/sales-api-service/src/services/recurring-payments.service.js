@@ -12,12 +12,13 @@ import {
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { getObfuscatedDob } from './contacts.service.js'
 import { createHash } from 'node:crypto'
-import { PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE } from '@defra-fish/business-rules-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_TYPE, TRANSACTION_SOURCE, isSenior } from '@defra-fish/business-rules-lib'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../config.js'
 import { TRANSACTION_STATUS } from '../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../services/paymentjournals/payment-journals.service.js'
 import { getGlobalOptionSetValue } from './reference-data.service.js'
+import { addSenior, removeJunior, removeSenior } from './concession.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -199,4 +200,23 @@ export const findLinkedRecurringPayment = async permissionId => {
     return RecurringPayment.fromResponse(rcpResponseData, definition)
   }
   return false
+}
+
+export const preparePermissionDataForRcpCancellation = async existingPermission => {
+  if (!existingPermission?.startDate || !existingPermission?.licensee?.birthDate) {
+    return existingPermission
+  }
+
+  const ageAtLicenceStartDate = moment(existingPermission.startDate).diff(moment(existingPermission.licensee.birthDate), 'years')
+
+  if (isSenior(ageAtLicenceStartDate)) {
+    await addSenior(existingPermission)
+  } else {
+    await removeSenior(existingPermission)
+  }
+
+  // Recurring payment agreements are only for adult licences.
+  await removeJunior(existingPermission)
+
+  return existingPermission
 }

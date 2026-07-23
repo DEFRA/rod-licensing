@@ -18,7 +18,8 @@ import {
   findNewestExistingRecurringPaymentInCrm,
   getRecurringPaymentAgreement,
   cancelRecurringPayment,
-  findLinkedRecurringPayment
+  findLinkedRecurringPayment,
+  preparePermissionDataForRcpCancellation
 } from '../recurring-payments.service.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
@@ -29,8 +30,9 @@ import { TRANSACTION_STATUS } from '../../services/transactions/constants.js'
 import { retrieveStagedTransaction } from '../../services/transactions/retrieve-transaction.js'
 import { createPaymentJournal, getPaymentJournal, updatePaymentJournal } from '../../services/paymentjournals/payment-journals.service.js'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
-import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
+import { PAYMENT_JOURNAL_STATUS_CODES, TRANSACTION_SOURCE, PAYMENT_TYPE, isSenior } from '@defra-fish/business-rules-lib'
 import db from 'debug'
+import { addSenior, removeJunior, removeSenior } from '../concession.service.js'
 
 jest.mock('ioredis', () => ({
   built: {
@@ -108,6 +110,12 @@ jest.mock('../reference-data.service.js', () => ({
   }))
 }))
 
+jest.mock('../concession.service.js', () => ({
+  addSenior: jest.fn(),
+  removeJunior: jest.fn(),
+  removeSenior: jest.fn()
+}))
+
 jest.mock('@defra-fish/business-rules-lib', () => ({
   PAYMENT_JOURNAL_STATUS_CODES: {
     InProgress: 'InProgressCode',
@@ -121,7 +129,8 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   },
   PAYMENT_TYPE: {
     debit: Symbol('debit')
-  }
+  },
+  isSenior: jest.fn()
 }))
 global.structuredClone = obj => JSON.parse(JSON.stringify(obj))
 
@@ -1048,6 +1057,116 @@ describe('recurring payments service', () => {
       dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: [] })
       const recurringPayment = await findLinkedRecurringPayment('abc123')
       expect(recurringPayment).toBeFalsy()
+    })
+  })
+
+  describe('preparePermissionDataForRcpCancellation', () => {
+    beforeEach(() => {
+      isSenior.mockReset()
+    })
+
+    it('returns permission unchanged when startDate is missing', async () => {
+      const permission = { concessions: [] }
+
+      const result = await preparePermissionDataForRcpCancellation(permission)
+
+      expect(result).toBe(permission)
+    })
+
+    it('does not add senior when startDate is missing', async () => {
+      await preparePermissionDataForRcpCancellation({ concessions: [] })
+
+      expect(addSenior).not.toHaveBeenCalled()
+    })
+
+    it('does not remove senior when startDate is missing', async () => {
+      await preparePermissionDataForRcpCancellation({ concessions: [] })
+
+      expect(removeSenior).not.toHaveBeenCalled()
+    })
+
+    it('does not remove junior when startDate is missing', async () => {
+      await preparePermissionDataForRcpCancellation({ concessions: [] })
+
+      expect(removeJunior).not.toHaveBeenCalled()
+    })
+
+    it('adds senior when licensee is senior at licence start', async () => {
+      isSenior.mockReturnValueOnce(true)
+      const permission = {
+        startDate: '2025-01-01',
+        licensee: { birthDate: '1940-01-01' },
+        concessions: []
+      }
+
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(addSenior).toHaveBeenCalledWith(permission)
+    })
+
+    it('does not remove senior when licensee is senior at licence start', async () => {
+      isSenior.mockReturnValueOnce(true)
+      const permission = {
+        startDate: '2025-01-01',
+        licensee: { birthDate: '1940-01-01' },
+        concessions: []
+      }
+
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(removeSenior).not.toHaveBeenCalled()
+    })
+
+    it('removes junior when licensee is senior at licence start', async () => {
+      isSenior.mockReturnValueOnce(true)
+      const permission = {
+        startDate: '2025-01-01',
+        licensee: { birthDate: '1940-01-01' },
+        concessions: []
+      }
+
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(removeJunior).toHaveBeenCalledWith(permission)
+    })
+
+    it('does not add senior when licensee is not senior at licence start', async () => {
+      isSenior.mockReturnValueOnce(false)
+      const permission = {
+        startDate: '2025-01-01',
+        licensee: { birthDate: '2000-01-01' },
+        concessions: []
+      }
+
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(addSenior).not.toHaveBeenCalled()
+    })
+
+    it('removes senior when licensee is not senior at licence start', async () => {
+      isSenior.mockReturnValueOnce(false)
+      const permission = {
+        startDate: '2025-01-01',
+        licensee: { birthDate: '2000-01-01' },
+        concessions: []
+      }
+
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(removeSenior).toHaveBeenCalledWith(permission)
+    })
+
+    it('removes junior when licensee is not senior at licence start', async () => {
+      isSenior.mockReturnValueOnce(false)
+      const permission = {
+        startDate: '2025-01-01',
+        licensee: { birthDate: '2000-01-01' },
+        concessions: []
+      }
+
+      await preparePermissionDataForRcpCancellation(permission)
+
+      expect(removeJunior).toHaveBeenCalledWith(permission)
     })
   })
 })
