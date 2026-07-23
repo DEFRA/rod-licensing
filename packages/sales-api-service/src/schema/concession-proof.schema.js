@@ -11,6 +11,7 @@ export const concessionProofSchema = Joi.array()
         .external(createReferenceDataEntityValidator(Concession))
         .required()
         .example(uuid()),
+      name: Joi.string().optional().example('Senior'),
       proof: Joi.object({
         type: buildJoiOptionSetValidator('defra_concessionproof', 'National Insurance Number'),
         referenceNumber: Joi.string()

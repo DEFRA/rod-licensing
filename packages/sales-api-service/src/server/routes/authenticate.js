@@ -52,6 +52,7 @@ const getAuthenticatedPermission = async request => {
       licensee: permission.expanded.licensee.entity.toJSON(),
       concessions: concessionProofs.map(c => ({
         id: c.expanded.concession.entity.id,
+        name: c.expanded.concession.entity.name,
         proof: c.entity.toJSON()
       })),
       permit: permission.expanded.permit.entity.toJSON()
