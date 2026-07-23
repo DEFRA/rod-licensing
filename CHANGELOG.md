@@ -1,4 +1,22 @@
 
+## v1.73.0-rc.9 (2026-07-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `sales-api-service`
+  * [#2383](https://github.com/DEFRA/rod-licensing/pull/2383) Upgrade dynamics-web-api package (#2378) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.73.0-rc.8 (2026-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2439](https://github.com/DEFRA/rod-licensing/pull/2439) update content on "How should we contact you" page ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.73.0-rc.7 (2026-07-13)
 
 #### :bug: Bug Fix
