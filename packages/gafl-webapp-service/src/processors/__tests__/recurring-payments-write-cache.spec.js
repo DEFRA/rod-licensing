@@ -79,8 +79,16 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     })
 
     it.each([
-      ['stores concessions from permission when type is present', [{ type: 'Senior', proof: { type: 'No Proof' } }], [{ type: 'Senior', proof: { type: 'No Proof' } }]],
-      ['normalises concessions from name to type', [{ name: 'Senior', proof: { type: 'No Proof' } }], [{ type: 'Senior', proof: { type: 'No Proof' } }]],
+      [
+        'stores concessions from permission when type is present',
+        [{ type: 'Senior', proof: { type: 'No Proof' } }],
+        [{ type: 'Senior', proof: { type: 'No Proof' } }]
+      ],
+      [
+        'normalises concessions from name to type',
+        [{ name: 'Senior', proof: { type: 'No Proof' } }],
+        [{ type: 'Senior', proof: { type: 'No Proof' } }]
+      ],
       ['stores empty concessions when permission has no concessions', [], []]
     ])('%s', async (_desc, concessions, expectedConcessions) => {
       const setCurrentPermission = jest.fn()
