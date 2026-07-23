@@ -394,7 +394,7 @@ describe('authenticate handler', () => {
               concessions: [],
               permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
             }),
-                  name: MOCK_CONCESSION.name,
+            name: MOCK_CONCESSION.name,
             recurringPayment: expect.objectContaining({ id: 'rcp-789', status: 1 })
           }
         })
