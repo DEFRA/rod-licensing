@@ -150,7 +150,10 @@ export default [
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { description: 'Recurring payment cancellation data was prepared for the permission', schema: authenticateRenewalResponseSchema },
+            200: {
+              description: 'Recurring payment cancellation data was prepared for the permission',
+              schema: authenticateRenewalResponseSchema
+            },
             401: { description: 'Recurring payment cancellation data could not be prepared for the permission' }
           },
           order: 4
