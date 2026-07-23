@@ -869,3 +869,34 @@ describe('rcp authentication', () => {
     expect(response).toBeNull()
   })
 })
+
+describe('preparePermissionDataForRcpCancellation', () => {
+  it('returns parsed JSON with successful fetch', async () => {
+    const expectedResponse = { permission: { id: 'perm-1' } }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    const response = await salesApi.preparePermissionDataForRcpCancellation('AAAAAA')
+    expect(response).toEqual(expectedResponse)
+  })
+
+  it('calls fetch with the RCP prepare URL', async () => {
+    const expectedResponse = { permission: { id: 'perm-1' } }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    await salesApi.preparePermissionDataForRcpCancellation('AAAAAA')
+    expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/permissionRcpCancellationData/AAAAAA', {
+      method: 'get',
+      headers: expect.any(Object),
+      timeout: 20000
+    })
+  })
+
+  it('throws on non-2xx response', async () => {
+    fetch.mockReturnValueOnce({
+      ok: false,
+      status: 500,
+      statusText: 'Internal Server Error',
+      text: async () => 'Server Error'
+    })
+
+    await expect(salesApi.preparePermissionDataForRcpCancellation('AAAAAA')).rejects.toThrow('Internal Server Error')
+  })
+})

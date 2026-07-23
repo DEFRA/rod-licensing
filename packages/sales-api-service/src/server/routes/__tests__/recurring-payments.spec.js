@@ -1,11 +1,25 @@
 import recurringPayments from '../recurring-payments.js'
-import { getRecurringPayments, processRPResult, cancelRecurringPayment } from '../../../services/recurring-payments.service.js'
+import {
+  getRecurringPayments,
+  processRPResult,
+  cancelRecurringPayment,
+  preparePermissionDataForRcpCancellation
+} from '../../../services/recurring-payments.service.js'
 import {
   dueRecurringPaymentsRequestParamsSchema,
   processRPResultRequestParamsSchema,
   cancelRecurringPaymentRequestParamsSchema,
   cancelRecurringPaymentRequestQuerySchema
 } from '../../../schema/recurring-payments.schema.js'
+import { permissionRenewalDataRequestParamsSchema } from '../../../schema/renewals.schema.js'
+import { executeQuery, permissionForFullReferenceNumber } from '@defra-fish/dynamics-lib'
+import {
+  MOCK_EXISTING_PERMISSION_ENTITY,
+  MOCK_EXISTING_CONTACT_ENTITY,
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
+  MOCK_CONCESSION_PROOF_ENTITY,
+  MOCK_CONCESSION
+} from '../../../__mocks__/test-data.js'
 
 const [
   {
@@ -16,13 +30,23 @@ const [
   },
   {
     options: { handler: crpHandler }
+  },
+  {
+    options: { handler: prcpHandler }
   }
 ] = recurringPayments
 
 jest.mock('../../../services/recurring-payments.service.js', () => ({
   getRecurringPayments: jest.fn(),
   processRPResult: jest.fn(),
-  cancelRecurringPayment: jest.fn()
+  cancelRecurringPayment: jest.fn(),
+  preparePermissionDataForRcpCancellation: jest.fn()
+}))
+
+jest.mock('@defra-fish/dynamics-lib', () => ({
+  ...jest.requireActual('@defra-fish/dynamics-lib'),
+  permissionForFullReferenceNumber: jest.fn(),
+  executeQuery: jest.fn()
 }))
 
 jest.mock('../../../schema/recurring-payments.schema.js', () => ({
@@ -47,6 +71,15 @@ const getMockRequest = ({
 
 const getMockResponseToolkit = () => ({
   response: jest.fn()
+})
+
+const permissionForFullReferenceNumberMock = () => ({
+  entity: MOCK_EXISTING_PERMISSION_ENTITY,
+  expanded: {
+    licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+    concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
+    permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+  }
 })
 
 describe('recurring payments', () => {
@@ -125,6 +158,52 @@ describe('recurring payments', () => {
       const request = getMockRequest({})
       await crpHandler(request, getMockResponseToolkit())
       expect(recurringPayments[2].options.validate.query).toBe(cancelRecurringPaymentRequestQuerySchema)
+    })
+  })
+
+  describe('permissionRcpCancellationData', () => {
+    it('should call permissionForFullReferenceNumber with reference number', async () => {
+      executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+      preparePermissionDataForRcpCancellation.mockResolvedValueOnce({ id: 'prepared-permission' })
+      const request = getMockRequest({})
+      request.params.referenceNumber = 'REFERENCE123'
+
+      await prcpHandler(request, getMockResponseToolkit())
+
+      expect(permissionForFullReferenceNumber).toHaveBeenCalledWith('REFERENCE123')
+    })
+
+    it('should call preparePermissionDataForRcpCancellation with expected data', async () => {
+      executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+      preparePermissionDataForRcpCancellation.mockResolvedValueOnce({ id: 'prepared-permission' })
+
+      const request = getMockRequest({})
+      request.params.referenceNumber = 'ABC123'
+      await prcpHandler(request, getMockResponseToolkit())
+
+      expect(preparePermissionDataForRcpCancellation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
+          licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+          permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+        })
+      )
+    })
+
+    it('should return wrapped prepared permission', async () => {
+      executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+      preparePermissionDataForRcpCancellation.mockResolvedValueOnce({ id: 'prepared-permission' })
+      const responseToolkit = getMockResponseToolkit()
+
+      const request = getMockRequest({})
+      request.params.referenceNumber = 'ABC123'
+      await prcpHandler(request, responseToolkit)
+
+      expect(responseToolkit.response).toHaveBeenCalledWith({ permission: { id: 'prepared-permission' } })
+    })
+
+    it('should validate with permissionRenewalDataRequestParamsSchema', async () => {
+      expect(recurringPayments[3].options.validate.params).toBe(permissionRenewalDataRequestParamsSchema)
     })
   })
 })

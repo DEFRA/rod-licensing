@@ -67,6 +67,7 @@ const getSampleResponseToolkit = () => ({
 const invokeHandlerWithMocks = async ({ h = getSampleResponseToolkit(), salesApiResponse } = {}) => {
   if (salesApiResponse) {
     salesApi.authenticateRecurringPayment.mockResolvedValueOnce(salesApiResponse)
+    salesApi.preparePermissionDataForRcpCancellation.mockResolvedValueOnce({ permission: salesApiResponse.permission })
   }
   const request = getSampleRequest()
   const result = await handler(request, h)
@@ -103,6 +104,14 @@ describe('Cancel RP Authentication Handler', () => {
         salesApiResponse: mockSuccessResponse()
       })
       expect(request.cache().helpers.status.setCurrentPermission).toHaveBeenCalledWith({ authentication: { authorised: true } })
+    })
+
+    it('calls preparePermissionDataForRcpCancellation with reference number', async () => {
+      await invokeHandlerWithMocks({
+        salesApiResponse: mockSuccessResponse()
+      })
+
+      expect(salesApi.preparePermissionDataForRcpCancellation).toHaveBeenCalledWith('ABC123')
     })
   })
 
@@ -251,6 +260,7 @@ describe('Cancel RP Authentication Handler', () => {
       permission: { id: 'perm-id' },
       recurringPayment: { id: 'rcp-id', status: 0, cancelledDate: null }
     })
+    salesApi.preparePermissionDataForRcpCancellation.mockResolvedValueOnce({ permission: { id: 'perm-id' } })
     const request = getSampleRequest({ referenceNumber: undefined })
     request.cache().helpers.status.getCurrentPermission.mockReturnValueOnce({
       referenceNumber: 'A1B2C3'

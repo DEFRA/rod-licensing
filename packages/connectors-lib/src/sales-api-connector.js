@@ -318,6 +318,16 @@ export const preparePermissionDataForRenewal = async referenceNumber =>
   exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
 
 /**
+ * Prepare permission data for recurring payment cancellation
+ *
+ * @param referenceNumber
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const preparePermissionDataForRcpCancellation = async referenceNumber =>
+  exec2xxOrThrow(call(new URL(`/permissionRcpCancellationData/${referenceNumber}`, urlBase), 'get'))
+
+/**
  * Process a recurring payment result
  *
  * @param transactionId

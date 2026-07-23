@@ -62,7 +62,13 @@ const cancelRecurringPaymentAuthenticationHandler = async (request, h) => {
     return applyAuthFailure(request, h, context)
   }
 
-  await setupCancelRecurringPaymentCacheFromAuthResult(request, authenticationResult)
+  const preparedPermissionData = await salesApi.preparePermissionDataForRcpCancellation(referenceNumber)
+  const authResultWithPreparedPermission = {
+    ...authenticationResult,
+    permission: preparedPermissionData.permission
+  }
+
+  await setupCancelRecurringPaymentCacheFromAuthResult(request, authResultWithPreparedPermission)
 
   await request.cache().helpers.status.setCurrentPermission({
     authentication: { authorised: true }

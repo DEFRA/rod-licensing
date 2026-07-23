@@ -7,7 +7,7 @@ import {
 } from '../../schema/authenticate.schema.js'
 import db from 'debug'
 import { permissionForContacts, concessionsByIds, executeQuery, contactForLicenseeNoReference } from '@defra-fish/dynamics-lib'
-import { findLinkedRecurringPayment, preparePermissionDataForRcpCancellation } from '../../services/recurring-payments.service.js'
+import { findLinkedRecurringPayment } from '../../services/recurring-payments.service.js'
 
 const debug = db('sales:renewal-authentication')
 const failAuthenticate = 'The licensee could not be authenticated'
@@ -95,9 +95,8 @@ export default [
     options: {
       handler: async (request, h) => {
         const { permission } = await getAuthenticatedPermission(request)
-        const preparedPermission = await preparePermissionDataForRcpCancellation(permission)
-        const recurringPayment = await findLinkedRecurringPayment(preparedPermission.id)
-        return h.response({ permission: preparedPermission, recurringPayment }).code(HTTP_OK)
+        const recurringPayment = await findLinkedRecurringPayment(permission.id)
+        return h.response({ permission, recurringPayment }).code(HTTP_OK)
       },
       description:
         'Authenticate a licensee by checking the licence number corresponds with the provided contact details. Checking agreement id exists and recurring payment is active and not cancelled',
