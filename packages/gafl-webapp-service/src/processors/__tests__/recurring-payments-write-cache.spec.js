@@ -11,8 +11,8 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
       },
       permit: {
-        description: 'Coarse 6 month 15 Rod Licence (Half)',
-        permitSubtype: { label: 'Salmon and sea trout' },
+        description: 'Coarse 12 month 3 Rod Licence (Full)',
+        permitSubtype: { label: 'Trout and coarse' },
         numberOfRods: 3
       },
       recurringPayment: { lastDigitsCardNumbers: '5678' }
@@ -55,8 +55,8 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
       [
         'permit',
         {
-          description: 'Coarse 6 month 15 Rod Licence (Half)',
-          permitSubtype: { label: 'Salmon and sea trout' },
+          description: 'Coarse 12 month 3 Rod Licence (Full)',
+          permitSubtype: { label: 'Trout and coarse' },
           numberOfRods: 3
         }
       ]
