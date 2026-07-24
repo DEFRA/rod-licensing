@@ -15,7 +15,6 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         permitSubtype: { label: 'Salmon and sea trout' },
         numberOfRods: 3
       },
-      concessions: [],
       recurringPayment: { lastDigitsCardNumbers: '5678' }
     }
 
@@ -30,8 +29,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
         permit: {
           ...defaults.permit,
           ...(overrides.permit ? overrides.permit : {})
-        },
-        concessions: overrides.concessions ?? defaults.concessions
+        }
       },
       recurringPayment: {
         ...defaults.recurringPayment,

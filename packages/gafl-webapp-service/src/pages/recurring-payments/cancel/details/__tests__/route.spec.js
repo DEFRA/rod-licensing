@@ -92,7 +92,6 @@ describe('route', () => {
         permitSubtype: { label: 'Trout and coarse' },
         numberOfRods: 2
       },
-      concessions: [],
       endDate: '01-01-2026',
       referenceNumber: 'abc123'
     },
