@@ -1,6 +1,6 @@
 export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, authenticationResult) => {
   const { permission, recurringPayment } = authenticationResult
-  const { referenceNumber, endDate, licensee, permit, concessions } = permission
+  const { referenceNumber, endDate, licensee, permit } = permission
 
   await request.cache().helpers.transaction.setCurrentPermission({
     permission: {
@@ -15,8 +15,7 @@ export const setupCancelRecurringPaymentCacheFromAuthResult = async (request, au
         description: permit.description,
         permitSubtype: permit.permitSubtype,
         numberOfRods: permit.numberOfRods
-      },
-      concessions: concessions ?? []
+      }
     },
     recurringPayment: {
       id: recurringPayment.id,

@@ -78,8 +78,7 @@ describe('route', () => {
     rp_cancel_details_payment_card: 'Payment card',
     rp_cancel_details_last_purchased: 'Last purchased',
     rp_cancel_details_licence_valid_until: 'Valid until',
-    licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)',
-    over_66: ' (over_66)'
+    licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)'
   })
 
   const getSamplePermission = () => ({
@@ -155,39 +154,6 @@ describe('route', () => {
         { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
         { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
       ])
-    })
-
-    it.each([
-      ['shows translated licence type with (over_66) for senior', [{ type: 'Senior' }], true],
-      ['shows translated licence type without (over_66) when not senior', [], false]
-    ])('%s', async (_desc, concessions, expectOver66) => {
-      const mssgs = getSampleCatalog()
-
-      const sampleData = getSamplePermission()
-      sampleData.permission.concessions = concessions
-
-      const mockRequest = createMockRequest({
-        catalog: mssgs,
-        currentPermission: sampleData
-      })
-
-      moment.mockReturnValueOnce({
-        format: () => '01-01-2026'
-      })
-
-      const result = await getData(mockRequest)
-
-      const licenceTypeRow = result.summaryTable.find(row => row.key.text === mssgs.rp_cancel_details_licence_type)
-
-      expect(licenceTypeRow).toBeDefined()
-
-      expect(licenceTypeRow.value.text).toContain(mssgs.licence_type_radio_trout_two_rod_payment_summary)
-
-      if (expectOver66) {
-        expect(licenceTypeRow.value.text).toContain('(over_66)')
-      } else {
-        expect(licenceTypeRow.value.text).not.toContain('(over_66)')
-      }
     })
 
     it('passes cache date format and request locale to moment', async () => {

@@ -78,29 +78,6 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
       )
     })
 
-    it.each([
-      ['stores concessions from permission', [{ type: 'Senior', proof: { type: 'No Proof' } }]],
-      ['stores empty concessions when permission has no concessions', []]
-    ])('%s', async (_desc, concessions) => {
-      const setCurrentPermission = jest.fn()
-
-      const mockRequest = getSampleRequest(setCurrentPermission)
-
-      const authResult = getSampleAuthResult({
-        concessions
-      })
-
-      await setupCancelRecurringPaymentCacheFromAuthResult(mockRequest, authResult)
-
-      expect(setCurrentPermission).toHaveBeenCalledWith(
-        expect.objectContaining({
-          permission: expect.objectContaining({
-            concessions
-          })
-        })
-      )
-    })
-
     it('Adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
