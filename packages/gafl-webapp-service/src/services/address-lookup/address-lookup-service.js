@@ -71,29 +71,61 @@ const removeTrailingWhitespace = value => (typeof value === 'string' ? value.tri
 const isNotNullOrUndefinedOrEmpty = value => value !== null && value !== undefined && String(value).length
 
 /**
- * Filter results by premises search term
+ * Filter results by premises search term and order results
  * @param {Array} results - Array of address results
  * @param {string} premises - Optional premises search term
  * @returns {Array} Filtered results
  */
-const filterByPremises = (results, premises) => {
+const filterAndOrderResults = (results, premises) => {
   if (!premises) {
     return results
   }
 
-  const normalizedPremises = premises.trim().replaceAll(/\s+/g, ' ').toLowerCase()
+  const userProvidedSearchTerms = splitStringIntoSearchTerms(premises)
+  const matches = []
 
-  return results.filter(r => {
-    debug('Refactored premises field will be:', buildPremises(r.DPA))
+  for (const result of results) {
+    const resultPremises = buildPremises(result.DPA)
+    const resultTerms = splitStringIntoSearchTerms(resultPremises)
+    let matchRating = 0
 
-    const searchText = [r.DPA.SUB_BUILDING_NAME, r.DPA.BUILDING_NUMBER, r.DPA.BUILDING_NAME, r.DPA.ORGANISATION_NAME]
-      .filter(Boolean)
-      .join(' ')
-      .replaceAll(/\s+/g, ' ')
-      .toLowerCase()
+    for (const userProvidedSearchTerm of userProvidedSearchTerms) {
+      for (const resultTerm of resultTerms) {
+        matchRating = matchRating + checkQualityOfMatch(userProvidedSearchTerm, resultTerm)
+      }
+    }
 
-    return searchText.includes(normalizedPremises)
-  })
+    if (matchRating > 0) {
+      matches.push({ matchRating, result })
+    }
+  }
+
+  // Order with highest-rated matches first
+  const orderedMatches = matches.sort((a, b) => b.matchRating - a.matchRating)
+  // Drop the scores and return the ordered results only
+  return orderedMatches.map(r => r.result)
+}
+
+const splitStringIntoSearchTerms = string => {
+  // Lowercase, strip out parentheses, then split on spaces, hyphens, full stops and commas
+  const terms = string
+    .toLowerCase()
+    .replaceAll(/\(|\)/g, '')
+    .split(/\s+|-|\.|,/)
+  const termsExcludingThe = terms.filter(term => term !== 'the')
+  return removeMissingOrBlankFields(termsExcludingThe)
+}
+
+const checkQualityOfMatch = (userProvidedSearchTerm, resultTerm) => {
+  if (userProvidedSearchTerm === resultTerm) {
+    // Matches that contain both letters and digits score higher
+    if (/[a-z]+/.test(userProvidedSearchTerm) && /\d+/.test(userProvidedSearchTerm)) {
+      return 2
+    }
+    return 1
+  }
+
+  return 0
 }
 
 /**
@@ -105,7 +137,7 @@ const mapResults = results => {
   return results.map((r, idx) => ({
     id: idx,
     address: `${r.DPA.ADDRESS.replace(r.DPA.POSTCODE, '').toLowerCase()}${r.DPA.POSTCODE}`,
-    premises: r.DPA.BUILDING_NAME || '',
+    premises: buildPremises(r.DPA),
     street: r.DPA.THOROUGHFARE_NAME || '',
     locality: r.DPA.DEPENDENT_LOCALITY || '',
     town: r.DPA.POST_TOWN || '',
@@ -254,7 +286,7 @@ export default async (premises, postcode) => {
     : { results: [], failedPages: [], pagesFetched: 0 }
 
   const allResults = processResults(firstPage, additionalResults, failedPages, additionalPagesFetched, postcode, cap, startTime)
-  const filteredResults = filterByPremises(allResults, premises)
+  const filteredResults = filterAndOrderResults(allResults, premises)
 
   debug({ premises: premises || null, filteredCount: filteredResults.length })
 
