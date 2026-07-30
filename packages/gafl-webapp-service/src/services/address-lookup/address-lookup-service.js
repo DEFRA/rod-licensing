@@ -13,6 +13,7 @@ const buildUrl = (postcode, offset) => {
   const url = new URL(process.env.ADDRESS_LOOKUP_URL)
   const params = new URLSearchParams({
     postcode: postcode,
+    lr: 'EN',
     key: process.env.ADDRESS_LOOKUP_KEY
   })
 

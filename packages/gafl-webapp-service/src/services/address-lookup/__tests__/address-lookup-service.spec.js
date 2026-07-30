@@ -22,10 +22,23 @@ describe('address-lookup-service', () => {
   beforeAll(() => {
     process.env.ADDRESS_LOOKUP_KEY = 'ADDRESS_LOOKUP_KEY'
     process.env.ADDRESS_LOOKUP_URL = 'https://address.lookup.url'
+    process.env.ADDRESS_LOOKUP_MS = '10000'
   })
   beforeEach(jest.clearAllMocks)
 
   describe('default', () => {
+    it('calls the address lookup with the correct parameters', async () => {
+      fetch.mockResolvedValue({ json: () => Promise.resolve({}) })
+
+      await addressLookupService('test', 'BS1 1AA')
+
+      const expectedUrl = [process.env.ADDRESS_LOOKUP_URL, '/?postcode=', 'BS1+1AA', '&lr=EN&key=', process.env.ADDRESS_LOOKUP_KEY].join('')
+      expect(fetch).toHaveBeenCalledWith(expectedUrl, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: process.env.ADDRESS_LOOKUP_MS
+      })
+    })
+
     it('returns empty array if results node is missing', async () => {
       fetch.mockResolvedValue({ json: () => Promise.resolve({}) })
       const results = await addressLookupService()
