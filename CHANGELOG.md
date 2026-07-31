@@ -1,4 +1,41 @@
 
+
+## v1.73.0-rc.9 (2026-07-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `sales-api-service`
+  * [#2383](https://github.com/DEFRA/rod-licensing/pull/2383) Upgrade dynamics-web-api package (#2378) ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.73.0-rc.8 (2026-07-21)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2439](https://github.com/DEFRA/rod-licensing/pull/2439) update content on "How should we contact you" page ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+## v1.73.0-rc.7 (2026-07-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2438](https://github.com/DEFRA/rod-licensing/pull/2438) update privacy policy ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+## v1.73.0-rc.6 (2026-07-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2434](https://github.com/DEFRA/rod-licensing/pull/2434) Dev - Ammend content in telesales first page ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.73.0-rc.5 (2026-06-30)
 
 #### :bug: Bug Fix

@@ -53,8 +53,7 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   findDueRecurringPayments: jest.fn(),
   findRecurringPaymentsByAgreementId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
   dynamicsClient: {
-    retrieveMultipleRequest: jest.fn(() => ({ value: [] })),
-    retrieveRequest: jest.fn(() => ({ _defra_activepermission_value: 'mock-permission-id' }))
+    retrieveMultiple: jest.fn(() => ({ value: [] }))
   },
   persist: jest.fn(),
   findRecurringPaymentByPermissionId: jest.fn(() => ({ toRetrieveRequest: () => {} })),
@@ -784,16 +783,16 @@ describe('recurring payments service', () => {
       expect(findRecurringPaymentsByAgreementId).toHaveBeenCalledWith(agreementId)
     })
 
-    it('passes query created by findRecurringPaymentsByAgreementId to retrieveMultipleRequest', async () => {
+    it('passes query created by findRecurringPaymentsByAgreementId to retrieveMultiple', async () => {
       const retrieveRequest = Symbol('retrieve request')
       findRecurringPaymentsByAgreementId.mockReturnValueOnce({ toRetrieveRequest: () => retrieveRequest })
       await findNewestExistingRecurringPaymentInCrm()
-      expect(dynamicsClient.retrieveMultipleRequest).toHaveBeenCalledWith(retrieveRequest)
+      expect(dynamicsClient.retrieveMultiple).toHaveBeenCalledWith(retrieveRequest)
     })
 
     it('returns a Recurring Payment (not a plain object)', async () => {
       jest.spyOn(RecurringPayment, 'fromResponse')
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce(getMockResponse())
+      dynamicsClient.retrieveMultiple.mockReturnValueOnce(getMockResponse())
       const recurringPayment = await findNewestExistingRecurringPaymentInCrm()
       expect(RecurringPayment.fromResponse.mock.results[0].value).toBe(recurringPayment)
     })
@@ -828,13 +827,13 @@ describe('recurring payments service', () => {
         '908-oid'
       ]
     ])('returns most recent existing recurring payment from %s', async (_desc, mockResponseData, expectedId) => {
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: mockResponseData })
+      dynamicsClient.retrieveMultiple.mockReturnValueOnce({ value: mockResponseData })
       const recurringPayment = await findNewestExistingRecurringPaymentInCrm()
       expect(recurringPayment.id).toBe(expectedId)
     })
 
     it('returns boolean false if no recurring payments found', async () => {
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: [] })
+      dynamicsClient.retrieveMultiple.mockReturnValueOnce({ value: [] })
       const recurringPayment = await findNewestExistingRecurringPaymentInCrm()
       expect(recurringPayment).toBeFalsy()
     })
@@ -918,11 +917,11 @@ describe('recurring payments service', () => {
     } = {}) => {
       const linkedPermission = createLinkedPermission(permissionOverrides)
       govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce(govUkPayResponse)
-      dynamicsClient.retrieveMultipleRequest.mockResolvedValueOnce(retrieveMultipleResponse)
+      dynamicsClient.retrieveMultiple.mockResolvedValueOnce(retrieveMultipleResponse)
       if (retrieveMultipleResponse.value[0]?.defra_ActivePermission) {
         jest.spyOn(Permission, 'fromResponse').mockReturnValueOnce(linkedPermission)
+        retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       }
-      retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ definition: 'mock-def' }) })
       return linkedPermission
     }
 
@@ -1046,13 +1045,11 @@ describe('recurring payments service', () => {
     })
 
     it('throws when GovUKPay returns unexpected status', async () => {
-      arrangeCancelRecurringPayment({
-        govUkPayResponse: {
-          ok: false,
-          status: 500,
-          statusText: 'Internal Server Error',
-          text: jest.fn().mockResolvedValue('Server error')
-        }
+      govUkPayApi.cancelRecurringPaymentAgreement.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+        text: jest.fn().mockResolvedValue('Server error')
       })
       const recurringPayment = getMockRecurringPayment()
       findById.mockReturnValueOnce(recurringPayment)
@@ -1093,7 +1090,7 @@ describe('recurring payments service', () => {
       }
     )
 
-    it('passes query to retrieveMultipleRequest', async () => {
+    it('passes query to retrieveMultiple', async () => {
       arrangeCancelRecurringPayment()
       const retrieveRequest = Symbol('retrieve request')
       findPermissionByRecurringPaymentId.mockReturnValueOnce({ toRetrieveRequest: () => retrieveRequest })
@@ -1102,7 +1099,7 @@ describe('recurring payments service', () => {
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(dynamicsClient.retrieveMultipleRequest).toHaveBeenCalledWith(retrieveRequest)
+      expect(dynamicsClient.retrieveMultiple).toHaveBeenCalledWith(retrieveRequest)
     })
 
     it('builds linked permission from expanded response data', async () => {
@@ -1137,7 +1134,6 @@ describe('recurring payments service', () => {
     })
 
     it('throws when recurring payment id is invalid', async () => {
-      arrangeCancelRecurringPayment()
       findById.mockReturnValueOnce(undefined)
 
       await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(
@@ -1158,7 +1154,7 @@ describe('recurring payments service', () => {
   describe('findLinkedRecurringPayment', () => {
     const arrangeLinkedRcpSuccess = mockResponse => {
       jest.spyOn(RecurringPayment, 'fromResponse')
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce(mockResponse)
+      dynamicsClient.retrieveMultiple.mockReturnValueOnce(mockResponse)
       retrieveGlobalOptionSets.mockReturnValueOnce({
         cached: jest.fn().mockResolvedValue({ definition: 'mock-def' })
       })
@@ -1170,11 +1166,11 @@ describe('recurring payments service', () => {
       expect(findRecurringPaymentByPermissionId).toHaveBeenCalledWith(permissionId)
     })
 
-    it('passes query created by findRecurringPaymentByPermissionId to retrieveMultipleRequest', async () => {
+    it('passes query created by findRecurringPaymentByPermissionId to retrieveMultiple', async () => {
       const retrieveRequest = Symbol('retrieve request')
       findRecurringPaymentByPermissionId.mockReturnValueOnce({ toRetrieveRequest: () => retrieveRequest })
       await findLinkedRecurringPayment()
-      expect(dynamicsClient.retrieveMultipleRequest).toHaveBeenCalledWith(retrieveRequest)
+      expect(dynamicsClient.retrieveMultiple).toHaveBeenCalledWith(retrieveRequest)
     })
 
     it('calls RecurringPayment.fromResponse with response and definitions', async () => {
@@ -1208,7 +1204,7 @@ describe('recurring payments service', () => {
         'rcp-456'
       ]
     ])('returns the most recent linked recurring payment (%s)', async (_desc, mockData, expectedId) => {
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: mockData })
+      dynamicsClient.retrieveMultiple.mockReturnValueOnce({ value: mockData })
       retrieveGlobalOptionSets.mockReturnValueOnce({ cached: jest.fn().mockResolvedValue({ def: 'mock' }) })
 
       const recurringPayment = await findLinkedRecurringPayment('abc123')
@@ -1216,7 +1212,7 @@ describe('recurring payments service', () => {
     })
 
     it('returns false if no linked recurring payments found', async () => {
-      dynamicsClient.retrieveMultipleRequest.mockReturnValueOnce({ value: [] })
+      dynamicsClient.retrieveMultiple.mockReturnValueOnce({ value: [] })
       const recurringPayment = await findLinkedRecurringPayment('abc123')
       expect(recurringPayment).toBeFalsy()
     })
