@@ -17,7 +17,7 @@ const headers = recurring => ({
  */
 export const createRecurringPaymentAgreement = async preparedPayment => {
   try {
-    return fetch(process.env.GOV_PAY_RCP_API_URL, {
+    return await fetch(process.env.GOV_PAY_RCP_API_URL, {
       headers: headers(true),
       method: 'post',
       body: JSON.stringify(preparedPayment),
@@ -39,7 +39,7 @@ export const createRecurringPaymentAgreement = async preparedPayment => {
  */
 export const createPayment = async (preparedPayment, recurring = false) => {
   try {
-    return fetch(process.env.GOV_PAY_API_URL, {
+    return await fetch(process.env.GOV_PAY_API_URL, {
       headers: headers(recurring),
       method: 'post',
       body: JSON.stringify(preparedPayment),
@@ -58,7 +58,7 @@ export const createPayment = async (preparedPayment, recurring = false) => {
  */
 export const fetchPaymentStatus = async (paymentId, recurring = false) => {
   try {
-    return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
+    return await fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
       headers: headers(recurring),
       method: 'get',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
@@ -76,7 +76,7 @@ export const fetchPaymentStatus = async (paymentId, recurring = false) => {
  */
 export const fetchPaymentEvents = async (paymentId, recurring = false) => {
   try {
-    return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
+    return await fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
       headers: headers(recurring),
       method: 'get',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
@@ -103,7 +103,7 @@ export const isGovPayUp = async () => {
  */
 export const getRecurringPaymentAgreementInformation = async agreementId => {
   try {
-    return fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}`, {
+    return await fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}`, {
       headers: headers(true),
       method: 'get',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
@@ -121,7 +121,7 @@ export const getRecurringPaymentAgreementInformation = async agreementId => {
  */
 export const cancelRecurringPaymentAgreement = async agreementId => {
   try {
-    return fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}/cancel`, {
+    return await fetch(`${process.env.GOV_PAY_RCP_API_URL}/${agreementId}/cancel`, {
       headers: headers(true),
       method: 'post',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
