@@ -21,7 +21,7 @@ describe('Recurring Payment Queries', () => {
   ]
 
   describe('findDueRecurringPayments', () => {
-    it('builds retrieve request with due date filter, active-state checks and contact/permission expands', () => {
+    it('builds a query to retrieve active recurring payments', () => {
       const date = new Date('2023-11-08')
 
       const query = findDueRecurringPayments(date)
@@ -37,7 +37,7 @@ describe('Recurring Payment Queries', () => {
   })
 
   describe('findRecurringPaymentsByAgreementId', () => {
-    it('builds retrieve request filtered by agreement id and active state', () => {
+    it('builds a query to retrieve active recurring payments', () => {
       const agreementId = 'abc123'
 
       const query = findRecurringPaymentsByAgreementId(agreementId)
@@ -51,7 +51,7 @@ describe('Recurring Payment Queries', () => {
   })
 
   describe('findRecurringPaymentByPermissionId', () => {
-    it('builds retrieve request filtered by active permission id and active state', () => {
+    it('builds a query to retrieve recurring payments by permissionId', () => {
       const permissionId = 'perm-123'
 
       const query = findRecurringPaymentByPermissionId(permissionId)
