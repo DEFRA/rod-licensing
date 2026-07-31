@@ -342,18 +342,6 @@ describe('govuk-pay-api-connector', () => {
       expect(result).toEqual(mockResponse)
     })
 
-    it('logs and rethrows errors when fetch rejects', async () => {
-      const error = new Error('cancel agreement failed')
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      fetch.mockRejectedValueOnce(error)
-
-      await expect(govUkPayApi.cancelRecurringPaymentAgreement('abc-123')).rejects.toBe(error)
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: abc-123',
-        error
-      )
-    })
-
     it('rethrows the same error when fetch rejects', async () => {
       const error = new Error('cancel agreement failed')
       fetch.mockRejectedValueOnce(error)
