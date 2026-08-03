@@ -1,4 +1,13 @@
 
+## v1.74.0-rc.1 (2026-08-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2450](https://github.com/DEFRA/rod-licensing/pull/2450) Return GAFL README to left alignment ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.74.0-rc.0 (2026-07-31)
 
 #### :rocket: Enhancement
