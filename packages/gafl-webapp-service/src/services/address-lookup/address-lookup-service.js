@@ -67,14 +67,10 @@ const buildLocality = result => {
 }
 
 const shouldBeOrganisationOnly = result => {
-  const fieldsToCheck = [
-    result.CLASSIFICATION_CODE,
-    result.PO_BOX_NUMBER,
-    result.SUB_BUILDING_NAME,
-    result.BUILDING_NAME,
-    result.BUILDING_NUMBER
-  ]
-  return removeMissingOrBlankFields(fieldsToCheck).length === 0
+  const fieldsToCheck = [result.PO_BOX_NUMBER, result.SUB_BUILDING_NAME, result.BUILDING_NAME, result.BUILDING_NUMBER]
+  const noAlternativeFields = removeMissingOrBlankFields(fieldsToCheck).length === 0
+  const organisationNamePresent = removeMissingOrBlankFields([result.ORGANISATION_NAME])
+  return noAlternativeFields && organisationNamePresent
 }
 
 const isPoBoxAddress = result => result.CLASSIFICATION_CODE === 'OR3' && result.PO_BOX_NUMBER

@@ -112,23 +112,24 @@ describe('address-lookup-service', () => {
 
   describe('premises field', () => {
     it.each`
-      desc                                                                  | expected                                    | searchPremises   | classificationCode | poBoxNumber  | subBuildingName | buildingName     | buildingNumber | organisationName
-      ${'everything but ORGANISATION_NAME is blank'}                        | ${'FishCorp'}                               | ${'FishCorp'}    | ${undefined}       | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
-      ${'CLASSIFICATION_CODE is blank'}                                     | ${'12345, Flat 3A, Fish Towers, 42'}        | ${'Flat 3A'}     | ${undefined}       | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-      ${'CLASSIFICATION_CODE is for PO box'}                                | ${'PO BOX 12345'}                           | ${'12345'}       | ${'OR3'}           | ${'12345'}   | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
-      ${'CLASSIFICATION_CODE is for PO box but other fields are present'}   | ${'PO BOX 12345, Flat 3A, Fish Towers, 42'} | ${'Flat 3A'}     | ${'OR3'}           | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-      ${'CLASSIFICATION_CODE is for PO box but PO_BOX_NUMBER is blank'}     | ${'Flat 3A, Fish Towers, 42'}               | ${'Flat 3A'}     | ${'OR3'}           | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-      ${'SUB_BUILDING_NAME, BUILDING_NAME and BUILDING_NUMBER are present'} | ${'Flat 3A, Fish Towers, 42'}               | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-      ${'SUB_BUILDING_NAME and BUILDING_NAME are present'}                  | ${'Flat 3A, Fish Towers'}                   | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
-      ${'SUB_BUILDING_NAME and BUILDING_NUMBER are present'}                | ${'Flat 3A, 42'}                            | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
-      ${'BUILDING_NAME and BUILDING_NUMBER are present'}                    | ${'Fish Towers, 42'}                        | ${'42'}          | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-      ${'BUILDING_NAME is present'}                                         | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
-      ${'BUILDING_NUMBER is present'}                                       | ${'42'}                                     | ${'42'}          | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
-      ${'BUILDING_NAME is present and BUILDING_NUMBER is an empty string'}  | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${''}          | ${'FishCorp'}
-      ${'BUILDING_NAME is present and BUILDING_NUMBER is spaces'}           | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'  '}        | ${'FishCorp'}
-      ${'BUILDING_NAME is present and BUILDING_NUMBER is null'}             | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${null}        | ${'FishCorp'}
-      ${'BUILDING_NUMBER is 0 string'}                                      | ${'0'}                                      | ${'0'}           | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'0'}         | ${'FishCorp'}
-      ${'BUILDING_NUMBER is 0 integer'}                                     | ${'0'}                                      | ${'0'}           | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${0}           | ${'FishCorp'}
+      desc                                                                   | expected                                    | searchPremises   | classificationCode | poBoxNumber  | subBuildingName | buildingName     | buildingNumber | organisationName
+      ${'everything but ORGANISATION_NAME is blank'}                         | ${'FishCorp'}                               | ${'FishCorp'}    | ${undefined}       | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+      ${'everything but CLASSIFICATION_CODE and ORGANISATION_NAME is blank'} | ${'FishCorp'}                               | ${'FishCorp'}    | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is blank but other fields are present'}         | ${'12345, Flat 3A, Fish Towers, 42'}        | ${'Flat 3A'}     | ${undefined}       | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is for PO box'}                                 | ${'PO BOX 12345'}                           | ${'12345'}       | ${'OR3'}           | ${'12345'}   | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is for PO box but other fields are present'}    | ${'PO BOX 12345, Flat 3A, Fish Towers, 42'} | ${'Flat 3A'}     | ${'OR3'}           | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is for PO box but PO_BOX_NUMBER is blank'}      | ${'Flat 3A, Fish Towers, 42'}               | ${'Flat 3A'}     | ${'OR3'}           | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'SUB_BUILDING_NAME, BUILDING_NAME and BUILDING_NUMBER are present'}  | ${'Flat 3A, Fish Towers, 42'}               | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'SUB_BUILDING_NAME and BUILDING_NAME are present'}                   | ${'Flat 3A, Fish Towers'}                   | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
+      ${'SUB_BUILDING_NAME and BUILDING_NUMBER are present'}                 | ${'Flat 3A, 42'}                            | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+      ${'BUILDING_NAME and BUILDING_NUMBER are present'}                     | ${'Fish Towers, 42'}                        | ${'42'}          | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'BUILDING_NAME is present'}                                          | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
+      ${'BUILDING_NUMBER is present'}                                        | ${'42'}                                     | ${'42'}          | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+      ${'BUILDING_NAME is present and BUILDING_NUMBER is an empty string'}   | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${''}          | ${'FishCorp'}
+      ${'BUILDING_NAME is present and BUILDING_NUMBER is spaces'}            | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'  '}        | ${'FishCorp'}
+      ${'BUILDING_NAME is present and BUILDING_NUMBER is null'}              | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${null}        | ${'FishCorp'}
+      ${'BUILDING_NUMBER is 0 string'}                                       | ${'0'}                                      | ${'0'}           | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'0'}         | ${'FishCorp'}
+      ${'BUILDING_NUMBER is 0 integer'}                                      | ${'0'}                                      | ${'0'}           | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${0}           | ${'FishCorp'}
     `(
       'when $desc it saves a premises field with correct value',
       async ({
@@ -350,12 +351,11 @@ describe('address-lookup-service', () => {
     })
 
     it.each`
-      snakeCaseField           | camelCaseField
-      ${'BUILDING_NAME'}       | ${'buildingName'}
-      ${'CLASSIFICATION_CODE'} | ${'classificationCode'}
-      ${'BUILDING_NUMBER'}     | ${'buildingNumber'}
-      ${'PO_BOX_NUMBER'}       | ${'poBoxNumber'}
-      ${'SUB_BUILDING_NAME'}   | ${'subBuildingName'}
+      snakeCaseField         | camelCaseField
+      ${'BUILDING_NAME'}     | ${'buildingName'}
+      ${'BUILDING_NUMBER'}   | ${'buildingNumber'}
+      ${'PO_BOX_NUMBER'}     | ${'poBoxNumber'}
+      ${'SUB_BUILDING_NAME'} | ${'subBuildingName'}
     `('does not match to ORGANISATION_NAME if $snakeCaseField is present', async ({ camelCaseField }) => {
       const term = 'Ministry of Salmon'
       fetch.mockResolvedValueOnce({
