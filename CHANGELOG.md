@@ -1,4 +1,13 @@
 
+## v1.74.0-rc.0 (2026-07-31)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`
+  * [#2133](https://github.com/DEFRA/rod-licensing/pull/2133) Implement batcher for RCP ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.73.0-rc.9 (2026-07-21)
 
