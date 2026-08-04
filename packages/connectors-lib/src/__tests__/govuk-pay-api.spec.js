@@ -284,18 +284,18 @@ describe('govuk-pay-api-connector', () => {
     })
   })
 
-  describe('cancelRecurringPaymentAgreement', () => {
+  describe.each(['abc-123', 'def-456', 'ghi-789'])('cancelRecurringPaymentAgreement with agreement id %s', agreementId => {
     it('calls the cancel endpoint for the provided agreement id', async () => {
       const mockResponse = { ok: true, status: 204 }
       fetch.mockReturnValueOnce(mockResponse)
-      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
-      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement/abc-123/cancel', expect.any(Object))
+      await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
+      expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0/agreement/${agreementId}/cancel`, expect.any(Object))
     })
 
     it('sends recurring API headers', async () => {
       const mockResponse = { ok: true, status: 204 }
       fetch.mockResolvedValueOnce(mockResponse)
-      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -307,7 +307,7 @@ describe('govuk-pay-api-connector', () => {
     it('uses POST method', async () => {
       const mockResponse = { ok: true, status: 204 }
       fetch.mockResolvedValueOnce(mockResponse)
-      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -319,7 +319,7 @@ describe('govuk-pay-api-connector', () => {
     it('uses the configured request timeout', async () => {
       const mockResponse = { ok: true, status: 204 }
       fetch.mockResolvedValueOnce(mockResponse)
-      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -331,14 +331,14 @@ describe('govuk-pay-api-connector', () => {
     it('returns the fetch response when GOV.UK Pay request succeeds', async () => {
       const mockResponse = { ok: true, status: 204 }
       fetch.mockResolvedValueOnce(mockResponse)
-      const result = await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      const result = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
       expect(result).toEqual({ ok: true, status: 204 })
     })
 
     it('returns non-ok responses for caller-side handling', async () => {
       const mockResponse = { ok: false, status: 400, statusText: 'Bad Request' }
       fetch.mockResolvedValueOnce(mockResponse)
-      const result = await govUkPayApi.cancelRecurringPaymentAgreement('abc-123')
+      const result = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
       expect(result).toEqual(mockResponse)
     })
 
@@ -346,7 +346,7 @@ describe('govuk-pay-api-connector', () => {
       const error = new Error('cancel agreement failed')
       fetch.mockRejectedValueOnce(error)
 
-      await expect(govUkPayApi.cancelRecurringPaymentAgreement('abc-123')).rejects.toBe(error)
+      await expect(govUkPayApi.cancelRecurringPaymentAgreement(agreementId)).rejects.toBe(error)
     })
 
     it('logs an error when fetch rejects', async () => {
@@ -354,9 +354,9 @@ describe('govuk-pay-api-connector', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       fetch.mockRejectedValueOnce(error)
 
-      await govUkPayApi.cancelRecurringPaymentAgreement('abc-123').catch(() => {})
+      await govUkPayApi.cancelRecurringPaymentAgreement(agreementId).catch(() => {})
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: abc-123',
+        `Error cancelling recurring payment agreement in the GOV.UK API service - agreementId: ${agreementId}`,
         error
       )
     })
