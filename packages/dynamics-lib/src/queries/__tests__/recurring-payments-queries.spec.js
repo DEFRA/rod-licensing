@@ -2,7 +2,7 @@ import {
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
   findRecurringPaymentByPermissionId,
-  findPermissionByRecurringPaymentId
+  findRecurringPaymentById
 } from '../recurring-payments.queries.js'
 import { RecurringPayment } from '../../entities/recurring-payment.entity.js'
 
@@ -65,7 +65,7 @@ describe('Recurring Payment Queries', () => {
     })
   })
 
-  describe('findPermissionByRecurringPaymentId', () => {
+  describe('findRecurringPaymentById', () => {
     const createMockDefinition = defaultFilter => ({
       defaultFilter,
       relationships: {
@@ -82,16 +82,14 @@ describe('Recurring Payment Queries', () => {
       const mockDefaultFilter = 'mock_default_filter'
       jest.spyOn(RecurringPayment, 'definition', 'get').mockReturnValue(createMockDefinition(mockDefaultFilter))
 
-      const request = findPermissionByRecurringPaymentId(recurringPaymentId).toRetrieveRequest()
-      expect(request.filter).toBe(
-        `_defra_activepermission_value ne null and defra_recurringpaymentid eq ${recurringPaymentId} and ${mockDefaultFilter}`
-      )
+      const request = findRecurringPaymentById(recurringPaymentId).toRetrieveRequest()
+      expect(request.filter).toBe(`defra_recurringpaymentid eq ${recurringPaymentId} and ${mockDefaultFilter}`)
     })
 
     it('expands active permission relationship', () => {
       jest.spyOn(RecurringPayment, 'definition', 'get').mockReturnValue(createMockDefinition('mock_default_filter'))
 
-      const request = findPermissionByRecurringPaymentId('rcp-456').toRetrieveRequest()
+      const request = findRecurringPaymentById('rcp-456').toRetrieveRequest()
       expect(request.expand).toContainEqual({ property: 'defra_ActivePermission' })
     })
   })

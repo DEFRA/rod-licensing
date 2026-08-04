@@ -1,12 +1,10 @@
 import {
   dynamicsClient,
   executeQuery,
-  findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
-  findPermissionByRecurringPaymentId,
+  findRecurringPaymentById,
   persist,
-  Permission,
   RecurringPayment,
   findRecurringPaymentByPermissionId,
   retrieveGlobalOptionSets
@@ -170,9 +168,15 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 }
 
 export const cancelRecurringPayment = async (id, reason) => {
-  const recurringPayment = await findById(RecurringPayment, id)
-  if (!recurringPayment) {
+  const [result] = await executeQuery(findRecurringPaymentById(id))
+  if (!result) {
     throw new Error(`Invalid id provided for recurring payment cancellation: ${id}`)
+  }
+
+  const recurringPayment = result.entity
+  const linkedPermission = result.expanded?.activePermission?.entity
+  if (!linkedPermission) {
+    throw new Error(`No active permission linked to recurring payment: ${id}`)
   }
   if (!recurringPayment.agreementId) {
     throw new Error(`Cannot cancel a recurring payment without an agreement ID: ${id}`)
@@ -184,29 +188,10 @@ export const cancelRecurringPayment = async (id, reason) => {
   await cancelGovUkPayAgreement(recurringPayment.agreementId)
 
   const updatedRecurringPayment = Object.assign(new RecurringPayment(), recurringPayment)
-  const entitiesToPersist = [updatedRecurringPayment]
+  linkedPermission.isRecurringPayment = false
 
-  const linkedPermission = await getLinkedPermission(id)
-  if (linkedPermission) {
-    linkedPermission.isRecurringPayment = false
-    entitiesToPersist.push(linkedPermission)
-  }
-
-  await persist(entitiesToPersist)
+  await persist([updatedRecurringPayment, linkedPermission])
   return updatedRecurringPayment
-}
-
-const getLinkedPermission = async recurringPaymentId => {
-  const query = findPermissionByRecurringPaymentId(recurringPaymentId)
-  const response = await dynamicsClient.retrieveMultiple(query.toRetrieveRequest())
-  if (response.value.length) {
-    const [record] = response.value
-    if (record.defra_ActivePermission) {
-      const optionSetData = await retrieveGlobalOptionSets().cached()
-      return Permission.fromResponse(record.defra_ActivePermission, optionSetData)
-    }
-  }
-  return null
 }
 
 const cancelGovUkPayAgreement = async agreementId => {
