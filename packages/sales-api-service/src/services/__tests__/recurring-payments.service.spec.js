@@ -1008,8 +1008,8 @@ describe('recurring payments service', () => {
       const recurringPayment = getMockRecurringPayment({ agreementId: undefined })
       findById.mockReturnValueOnce(recurringPayment)
 
-      await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(
-        'Cannot cancel a recurring payment without an agreement ID'
+      await expect(cancelRecurringPayment('recurring-payment-id', 'Payment Failure')).rejects.toThrow(
+        'Cannot cancel a recurring payment without an agreement ID: recurring-payment-id'
       )
     })
 
@@ -1136,8 +1136,8 @@ describe('recurring payments service', () => {
     it('throws when recurring payment id is invalid', async () => {
       findById.mockReturnValueOnce(undefined)
 
-      await expect(cancelRecurringPayment('id', 'Payment Failure')).rejects.toThrow(
-        'Invalid id provided for recurring payment cancellation'
+      await expect(cancelRecurringPayment('recurring-payment-id', 'Payment Failure')).rejects.toThrow(
+        'Invalid id provided for recurring payment cancellation: recurring-payment-id'
       )
     })
 

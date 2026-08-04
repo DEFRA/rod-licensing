@@ -172,10 +172,10 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 export const cancelRecurringPayment = async (id, reason) => {
   const recurringPayment = await findById(RecurringPayment, id)
   if (!recurringPayment) {
-    throw new Error('Invalid id provided for recurring payment cancellation')
+    throw new Error(`Invalid id provided for recurring payment cancellation: ${id}`)
   }
   if (!recurringPayment.agreementId) {
-    throw new Error('Cannot cancel a recurring payment without an agreement ID')
+    throw new Error(`Cannot cancel a recurring payment without an agreement ID: ${id}`)
   }
 
   recurringPayment.cancelledDate = new Date().toISOString()
