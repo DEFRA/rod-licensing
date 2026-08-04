@@ -1,5 +1,5 @@
 import { HOW_CONTACTED } from './mapping-constants.js'
-import { SERVICE_LOCAL_TIME, ADULT_MIN_AGE } from '@defra-fish/business-rules-lib'
+import { SERVICE_LOCAL_TIME, RECURRING_PAYMENT_MIN_AGE } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
 export const recurringPayReminderDisplay = (permission, mssgs) => {
@@ -16,7 +16,7 @@ export const validForRecurringPayment = permission => {
   return (
     permission.licenceLength === '12M' &&
     permission.isLicenceForYou &&
-    licenseeAge >= ADULT_MIN_AGE &&
+    licenseeAge >= RECURRING_PAYMENT_MIN_AGE &&
     process.env.CHANNEL?.toLowerCase() !== 'telesales'
   )
 }
