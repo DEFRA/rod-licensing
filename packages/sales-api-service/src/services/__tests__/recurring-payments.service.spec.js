@@ -896,12 +896,6 @@ describe('recurring payments service', () => {
   })
 
   describe('cancelRecurringPayment', () => {
-    const cancelRecurringPaymentIds = [
-      '92207e2c-0aa2-4600-a9c4-a7eb2276e404',
-      'f794dd0d-b80a-4d51-b738-479c87b4765b',
-      'b437d543-430f-4eb1-830d-539148c8b440'
-    ]
-
     const createLinkedPermission = (overrides = {}) => {
       const permission = new Permission()
       permission.isRecurringPayment = true
@@ -919,13 +913,16 @@ describe('recurring payments service', () => {
       return { recurringPayment, linkedPermission }
     }
 
-    it.each(cancelRecurringPaymentIds)('passes recurring payment id to findRecurringPaymentById when id is %s', async id => {
-      arrangeCancelRecurringPayment()
+    it.each(['92207e2c-0aa2-4600-a9c4-a7eb2276e404', 'f794dd0d-b80a-4d51-b738-479c87b4765b', 'b437d543-430f-4eb1-830d-539148c8b440'])(
+      'passes recurring payment id to findRecurringPaymentById when id is %s',
+      async id => {
+        arrangeCancelRecurringPayment()
 
-      await cancelRecurringPayment(id, 'Payment Failure')
+        await cancelRecurringPayment(id, 'Payment Failure')
 
-      expect(findRecurringPaymentById).toHaveBeenCalledWith(id)
-    })
+        expect(findRecurringPaymentById).toHaveBeenCalledWith(id)
+      }
+    )
 
     it('passes query created by findRecurringPaymentById to executeQuery', async () => {
       const query = Symbol('query')
@@ -1006,7 +1003,10 @@ describe('recurring payments service', () => {
 
     it('throws when recurring payment has no agreement id', async () => {
       const recurringPayment = getMockRecurringPayment({ agreementId: undefined })
-      arrangeCancelRecurringPayment({ recurringPayment })
+
+      executeQuery.mockResolvedValueOnce([
+        { entity: recurringPayment, expanded: { activePermission: { entity: createLinkedPermission() } } }
+      ])
 
       await expect(cancelRecurringPayment('recurring-payment-id', 'Payment Failure')).rejects.toThrow(
         'Cannot cancel a recurring payment without an agreement ID: recurring-payment-id'
