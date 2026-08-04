@@ -1008,6 +1008,27 @@ describe('recurring payments service', () => {
       expect(govUkPayApi.cancelRecurringPaymentAgreement).toHaveBeenCalledWith(recurringPayment.agreementId)
     })
 
+    it('debug outputs success message with agreement id when GovUKPay cancellation succeeds', async () => {
+      const recurringPayment = getMockRecurringPayment()
+      arrangeCancelRecurringPayment({ recurringPayment })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(debug).toHaveBeenCalledWith('Successfully cancelled GovUkPay agreement: %s', recurringPayment.agreementId)
+    })
+
+    it.each([
+      ['404 not found', 404, 'GovUkPay agreement not found (already cancelled or does not exist): %s'],
+      ['400 bad request', 400, 'GovUkPay agreement cannot be cancelled (invalid state): %s']
+    ])('debug outputs message with agreement id when GovUKPay returns %s', async (_description, status, expectedMessage) => {
+      const recurringPayment = getMockRecurringPayment()
+      arrangeCancelRecurringPayment({ recurringPayment, govUkPayResponse: { ok: false, status } })
+
+      await cancelRecurringPayment('id', 'User Cancelled')
+
+      expect(debug).toHaveBeenCalledWith(expectedMessage, recurringPayment.agreementId)
+    })
+
     it('throws when recurring payment has no agreement id', async () => {
       const recurringPayment = getMockRecurringPayment({ agreementId: undefined })
 
@@ -1069,11 +1090,19 @@ describe('recurring payments service', () => {
     })
 
     it('persists linked permission alongside recurring payment', async () => {
-      const { linkedPermission } = arrangeCancelRecurringPayment()
+      const recurringPayment = getMockRecurringPayment()
+      const { linkedPermission } = arrangeCancelRecurringPayment({ recurringPayment })
 
       await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(persist).toHaveBeenCalledWith([expect.any(RecurringPayment), linkedPermission])
+      expect(persist).toHaveBeenCalledWith([
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledDate: expect.any(String),
+          cancelledReason: expect.any(Object)
+        }),
+        linkedPermission
+      ])
     })
 
     it('throws when recurring payment id is invalid', async () => {
