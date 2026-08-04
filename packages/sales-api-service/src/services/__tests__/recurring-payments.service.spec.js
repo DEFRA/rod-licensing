@@ -962,11 +962,18 @@ describe('recurring payments service', () => {
     })
 
     it('returns the updated recurring payment', async () => {
-      arrangeCancelRecurringPayment()
+      const recurringPayment = getMockRecurringPayment()
+      arrangeCancelRecurringPayment({ recurringPayment })
 
       const result = await cancelRecurringPayment('id', 'User Cancelled')
 
-      expect(result).toEqual(expect.any(RecurringPayment))
+      expect(result).toEqual(
+        expect.objectContaining({
+          ...recurringPayment,
+          cancelledDate: expect.any(String),
+          cancelledReason: expect.any(Object)
+        })
+      )
     })
 
     it.each(['2026-05-20T09:10:11.123Z', '2027-01-01T00:00:00.000Z'])(
