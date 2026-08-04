@@ -298,7 +298,7 @@ describe('address-lookup-service', () => {
       ${'BUILDING_NUMBER'}     | ${'buildingNumber'}
       ${'PO_BOX_NUMBER'}       | ${'poBoxNumber'}
       ${'SUB_BUILDING_NAME'}   | ${'subBuildingName'}
-    `('does not match to ORGANISATION_NAME if $snakeCaseField is present', async ({ _snakeCaseField, camelCaseField }) => {
+    `('does not match to ORGANISATION_NAME if $snakeCaseField is present', async ({ camelCaseField }) => {
       const term = 'Ministry of Salmon'
       fetch.mockResolvedValueOnce({
         json: () => ({
@@ -335,6 +335,7 @@ describe('address-lookup-service', () => {
         const onlyMatchesABit = 'foo'
         const notAMatchAtAll = 'salmon'
 
+        const orderedAddresses = [exactMatch, partialMatch, anotherPartialMatch, onlyMatchesABit]
         const disorderedAddresses = [partialMatch, notAMatchAtAll, onlyMatchesABit, exactMatch, anotherPartialMatch]
         const addressResults = []
         for (const address of disorderedAddresses) {
@@ -343,7 +344,6 @@ describe('address-lookup-service', () => {
         fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
         const results = await addressLookupService(exactMatch, 'FI1 5SH')
-        const orderedAddresses = [exactMatch, partialMatch, anotherPartialMatch, onlyMatchesABit]
         expect(results.map(r => r.premises)).toEqual(orderedAddresses)
       })
 
@@ -358,6 +358,14 @@ describe('address-lookup-service', () => {
         const doesNotMatch = 'bar 2B 200'
         const alsoDoesNotMatch = 'baz 3C 300'
 
+        const orderedAddresses = [
+          matchesLettersAndDigits,
+          alsoMatchesLettersAndDigits,
+          matchesDigitsOnly,
+          matchesLettersOnly,
+          alsoMatchesLettersOnly,
+          alsoMatchesDigitsOnly
+        ]
         const disorderedAddresses = [
           matchesDigitsOnly,
           doesNotMatch,
@@ -375,14 +383,6 @@ describe('address-lookup-service', () => {
         fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
         const results = await addressLookupService(term, 'FI1 5SH')
-        const orderedAddresses = [
-          matchesLettersAndDigits,
-          alsoMatchesLettersAndDigits,
-          matchesDigitsOnly,
-          matchesLettersOnly,
-          alsoMatchesLettersOnly,
-          alsoMatchesDigitsOnly
-        ]
         expect(results.map(r => r.premises)).toEqual(orderedAddresses)
       })
 
@@ -395,6 +395,13 @@ describe('address-lookup-service', () => {
         const shouldScoreOnePoint = 'baz'
         const shouldScoreZeroPoints = 'trout'
 
+        const orderedAddresses = [
+          shouldScoreFivePoints,
+          shouldScoreFourPoints,
+          shouldScoreThreePoints,
+          shouldScoreTwoPoints,
+          shouldScoreOnePoint
+        ]
         const disorderedAddresses = [
           shouldScoreTwoPoints,
           shouldScoreFourPoints,
@@ -410,13 +417,6 @@ describe('address-lookup-service', () => {
         fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
         const results = await addressLookupService(term, 'FI1 5SH')
-        const orderedAddresses = [
-          shouldScoreFivePoints,
-          shouldScoreFourPoints,
-          shouldScoreThreePoints,
-          shouldScoreTwoPoints,
-          shouldScoreOnePoint
-        ]
         expect(results.map(r => r.premises)).toEqual(orderedAddresses)
       })
 
@@ -433,6 +433,7 @@ describe('address-lookup-service', () => {
         const shouldScoreOnePoint = { buildingName: 'baz', expectedPremises: 'baz' }
         const shouldScoreZeroPoints = { buildingNumber: '500', expectedPremises: '500' }
 
+        const orderedAddresses = [shouldScoreFourPoints, shouldScoreThreePoints, shouldScoreTwoPoints, shouldScoreOnePoint]
         const disorderedAddresses = [
           shouldScoreOnePoint,
           shouldScoreFourPoints,
@@ -447,7 +448,6 @@ describe('address-lookup-service', () => {
         fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
         const results = await addressLookupService(term, 'FI1 5SH')
-        const orderedAddresses = [shouldScoreFourPoints, shouldScoreThreePoints, shouldScoreTwoPoints, shouldScoreOnePoint]
         expect(results.map(r => r.premises)).toEqual(orderedAddresses.map(a => a.expectedPremises))
       })
     })

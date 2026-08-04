@@ -120,7 +120,7 @@ const splitStringIntoSearchTerms = string => {
 const checkQualityOfMatch = (userProvidedSearchTerm, resultTerm) => {
   if (userProvidedSearchTerm === resultTerm) {
     // Matches that contain both letters and digits score higher
-    if (/[a-z]+/.test(userProvidedSearchTerm) && /\d+/.test(userProvidedSearchTerm)) {
+    if (/^(?=.*[a-zA-Z])(?=.*\d)/.test(userProvidedSearchTerm)) {
       return 2
     }
     return 1
