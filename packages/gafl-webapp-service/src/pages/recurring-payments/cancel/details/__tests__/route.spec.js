@@ -78,7 +78,9 @@ describe('route', () => {
     rp_cancel_details_payment_card: 'Payment card',
     rp_cancel_details_last_purchased: 'Last purchased',
     rp_cancel_details_licence_valid_until: 'Valid until',
-    licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)'
+    licence_type_radio_salmon_payment_summary: 'Salmon and sea trout',
+    licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)',
+    licence_type_radio_trout_three_rod_payment_summary: 'Trout and coarse (up to 3 rods)'
   })
 
   const getSamplePermission = () => ({
@@ -89,7 +91,7 @@ describe('route', () => {
       },
       permit: {
         description: 'Salmon and sea trout',
-        permitSubtype: { label: 'Trout and coarse' },
+        permitSubtype: { label: 'Salmon and sea trout' },
         numberOfRods: 2
       },
       endDate: '01-01-2026',
@@ -144,7 +146,7 @@ describe('route', () => {
           key: { text: mssgs.rp_cancel_details_licence_holder },
           value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
         },
-        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: mssgs.licence_type_radio_trout_two_rod_payment_summary } },
+        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: mssgs.licence_type_radio_salmon_payment_summary } },
         {
           key: { text: mssgs.rp_cancel_details_payment_card },
           value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
@@ -152,6 +154,24 @@ describe('route', () => {
         { key: { text: mssgs.rp_cancel_details_last_purchased }, value: { text: sampleData.permission.referenceNumber } },
         { key: { text: mssgs.rp_cancel_details_licence_valid_until }, value: { text: sampleFormattedDate } }
       ])
+    })
+
+    it.each([
+      ['Salmon and sea trout', 2, 'licence_type_radio_salmon_payment_summary'],
+      ['Trout and coarse', 2, 'licence_type_radio_trout_two_rod_payment_summary'],
+      ['Trout and coarse', 3, 'licence_type_radio_trout_three_rod_payment_summary']
+    ])('returns licence type summary row text for %s, %s rods', async (subtypeLabel, numberOfRods, expectedCatalogKey) => {
+      const mssgs = getSampleCatalog()
+      const sampleData = getSamplePermission()
+      sampleData.permission.permit.permitSubtype = { label: subtypeLabel }
+      sampleData.permission.permit.numberOfRods = numberOfRods
+      const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+
+      const result = await getData(mockRequest)
+
+      const licenceTypeRow = result.summaryTable.find(row => row.key.text === mssgs.rp_cancel_details_licence_type)
+
+      expect(licenceTypeRow.value.text).toBe(mssgs[expectedCatalogKey])
     })
 
     it('passes cache date format and request locale to moment', async () => {
