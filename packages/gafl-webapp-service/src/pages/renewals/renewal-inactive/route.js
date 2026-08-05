@@ -15,7 +15,7 @@ export const getTitleAndBodyMessage = (mssgs, reason, referenceNumber, validTo) 
       }
     case RENEWAL_ERROR_REASON.EXPIRED:
       return {
-        bodyMessage: `${mssgs.renewal_inactive_not_due_1}${referenceNumber}${mssgs.renewal_inactive_has_expired_1}${validTo}${mssgs.renewal_inactive_has_expired_2}`,
+        bodyMessage: `${mssgs.renewal_inactive_not_due_3}${referenceNumber}${mssgs.renewal_inactive_has_expired_1}${validTo}${mssgs.renewal_inactive_has_expired_2}`,
         title: mssgs.renewal_inactive_title_2
       }
     case RENEWAL_ERROR_REASON.NOT_ANNUAL:

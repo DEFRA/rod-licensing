@@ -20,6 +20,7 @@ const getMessages = (overrides = {}) => ({
   renewal_inactive_title_3: 'You cannot renew an 8 day or 1 day licence',
   renewal_inactive_not_due_1: 'The licence ending in ',
   renewal_inactive_not_due_2: ' does not expire until ',
+  renewal_inactive_not_due_3: 'The licence ending in ',
   renewal_inactive_has_expired_1: ' has expired on ',
   renewal_inactive_has_expired_2: ' and can no longer be renewed',
   renewal_inactive_not_annual_1: ' is not a 12 month licence and cannot be renewed.',
