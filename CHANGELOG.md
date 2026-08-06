@@ -1,4 +1,14 @@
 
+## v1.75.0-rc.1 (2026-08-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2440](https://github.com/DEFRA/rod-licensing/pull/2440) Amend age concession content ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.75.0-rc.0 (2026-08-06)
 
 #### :bug: Bug Fix
