@@ -1,7 +1,7 @@
-import { airbrake, salesApi } from '@defra-fish/connectors-lib'
+import { airbrake, salesApi, HTTPRequestBatcher } from '@defra-fish/connectors-lib'
 import { PAYMENT_STATUS, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { execute } from '../recurring-payments-processor.js'
-import { getPaymentStatus, isGovPayUp, sendPayment } from '../services/govuk-pay-service.js'
+import { isGovPayUp, queueRecurringPayment, queueRecurringPaymentStatusCheck } from '../services/govuk-pay-service.js'
 import db from 'debug'
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
@@ -40,45 +40,100 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     })),
     processRPResult: jest.fn(),
     updatePaymentJournal: jest.fn()
-  }
+  },
+  HTTPRequestBatcher: jest.fn(function () {
+    this.addRequest = jest.fn()
+    this.fetch = jest.fn()
+    this.responseDetails = [
+      {
+        url: 'url',
+        options: {},
+        reference: 'test-agreement-id',
+        responses: [{ status: 200, json: () => Promise.resolve(getMockSendPaymentResponse()) }]
+      }
+    ]
+  })
 }))
-
 jest.mock('../services/govuk-pay-service.js', () => ({
-  sendPayment: jest.fn(() => ({ payment_id: 'payment_id', created_date: '2025-07-18T09:00:00.000Z' })),
-  getPaymentStatus: jest.fn(),
+  queueRecurringPayment: jest.fn(() => ({ fetch: jest.fn() })),
+  queueRecurringPaymentStatusCheck: jest.fn(),
   isGovPayUp: jest.fn(() => true)
 }))
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 const PAYMENT_STATUS_DELAY = 60000
-const getPaymentStatusSuccess = () => ({ state: { status: 'payment status success' } })
-const getPaymentStatusFailure = () => ({ state: { status: 'payment status failure' } })
-const getPaymentStatusError = () => ({ state: { status: 'payment status error' } })
-const getMockPaymentRequestResponse = () => [
-  {
-    entity: { agreementId: 'agreement-1' },
-    expanded: {
-      activePermission: {
-        entity: {
-          referenceNumber: 'ref-1'
-        }
-      }
-    }
-  }
-]
-
-const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'abc-123', referenceNumber = '123' } = {}) => ({
+const getPaymentStatusSuccess = (additionalFields = {}) => ({
+  state: { status: PAYMENT_STATUS.Success },
+  payment_id: 'pay-1',
+  reference: 'test-transaction-id',
+  created_date: '2026-01-01T00:00.000Z',
+  ...additionalFields
+})
+const getPaymentStatusFailure = () => ({ state: { status: PAYMENT_STATUS.Failure } })
+const getPaymentStatusError = () => ({ state: { status: PAYMENT_STATUS.Error } })
+const getMockDueRecurringPayment = ({ agreementId = 'test-agreement-id', id = 'abc-123', referenceNumber = 'ref-1' } = {}) => ({
   entity: { id, agreementId },
   expanded: { activePermission: { entity: { referenceNumber } } }
 })
-
-// eslint-disable-next-line camelcase
-const getMockSendPaymentResponse = ({ payment_id = 'pay-1', agreementId = 'agr-1', created_date = '2025-01-01T00:00:00.000Z' } = {}) => ({
+/* eslint-disable camelcase */
+const getMockSendPaymentResponse = ({
+  payment_id = 'pay-1',
+  created_date = '2025-01-01T00:00:00.000Z',
+  agreement_id = 'test-agreement-id',
+  state = { status: 'created' },
+  description = ''
+} = {}) => ({
   payment_id,
-  agreementId,
-  created_date
+  created_date,
+  agreement_id,
+  state,
+  description
 })
+/* eslint-enable camelcase */
+const mockBatchers = ({ paymentResponses = [], statusResponses = [] } = {}) =>
+  HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(paymentResponses)).mockImplementationOnce(
+    getBatcherImplementation(statusResponses)
+  )
+
+const getBatcherImplementation = (responses = []) => {
+  return function () {
+    this.addRequest = jest.fn()
+    this.fetch = jest.fn(() => {
+      this.responseDetails = responses.map(response => {
+        const reference = response.reference
+        delete response.reference
+        return {
+          url: 'url',
+          options: {},
+          reference: reference || 'test-agreement-id',
+          responses: Array.isArray(response) ? response : [response]
+        }
+      })
+    })
+    Object.defineProperty(this, 'requestQueue', {
+      get: () => {
+        const requestQueue = Array(100)
+        requestQueue.fill({
+          options: {
+            body: '{ "value" : "Sample Payload" }'
+          }
+        })
+        return requestQueue
+      }
+    })
+  }
+}
+
+const getJSONImplementation = responseJSON => {
+  return function () {
+    if (!this.called) {
+      this.called = true
+      return Promise.resolve(responseJSON)
+    }
+    return Promise.reject(new TypeError('body used already'))
+  }
+}
 
 describe('recurring-payments-processor', () => {
   const [{ value: debugLogger }] = db.mock.results
@@ -202,62 +257,73 @@ describe('recurring-payments-processor', () => {
     expect(debugLogger).toHaveBeenNthCalledWith(2, 'Recurring Payments found:', [])
   })
 
-  describe('When RP fetch throws an error...', () => {
-    it('calls console.error with error message', async () => {
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      const error = new Error('Test error')
-      salesApi.getDueRecurringPayments.mockImplementationOnce(() => {
-        throw error
-      })
-
-      try {
-        await execute()
-      } catch {}
-
-      expect(errorSpy).toHaveBeenCalledWith('Run aborted. Error fetching due recurring payments:', error)
+  it('When RP fetch throws an error, console.error is called with error message', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+    const error = new Error('Test error')
+    salesApi.getDueRecurringPayments.mockImplementationOnce(() => {
+      throw error
     })
+
+    try {
+      await execute()
+    } catch {}
+
+    expect(errorSpy).toHaveBeenCalledWith('Run aborted. Error fetching due recurring payments:', error)
   })
 
   describe('When payment request throws an error...', () => {
-    it('console.error is called with error message', async () => {
+    it('lack of a json function on the error response is handled gracefully', async () => {
       jest.spyOn(console, 'error')
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
-      const oopsie = new Error('payment gate down')
-      sendPayment.mockRejectedValueOnce(oopsie)
+      const mockPayment = getMockDueRecurringPayment()
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([mockPayment])
+      const errorResponse = new Error('Network error')
+      errorResponse.reference = mockPayment.agreementId
+      mockBatchers({ paymentResponses: [errorResponse] })
 
-      try {
-        await execute()
-      } catch {}
+      await execute()
 
-      expect(console.error).toHaveBeenCalledWith(expect.any(String), oopsie)
+      expect(console.error).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringMatching(/response\.json is not a function.*/)
+        })
+      )
     })
 
-    it('prepares and sends all payment requests, even if some fail', async () => {
-      const agreementIds = [Symbol('agreementId1'), Symbol('agreementId2'), Symbol('agreementId3'), Symbol('agreementId4')]
-      salesApi.getDueRecurringPayments.mockReturnValueOnce([
-        getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: agreementIds[0] }),
-        getMockDueRecurringPayment({ referenceNumber: 'fi', agreementId: agreementIds[1] }),
-        getMockDueRecurringPayment({ referenceNumber: 'foe', agreementId: agreementIds[2] }),
-        getMockDueRecurringPayment({ referenceNumber: 'fum', agreementId: agreementIds[3] })
-      ])
+    it.each(['cd068c00-638f-49d9-baa8-fc7aa3022698', '003d1230-3746-47a8-9778-0c4cfb7438f4'])(
+      'logs an error for the failed payment request including agreement id %s',
+      async agreementId => {
+        jest.spyOn(console, 'error')
+        salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId })])
+        const errorResponse = new Error('Server down')
+        errorResponse.reference = agreementId
+        mockBatchers({
+          paymentResponses: [errorResponse]
+        })
 
-      const permissionData = { licensee: { countryCode: 'GB-ENG' } }
+        await execute()
+
+        expect(console.error).toHaveBeenCalledWith(`Error when calling GOV.UK Pay API for agreement ${agreementId}:`, errorResponse)
+      }
+    )
+
+    it('subsequent payment requests are still sent', async () => {
+      const agreementIds = [
+        '45f0ac55-9638-426f-b8f6-154cd8eda5fc',
+        '086f1185-acae-4b7a-a362-3eca973c36f9',
+        '094ad13c-4d77-4ed1-98e9-47844f998571',
+        '208a3f88-7753-45d6-a642-172db734cd73'
+      ]
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([
+        getMockDueRecurringPayment({ agreementId: agreementIds[0] }),
+        getMockDueRecurringPayment({ agreementId: agreementIds[1] }),
+        getMockDueRecurringPayment({ agreementId: agreementIds[2] }),
+        getMockDueRecurringPayment({ agreementId: agreementIds[3] })
+      ])
       for (let x = 0; x < agreementIds.length; x++) {
-        salesApi.preparePermissionDataForRenewal.mockReturnValueOnce(permissionData)
         salesApi.createTransaction.mockReturnValueOnce({
           cost: 50,
           id: `transaction-id-${x + 1}`
         })
-
-        if (x === 1) {
-          const err = new Error('Payment request failed')
-          sendPayment.mockRejectedValueOnce(err)
-        } else {
-          sendPayment.mockResolvedValueOnce({ payment_id: `test-payment-id-${x + 1}`, agreementId: agreementIds[x] })
-        }
-        if (x < 3) {
-          getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-        }
       }
       const expectedData = {
         amount: 5000,
@@ -268,28 +334,32 @@ describe('recurring-payments-processor', () => {
 
       await execute()
 
-      expect(sendPayment).toHaveBeenCalledTimes(4)
-      expect(sendPayment).toHaveBeenNthCalledWith(
+      expect(queueRecurringPayment).toHaveBeenCalledTimes(4)
+      expect(queueRecurringPayment).toHaveBeenNthCalledWith(
         1,
-        expect.objectContaining({ ...expectedData, reference: 'transaction-id-1', agreement_id: agreementIds[0] })
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-1', agreement_id: agreementIds[0] }),
+        expect.anything()
       )
-      expect(sendPayment).toHaveBeenNthCalledWith(
+      expect(queueRecurringPayment).toHaveBeenNthCalledWith(
         2,
-        expect.objectContaining({ ...expectedData, reference: 'transaction-id-2', agreement_id: agreementIds[1] })
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-2', agreement_id: agreementIds[1] }),
+        expect.anything()
       )
-      expect(sendPayment).toHaveBeenNthCalledWith(
+      expect(queueRecurringPayment).toHaveBeenNthCalledWith(
         3,
-        expect.objectContaining({ ...expectedData, reference: 'transaction-id-3', agreement_id: agreementIds[2] })
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-3', agreement_id: agreementIds[2] }),
+        expect.anything()
       )
-      expect(sendPayment).toHaveBeenNthCalledWith(
+      expect(queueRecurringPayment).toHaveBeenNthCalledWith(
         4,
-        expect.objectContaining({ ...expectedData, reference: 'transaction-id-4', agreement_id: agreementIds[3] })
+        expect.objectContaining({ ...expectedData, reference: 'transaction-id-4', agreement_id: agreementIds[3] }),
+        expect.anything()
       )
     })
 
-    it('logs an error for every failure', async () => {
+    it('logs an error for data preparation and create transaction failures', async () => {
       jest.spyOn(console, 'error')
-      const errors = [new Error('error 1'), new Error('error 2'), new Error('error 3')]
+      const errors = [new Error('error 1'), new Error('error 2')]
       salesApi.getDueRecurringPayments.mockReturnValueOnce([
         getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: 'a1' }),
         getMockDueRecurringPayment({ referenceNumber: 'fi', agreementId: 'a2' }),
@@ -301,84 +371,206 @@ describe('recurring-payments-processor', () => {
         .mockReturnValueOnce(permissionData)
         .mockReturnValueOnce(permissionData)
       salesApi.createTransaction.mockRejectedValueOnce(errors[1]).mockReturnValueOnce({ cost: 50, id: 'transaction-id-3' })
-      sendPayment.mockRejectedValueOnce(errors[2])
+      HTTPRequestBatcher.mockImplementationOnce(
+        getBatcherImplementation([
+          { status: 200, json: getJSONImplementation({ payment_id: 'payment-id-1', agreement_id: 'agreement-id-1', description: '' }) },
+          { status: 200, json: getJSONImplementation({ payment_id: 'payment-id-2', agreement_id: 'agreement-id-2', description: '' }) }
+        ])
+      )
+      // no need to mock returns for payment status batcher as we are only testing transaction creation errors here
 
       await execute()
 
       expect(console.error).toHaveBeenCalledWith(expect.any(String), ...errors)
     })
 
-    describe('when the error is caused by an invalid agreementId', () => {
-      it('logs out the ids', async () => {
-        jest.spyOn(console, 'log')
-        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
-        const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
-        sendPayment.mockRejectedValueOnce(oopsie)
-
-        try {
-          await execute()
-        } catch (e) {}
-
-        expect(console.log).toHaveBeenCalledWith(
-          '%s is an invalid agreementId. Recurring payment %s will be cancelled',
-          'agreement-1',
-          'recurring-payment-1'
-        )
+    it('logs an error when a payment fails', async () => {
+      jest.spyOn(console, 'error')
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([
+        getMockDueRecurringPayment({ referenceNumber: 'fee', agreementId: 'a1' }),
+        getMockDueRecurringPayment({ referenceNumber: 'fi', agreementId: 'a2' }),
+        getMockDueRecurringPayment({ referenceNumber: 'foe', agreementId: 'a3' }),
+        getMockDueRecurringPayment({ referenceNumber: 'fum', agreementId: 'a4' })
+      ])
+      mockBatchers({
+        paymentResponses: [
+          { status: 200, reference: 'a1', json: getJSONImplementation(getMockSendPaymentResponse({ agreement_id: 'a1' })) },
+          { status: 500, reference: 'a2', json: getJSONImplementation({ code: 'B00M', description: 'Something dreadful happened' }) },
+          { status: 200, reference: 'a3', json: getJSONImplementation(getMockSendPaymentResponse({ agreement_id: 'a3' })) },
+          { status: 200, reference: 'a4', json: getJSONImplementation(getMockSendPaymentResponse({ agreement_id: 'a4' })) }
+        ],
+        statusResponses: [
+          { status: 200, json: getJSONImplementation(getPaymentStatusSuccess()) },
+          { status: 200, json: getJSONImplementation(getPaymentStatusSuccess()) },
+          { status: 200, json: getJSONImplementation(getPaymentStatusSuccess()) }
+        ]
       })
-
-      it('cancels the recurring payment', async () => {
-        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
-        const oopsie = new Error('Invalid attribute value: agreement_id. Agreement does not exist')
-        sendPayment.mockRejectedValueOnce(oopsie)
-
-        try {
-          await execute()
-        } catch (e) {}
-
-        expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith('recurring-payment-1')
-      })
-    })
-
-    describe('when the error is caused by a reason other than invalid agreementId', () => {
-      it('does not try to cancel the recurring payment', async () => {
-        salesApi.getDueRecurringPayments.mockReturnValueOnce(getMockPaymentRequestResponse())
-        const oopsie = new Error('The moon blew up without warning and for no apparent reason')
-        sendPayment.mockRejectedValueOnce(oopsie)
-
-        try {
-          await execute()
-        } catch (e) {
-          expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalledWith('recurring-payment-1')
-        }
-      })
-    })
-  })
-
-  describe('When payment status request throws an error...', () => {
-    it('processRecurringPayments requests payment status for all payments, even if some throw errors', async () => {
-      const dueRecurringPayments = []
-      for (let x = 0; x < 6; x++) {
-        dueRecurringPayments.push(getMockDueRecurringPayment())
-        if ([1, 3].includes(x)) {
-          getPaymentStatus.mockRejectedValueOnce(new Error(`status failure ${x}`))
-        } else {
-          getPaymentStatus.mockReturnValueOnce(getPaymentStatusSuccess())
-        }
-      }
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(dueRecurringPayments)
 
       await execute()
 
-      expect(getPaymentStatus).toHaveBeenCalledTimes(6)
+      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unexpected response from GOV.UK Pay API\..*/))
+    })
+
+    describe.each(['must be active', 'does not exist'])('when the error is caused by an invalid agreementId', errorMessageFragment => {
+      it(`logs out the ids when agreement ${errorMessageFragment}`, async () => {
+        jest.spyOn(console, 'log')
+        const agreementId = 'abc-123'
+        const referenceNumber = 'def-456'
+        salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, referenceNumber })])
+        salesApi.createTransaction.mockResolvedValueOnce({
+          recurringPayment: {
+            id: referenceNumber
+          }
+        })
+        HTTPRequestBatcher.mockImplementationOnce(
+          getBatcherImplementation([
+            {
+              status: 400,
+              reference: agreementId,
+              json: getJSONImplementation({
+                field: 'agreement_id',
+                code: 'P0102',
+                description: `Invalid attribute value: abc-123. Agreement ${errorMessageFragment}`
+              })
+            }
+          ])
+        )
+
+        await execute()
+
+        expect(console.log).toHaveBeenCalledWith(
+          '%s is an invalid agreementId. Recurring payment %s will be cancelled',
+          agreementId,
+          referenceNumber
+        )
+      })
+
+      it(`cancels the recurring payment ${errorMessageFragment}`, async () => {
+        const agreementId = 'abc-123'
+        const referenceNumber = 'def-456'
+        salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, referenceNumber })])
+        salesApi.createTransaction.mockResolvedValueOnce({
+          recurringPayment: {
+            id: referenceNumber
+          }
+        })
+        HTTPRequestBatcher.mockImplementationOnce(
+          getBatcherImplementation([
+            {
+              status: 400,
+              reference: agreementId,
+              json: getJSONImplementation({
+                field: 'agreement_id',
+                code: 'P0102',
+                description: `Invalid attribute value: abc-123. Agreement ${errorMessageFragment}`
+              })
+            }
+          ])
+        )
+
+        await execute()
+
+        expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(referenceNumber)
+      })
+    })
+
+    it('when the error is caused by a reason other than invalid agreementId, RP is not cancelled', async () => {
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+      HTTPRequestBatcher.mockImplementationOnce(
+        getBatcherImplementation([
+          {
+            status: 400,
+            json: getJSONImplementation({ code: 'B00M', description: 'The moon blew up without warning and for no apparent reason' })
+          }
+        ])
+      )
+
+      try {
+        await execute()
+      } finally {
+        expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalledWith('recurring-payment-1')
+      }
     })
   })
 
+  describe.each([
+    [
+      4,
+      'errors',
+      [
+        { status: 200, paymentId: 'aab5a964-7b4b-42f9-b9a9-bf97e9789739' },
+        { status: 200, paymentId: '903edb3d-85e5-40b2-9027-12b7b91329c9' },
+        new Error('Payment request failed'),
+        { status: 200, paymentId: 'a7bffcac-c4c5-463a-ad23-d6ed6b2c96f7' },
+        new Error('Payment request failed'),
+        { status: 200, paymentId: '821d2705-7eb5-4e43-9d71-9ae899981cf3' }
+      ]
+    ],
+    [
+      3,
+      '429 and 500 responses',
+      [
+        { status: 200, paymentId: '92972d0a-5f88-4ea6-b594-3f9ad84a99c3' },
+        { status: 429 },
+        { status: 500 },
+        { status: 200, paymentId: '524485f9-8fc4-4cba-8b9e-39d111b66014' },
+        { status: 201, paymentId: 'a8f79b64-e5cb-4ad9-b31e-fca64d0dd709' }
+      ]
+    ]
+  ])(
+    'processRecurringPayments requests payment status for all %i successful payments when responses include %s',
+    (expectedStatusCallCount, _d, sampleResponses) => {
+      it('queues a payment status check for each successful payment response', async () => {
+        const responses = sampleResponses.map((sr, idx) => ({ ...sr, reference: `a-${idx}` }))
+        const paymentIds = responses.filter(r => r.paymentId).map(r => r.paymentId)
+        for (let x = 0; x < responses.length; x++) {
+          if (responses[x].paymentId) {
+            responses[x].json = getJSONImplementation(
+              getMockSendPaymentResponse({ payment_id: responses[x].paymentId, agreement_id: `a-${x}` })
+            )
+          }
+        }
+        const dueRecurringPayments = Array(responses.length)
+        for (let i = 0; i < dueRecurringPayments.length; i++) {
+          dueRecurringPayments[i] = getMockDueRecurringPayment({ agreementId: `a-${i}` })
+        }
+        salesApi.getDueRecurringPayments.mockReturnValueOnce(dueRecurringPayments)
+        HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(responses))
+
+        await execute()
+
+        const paymentStatusBatcher = HTTPRequestBatcher.mock.instances[1]
+        paymentIds.forEach((paymentId, idx) => {
+          expect(queueRecurringPaymentStatusCheck).toHaveBeenNthCalledWith(idx + 1, paymentId, paymentStatusBatcher)
+        })
+      })
+
+      it('initiates the batcher to retrieve payment statuses', async () => {
+        const responses = sampleResponses.map((sr, idx) => ({ ...sr, reference: `a-${idx}` }))
+        for (let x = 0; x < responses.length; x++) {
+          if (responses[x].paymentId) {
+            responses[x].json = getJSONImplementation(
+              getMockSendPaymentResponse({ payment_id: responses[x].paymentId, agreement_id: `a-${x}` })
+            )
+          }
+        }
+        const dueRecurringPayments = Array(responses.length)
+        for (let i = 0; i < dueRecurringPayments.length; i++) {
+          dueRecurringPayments[i] = getMockDueRecurringPayment({ agreementId: `a-${i}` })
+        }
+        salesApi.getDueRecurringPayments.mockReturnValueOnce(dueRecurringPayments)
+        HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(responses))
+
+        await execute()
+        const paymentStatusBatcher = HTTPRequestBatcher.mock.instances[1]
+        expect(paymentStatusBatcher.fetch).toHaveBeenCalled()
+      })
+    }
+  )
+
   it('prepares the data for found recurring payments', async () => {
-    const referenceNumber = Symbol('reference')
+    const referenceNumber = 'aefcd534-d2f8-422a-b959-70ee6bc1ead2'
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber })])
-    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await execute()
 
@@ -386,16 +578,16 @@ describe('recurring-payments-processor', () => {
   })
 
   it('creates a transaction with the correct data', async () => {
-    const id = Symbol('recurring-payment-id')
-    const agreementId = Symbol('agreement-id')
+    const id = 'f7a3e603-1206-4ed3-afc3-80342075f5fc'
+    const agreementId = '77c2c30c-b7b3-42eb-8919-ce9b157b7c9c'
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, id })])
 
-    const isLicenceForYou = Symbol('isLicenceForYou')
-    const isRenewal = Symbol('isRenewal')
-    const country = Symbol('country')
-    const permitId = Symbol('permitId')
-    const firstName = Symbol('firstName')
-    const lastName = Symbol('lastName')
+    const isLicenceForYou = 'f824e9b2-d2ee-449b-9c06-2bd9e60a797b'
+    const isRenewal = 'c5d5e46b-3a98-4512-b6ec-435b32f011c2'
+    const country = 'ee6c7fc5-dd90-49f7-8b87-a301fb4abc45'
+    const permitId = 'b4fe7675-29d4-4372-aa3a-7b09c59381b6'
+    const firstName = 'cd775e3c-6215-423e-9582-73e4aac02177'
+    const lastName = '9b3ae360-0388-46ed-90d2-a51d540ea7e8'
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       isLicenceForYou,
@@ -433,26 +625,48 @@ describe('recurring-payments-processor', () => {
       ]
     }
 
-    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'test-agreement-id' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-
     await execute()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
   })
 
+  it('only creates payments for transactions that are successfully created', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment(), getMockDueRecurringPayment()])
+    salesApi.createTransaction.mockRejectedValueOnce(new Error('Transaction creation failed'))
+
+    await execute()
+
+    expect(queueRecurringPayment).toHaveBeenCalledTimes(1)
+  })
+
   it('creates a payment journal entry', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
     const samplePayment = {
-      payment_id: Symbol('payment-id'),
-      created_date: Symbol('created-date')
+      payment_id: '29144939-421d-4717-b085-9c06abf08845',
+      created_date: 'eef03cd5-ef79-4319-8fa7-250cd7d8d54f'
     }
     const sampleTransaction = {
-      id: Symbol('transaction-id'),
+      id: '53e15493-9e69-401d-b53e-09e8cde3edb3',
       cost: 99
     }
-    sendPayment.mockResolvedValueOnce(samplePayment)
+    HTTPRequestBatcher.mockImplementationOnce(
+      getBatcherImplementation([
+        {
+          status: 200,
+          reference: 'test-agreement-id',
+          json: getJSONImplementation(
+            getMockSendPaymentResponse(
+              getPaymentStatusSuccess({
+                payment_id: samplePayment.payment_id,
+                created_date: samplePayment.created_date,
+                reference: sampleTransaction.id,
+                agreement_id: 'test-agreement-id'
+              })
+            )
+          )
+        }
+      ])
+    )
     salesApi.createTransaction.mockResolvedValueOnce(sampleTransaction)
 
     await execute()
@@ -462,6 +676,79 @@ describe('recurring-payments-processor', () => {
       expect.objectContaining({
         paymentReference: samplePayment.payment_id,
         paymentTimestamp: samplePayment.created_date,
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    )
+  })
+
+  it('creates a payment journal entry that corresponds to the correct payment and transaction when any 2xx response received', async () => {
+    const paymentIds = [
+      '561ba547-9d22-45e5-a879-ce1c4656be37',
+      '51006b9f-f974-467a-a6c0-fad176b4e507',
+      '522bca2a-441d-43ef-9313-cef4916f41f0',
+      'cc7bea1f-8180-4e0f-8aac-9a25fccffdd2',
+      'b2bd701d-26fb-487a-bc43-c844cd648237'
+    ]
+    const responses = [
+      { status: 200, reference: 'a-1', json: getJSONImplementation(getMockSendPaymentResponse({ payment_id: paymentIds[0] })) },
+      Object.assign(new Error('Payment request failed'), { reference: 'a-2' }),
+      { status: 201, reference: 'a-3', json: getJSONImplementation(getMockSendPaymentResponse({ payment_id: paymentIds[1] })) },
+      Object.assign(new Error('Payment request failed'), { reference: 'a-4' }),
+      { status: 210, reference: 'a-5', json: getJSONImplementation(getMockSendPaymentResponse({ payment_id: paymentIds[2] })) },
+      { status: 222, reference: 'a-6', json: getJSONImplementation(getMockSendPaymentResponse({ payment_id: paymentIds[3] })) },
+      { status: 429, reference: 'a-7', json: getJSONImplementation({ field: '', code: 'P0900', description: 'Calm it down a bit' }) },
+      { status: 500, reference: 'a-8', json: getJSONImplementation({ description: 'BOOM!' }) },
+      { status: 299, reference: 'a-9', json: getJSONImplementation(getMockSendPaymentResponse({ payment_id: paymentIds[4] })) }
+    ]
+    const dueRecurringPayments = Array(responses.length)
+    for (let i = 0; i < dueRecurringPayments.length; i++) {
+      dueRecurringPayments[i] = getMockDueRecurringPayment({ agreementId: `a-${i + 1}` })
+    }
+    salesApi.getDueRecurringPayments.mockReturnValueOnce(dueRecurringPayments)
+    HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(responses))
+    for (let x = 0; x < responses.length; x++) {
+      salesApi.createTransaction.mockResolvedValueOnce({ id: `transaction-${x + 1}` })
+    }
+
+    await execute()
+
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      1,
+      'transaction-1',
+      expect.objectContaining({
+        paymentReference: paymentIds[0],
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    )
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      2,
+      'transaction-3',
+      expect.objectContaining({
+        paymentReference: paymentIds[1],
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    )
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      3,
+      'transaction-5',
+      expect.objectContaining({
+        paymentReference: paymentIds[2],
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    )
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      4,
+      'transaction-6',
+      expect.objectContaining({
+        paymentReference: paymentIds[3],
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    )
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      5,
+      'transaction-9',
+      expect.objectContaining({
+        paymentReference: paymentIds[4],
         paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
       })
     )
@@ -482,10 +769,6 @@ describe('recurring-payments-processor', () => {
         }
       ]
     })
-
-    const mockPaymentResponse = { payment_id: 'test-payment-id' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     await execute()
 
@@ -513,10 +796,6 @@ describe('recurring-payments-processor', () => {
       licenceStartTime: 15
     })
 
-    const mockPaymentResponse = { payment_id: 'test-payment-id' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-
     await execute()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(
@@ -534,10 +813,6 @@ describe('recurring-payments-processor', () => {
       licenceStartDate: '2020-03-14'
     })
 
-    const mockPaymentResponse = { payment_id: 'test-payment-id' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-
     await execute()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(
@@ -547,62 +822,53 @@ describe('recurring-payments-processor', () => {
     )
   })
 
-  it('prepares and sends the payment request', async () => {
-    const agreementId = Symbol('agreementId')
+  describe.each([
+    ['request payment', 1, 'GOV_PAY_POST_BATCH_SIZE'],
+    ['get payment status', 2, 'GOV_PAY_GET_BATCH_SIZE']
+  ])('HTTPRequestBatcher instantiation for %s', (_d, callNumber, envVarName) => {
+    it.each([23, 202, 1])('has expected batch size (%i)', async batchSize => {
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+      process.env[envVarName] = batchSize
+      await execute()
+      expect(HTTPRequestBatcher).toHaveBeenNthCalledWith(callNumber, expect.objectContaining({ batchSize }))
+    })
+
+    it.each([1000, 12, 3600])('has expected batch delay (%i)', async delay => {
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+      process.env.GOV_PAY_BATCH_DELAY_MS = delay
+      await execute()
+      expect(HTTPRequestBatcher).toHaveBeenNthCalledWith(callNumber, expect.objectContaining({ delay }))
+    })
+  })
+
+  it('prepares and queues the payment request', async () => {
     const transactionId = 'transactionId'
-
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ referenceNumber: 'foo', agreementId: agreementId })])
-
+    const duePayment = getMockDueRecurringPayment()
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([duePayment])
+    HTTPRequestBatcher.mockImplementationOnce(
+      getBatcherImplementation([
+        { json: getJSONImplementation({ payment_id: 'test-payment-id', agreement_id: duePayment.entity.agreementId }) }
+      ])
+    )
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       licensee: { countryCode: 'GB-ENG' }
     })
-
     salesApi.createTransaction.mockReturnValueOnce({
       cost: 50,
       id: transactionId
     })
-
-    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
 
     const expectedData = {
       amount: 5000,
       description: 'The recurring card payment for your rod fishing licence',
       reference: transactionId,
       authorisation_mode: 'agreement',
-      agreement_id: agreementId
+      agreement_id: duePayment.entity.agreementId
     }
 
     await execute()
 
-    expect(sendPayment).toHaveBeenCalledWith(expectedData)
-  })
-
-  it('should call getPaymentStatus with payment id', async () => {
-    const mockResponse = [
-      {
-        entity: { agreementId: 'agreement-1' },
-        expanded: {
-          activePermission: {
-            entity: {
-              referenceNumber: 'ref-1'
-            }
-          }
-        }
-      }
-    ]
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
-    salesApi.createTransaction.mockResolvedValueOnce({
-      id: 'payment-id-1'
-    })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-    const mockPaymentResponse = { payment_id: 'test-payment-id', agreementId: 'agreement-1' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-
-    await execute()
-
-    expect(getPaymentStatus).toHaveBeenCalledWith('test-payment-id')
+    expect(queueRecurringPayment).toHaveBeenCalledWith(expectedData, expect.any(HTTPRequestBatcher))
   })
 
   it('should log payment status for recurring payment', async () => {
@@ -623,13 +889,17 @@ describe('recurring-payments-processor', () => {
     salesApi.createTransaction.mockResolvedValueOnce({
       id: mockPaymentId
     })
-    const mockPaymentResponse = { payment_id: mockPaymentId, agreementId: 'agreement-1' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+    mockBatchers({
+      paymentResponses: [
+        { status: 200, reference: 'agreement-1', json: getJSONImplementation({ payment_id: mockPaymentId, agreement_id: 'agreement-1' }) }
+      ],
+      statusResponses: [
+        { status: 200, reference: mockPaymentId, json: getJSONImplementation(getPaymentStatusSuccess({ payment_id: mockPaymentId })) }
+      ]
+    })
 
     await execute()
 
-    console.log(debugLogger.mock.calls)
     expect(debugLogger).toHaveBeenCalledWith(`Payment status for ${mockPaymentId}: ${PAYMENT_STATUS.Success}`)
   })
 
@@ -646,21 +916,29 @@ describe('recurring-payments-processor', () => {
     expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
   })
 
-  // --- //
+  it('calls batcher fetch if there is at least one due payment', async () => {
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
 
-  it('should log errors from await salesApi.processRPResult', async () => {
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment()])
+    await execute()
+
+    expect(HTTPRequestBatcher.mock.instances[0].fetch).toHaveBeenCalled()
+  })
+
+  it('should log errors from salesApi.processRPResult', async () => {
+    const sampleDuePayment = getMockDueRecurringPayment()
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([sampleDuePayment])
     salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 })
-
-    const payment = getMockSendPaymentResponse()
-    sendPayment.mockResolvedValueOnce(payment)
-
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-
+    const samplePaymentStatusResponse = getPaymentStatusSuccess({ reference: 'trans-1' })
+    mockBatchers({
+      paymentResponses: [
+        { status: 200, reference: sampleDuePayment.agreementId, json: getJSONImplementation(getMockSendPaymentResponse()) }
+      ],
+      statusResponses: [
+        { status: 200, reference: samplePaymentStatusResponse.payment_id, json: getJSONImplementation(samplePaymentStatusResponse) }
+      ]
+    })
     const boom = new Error('boom')
-
     salesApi.processRPResult.mockImplementation(transId => (transId === 'trans-1' ? Promise.reject(boom) : Promise.resolve()))
-
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
     await execute()
@@ -672,56 +950,47 @@ describe('recurring-payments-processor', () => {
 
   describe('handling failures for multiple due payments', () => {
     beforeEach(() => {
-      salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment(), getMockDueRecurringPayment()])
-
+      salesApi.getDueRecurringPayments.mockResolvedValueOnce([
+        getMockDueRecurringPayment({ agreementId: 'agr-1' }),
+        getMockDueRecurringPayment({ agreementId: 'agr-2' })
+      ])
       salesApi.preparePermissionDataForRenewal.mockResolvedValueOnce({ licensee: { countryCode: 'GB-ENG' } })
-
       salesApi.createTransaction.mockResolvedValueOnce({ id: 'trans-1', cost: 30 }).mockResolvedValueOnce({ id: 'trans-2', cost: 30 })
-    })
-
-    it('continues when one sendPayment rejects (Promise.allSettled check)', async () => {
-      const secondPayment = getMockSendPaymentResponse({
-        payment_id: 'test-payment-second',
-        agreementId: 'agr-2',
-        created_date: '2025-01-01T00:00:00.000Z'
-      })
-
-      const gatewayDown = new Error('gateway down')
-      sendPayment.mockRejectedValueOnce(gatewayDown).mockResolvedValueOnce(secondPayment)
-      getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-      salesApi.processRPResult.mockResolvedValueOnce()
-
-      await execute()
-
-      const summary = {
-        statusArgs: getPaymentStatus.mock.calls,
-        rpResultArgs: salesApi.processRPResult.mock.calls
-      }
-
-      expect(summary).toEqual({
-        statusArgs: [[secondPayment.payment_id]],
-        rpResultArgs: [['trans-2', secondPayment.payment_id, secondPayment.created_date]]
-      })
     })
 
     it('continues when processRPResult rejects for one payment', async () => {
       const firstPayment = getMockSendPaymentResponse({
         payment_id: 'pay-1',
-        agreementId: 'agr-1',
+        agreement_id: 'agr-1',
         created_date: '2025-01-01T00:00:00.000Z'
       })
       const secondPayment = getMockSendPaymentResponse({
         payment_id: 'pay-2',
-        agreementId: 'agr-2',
+        agreement_id: 'agr-2',
         created_date: '2025-01-01T00:01:00.000Z'
       })
-
-      sendPayment.mockResolvedValueOnce(firstPayment).mockResolvedValueOnce(secondPayment)
-      getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess()).mockResolvedValueOnce(getPaymentStatusSuccess())
-
+      const firstStatus = getPaymentStatusSuccess({
+        payment_id: firstPayment.payment_id,
+        created_date: firstPayment.created_date,
+        reference: 'trans-1'
+      })
+      const secondStatus = getPaymentStatusSuccess({
+        payment_id: secondPayment.payment_id,
+        created_date: secondPayment.created_date,
+        reference: 'trans-2'
+      })
+      mockBatchers({
+        paymentResponses: [
+          { status: 200, reference: 'agr-1', json: getJSONImplementation(firstPayment) },
+          { status: 200, reference: 'agr-2', json: getJSONImplementation(secondPayment) }
+        ],
+        statusResponses: [
+          { status: 200, reference: firstPayment.payment_id, json: getJSONImplementation(firstStatus) },
+          { status: 200, reference: secondPayment.payment_id, json: getJSONImplementation(secondStatus) }
+        ]
+      })
       const boom = new Error('boom')
-      salesApi.processRPResult.mockImplementation(transId => (transId === 'trans-1' ? Promise.reject(boom) : Promise.resolve()))
-
+      salesApi.processRPResult.mockRejectedValueOnce(boom)
       const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
       await execute()
@@ -744,40 +1013,58 @@ describe('recurring-payments-processor', () => {
       })
     })
 
-    it('does not abort when getPaymentStatus rejects for one payment (allSettled at status stage)', async () => {
-      const p1 = getMockSendPaymentResponse({ payment_id: 'pay-1', created_date: '2025-01-01T00:00:00.000Z' })
-      const p2 = getMockSendPaymentResponse({ payment_id: 'pay-2', created_date: '2025-01-01T00:01:00.000Z' })
-
-      sendPayment.mockResolvedValueOnce(p1).mockResolvedValueOnce(p2)
-
-      getPaymentStatus.mockImplementation(async id => {
-        if (id === p1.payment_id) {
-          throw Object.assign(new Error('HTTP 500'), { response: { status: 500, data: 'boom' } })
-        }
-        return getPaymentStatusSuccess()
+    it('does not abort when call to get payment status rejects for one payment', async () => {
+      const firstPayment = getMockSendPaymentResponse({
+        payment_id: 'pay-1',
+        agreement_id: 'agr-1',
+        created_date: '2025-01-01T00:00:00.000Z'
       })
+      const secondPayment = getMockSendPaymentResponse({
+        payment_id: 'pay-2',
+        agreement_id: 'agr-2',
+        created_date: '2025-01-01T00:01:00.000Z'
+      })
+      const mockError = new Error('Payment status fetch failed')
+      mockError.reference = firstPayment.payment_id
 
-      salesApi.processRPResult.mockResolvedValueOnce()
+      mockBatchers({
+        paymentResponses: [
+          { status: 200, reference: 'agr-1', json: getJSONImplementation(firstPayment) },
+          { status: 200, reference: 'agr-2', json: getJSONImplementation(secondPayment) }
+        ],
+        statusResponses: [
+          mockError,
+          {
+            status: 200,
+            reference: secondPayment.payment_id,
+            json: getJSONImplementation(
+              getPaymentStatusSuccess({
+                payment_id: secondPayment.payment_id,
+                created_date: secondPayment.created_date,
+                reference: 'trans-2'
+              })
+            )
+          }
+        ]
+      })
 
       await execute()
 
       const summary = {
-        statusArgs: getPaymentStatus.mock.calls,
-        statusCount: getPaymentStatus.mock.calls.length,
+        statusArgs: queueRecurringPaymentStatusCheck.mock.calls.map(c => c[0]),
+        statusCount: queueRecurringPaymentStatusCheck.mock.calls.length,
         rpResultArgs: salesApi.processRPResult.mock.calls,
         rpCount: salesApi.processRPResult.mock.calls.length
       }
 
       expect(summary).toEqual({
-        statusArgs: expect.arrayContaining([[p1.payment_id], [p2.payment_id]]),
+        statusArgs: expect.arrayContaining([firstPayment.payment_id, secondPayment.payment_id]),
         statusCount: 2,
-        rpResultArgs: expect.arrayContaining([['trans-2', p2.payment_id, p2.created_date]]),
+        rpResultArgs: expect.arrayContaining([['trans-2', secondPayment.payment_id, secondPayment.created_date]]),
         rpCount: 1
       })
     })
   })
-
-  // --- //
 
   it.each([
     [400, 'Failed to fetch status for payment test-payment-id, error 400'],
@@ -786,22 +1073,22 @@ describe('recurring-payments-processor', () => {
     [500, 'Payment status API error for test-payment-id, error 500'],
     [512, 'Payment status API error for test-payment-id, error 512'],
     [599, 'Payment status API error for test-payment-id, error 599']
-  ])('logs the correct message when getPaymentStatus rejects with HTTP %i', async (statusCode, expectedMessage) => {
+  ])('logs the correct message when queued payment status request rejects with HTTP %i', async (status, expectedMessage) => {
     jest.spyOn(console, 'error')
     const mockPaymentId = 'test-payment-id'
-    const mockResponse = [
-      { entity: { agreementId: 'agreement-1' }, expanded: { activePermission: { entity: { referenceNumber: 'ref-1' } } } }
-    ]
+    const mockResponse = [getMockDueRecurringPayment({ agreementId: 'agreement-1' })]
     salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockResponse)
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
-    sendPayment.mockResolvedValueOnce({
-      payment_id: mockPaymentId,
-      agreementId: 'agreement-1',
-      created_date: '2025-04-30T12:00:00Z'
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          reference: 'agreement-1',
+          json: getJSONImplementation({ payment_id: mockPaymentId, agreement_id: mockResponse[0].entity.agreementId })
+        }
+      ],
+      statusResponses: [{ status, reference: mockPaymentId }]
     })
-
-    const apiError = { response: { status: statusCode, data: 'boom' } }
-    getPaymentStatus.mockRejectedValueOnce(apiError)
 
     await execute()
 
@@ -811,16 +1098,20 @@ describe('recurring-payments-processor', () => {
   it('logs the generic unexpected-error message and still rejects', async () => {
     jest.spyOn(console, 'error')
     const mockPaymentId = 'test-payment-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
+    const duePayments = [getMockDueRecurringPayment()]
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(duePayments)
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId })
-    sendPayment.mockResolvedValueOnce({
-      payment_id: mockPaymentId,
-      agreementId: 'agreement-1',
-      created_date: '2025-04-30T12:00:00.000Z'
-    })
-
     const networkError = new Error('network meltdown')
-    getPaymentStatus.mockRejectedValueOnce(networkError)
+    networkError.reference = mockPaymentId
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          json: getJSONImplementation({ payment_id: mockPaymentId, agreement_id: duePayments[0].entity.agreementId })
+        }
+      ],
+      statusResponses: [networkError]
+    })
 
     await execute()
 
@@ -828,13 +1119,23 @@ describe('recurring-payments-processor', () => {
   })
 
   it('should call setTimeout with correct delay when there are recurring payments', async () => {
-    const referenceNumber = Symbol('reference')
+    const referenceNumber = '243d0b59-ad08-408d-81df-37aff0aebab2'
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment({ referenceNumber })])
-    const mockPaymentResponse = { payment_id: 'test-payment-id' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
-
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          json: getJSONImplementation({ payment_id: 'test-payment-id', agreement_id: 'test-agreement-id' })
+        }
+      ],
+      statusResponses: [
+        {
+          status: 200,
+          json: getJSONImplementation(getPaymentStatusSuccess())
+        }
+      ]
+    })
 
     await execute()
 
@@ -843,7 +1144,6 @@ describe('recurring-payments-processor', () => {
 
   it('should not call setTimeout when there are no recurring payments', async () => {
     salesApi.getDueRecurringPayments.mockResolvedValueOnce([])
-
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
 
     await execute()
@@ -852,50 +1152,122 @@ describe('recurring-payments-processor', () => {
   })
 
   it('calls processRPResult with transaction id, payment id and created date when payment is successful', async () => {
-    debugLogger.mockImplementation(function () {
-      console.log(...arguments)
-    })
     const mockTransactionId = 'test-transaction-id'
     const mockPaymentId = 'test-payment-id'
     const mockPaymentCreatedDate = '2025-01-01T00:00:00.000Z'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
+    const mockPaymentRequestResponse = [getMockDueRecurringPayment()]
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce(mockPaymentRequestResponse)
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockTransactionId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1', created_date: mockPaymentCreatedDate })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusSuccess())
+
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          reference: mockPaymentRequestResponse[0].entity.agreementId,
+          json: getJSONImplementation({
+            payment_id: mockPaymentId,
+            created_date: mockPaymentCreatedDate,
+            agreement_id: mockPaymentRequestResponse[0].entity.agreementId
+          })
+        }
+      ],
+      statusResponses: [
+        {
+          status: 200,
+          reference: mockPaymentId,
+          json: getJSONImplementation(
+            getPaymentStatusSuccess({
+              reference: mockTransactionId,
+              payment_id: mockPaymentId,
+              created_date: mockPaymentCreatedDate
+            })
+          )
+        }
+      ]
+    })
 
     await execute()
 
-    console.log(salesApi.processRPResult.mock.calls, mockTransactionId, mockPaymentId, mockPaymentCreatedDate)
     expect(salesApi.processRPResult).toHaveBeenCalledWith(mockTransactionId, mockPaymentId, mockPaymentCreatedDate)
   })
 
   it("doesn't call processRPResult if payment status is not successful", async () => {
     const mockPaymentId = 'test-payment-id'
-    salesApi.getDueRecurringPayments.mockResolvedValueOnce(getMockPaymentRequestResponse())
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([getMockDueRecurringPayment()])
     salesApi.createTransaction.mockResolvedValueOnce({ id: mockPaymentId, cost: 30 })
-    sendPayment.mockResolvedValueOnce({ payment_id: mockPaymentId, agreementId: 'agreement-1' })
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
 
     await execute()
 
     expect(salesApi.processRPResult).not.toHaveBeenCalled()
   })
 
-  it.each([
-    ['agreement-id', getPaymentStatusFailure(), 'failure'],
-    ['test-agreement-id', getPaymentStatusFailure(), 'failure'],
-    ['another-agreement-id', getPaymentStatusFailure(), 'failure'],
-    ['agreement-id', getPaymentStatusError(), 'error'],
-    ['test-agreement-id', getPaymentStatusError(), 'error'],
-    ['another-agreement-id', getPaymentStatusError(), 'error']
-  ])(
-    'console error displays "Payment failed. Recurring payment agreement for: %s set to be cancelled" when payment is a %status',
-    async (agreementId, mockStatus, status) => {
+  it('only retrieves payment response json once', async () => {
+    const mockDuePayment = getMockDueRecurringPayment()
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([mockDuePayment])
+    const mockPaymentResponse = getMockSendPaymentResponse()
+    const paymentResponseJSON = jest.fn(() => mockPaymentResponse)
+    mockBatchers({
+      paymentResponses: [{ status: 200, reference: mockDuePayment.entity.agreementId, json: paymentResponseJSON }],
+      statusResponses: [{ status: 200, reference: mockPaymentResponse.payment_id, json: getJSONImplementation(getPaymentStatusSuccess()) }]
+    })
+
+    await execute()
+
+    expect(paymentResponseJSON).toHaveBeenCalledTimes(1)
+  })
+
+  it('only retrieves payment status response json once', async () => {
+    const mockDuePayment = getMockDueRecurringPayment()
+    salesApi.getDueRecurringPayments.mockResolvedValueOnce([mockDuePayment])
+    const mockPaymentStatusResponse = getPaymentStatusSuccess()
+    const paymentStatusJSON = jest.fn(() => mockPaymentStatusResponse)
+    mockBatchers({
+      paymentResponses: [
+        { status: 200, reference: mockDuePayment.entity.agreementId, json: getJSONImplementation(getMockSendPaymentResponse()) }
+      ],
+      statusResponses: [{ status: 200, reference: mockPaymentStatusResponse.payment_id, json: paymentStatusJSON }]
+    })
+
+    await execute()
+
+    expect(paymentStatusJSON).toHaveBeenCalledTimes(1)
+  })
+
+  it.each`
+    agreementId               | paymentDescription | mockStatus
+    ${'agreement-id'}         | ${'failure'}       | ${getPaymentStatusFailure()}
+    ${'test-agreement-id'}    | ${'failure'}       | ${getPaymentStatusFailure()}
+    ${'another-agreement-id'} | ${'failure'}       | ${getPaymentStatusFailure()}
+    ${'agreement-id'}         | ${'error'}         | ${getPaymentStatusError()}
+    ${'test-agreement-id'}    | ${'error'}         | ${getPaymentStatusError()}
+    ${'another-agreement-id'} | ${'error'}         | ${getPaymentStatusError()}
+  `(
+    'console error displays "Payment failed. Recurring payment agreement for: $agreementId set to be cancelled" when payment is a $paymentDescription',
+    async ({ agreementId, mockStatus }) => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
-      const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-      sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-      getPaymentStatus.mockResolvedValueOnce(mockStatus)
+      const mockPaymentResponse = {
+        payment_id: 'test-payment-id',
+        agreement_id: agreementId,
+        created_date: '2025-01-01T00:00:00.000Z',
+        randomTag: Symbol('random')
+      }
+      mockBatchers({
+        paymentResponses: [
+          {
+            status: 200,
+            reference: agreementId,
+            json: getJSONImplementation(mockPaymentResponse)
+          }
+        ],
+        statusResponses: [
+          {
+            status: 200,
+            reference: mockPaymentResponse.payment_id,
+            json: getJSONImplementation(mockStatus)
+          }
+        ]
+      })
 
       await execute()
 
@@ -912,17 +1284,38 @@ describe('recurring-payments-processor', () => {
     ['an error', 'agreement-id', getPaymentStatusError()],
     ['an error', 'test-agreement-id', getPaymentStatusError()],
     ['an error', 'another-agreement-id', getPaymentStatusError()]
-  ])('cancelRecurringPayment is called when payment is %s', async (_status, agreementId, mockStatus) => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
-    const id = Symbol('recurring-payment-id')
-    salesApi.createTransaction.mockResolvedValueOnce({
+  ])('cancelRecurringPayment is called when payment is %s for %s', async (_status, agreementId, mockStatus) => {
+    const id = '8c6392f2-4dc7-4fb9-b197-d116c0e6409d'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId, id })])
+    salesApi.createTransaction.mockReturnValueOnce({
+      id: 'test-transaction-id',
+      cost: 30,
+      agreement_id: agreementId,
       recurringPayment: {
-        id
+        id: ''
       }
     })
-    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(mockStatus)
+    const mockPaymentResponse = getMockSendPaymentResponse({
+      payment_id: 'test-payment-id',
+      agreement_id: agreementId,
+      created_date: '2025-01-01T00:00:00.000Z'
+    })
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          reference: agreementId,
+          json: getJSONImplementation(mockPaymentResponse)
+        }
+      ],
+      statusResponses: [
+        {
+          status: 200,
+          reference: mockPaymentResponse.payment_id,
+          json: getJSONImplementation(mockStatus)
+        }
+      ]
+    })
 
     await execute()
 
@@ -930,15 +1323,35 @@ describe('recurring-payments-processor', () => {
   })
 
   it('updatePaymentJournal is called with transaction id and failed status code payment is not succesful and payment journal exists', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const dueRecurringPayment = getMockDueRecurringPayment()
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([dueRecurringPayment])
     const transactionId = 'test-transaction-id'
     salesApi.createTransaction.mockReturnValueOnce({
       cost: 50,
       id: transactionId
     })
-    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
+    const mockPaymentResponse = {
+      agreement_id: dueRecurringPayment.entity.agreementId,
+      payment_id: 'test-payment-id',
+      created_date: '2025-01-01T00:00:00.000Z',
+      reference: transactionId
+    }
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          reference: dueRecurringPayment.entity.agreementId,
+          json: getJSONImplementation(mockPaymentResponse)
+        }
+      ],
+      statusResponses: [
+        {
+          status: 200,
+          reference: mockPaymentResponse.payment_id,
+          json: getJSONImplementation(getPaymentStatusFailure())
+        }
+      ]
+    })
     salesApi.getPaymentJournal.mockResolvedValueOnce(true)
 
     await execute()
@@ -947,15 +1360,35 @@ describe('recurring-payments-processor', () => {
   })
 
   it('updatePaymentJournal is not called when failed status code payment is not succesful but payment journal does not exist', async () => {
-    salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment()])
+    const dueRecurringPayment = getMockDueRecurringPayment()
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([dueRecurringPayment])
     const transactionId = 'test-transaction-id'
     salesApi.createTransaction.mockReturnValueOnce({
       cost: 50,
       id: transactionId
     })
-    const mockPaymentResponse = { payment_id: 'test-payment-id', created_date: '2025-01-01T00:00:00.000Z' }
-    sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-    getPaymentStatus.mockResolvedValueOnce(getPaymentStatusFailure())
+    const mockPaymentResponse = {
+      agreement_id: dueRecurringPayment.entity.agreementId,
+      payment_id: 'test-payment-id',
+      created_date: '2025-01-01T00:00:00.000Z',
+      reference: transactionId
+    }
+    mockBatchers({
+      paymentResponses: [
+        {
+          status: 200,
+          reference: dueRecurringPayment.entity.agreementId,
+          json: getJSONImplementation(mockPaymentResponse)
+        }
+      ],
+      statusResponses: [
+        {
+          status: 200,
+          reference: mockPaymentResponse.payment_id,
+          json: getJSONImplementation(getPaymentStatusFailure())
+        }
+      ]
+    })
     salesApi.getPaymentJournal.mockResolvedValueOnce(undefined)
 
     await execute()
@@ -963,26 +1396,193 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
   })
 
+  it('all transactions are created before any payment requests are sent', async () => {
+    const callLog = []
+    const ids = ['a1-b2', 'b1-c2', 'c1-d2', 'd1-e2']
+    const dueRecurringPayments = []
+    const paymentResponses = []
+    for (const id of ids) {
+      salesApi.createTransaction.mockImplementationOnce(() => {
+        callLog.push('createTransaction')
+        return {
+          id: 'test-transaction-id',
+          cost: 30,
+          recurringPayment: {
+            id: 'recurring-payment-1'
+          }
+        }
+      })
+      queueRecurringPayment.mockImplementationOnce(() => {
+        callLog.push('queueRecurringPayment')
+      })
+      dueRecurringPayments.push(getMockDueRecurringPayment({ id }))
+      paymentResponses.push({
+        status: 400,
+        json: getJSONImplementation({ description: 'fail' })
+      })
+    }
+    salesApi.getDueRecurringPayments.mockReturnValueOnce(dueRecurringPayments)
+    HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(paymentResponses))
+
+    await execute()
+
+    expect(callLog).toEqual([
+      'createTransaction',
+      'createTransaction',
+      'createTransaction',
+      'createTransaction',
+      'queueRecurringPayment',
+      'queueRecurringPayment',
+      'queueRecurringPayment',
+      'queueRecurringPayment'
+    ])
+  })
+
+  it('when a 429 response is received, the eventual success is tied to the correct payment', async () => {
+    const paymentId = '596c38e2-4f57-4003-ac04-0912397bd56c'
+    const agreementId = '4b94f1f7-73dc-426d-8d3e-de6bc4a291eb'
+    const transactionId = 'd3ed5af4-e937-4c8d-9357-3412a2a14504'
+    const paymentIdentifiers = { payment_id: paymentId, agreement_id: agreementId }
+    const dueRecurringPayment = getMockDueRecurringPayment({ agreementId })
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([dueRecurringPayment])
+    salesApi.createTransaction.mockReturnValueOnce({
+      cost: 50,
+      id: transactionId
+    })
+    const paymentResponse = [{ status: 429 }, { status: 200, json: getJSONImplementation(paymentIdentifiers) }]
+    paymentResponse.reference = dueRecurringPayment.entity.agreementId
+    mockBatchers({
+      paymentResponses: [paymentResponse],
+      statusResponses: [
+        {
+          status: 200,
+          reference: paymentId,
+          json: getJSONImplementation({
+            ...getPaymentStatusSuccess(),
+            ...paymentIdentifiers,
+            reference: transactionId,
+            created_date: ''
+          })
+        }
+      ]
+    })
+    salesApi.getPaymentJournal.mockResolvedValueOnce(true)
+
+    await execute()
+
+    expect(salesApi.processRPResult).toHaveBeenCalledWith(transactionId, paymentId, expect.any(String))
+  })
+
+  it('matches payment responses to requested payments by agreementId rather than ordinal position', async () => {
+    const agreementIds = ['de825dec-ed0d-435e-8543-776ae2799f9d', '91df9489-ee8e-41ca-8443-f5cc62967616']
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([
+      getMockDueRecurringPayment({ agreementId: agreementIds[0] }),
+      getMockDueRecurringPayment({ agreementId: agreementIds[1] })
+    ])
+    salesApi.createTransaction
+      .mockReturnValueOnce({
+        cost: 22,
+        id: 'transaction-1'
+      })
+      .mockReturnValueOnce({
+        cost: 44,
+        id: 'transaction-2'
+      })
+    // payment responses are intentionally out of order to test matching by agreementId
+    const paymentResponses = [
+      { status: 200, reference: agreementIds[1], json: getJSONImplementation({ payment_id: 'payment-2', agreement_id: agreementIds[1] }) },
+      { status: 200, reference: agreementIds[0], json: getJSONImplementation({ payment_id: 'payment-1', agreement_id: agreementIds[0] }) }
+    ]
+    mockBatchers({
+      paymentResponses,
+      statusResponses: [
+        {
+          status: 200,
+          json: getJSONImplementation({
+            ...getPaymentStatusSuccess(),
+            payment_id: 'payment-1',
+            agreement_id: agreementIds[0]
+          })
+        },
+        {
+          status: 200,
+          json: getJSONImplementation({
+            ...getPaymentStatusSuccess(),
+            payment_id: 'payment-2',
+            agreement_id: agreementIds[1]
+          })
+        }
+      ]
+    })
+
+    await execute()
+
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      1,
+      'transaction-1',
+      expect.objectContaining({ paymentReference: 'payment-1' })
+    )
+    expect(salesApi.createPaymentJournal).toHaveBeenNthCalledWith(
+      2,
+      'transaction-2',
+      expect.objectContaining({ paymentReference: 'payment-2' })
+    )
+  })
+
+  it('matches payment status responses to requested payments by paymentId rather than ordinal position', async () => {
+    const paymentIds = ['payment-1', 'payment-2']
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([
+      getMockDueRecurringPayment({ agreementId: 'agreement-1' }),
+      getMockDueRecurringPayment({ agreementId: 'agreement-2' })
+    ])
+    salesApi.createTransaction
+      .mockReturnValueOnce({
+        cost: 22,
+        id: 'transaction-1'
+      })
+      .mockReturnValueOnce({
+        cost: 44,
+        id: 'transaction-2'
+      })
+    mockBatchers({
+      paymentResponses: [
+        { status: 200, reference: 'agreement-1', json: getJSONImplementation({ payment_id: paymentIds[0], agreement_id: 'agreement-1' }) },
+        { status: 200, reference: 'agreement-2', json: getJSONImplementation({ payment_id: paymentIds[1], agreement_id: 'agreement-2' }) }
+      ],
+      statusResponses: [
+        { status: 200, reference: paymentIds[1], json: getJSONImplementation(getPaymentStatusSuccess({ payment_id: paymentIds[1] })) },
+        { status: 200, reference: paymentIds[0], json: getJSONImplementation(getPaymentStatusSuccess({ payment_id: paymentIds[0] })) }
+      ]
+    })
+
+    await execute()
+
+    expect(salesApi.processRPResult).toHaveBeenNthCalledWith(1, expect.any(String), paymentIds[0], expect.any(String))
+    expect(salesApi.processRPResult).toHaveBeenNthCalledWith(2, expect.any(String), paymentIds[1], expect.any(String))
+  })
+
   describe.each([2, 3, 10])('if there are %d recurring payments', count => {
+    const mockBatcher = () => {
+      HTTPRequestBatcher.mockImplementationOnce(
+        getBatcherImplementation(Array(count).fill({ status: 400, json: getJSONImplementation({ description: 'Failure' }) }))
+      )
+    }
+
     it('prepares the data for each one', async () => {
       const references = []
       for (let i = 0; i < count; i++) {
-        references.push(Symbol('reference' + i))
+        references.push(`298ea261-3d61-4f77-add1-91ea136405f${i}`)
       }
       const mockGetDueRecurringPayments = []
       references.forEach(referenceNumber => {
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ referenceNumber }))
       })
       salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
-      const mockPaymentResponse = { payment_id: 'test-payment-id' }
-      sendPayment.mockResolvedValue(mockPaymentResponse)
-      const mockPaymentStatus = getPaymentStatusSuccess()
-      getPaymentStatus.mockResolvedValue(mockPaymentStatus)
-
       const expectedData = []
       references.forEach(reference => {
         expectedData.push([reference])
       })
+      mockBatcher()
 
       await execute()
 
@@ -993,40 +1593,33 @@ describe('recurring-payments-processor', () => {
       const mockGetDueRecurringPayments = []
       const agreementIds = []
       const ids = []
+      const permits = []
+      const expectedData = []
       for (let i = 0; i < count; i++) {
-        const agreementId = Symbol(`agreement-id-${i}`)
-        const id = Symbol(`recurring-payment-${i}`)
+        const agreementId = `77126ef9-69a1-4412-93e5-6d4d5d011c7${i}`
+        const id = `bf21de64-c4e1-48fc-a71e-ce959352943${i}`
+        const permit = `ddcd80df-0569-4615-8d69-d47b02c0fd0${i}`
         agreementIds.push(agreementId)
         ids.push(id)
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId, id, referenceNumber: i }))
-      }
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
-
-      const permits = []
-      for (let i = 0; i < count; i++) {
-        permits.push(Symbol(`permit${i}`))
-      }
-
-      permits.forEach(permit => {
+        permits.push(permit)
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
           licensee: { countryCode: 'GB-ENG' },
           permitId: permit
         })
-      })
-
-      const expectedData = []
-      permits.forEach((permit, i) => {
         expectedData.push([
           {
             dataSource: 'Recurring Payment',
             recurringPayment: {
-              agreementId: agreementIds[i],
-              id: ids[i]
+              agreementId: agreementId,
+              id: id
             },
             permissions: [expect.objectContaining({ permitId: permit })]
           }
         ])
-      })
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+      mockBatcher()
 
       await execute()
 
@@ -1036,83 +1629,73 @@ describe('recurring-payments-processor', () => {
     it('sends a payment for each one', async () => {
       const mockGetDueRecurringPayments = []
       const agreementIds = []
-      for (let i = 0; i < count; i++) {
-        const agreementId = Symbol(`agreementId${1}`)
-        agreementIds.push(agreementId)
-        mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId }))
-      }
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
-
       const permits = []
+      const expectedData = []
       for (let i = 0; i < count; i++) {
-        permits.push(Symbol(`permit${i}`))
-      }
-
-      permits.forEach((permit, i) => {
+        const agreementId = `f2532882-3560-400d-8583-0e6f87e15ea${i}`
+        const permit = `bc6d2c2e-6c30-401d-b55d-69012b96f11${i}`
+        agreementIds.push(agreementId)
+        permits.push(permit)
+        mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId }))
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
           licensee: { countryCode: 'GB-ENG' }
         })
-
         salesApi.createTransaction.mockReturnValueOnce({
           cost: i,
           id: permit
         })
-      })
-
-      const expectedData = []
-      permits.forEach((permit, i) => {
-        expectedData.push([
-          {
-            amount: i * 100,
-            description: 'The recurring card payment for your rod fishing licence',
-            reference: permit,
-            authorisation_mode: 'agreement',
-            agreement_id: agreementIds[i]
-          }
-        ])
-      })
+        expectedData.push({
+          amount: i * 100,
+          description: 'The recurring card payment for your rod fishing licence',
+          reference: permit,
+          authorisation_mode: 'agreement',
+          agreement_id: agreementId
+        })
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+      mockBatcher()
 
       await execute()
-      expect(sendPayment.mock.calls).toEqual(expectedData)
+      expectedData.forEach(expectedCall => {
+        expect(queueRecurringPayment).toHaveBeenCalledWith(expectedCall, expect.any(HTTPRequestBatcher))
+      })
     })
 
     it('gets the payment status for each one', async () => {
       const mockGetDueRecurringPayments = []
       const agreementIds = []
+      const permits = []
+      const govUkPayResponses = []
+      const expectedData = []
       for (let i = 0; i < count; i++) {
-        const agreementId = Symbol(`agreementId${1}`)
+        const agreementId = `f2532882-3560-400d-8583-0e6f87e15ea${i}`
+        const permit = `bc9b0e08-16a5-4683-9217-9a19f396d31${i}`
+        const paymentId = `payment-id-${i}`
+        const mockPaymentResponse = { payment_id: paymentId, agreement_id: agreementId }
         agreementIds.push(agreementId)
         mockGetDueRecurringPayments.push(getMockDueRecurringPayment({ agreementId }))
-      }
-      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
-
-      const permits = []
-      for (let i = 0; i < count; i++) {
-        permits.push(Symbol(`permit${i}`))
-      }
-
-      permits.forEach((permit, i) => {
+        permits.push(permit)
         salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
           licensee: { countryCode: 'GB-ENG' }
         })
-
         salesApi.createTransaction.mockReturnValueOnce({
           cost: i,
           id: permit
         })
-      })
-
-      const expectedData = []
-      permits.forEach((_, index) => {
-        const paymentId = `payment-id-${index}`
         expectedData.push(paymentId)
-        const mockPaymentResponse = { payment_id: paymentId }
-        sendPayment.mockResolvedValueOnce(mockPaymentResponse)
-      })
+        govUkPayResponses.push({
+          status: 200,
+          reference: agreementId,
+          json: getJSONImplementation(mockPaymentResponse)
+        })
+      }
+      HTTPRequestBatcher.mockImplementationOnce(getBatcherImplementation(govUkPayResponses))
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
 
       await execute()
+
       expectedData.forEach(paymentId => {
-        expect(getPaymentStatus).toHaveBeenCalledWith(paymentId)
+        expect(queueRecurringPaymentStatusCheck).toHaveBeenCalledWith(paymentId, expect.any(HTTPRequestBatcher))
       })
     })
   })
