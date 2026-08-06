@@ -60,6 +60,12 @@ const buildStreet = result => {
   return removeMissingOrBlankFields(streetFields).join(', ')
 }
 
+const buildLocality = result => {
+  const localityFields = [result.DOUBLE_DEPENDENT_LOCALITY, result.DEPENDENT_LOCALITY]
+
+  return removeMissingOrBlankFields(localityFields).join(', ')
+}
+
 const shouldBeOrganisationOnly = result => {
   const fieldsToCheck = [
     result.CLASSIFICATION_CODE,
@@ -146,7 +152,7 @@ const mapResults = results => {
     address: `${r.DPA.ADDRESS.replace(r.DPA.POSTCODE, '').toLowerCase()}${r.DPA.POSTCODE}`,
     premises: buildPremises(r.DPA),
     street: buildStreet(r.DPA) || '',
-    locality: r.DPA.DEPENDENT_LOCALITY || '',
+    locality: buildLocality(r.DPA) || '',
     town: r.DPA.POST_TOWN || '',
     postcode: r.DPA.POSTCODE
   }))

@@ -8,7 +8,9 @@ describe('address-lookup-service', () => {
     buildingName,
     buildingNumber,
     classificationCode,
+    dependentLocality,
     dependentThoroughfareName,
+    doubleDependentLocality,
     organisationName,
     poBoxNumber,
     subBuildingName,
@@ -19,7 +21,9 @@ describe('address-lookup-service', () => {
       BUILDING_NUMBER: buildingNumber,
       BUILDING_NAME: buildingName,
       CLASSIFICATION_CODE: classificationCode,
+      DEPENDENT_LOCALITY: dependentLocality,
       DEPENDENT_THOROUGHFARE_NAME: dependentThoroughfareName,
+      DOUBLE_DEPENDENT_LOCALITY: doubleDependentLocality,
       ORGANISATION_NAME: organisationName,
       PO_BOX_NUMBER: poBoxNumber,
       POST_TOWN: 'BRISTOL',
@@ -169,6 +173,28 @@ describe('address-lookup-service', () => {
       })
       const results = await addressLookupService(searchPremises, 'BS1 1AA')
       expect(results[0].street).toBe(expected)
+    })
+  })
+
+  describe('locality field', () => {
+    it.each`
+      desc                                                                                | expected                       | doubleDependentLocality | dependentLocality
+      ${'DOUBLE_DEPENDENT_LOCALITY and DEPENDENT_LOCALITY are present'}                   | ${'Salmonville, Isle of Pike'} | ${'Salmonville'}        | ${'Isle of Pike'}
+      ${'only DOUBLE_DEPENDENT_LOCALITY is present'}                                      | ${'Salmonville'}               | ${'Salmonville'}        | ${undefined}
+      ${'only DEPENDENT_LOCALITY is present'}                                             | ${'Isle of Pike'}              | ${undefined}            | ${'Isle of Pike'}
+      ${'DEPENDENT_LOCALITY is present and DOUBLE_DEPENDENT_LOCALITY is an empty string'} | ${'Isle of Pike'}              | ${''}                   | ${'Isle of Pike'}
+      ${'DEPENDENT_LOCALITY is present and DOUBLE_DEPENDENT_LOCALITY is spaces'}          | ${'Isle of Pike'}              | ${'     '}              | ${'Isle of Pike'}
+      ${'DEPENDENT_LOCALITY is present and DOUBLE_DEPENDENT_LOCALITY is null'}            | ${'Isle of Pike'}              | ${null}                 | ${'Isle of Pike'}
+      ${'no valid locality fields are present'}                                           | ${''}                          | ${undefined}            | ${undefined}
+    `('when $desc it saves a locality field with correct value', async ({ expected, doubleDependentLocality, dependentLocality }) => {
+      const searchPremises = '5'
+      fetch.mockResolvedValueOnce({
+        json: () => ({
+          results: [createMockAddress({ buildingNumber: searchPremises, doubleDependentLocality, dependentLocality })]
+        })
+      })
+      const results = await addressLookupService(searchPremises, 'BS1 1AA')
+      expect(results[0].locality).toBe(expected)
     })
   })
 
