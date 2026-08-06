@@ -194,9 +194,12 @@ const fetchAdditionalPages = async (postcode, totalResults, maxResultsPerPage, c
     return { additionalResults: [], failedPages: [], additionalPagesFetched: 0 }
   }
 
+  // We request pages based on the index of the address at the "top" of the page, as calculated by the offset
+  // So if the maxResultsPerPage is 100, we would send requests for 100, 200, 300, etc
   const pageResults = await Promise.allSettled(offsets.map(offset => fetchPage(buildUrl(postcode, offset))))
   const additionalResults = pageResults.filter(r => r.status === 'fulfilled' && r.value.results).flatMap(r => r.value.results)
 
+  // Capture which requests failed and why, along with the offset so we can see which page failed
   const failedPages = pageResults
     .map((result, idx) => ({ result, offset: offsets[idx] }))
     .filter(({ result }) => result.status === 'rejected')
