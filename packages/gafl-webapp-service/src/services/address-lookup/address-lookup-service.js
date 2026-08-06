@@ -110,7 +110,7 @@ const filterAndOrderResults = (results, premises) => {
   }
 
   // Order with highest-rated matches first
-  const orderedMatches = matches.sort((a, b) => b.matchRating - a.matchRating)
+  const orderedMatches = matches.toSorted((a, b) => b.matchRating - a.matchRating)
   // Drop the scores and return the ordered results only
   return orderedMatches.map(r => r.result)
 }
@@ -119,7 +119,7 @@ const splitStringIntoSearchTerms = string => {
   // Lowercase, strip out parentheses, then split on spaces, hyphens, full stops and commas
   const terms = string
     .toLowerCase()
-    .replaceAll(/\(|\)/g, '')
+    .replaceAll(/[()]/g, '')
     .split(/\s+|-|\.|,/)
   const termsExcludingThe = terms.filter(term => term !== 'the')
   return removeMissingOrBlankFields(termsExcludingThe)
