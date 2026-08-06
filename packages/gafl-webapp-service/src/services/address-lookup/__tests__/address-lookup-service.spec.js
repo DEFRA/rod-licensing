@@ -4,18 +4,28 @@ import fetch from 'node-fetch'
 jest.mock('node-fetch')
 
 describe('address-lookup-service', () => {
-  const createMockAddress = ({ buildingName, buildingNumber, classificationCode, organisationName, poBoxNumber, subBuildingName }) => ({
+  const createMockAddress = ({
+    buildingName,
+    buildingNumber,
+    classificationCode,
+    dependentThoroughfareName,
+    organisationName,
+    poBoxNumber,
+    subBuildingName,
+    thoroughfareName
+  }) => ({
     DPA: {
       ADDRESS: 'FISHCORP, FISH BOULEVARD, FISHBOROUGH, FI1 5SH',
       BUILDING_NUMBER: buildingNumber,
       BUILDING_NAME: buildingName,
       CLASSIFICATION_CODE: classificationCode,
+      DEPENDENT_THOROUGHFARE_NAME: dependentThoroughfareName,
       ORGANISATION_NAME: organisationName,
       PO_BOX_NUMBER: poBoxNumber,
       POST_TOWN: 'BRISTOL',
       POSTCODE: 'BS1 1AA',
       SUB_BUILDING_NAME: subBuildingName,
-      THOROUGHFARE_NAME: 'TEST STREET'
+      THOROUGHFARE_NAME: thoroughfareName
     }
   })
 
@@ -138,6 +148,28 @@ describe('address-lookup-service', () => {
         expect(results[0].premises).toBe(expected)
       }
     )
+  })
+
+  describe('street field', () => {
+    it.each`
+      desc                                                                                 | expected                        | dependentThoroughfareName | thoroughfareName
+      ${'DEPENDENT_THOROUGHFARE_NAME and THOROUGHFARE_NAME are present'}                   | ${'Trout Terrace, Fish Street'} | ${'Trout Terrace'}        | ${'Fish Street'}
+      ${'only DEPENDENT_THOROUGHFARE_NAME is present'}                                     | ${'Trout Terrace'}              | ${'Trout Terrace'}        | ${undefined}
+      ${'only THOROUGHFARE_NAME is present'}                                               | ${'Fish Street'}                | ${undefined}              | ${'Fish Street'}
+      ${'THOROUGHFARE_NAME is present and DEPENDENT_THOROUGHFARE_NAME is an empty string'} | ${'Fish Street'}                | ${''}                     | ${'Fish Street'}
+      ${'THOROUGHFARE_NAME is present and DEPENDENT_THOROUGHFARE_NAME is spaces'}          | ${'Fish Street'}                | ${'     '}                | ${'Fish Street'}
+      ${'THOROUGHFARE_NAME is present and DEPENDENT_THOROUGHFARE_NAME is null'}            | ${'Fish Street'}                | ${null}                   | ${'Fish Street'}
+      ${'no valid street fields are present'}                                              | ${''}                           | ${undefined}              | ${undefined}
+    `('when $desc it saves a street field with correct value', async ({ expected, dependentThoroughfareName, thoroughfareName }) => {
+      const searchPremises = '5'
+      fetch.mockResolvedValueOnce({
+        json: () => ({
+          results: [createMockAddress({ buildingNumber: searchPremises, dependentThoroughfareName, thoroughfareName })]
+        })
+      })
+      const results = await addressLookupService(searchPremises, 'BS1 1AA')
+      expect(results[0].street).toBe(expected)
+    })
   })
 
   describe('filterAndOrderResults', () => {
