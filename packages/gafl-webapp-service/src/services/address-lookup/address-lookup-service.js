@@ -155,29 +155,37 @@ const mapResults = results => {
 }
 
 /**
+ * Calculate offsets for additional pages (first page already fetched at offset 0)
+ * Example: if effectiveTotal=250 and maxResults=100, generates [100, 200] to fetch pages 2 and 3
+ * @param {number} cap - Maximum results to fetch (configurable limit)
+ * @param {number} maxResults - Maximum results per page
+ * @param {number} totalResults - Total results available from API
+ * @returns {array} Array of numbers for the result at the "start" of each page
+ */
+const calculateOffsets = (cap, maxResults, totalResults) => {
+  const effectiveTotal = Math.min(totalResults, cap)
+
+  return Array.from({ length: Math.ceil((effectiveTotal - maxResults) / maxResults) }, (_, i) => maxResults + i * maxResults).filter(
+    offset => offset < effectiveTotal
+  )
+}
+
+/**
  * Fetch additional pages when pagination is needed
  * @param {string} postcode - The postcode being searched
- * @param {number} totalresults - Total results available from API
- * @param {number} maxresults - Maximum results per page
+ * @param {number} totalResults - Total results available from API
+ * @param {number} maxResults - Maximum results per page
  * @param {number} cap - Maximum results to fetch (configurable limit)
  * @returns {Promise<object>} Object containing additional results, failed pages, and page count
  */
-const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => {
-  const effectiveTotal = Math.min(totalresults, cap)
-
-  // Calculate offsets for additional pages (first page already fetched at offset 0)
-  // Example: if effectiveTotal=250 and maxresults=100, generates [100, 200] to fetch pages 2 and 3
-  const offsets = Array.from(
-    { length: Math.ceil((effectiveTotal - maxresults) / maxresults) },
-    (_, i) => maxresults + i * maxresults
-  ).filter(offset => offset < effectiveTotal)
+const fetchAdditionalPages = async (postcode, totalResults, maxResults, cap) => {
+  const offsets = calculateOffsets(cap, maxResults, totalResults)
 
   if (offsets.length === 0) {
-    return { results: [], failedPages: [], pagesFetched: 0 }
+    return { additionalResults: [], failedPages: [], additionalPagesFetched: 0 }
   }
 
   const pageResults = await Promise.allSettled(offsets.map(offset => fetchPage(buildUrl(postcode, offset))))
-
   const additionalResults = pageResults.filter(r => r.status === 'fulfilled' && r.value.results).flatMap(r => r.value.results)
 
   const failedPages = pageResults
@@ -190,7 +198,7 @@ const fetchAdditionalPages = async (postcode, totalresults, maxresults, cap) => 
 
   const pagesFetched = pageResults.filter(r => r.status === 'fulfilled').length
 
-  return { results: additionalResults, failedPages, pagesFetched }
+  return { additionalResults, failedPages, pagesFetched }
 }
 
 /**
@@ -203,12 +211,12 @@ const getMaximumResultsCap = () => {
 
 /**
  * Check if pagination is needed based on total results and page size
- * @param {number} totalresults - Total results available
- * @param {number} maxresults - Maximum results per page
+ * @param {number} totalResults - Total results available
+ * @param {number} maxResults - Maximum results per page
  * @returns {boolean} Whether pagination is needed
  */
-const checkNeedsPagination = (totalresults, maxresults) => {
-  return totalresults && maxresults && totalresults > maxresults
+const paginationRequired = (totalResults, maxResults) => {
+  return totalResults && maxResults && totalResults > maxResults
 }
 
 /**
@@ -230,44 +238,138 @@ const fetchFirstPage = async postcode => {
 }
 
 /**
- * Process and aggregate results from multiple pages
- * @param {object} firstPage - First page response
- * @param {Array} additionalResults - Results from additional pages
- * @param {Array} failedPages - Failed page information
- * @param {number} additionalPagesFetched - Count of additional pages fetched
+ * Fetch additional pages when pagination is needed
+ * @param {number} totalResults - Total results available from API
+ * @param {number} maxResults - Maximum results per page
  * @param {string} postcode - Postcode being searched
- * @param {number} cap - Maximum results cap
- * @param {number} startTime - Start timestamp for telemetry
- * @returns {Array} Aggregated results
+ * @param {number} cap - Maximum results to fetch (configurable limit)
+ * @returns {Promise<object>} Object containing additional results, failed pages, and page count
  */
-const processResults = (firstPage, additionalResults, failedPages, additionalPagesFetched, postcode, cap, startTime) => {
-  const allResults = [...(firstPage.results || []), ...additionalResults]
-  const pagesFetched = 1 + additionalPagesFetched
-  const { totalresults, maxresults } = firstPage.header || {}
+const fetchAdditionalPagesIfNecessary = async ({ totalResults, maxResults, postcode, cap }) => {
+  const needsPagination = paginationRequired(totalResults, maxResults)
 
+  if (needsPagination) {
+    const { additionalResults, failedPages, additionalPagesFetched } = await fetchAdditionalPages(postcode, totalResults, maxResults, cap)
+    return { additionalResults, failedPages, additionalPagesFetched }
+  } else {
+    return { additionalResults: [], failedPages: [], additionalPagesFetched: 0 }
+  }
+}
+
+/**
+ * Combine results from multiple pages into one array
+ * @param {object} firstPage - First page response
+ * @param {array} additionalResults - Results from subsequent pages
+ * @returns {Array} Combined results from the first page and any subsequent pages
+ */
+const combineFirstAndAdditionalResults = (firstPage, additionalResults) => {
+  const firstPageResults = firstPage.results || []
+  return [...firstPageResults, ...additionalResults]
+}
+
+/**
+ * Log an error if any pages failed
+ * @param {array} failedPages - Pages that failed
+ * @param {string} postcode - The postcode being searched
+ */
+const checkForFailedPages = ({ failedPages, postcode }) => {
   if (failedPages.length > 0) {
     console.error(`Failed to fetch ${failedPages.length} pages for postcode ${postcode}`, {
       offsets: failedPages.map(f => f.offset),
       errors: failedPages.map(f => f.error)
     })
   }
+}
 
-  if (totalresults > cap) {
+/**
+ * Log a warning if there are more matches than can be requested
+ * @param {number} cap - Maximum results to fetch (configurable limit)
+ * @param {number} pagesFetched - Total count of pages fetched
+ * @param {string} postcode - The postcode being searched
+ * @param {number} resultsLength - Length of the allResults array
+ * @param {number} totalResults - Total results available from API
+ */
+const checkIfCapExceeded = ({ cap, pagesFetched, postcode, resultsLength, totalResults }) => {
+  if (totalResults > cap) {
     console.warn(
-      `Postcode ${postcode}: totalresults ${totalresults} exceeds cap ${cap}, retrieved ${pagesFetched} pages (${allResults.length} addresses)`
+      `Postcode ${postcode}: totalresults ${totalResults} exceeds cap ${cap}, retrieved ${pagesFetched} pages (${resultsLength} addresses)`
     )
   }
+}
 
+/**
+ * Log debug data about the result of the OS Places requests
+ * @param {number} startTime - Start timestamp for telemetry
+ * @param {array} failedPages - Pages that failed
+ * @param {number} maxresults - Maximum results per page
+ * @param {number} pagesFetched - Total count of pages fetched
+ * @param {string} postcode - The postcode being searched
+ * @param {number} resultsLength - Length of the allResults array
+ * @param {number} totalResults - Total results available from API
+ */
+const logDebugData = (startTime, { failedPages, maxResults, pagesFetched, postcode, resultsLength, totalResults }) => {
   const duration = Date.now() - startTime
   debug({
     postcode,
-    totalresults: totalresults || allResults.length,
-    maxresults: maxresults || 100,
+    totalResults: totalResults || resultsLength,
+    maxResults: maxResults || 100,
     pagesFetched,
-    aggregatedCount: allResults.length,
+    aggregatedCount: resultsLength,
     failedPages: failedPages.length,
     duration: `${duration}ms`
   })
+}
+
+/**
+ * Combine results from multiple pages into one array
+ * @param {object} firstPage - First page response
+ * @param {array} additionalResults - Results from subsequent pages
+ * @returns {Promise<object>} Object containing the max results cap, the max results per page and the total results available
+ */
+const preparePaginationNumbers = firstPage => {
+  return {
+    cap: getMaximumResultsCap(),
+    maxResults: firstPage?.header?.maxresults,
+    totalResults: firstPage?.header?.totalresults
+  }
+}
+
+/**
+ * Fetch all pages from OS Places and return the results
+ * @param {string} postcode - The postcode being searched
+ * @param {number} startTime - Start timestamp for telemetry
+ * @returns {Array} All the results from OS Places
+ */
+const fetchResults = async (postcode, startTime) => {
+  const firstPage = await fetchFirstPage(postcode)
+
+  if (!firstPage) {
+    return null
+  }
+
+  const { cap, maxResults, totalResults } = preparePaginationNumbers(firstPage)
+  const { additionalResults, failedPages, additionalPagesFetched } = await fetchAdditionalPagesIfNecessary({
+    totalResults,
+    maxResults,
+    postcode,
+    cap
+  })
+
+  const allResults = combineFirstAndAdditionalResults(firstPage, additionalResults)
+
+  const resultsData = {
+    cap,
+    failedPages,
+    maxResults,
+    pagesFetched: 1 + additionalPagesFetched,
+    postcode,
+    resultsLength: allResults.length,
+    totalResults
+  }
+
+  checkForFailedPages(resultsData)
+  checkIfCapExceeded(resultsData)
+  logDebugData(startTime, resultsData)
 
   return allResults
 }
@@ -275,26 +377,11 @@ const processResults = (firstPage, additionalResults, failedPages, additionalPag
 export default async (premises, postcode) => {
   const startTime = Date.now()
 
-  const firstPage = await fetchFirstPage(postcode)
-
-  if (!firstPage) {
+  const allResults = await fetchResults(postcode, startTime)
+  if (!allResults) {
     return []
   }
 
-  const { totalresults, maxresults } = firstPage.header || {}
-  const needsPagination = checkNeedsPagination(totalresults, maxresults)
-
-  // Fetch additional pages if needed
-  const cap = getMaximumResultsCap()
-  const {
-    results: additionalResults,
-    failedPages,
-    pagesFetched: additionalPagesFetched
-  } = needsPagination
-    ? await fetchAdditionalPages(postcode, totalresults, maxresults, cap)
-    : { results: [], failedPages: [], pagesFetched: 0 }
-
-  const allResults = processResults(firstPage, additionalResults, failedPages, additionalPagesFetched, postcode, cap, startTime)
   const filteredResults = filterAndOrderResults(allResults, premises)
 
   debug({ premises: premises || null, filteredCount: filteredResults.length })
