@@ -1,19 +1,44 @@
 import addressLookupService from '../address-lookup-service.js'
 import fetch from 'node-fetch'
-import db from 'debug'
 
 jest.mock('node-fetch')
-jest.mock('debug', () => jest.fn(() => jest.fn()))
-const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:address-lookup-service')]
 
 describe('address-lookup-service', () => {
+  const createMockAddress = ({ buildingName, buildingNumber, classificationCode, organisationName, poBoxNumber, subBuildingName }) => ({
+    DPA: {
+      ADDRESS: 'FISHCORP, FISH BOULEVARD, FISHBOROUGH, FI1 5SH',
+      BUILDING_NUMBER: buildingNumber,
+      BUILDING_NAME: buildingName,
+      CLASSIFICATION_CODE: classificationCode,
+      ORGANISATION_NAME: organisationName,
+      PO_BOX_NUMBER: poBoxNumber,
+      POST_TOWN: 'BRISTOL',
+      POSTCODE: 'BS1 1AA',
+      SUB_BUILDING_NAME: subBuildingName,
+      THOROUGHFARE_NAME: 'TEST STREET'
+    }
+  })
+
   beforeAll(() => {
     process.env.ADDRESS_LOOKUP_KEY = 'ADDRESS_LOOKUP_KEY'
     process.env.ADDRESS_LOOKUP_URL = 'https://address.lookup.url'
+    process.env.ADDRESS_LOOKUP_MS = '10000'
   })
   beforeEach(jest.clearAllMocks)
 
   describe('default', () => {
+    it('calls the address lookup with the correct parameters', async () => {
+      fetch.mockResolvedValue({ json: () => Promise.resolve({}) })
+
+      await addressLookupService('test', 'BS1 1AA')
+
+      const expectedUrl = [process.env.ADDRESS_LOOKUP_URL, '/?postcode=', 'BS1+1AA', '&lr=EN&key=', process.env.ADDRESS_LOOKUP_KEY].join('')
+      expect(fetch).toHaveBeenCalledWith(expectedUrl, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: process.env.ADDRESS_LOOKUP_MS
+      })
+    })
+
     it('returns empty array if results node is missing', async () => {
       fetch.mockResolvedValue({ json: () => Promise.resolve({}) })
       const results = await addressLookupService()
@@ -71,574 +96,376 @@ describe('address-lookup-service', () => {
     )
   })
 
-  describe('filtering by premises', () => {
-    describe('refactored premises field', () => {
-      it.each`
-        desc                                                                   | expected                                    | classificationCode | poBoxNumber  | subBuildingName | buildingName     | buildingNumber | organisationName
-        ${'everything but ORGANISATION_NAME is blank'}                         | ${'FishCorp'}                               | ${undefined}       | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
-        ${'everything but ORGANISATION_NAME and CLASSIFICATION CODE is blank'} | ${''}                                       | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
-        ${'CLASSIFICATION_CODE is blank'}                                      | ${'12345, Flat 3A, Fish Towers, 42'}        | ${undefined}       | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-        ${'CLASSIFICATION_CODE is for PO box'}                                 | ${'PO BOX 12345'}                           | ${'OR3'}           | ${'12345'}   | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
-        ${'CLASSIFICATION_CODE is for PO box but other fields are present'}    | ${'PO BOX 12345, Flat 3A, Fish Towers, 42'} | ${'OR3'}           | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-        ${'CLASSIFICATION_CODE is for PO box but PO_BOX_NUMBER is blank'}      | ${'Flat 3A, Fish Towers, 42'}               | ${'OR3'}           | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-        ${'SUB_BUILDING_NAME, BUILDING_NAME and BUILDING_NUMBER are present'}  | ${'Flat 3A, Fish Towers, 42'}               | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-        ${'SUB_BUILDING_NAME and BUILDING_NAME are present'}                   | ${'Flat 3A, Fish Towers'}                   | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
-        ${'SUB_BUILDING_NAME and BUILDING_NUMBER are present'}                 | ${'Flat 3A, 42'}                            | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
-        ${'BUILDING_NAME and BUILDING_NUMBER are present'}                     | ${'Fish Towers, 42'}                        | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
-        ${'BUILDING_NAME is present'}                                          | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
-        ${'BUILDING_NUMBER is present'}                                        | ${'42'}                                     | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
-        ${'BUILDING_NAME is present and BUILDING_NUMBER is an empty string'}   | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${''}          | ${'FishCorp'}
-        ${'BUILDING_NAME is present and BUILDING_NUMBER is spaces'}            | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'  '}        | ${'FishCorp'}
-        ${'BUILDING_NAME is present and BUILDING_NUMBER is null'}              | ${'Fish Towers'}                            | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${null}        | ${'FishCorp'}
-        ${'BUILDING_NUMBER is 0 string'}                                       | ${'0'}                                      | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'0'}         | ${'FishCorp'}
-        ${'BUILDING_NUMBER is 0 integer'}                                      | ${'0'}                                      | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${0}           | ${'FishCorp'}
-      `(
-        'when $desc it logs a premises field with correct value',
-        async ({ expected, classificationCode, poBoxNumber, subBuildingName, buildingName, buildingNumber, organisationName }) => {
+  describe('premises field', () => {
+    it.each`
+      desc                                                                  | expected                                    | searchPremises   | classificationCode | poBoxNumber  | subBuildingName | buildingName     | buildingNumber | organisationName
+      ${'everything but ORGANISATION_NAME is blank'}                        | ${'FishCorp'}                               | ${'FishCorp'}    | ${undefined}       | ${undefined} | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is blank'}                                     | ${'12345, Flat 3A, Fish Towers, 42'}        | ${'Flat 3A'}     | ${undefined}       | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is for PO box'}                                | ${'PO BOX 12345'}                           | ${'12345'}       | ${'OR3'}           | ${'12345'}   | ${undefined}    | ${undefined}     | ${undefined}   | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is for PO box but other fields are present'}   | ${'PO BOX 12345, Flat 3A, Fish Towers, 42'} | ${'Flat 3A'}     | ${'OR3'}           | ${'12345'}   | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'CLASSIFICATION_CODE is for PO box but PO_BOX_NUMBER is blank'}     | ${'Flat 3A, Fish Towers, 42'}               | ${'Flat 3A'}     | ${'OR3'}           | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'SUB_BUILDING_NAME, BUILDING_NAME and BUILDING_NUMBER are present'} | ${'Flat 3A, Fish Towers, 42'}               | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'SUB_BUILDING_NAME and BUILDING_NAME are present'}                  | ${'Flat 3A, Fish Towers'}                   | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
+      ${'SUB_BUILDING_NAME and BUILDING_NUMBER are present'}                | ${'Flat 3A, 42'}                            | ${'Flat 3A'}     | ${'RD04'}          | ${undefined} | ${'Flat 3A'}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+      ${'BUILDING_NAME and BUILDING_NUMBER are present'}                    | ${'Fish Towers, 42'}                        | ${'42'}          | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'42'}        | ${'FishCorp'}
+      ${'BUILDING_NAME is present'}                                         | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${undefined}   | ${'FishCorp'}
+      ${'BUILDING_NUMBER is present'}                                       | ${'42'}                                     | ${'42'}          | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'42'}        | ${'FishCorp'}
+      ${'BUILDING_NAME is present and BUILDING_NUMBER is an empty string'}  | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${''}          | ${'FishCorp'}
+      ${'BUILDING_NAME is present and BUILDING_NUMBER is spaces'}           | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${'  '}        | ${'FishCorp'}
+      ${'BUILDING_NAME is present and BUILDING_NUMBER is null'}             | ${'Fish Towers'}                            | ${'Fish Towers'} | ${'RD04'}          | ${undefined} | ${undefined}    | ${'Fish Towers'} | ${null}        | ${'FishCorp'}
+      ${'BUILDING_NUMBER is 0 string'}                                      | ${'0'}                                      | ${'0'}           | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${'0'}         | ${'FishCorp'}
+      ${'BUILDING_NUMBER is 0 integer'}                                     | ${'0'}                                      | ${'0'}           | ${'RD04'}          | ${undefined} | ${undefined}    | ${undefined}     | ${0}           | ${'FishCorp'}
+    `(
+      'when $desc it saves a premises field with correct value',
+      async ({
+        expected,
+        searchPremises,
+        classificationCode,
+        poBoxNumber,
+        subBuildingName,
+        buildingName,
+        buildingNumber,
+        organisationName
+      }) => {
+        fetch.mockResolvedValueOnce({
+          json: () => ({
+            results: [
+              createMockAddress({ buildingName, buildingNumber, classificationCode, organisationName, poBoxNumber, subBuildingName })
+            ]
+          })
+        })
+        const results = await addressLookupService(searchPremises, 'BS1 1AA')
+        expect(results[0].premises).toBe(expected)
+      }
+    )
+  })
+
+  describe('filterAndOrderResults', () => {
+    describe.each`
+      snakeCaseField         | camelCaseField
+      ${'SUB_BUILDING_NAME'} | ${'subBuildingName'}
+      ${'BUILDING_NAME'}     | ${'buildingName'}
+      ${'BUILDING_NUMBER'}   | ${'buildingNumber'}
+      ${'PO_BOX_NUMBER'}     | ${'poBoxNumber'}
+    `('matches within $camelCaseField', ({ snakeCaseField, camelCaseField }) => {
+      describe.each(['trout', 'TROUT', '1', '100', '1A'])('when the term is %s', term => {
+        it(`returns matches where the ${snakeCaseField} exactly matches the term ${term}`, async () => {
           fetch.mockResolvedValueOnce({
             json: () => ({
-              results: [
-                {
-                  DPA: {
-                    ADDRESS: 'FISHCORP, FISH BOULEVARD, FISHBOROUGH, FI1 5SH',
-                    BUILDING_NAME: buildingName,
-                    BUILDING_NUMBER: buildingNumber,
-                    CLASSIFICATION_CODE: classificationCode,
-                    ORGANISATION_NAME: organisationName,
-                    PO_BOX_NUMBER: poBoxNumber,
-                    POST_TOWN: 'FISHBOROUGH',
-                    POSTCODE: 'FI1 5SH',
-                    SUB_BUILDING_NAME: subBuildingName,
-                    THOROUGHFARE_NAME: 'FISH BOULEVARD'
-                  }
-                }
-              ]
+              results: [createMockAddress({ [camelCaseField]: term })]
             })
           })
-          await addressLookupService('Flat 3A', 'FI1 5SH')
-          expect(debug).toHaveBeenCalledWith('Refactored premises field will be:', expected)
+          const results = await addressLookupService(term, 'FI1 5SH')
+          expect(results[0].premises).toBe(term)
+        })
+
+        it(`returns matches where the ${snakeCaseField} contains the term ${term}, but the user entered it with whitespace`, async () => {
+          fetch.mockResolvedValueOnce({
+            json: () => ({
+              results: [createMockAddress({ [camelCaseField]: term })]
+            })
+          })
+          const results = await addressLookupService(`  ${term}  `, 'FI1 5SH')
+          expect(results[0].premises).toBe(term)
+        })
+
+        it(`returns matches where the ${snakeCaseField} contains the term ${term}, but the user entered it with parentheses`, async () => {
+          fetch.mockResolvedValueOnce({
+            json: () => ({
+              results: [createMockAddress({ [camelCaseField]: term })]
+            })
+          })
+          const results = await addressLookupService(`(${term})`, 'FI1 5SH')
+          expect(results[0].premises).toBe(term)
+        })
+
+        it(`returns matches where the ${snakeCaseField} includes the term ${term} as one of several distinct strings`, async () => {
+          const validMatches = [
+            `${term} ${term}`,
+            `${term} foo`,
+            `foo ${term}`,
+            `foo ${term} bar`,
+            `foo-${term}`,
+            `${term}`.toUpperCase(),
+            `${term}`,
+            `${term}, foo`,
+            `foo.${term}`
+          ]
+          const addresses = []
+          for (const match of validMatches) {
+            addresses.push(createMockAddress({ [camelCaseField]: match }))
+          }
+          fetch.mockResolvedValueOnce({ json: () => ({ results: addresses }) })
+
+          const results = await addressLookupService(term, 'FI1 5SH')
+          expect(results.map(r => r.premises)).toEqual(addresses.map(a => a.DPA[snakeCaseField]))
+        })
+
+        it(`does not return matches where the ${snakeCaseField} includes the term ${term} within a longer string`, async () => {
+          const invalidMatches = [`${term}foo`, `foo${term}`, `foo${term}bar`, `${term}${term}`]
+          const addresses = []
+          for (const match of invalidMatches) {
+            addresses.push(createMockAddress({ [camelCaseField]: match }))
+          }
+          fetch.mockResolvedValueOnce({ json: () => ({ results: addresses }) })
+
+          const results = await addressLookupService(term, 'FI1 5SH')
+          expect(results).toHaveLength(0)
+        })
+
+        it(`when there is a mixture of matching and non-matching results for ${term} in ${snakeCaseField}, returns only the matching results`, async () => {
+          const validAddress = createMockAddress({ [camelCaseField]: term })
+          const invalidAddress = createMockAddress({ [camelCaseField]: `${term}foo` })
+          const anotherValidAddress = createMockAddress({ [camelCaseField]: `Flat ${term}` })
+          const anotherInvalidAddress = createMockAddress({ [camelCaseField]: 'foobarbaz' })
+          fetch.mockResolvedValueOnce({
+            json: () => ({ results: [validAddress, invalidAddress, anotherValidAddress, anotherInvalidAddress] })
+          })
+
+          const results = await addressLookupService(term, 'FI1 5SH')
+          const validAddresses = [validAddress, anotherValidAddress]
+          expect(results.map(r => r.premises)).toEqual(validAddresses.map(a => a.DPA[snakeCaseField]))
+        })
+      })
+
+      it(`does not return matches where the ${snakeCaseField} has a similar but non-matching term`, async () => {
+        const term = 'trout'
+        const invalidMatches = ['trut', 'troutt', 'grout', 'trou', 'trowt']
+        const addresses = []
+        for (const match of invalidMatches) {
+          addresses.push(createMockAddress({ [camelCaseField]: match }))
+        }
+        fetch.mockResolvedValueOnce({ json: () => ({ results: addresses }) })
+
+        const results = await addressLookupService(term, 'FI1 5SH')
+        expect(results).toHaveLength(0)
+      })
+
+      it(`does not return matches where the ${snakeCaseField} has a partial numeric match`, async () => {
+        const term = '1'
+        const invalidMatches = ['1A', '11', '21', '100', '301']
+        const addresses = []
+        for (const match of invalidMatches) {
+          addresses.push(createMockAddress({ [camelCaseField]: match }))
+        }
+        fetch.mockResolvedValueOnce({ json: () => ({ results: addresses }) })
+
+        const results = await addressLookupService(term, 'FI1 5SH')
+        expect(results).toHaveLength(0)
+      })
+
+      it('does not return matches for "the"', async () => {
+        fetch.mockResolvedValueOnce({
+          json: () => ({
+            results: [createMockAddress({ [camelCaseField]: 'the' })]
+          })
+        })
+
+        const results = await addressLookupService('the', 'FI1 5SH')
+        expect(results).toHaveLength(0)
+      })
+
+      it.each(['there', 'lathe', 'anthem'])(
+        'does return matches when the term includes "the" as part of a longer string, ie "%s"',
+        async term => {
+          fetch.mockResolvedValueOnce({
+            json: () => ({
+              results: [createMockAddress({ [camelCaseField]: term })]
+            })
+          })
+
+          const results = await addressLookupService(term, 'FI1 5SH')
+          expect(results[0].premises).toBe(term)
         }
       )
     })
 
-    it('filters results by BUILDING_NAME substring match', async () => {
+    it.each(['1', '100', '11FOO'])('matches PO_BOX_NUMBER with added label when classificationCode is OR3', async term => {
+      fetch.mockResolvedValueOnce({
+        json: () => ({
+          results: [createMockAddress({ poBoxNumber: term, classificationCode: 'OR3' })]
+        })
+      })
+
+      const results = await addressLookupService(term, 'FI1 5SH')
+      expect(results[0].premises).toBe(`PO BOX ${term}`)
+    })
+
+    it.each`
+      snakeCaseField           | camelCaseField
+      ${'BUILDING_NAME'}       | ${'buildingName'}
+      ${'CLASSIFICATION_CODE'} | ${'classificationCode'}
+      ${'BUILDING_NUMBER'}     | ${'buildingNumber'}
+      ${'PO_BOX_NUMBER'}       | ${'poBoxNumber'}
+      ${'SUB_BUILDING_NAME'}   | ${'subBuildingName'}
+    `('does not match to ORGANISATION_NAME if $snakeCaseField is present', async ({ camelCaseField }) => {
+      const term = 'Ministry of Salmon'
       fetch.mockResolvedValueOnce({
         json: () => ({
           results: [
-            {
-              DPA: {
-                ADDRESS: '1 SARK TOWER, EREBUS DRIVE, LONDON, SE28 0GG',
-                POSTCODE: 'SE28 0GG',
-                BUILDING_NAME: '1 SARK TOWER',
-                THOROUGHFARE_NAME: 'EREBUS DRIVE',
-                POST_TOWN: 'LONDON'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: '10 SARK TOWER, EREBUS DRIVE, LONDON, SE28 0GG',
-                POSTCODE: 'SE28 0GG',
-                BUILDING_NAME: '10 SARK TOWER',
-                THOROUGHFARE_NAME: 'EREBUS DRIVE',
-                POST_TOWN: 'LONDON'
-              }
-            }
+            createMockAddress({
+              organisationName: term,
+              [camelCaseField]: 'foo'
+            })
           ]
         })
       })
 
-      const results = await addressLookupService('10 sark', 'SE28 0GG')
+      const results = await addressLookupService(term, 'FI1 5SH')
+      expect(results).toHaveLength(0)
+    })
 
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: '10 sark tower, erebus drive, london, SE28 0GG',
-          premises: '10 SARK TOWER',
-          street: 'EREBUS DRIVE',
-          locality: '',
-          town: 'LONDON',
-          postcode: 'SE28 0GG'
+    it('matches to ORGANISATION_NAME if no other valid fields are present', async () => {
+      const term = 'Ministry of Salmon'
+      fetch.mockResolvedValueOnce({
+        json: () => ({
+          results: [createMockAddress({ organisationName: term })]
+        })
+      })
+
+      const results = await addressLookupService(term, 'FI1 5SH')
+      expect(results[0].premises).toBe(term)
+    })
+
+    describe('match ordering', () => {
+      it('prioritises matches with more matching strings', async () => {
+        const exactMatch = 'foo bar baz'
+        const partialMatch = 'foo bar'
+        const anotherPartialMatch = 'foo baz'
+        const onlyMatchesABit = 'foo'
+        const notAMatchAtAll = 'salmon'
+
+        const orderedAddresses = [exactMatch, partialMatch, anotherPartialMatch, onlyMatchesABit]
+        const disorderedAddresses = [partialMatch, notAMatchAtAll, onlyMatchesABit, exactMatch, anotherPartialMatch]
+        const addressResults = []
+        for (const address of disorderedAddresses) {
+          addressResults.push(createMockAddress({ buildingName: address }))
         }
-      ])
-    })
+        fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
-    it('filters results by SUB_BUILDING_NAME for flats', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: 'FLAT 1-1 LOWRY 1, PEEL PARK QUARTER, UNIVERSITY ROAD, SALFORD, M5 4NJ',
-                POSTCODE: 'M5 4NJ',
-                SUB_BUILDING_NAME: 'FLAT 1-1 LOWRY 1',
-                BUILDING_NAME: 'PEEL PARK QUARTER',
-                THOROUGHFARE_NAME: 'UNIVERSITY ROAD',
-                POST_TOWN: 'SALFORD'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: 'FLAT 1-2 LOWRY 1, PEEL PARK QUARTER, UNIVERSITY ROAD, SALFORD, M5 4NJ',
-                POSTCODE: 'M5 4NJ',
-                SUB_BUILDING_NAME: 'FLAT 1-2 LOWRY 1',
-                BUILDING_NAME: 'PEEL PARK QUARTER',
-                THOROUGHFARE_NAME: 'UNIVERSITY ROAD',
-                POST_TOWN: 'SALFORD'
-              }
-            }
-          ]
-        })
+        const results = await addressLookupService(exactMatch, 'FI1 5SH')
+        expect(results.map(r => r.premises)).toEqual(orderedAddresses)
       })
 
-      const results = await addressLookupService('1-1', 'M5 4NJ')
+      it('prioritises matches on strings that contain letters and digits', async () => {
+        const term = 'foo 1A 100'
+        const matchesLettersAndDigits = 'bar 1A 200'
+        const alsoMatchesLettersAndDigits = 'baz 1A 300'
+        const matchesLettersOnly = 'foo 2B 200'
+        const alsoMatchesLettersOnly = 'foo 3C 300'
+        const matchesDigitsOnly = 'bar 2B 100'
+        const alsoMatchesDigitsOnly = 'baz 3C 100'
+        const doesNotMatch = 'bar 2B 200'
+        const alsoDoesNotMatch = 'baz 3C 300'
 
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: 'flat 1-1 lowry 1, peel park quarter, university road, salford, M5 4NJ',
-          premises: 'PEEL PARK QUARTER',
-          street: 'UNIVERSITY ROAD',
-          locality: '',
-          town: 'SALFORD',
-          postcode: 'M5 4NJ'
+        const orderedAddresses = [
+          matchesLettersAndDigits,
+          alsoMatchesLettersAndDigits,
+          matchesDigitsOnly,
+          matchesLettersOnly,
+          alsoMatchesLettersOnly,
+          alsoMatchesDigitsOnly
+        ]
+        const disorderedAddresses = [
+          matchesDigitsOnly,
+          doesNotMatch,
+          matchesLettersOnly,
+          alsoDoesNotMatch,
+          matchesLettersAndDigits,
+          alsoMatchesLettersOnly,
+          alsoMatchesLettersAndDigits,
+          alsoMatchesDigitsOnly
+        ]
+        const addressResults = []
+        for (const address of disorderedAddresses) {
+          addressResults.push(createMockAddress({ buildingName: address }))
         }
-      ])
-    })
+        fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
-    it('filters results by BUILDING_NUMBER', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '14, CHURCH STREET, YORK, YO1 8BE',
-                POSTCODE: 'YO1 8BE',
-                BUILDING_NUMBER: '14',
-                THOROUGHFARE_NAME: 'CHURCH STREET',
-                POST_TOWN: 'YORK'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: '15, CHURCH STREET, YORK, YO1 8BE',
-                POSTCODE: 'YO1 8BE',
-                BUILDING_NUMBER: '15',
-                THOROUGHFARE_NAME: 'CHURCH STREET',
-                POST_TOWN: 'YORK'
-              }
-            }
-          ]
-        })
+        const results = await addressLookupService(term, 'FI1 5SH')
+        expect(results.map(r => r.premises)).toEqual(orderedAddresses)
       })
 
-      const results = await addressLookupService('14', 'YO1 8BE')
+      it('prioritises matches that score highest based on multiple criteria', async () => {
+        const term = 'foo bar baz 1A'
+        const shouldScoreFivePoints = 'foo bar baz 1A'
+        const shouldScoreFourPoints = 'foo baz 1A'
+        const shouldScoreThreePoints = 'foo bar baz'
+        const shouldScoreTwoPoints = '1A'
+        const shouldScoreOnePoint = 'baz'
+        const shouldScoreZeroPoints = 'trout'
 
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: '14, church street, york, YO1 8BE',
-          premises: '',
-          street: 'CHURCH STREET',
-          locality: '',
-          town: 'YORK',
-          postcode: 'YO1 8BE'
+        const orderedAddresses = [
+          shouldScoreFivePoints,
+          shouldScoreFourPoints,
+          shouldScoreThreePoints,
+          shouldScoreTwoPoints,
+          shouldScoreOnePoint
+        ]
+        const disorderedAddresses = [
+          shouldScoreTwoPoints,
+          shouldScoreFourPoints,
+          shouldScoreOnePoint,
+          shouldScoreFivePoints,
+          shouldScoreZeroPoints,
+          shouldScoreThreePoints
+        ]
+        const addressResults = []
+        for (const address of disorderedAddresses) {
+          addressResults.push(createMockAddress({ buildingName: address }))
         }
-      ])
-    })
+        fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
-    it('filters results by ORGANISATION_NAME', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: 'THE BARN, ROSE FARM, YORK, YO60 7PD',
-                POSTCODE: 'YO60 7PD',
-                BUILDING_NAME: 'THE BARN',
-                ORGANISATION_NAME: 'ROSE FARM',
-                POST_TOWN: 'YORK'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: 'STABLE COTTAGE, BLUE MEADOW, YORK, YO60 7PD',
-                POSTCODE: 'YO60 7PD',
-                BUILDING_NAME: 'STABLE COTTAGE',
-                ORGANISATION_NAME: 'BLUE MEADOW',
-                POST_TOWN: 'YORK'
-              }
-            }
-          ]
-        })
+        const results = await addressLookupService(term, 'FI1 5SH')
+        expect(results.map(r => r.premises)).toEqual(orderedAddresses)
       })
 
-      const results = await addressLookupService('rose farm', 'YO60 7PD')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: 'the barn, rose farm, york, YO60 7PD',
-          premises: 'THE BARN',
-          street: '',
-          locality: '',
-          town: 'YORK',
-          postcode: 'YO60 7PD'
+      it('prioritises matches even when matching terms are spread across multiple fields', async () => {
+        const term = 'foo bar baz 1A'
+        const shouldScoreFourPoints = {
+          subBuildingName: 'foo',
+          buildingName: 'baz',
+          buildingNumber: '1A',
+          expectedPremises: 'foo, baz, 1A'
         }
-      ])
-    })
+        const shouldScoreThreePoints = { subBuildingName: '1A', buildingName: 'baz', expectedPremises: '1A, baz' }
+        const shouldScoreTwoPoints = { subBuildingName: 'foo', buildingName: 'bar', expectedPremises: 'foo, bar' }
+        const shouldScoreOnePoint = { buildingName: 'baz', expectedPremises: 'baz' }
+        const shouldScoreZeroPoints = { buildingNumber: '500', expectedPremises: '500' }
 
-    it('performs case-insensitive filtering', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: 'THE BARN, YORK, YO60 7PD',
-                POSTCODE: 'YO60 7PD',
-                BUILDING_NAME: 'THE BARN',
-                POST_TOWN: 'YORK'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService('the barn', 'YO60 7PD')
-
-      expect(results[0].premises).toBe('THE BARN')
-    })
-
-    it('trims whitespace from premises search term', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '10 SARK TOWER, LONDON, SE28 0GG',
-                POSTCODE: 'SE28 0GG',
-                BUILDING_NAME: '10 SARK TOWER',
-                POST_TOWN: 'LONDON'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService('  10 sark  ', 'SE28 0GG')
-
-      expect(results[0].premises).toBe('10 SARK TOWER')
-    })
-
-    it.each([
-      ['null', null],
-      ['empty string', '']
-    ])('returns all results when premises is %s', async (_, premisesValue) => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '1 SARK TOWER, LONDON, SE28 0GG',
-                POSTCODE: 'SE28 0GG',
-                BUILDING_NAME: '1 SARK TOWER',
-                POST_TOWN: 'LONDON'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: '10 SARK TOWER, LONDON, SE28 0GG',
-                POSTCODE: 'SE28 0GG',
-                BUILDING_NAME: '10 SARK TOWER',
-                POST_TOWN: 'LONDON'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService(premisesValue, 'SE28 0GG')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: '1 sark tower, london, SE28 0GG',
-          premises: '1 SARK TOWER',
-          street: '',
-          locality: '',
-          town: 'LONDON',
-          postcode: 'SE28 0GG'
-        },
-        {
-          id: 1,
-          address: '10 sark tower, london, SE28 0GG',
-          premises: '10 SARK TOWER',
-          street: '',
-          locality: '',
-          town: 'LONDON',
-          postcode: 'SE28 0GG'
+        const orderedAddresses = [shouldScoreFourPoints, shouldScoreThreePoints, shouldScoreTwoPoints, shouldScoreOnePoint]
+        const disorderedAddresses = [
+          shouldScoreOnePoint,
+          shouldScoreFourPoints,
+          shouldScoreZeroPoints,
+          shouldScoreTwoPoints,
+          shouldScoreThreePoints
+        ]
+        const addressResults = []
+        for (const address of disorderedAddresses) {
+          addressResults.push(createMockAddress(address))
         }
-      ])
+        fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
+
+        const results = await addressLookupService(term, 'FI1 5SH')
+        expect(results.map(r => r.premises)).toEqual(orderedAddresses.map(a => a.expectedPremises))
+      })
     })
 
-    it('returns empty array when filter matches nothing', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '1 SARK TOWER, LONDON, SE28 0GG',
-                POSTCODE: 'SE28 0GG',
-                BUILDING_NAME: '1 SARK TOWER',
-                POST_TOWN: 'LONDON'
-              }
-            }
-          ]
-        })
-      })
+    it('returns all OS Places results if no premise search term is provided', async () => {
+      const addresses = [
+        { subBuildingName: 'Flat 1A', buildingName: 'Fish Towers', expectedPremises: 'Flat 1A, Fish Towers' },
+        { buildingNumber: '100', expectedPremises: '100' },
+        { buildingName: 'Fish Cottage', expectedPremises: 'Fish Cottage' }
+      ]
+      const addressResults = []
+      for (const address of addresses) {
+        addressResults.push(createMockAddress(address))
+      }
+      fetch.mockResolvedValueOnce({ json: () => ({ results: addressResults }) })
 
-      const results = await addressLookupService('nonexistent address', 'SE28 0GG')
-
-      expect(results).toEqual([])
-    })
-
-    it('returns only matching results from multiple addresses', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '1 ROSE FARM COTTAGES, YORK, YO60 7PD',
-                POSTCODE: 'YO60 7PD',
-                BUILDING_NAME: '1 ROSE FARM COTTAGES',
-                POST_TOWN: 'YORK'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: '1 SOUTH VIEW, YORK, YO60 7PD',
-                POSTCODE: 'YO60 7PD',
-                BUILDING_NAME: '1 SOUTH VIEW',
-                POST_TOWN: 'YORK'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: '2 ROSE FARM COTTAGES, YORK, YO60 7PD',
-                POSTCODE: 'YO60 7PD',
-                BUILDING_NAME: '2 ROSE FARM COTTAGES',
-                POST_TOWN: 'YORK'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService('rose farm', 'YO60 7PD')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: '1 rose farm cottages, york, YO60 7PD',
-          premises: '1 ROSE FARM COTTAGES',
-          street: '',
-          locality: '',
-          town: 'YORK',
-          postcode: 'YO60 7PD'
-        },
-        {
-          id: 1,
-          address: '2 rose farm cottages, york, YO60 7PD',
-          premises: '2 ROSE FARM COTTAGES',
-          street: '',
-          locality: '',
-          town: 'YORK',
-          postcode: 'YO60 7PD'
-        }
-      ])
-    })
-
-    it('normalizes multiple spaces in user input to single space', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: 'THE BARN, MAIN STREET, BRISTOL, BS1 1AA',
-                POSTCODE: 'BS1 1AA',
-                BUILDING_NAME: 'THE BARN',
-                POST_TOWN: 'BRISTOL'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService('the  barn', 'BS1 1AA')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: 'the barn, main street, bristol, BS1 1AA',
-          premises: 'THE BARN',
-          street: '',
-          locality: '',
-          town: 'BRISTOL',
-          postcode: 'BS1 1AA'
-        }
-      ])
-    })
-
-    it('normalizes multiple spaces in API results to single space', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: 'THE  BARN, MAIN STREET, BRISTOL, BS1 1AA',
-                POSTCODE: 'BS1 1AA',
-                BUILDING_NAME: 'THE  BARN',
-                POST_TOWN: 'BRISTOL'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService('the barn', 'BS1 1AA')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: 'the  barn, main street, bristol, BS1 1AA',
-          premises: 'THE  BARN',
-          street: '',
-          locality: '',
-          town: 'BRISTOL',
-          postcode: 'BS1 1AA'
-        }
-      ])
-    })
-
-    it('normalizes multiple spaces in both input and API results', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: 'THE   OLD   BARN, MAIN STREET, BRISTOL, BS1 1AA',
-                POSTCODE: 'BS1 1AA',
-                BUILDING_NAME: 'THE   OLD   BARN',
-                POST_TOWN: 'BRISTOL'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService('the  old  barn', 'BS1 1AA')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: 'the   old   barn, main street, bristol, BS1 1AA',
-          premises: 'THE   OLD   BARN',
-          street: '',
-          locality: '',
-          town: 'BRISTOL',
-          postcode: 'BS1 1AA'
-        }
-      ])
-    })
-
-    it('returns empty array when results is null but premises filter provided', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: null
-        })
-      })
-
-      const results = await addressLookupService('test', 'BS1 1AA')
-
-      expect(results).toEqual([])
-    })
-
-    it('returns all results when premises parameter is null', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '1 TEST STREET, BRISTOL, BS1 1AA',
-                POSTCODE: 'BS1 1AA',
-                BUILDING_NAME: '1 TEST STREET',
-                POST_TOWN: 'BRISTOL'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService(null, 'BS1 1AA')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: '1 test street, bristol, BS1 1AA',
-          premises: '1 TEST STREET',
-          street: '',
-          locality: '',
-          town: 'BRISTOL',
-          postcode: 'BS1 1AA'
-        }
-      ])
-    })
-
-    it('returns all results when premises parameter is undefined', async () => {
-      fetch.mockResolvedValueOnce({
-        json: () => ({
-          results: [
-            {
-              DPA: {
-                ADDRESS: '1 TEST STREET, BRISTOL, BS1 1AA',
-                POSTCODE: 'BS1 1AA',
-                BUILDING_NAME: '1 TEST STREET',
-                POST_TOWN: 'BRISTOL'
-              }
-            },
-            {
-              DPA: {
-                ADDRESS: '2 TEST STREET, BRISTOL, BS1 1AA',
-                POSTCODE: 'BS1 1AA',
-                BUILDING_NAME: '2 TEST STREET',
-                POST_TOWN: 'BRISTOL'
-              }
-            }
-          ]
-        })
-      })
-
-      const results = await addressLookupService(undefined, 'BS1 1AA')
-
-      expect(results).toEqual([
-        {
-          id: 0,
-          address: '1 test street, bristol, BS1 1AA',
-          premises: '1 TEST STREET',
-          street: '',
-          locality: '',
-          town: 'BRISTOL',
-          postcode: 'BS1 1AA'
-        },
-        {
-          id: 1,
-          address: '2 test street, bristol, BS1 1AA',
-          premises: '2 TEST STREET',
-          street: '',
-          locality: '',
-          town: 'BRISTOL',
-          postcode: 'BS1 1AA'
-        }
-      ])
+      const results = await addressLookupService(undefined, 'FI1 5SH')
+      expect(results.map(r => r.premises)).toEqual(addresses.map(a => a.expectedPremises))
     })
   })
 
@@ -699,20 +526,16 @@ describe('address-lookup-service', () => {
   })
 
   describe('pagination', () => {
-    const createMockAddress = idx => ({
-      DPA: {
-        ADDRESS: `${idx} TEST STREET, BRISTOL, BS1 1AA`,
-        POSTCODE: 'BS1 1AA',
-        BUILDING_NAME: `${idx} TEST STREET`,
-        THOROUGHFARE_NAME: 'TEST STREET',
-        POST_TOWN: 'BRISTOL'
-      }
-    })
-
     const createMockResponse = (totalresults, maxresults, offset = 0, count = maxresults) => ({
       json: () => ({
         header: { totalresults, maxresults },
-        results: Array.from({ length: count }, (_, i) => createMockAddress(offset + i))
+        results: Array.from({ length: count }, (_, i) =>
+          createMockAddress({
+            buildingNumber: `${offset + i}`,
+            buildingName: 'TEST TOWERS',
+            classificationCode: 'RD04'
+          })
+        )
       })
     })
 
@@ -791,7 +614,7 @@ describe('address-lookup-service', () => {
       it('does not fetch additional pages when header is missing', async () => {
         fetch.mockResolvedValueOnce({
           json: () => ({
-            results: [createMockAddress(0)]
+            results: [createMockAddress({ buildingNumber: 0 })]
           })
         })
 
