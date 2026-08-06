@@ -77,7 +77,8 @@ describe('route', () => {
     rp_cancel_details_licence_type: 'Licence type',
     rp_cancel_details_payment_card: 'Payment card',
     rp_cancel_details_last_purchased: 'Last purchased',
-    rp_cancel_details_licence_valid_until: 'Valid until'
+    rp_cancel_details_licence_valid_until: 'Valid until',
+    licence_type_radio_trout_two_rod_payment_summary: 'Trout and coarse (up to 2 rods)'
   })
 
   const getSamplePermission = () => ({
@@ -87,7 +88,9 @@ describe('route', () => {
         lastName: 'Smith'
       },
       permit: {
-        description: 'Salmon and sea trout'
+        description: 'Salmon and sea trout',
+        permitSubtype: { label: 'Trout and coarse' },
+        numberOfRods: 2
       },
       endDate: '01-01-2026',
       referenceNumber: 'abc123'
@@ -127,24 +130,10 @@ describe('route', () => {
 
     it('returns summaryTable with expected data', async () => {
       const mssgs = getSampleCatalog()
-      const sampleData = {
-        permission: {
-          licensee: {
-            firstName: 'Brenin',
-            lastName: 'Pysgotwr'
-          },
-          permit: {
-            description: 'Wellies and old shopping trollies'
-          },
-          endDate: '21-03-2026',
-          referenceNumber: 'aaa-111-bbb-222'
-        },
-        recurringPayment: {
-          lastDigitsCardNumbers: '9999'
-        }
-      }
-      const sampleFormattedDate = Symbol('formatted-end-date')
+      const sampleData = getSamplePermission()
       const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+
+      const sampleFormattedDate = '01-01-2026'
       moment.mockReturnValueOnce({
         format: () => sampleFormattedDate
       })
@@ -156,7 +145,7 @@ describe('route', () => {
           key: { text: mssgs.rp_cancel_details_licence_holder },
           value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
         },
-        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: sampleData.permission.permit.description } },
+        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: mssgs.licence_type_radio_trout_two_rod_payment_summary } },
         {
           key: { text: mssgs.rp_cancel_details_payment_card },
           value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }

@@ -4,12 +4,25 @@ import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat, dateDisplayFormat } from '../../../../processors/date-and-time-display.js'
 
+import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+
 const getLicenseeDetailsSummaryRows = (currentPermission, mssgs, locale) => [
   {
     key: { text: mssgs.rp_cancel_details_licence_holder },
     value: { text: `${currentPermission.permission.licensee.firstName} ${currentPermission.permission.licensee.lastName}` }
   },
-  { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: currentPermission.permission.permit.description } },
+  {
+    key: { text: mssgs.rp_cancel_details_licence_type },
+    value: {
+      text: licenceTypeDisplay(
+        {
+          licenceType: currentPermission.permission.permit.permitSubtype?.label,
+          numberOfRods: String(currentPermission.permission.permit.numberOfRods)
+        },
+        mssgs
+      )
+    }
+  },
   {
     key: { text: mssgs.rp_cancel_details_payment_card },
     value: { text: `**** **** **** ${currentPermission.recurringPayment.lastDigitsCardNumbers}` }
