@@ -8,8 +8,8 @@ To run from this directory:
 
 ## Environment variables
 
-|               name                |                               description                                | required |                          default                          |         valid          |
-| :-------------------------------: | :----------------------------------------------------------------------: | :------: | :-------------------------------------------------------: | :--------------------: |
+| name                              | description                                                              | required | default                                                   | valid                  |
+| --------------------------------- | ------------------------------------------------------------------------ | :------: | --------------------------------------------------------- | ---------------------- |
 | NODE_ENV                          | Node environment                                                         |    no    |                                                           | development, fsh-{env} |
 | HAPI_KEEP_ALIVE_TIMEOUT_MS        | Configure the keep-alive timeout on the server listener                  |    no    | 1 minute                                                  |                        |
 | PORT                              | The http port the listens on                                             |    no    | 3000                                                      |                        |
@@ -56,4 +56,4 @@ An address lookup key will also need to be set.
 
 ## GOV.UK pay setup
 
-The details of the GOV.UK payment API can be found here; https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation
+The details of the GOV.UK payment API can be found here: https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation
