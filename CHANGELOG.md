@@ -1,4 +1,13 @@
 
+## v1.75.0-rc.0 (2026-08-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2442](https://github.com/DEFRA/rod-licensing/pull/2442) Incorrect link colours in Easy Renewals journey ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 
 ## v1.74.0-rc.1 (2026-08-03)
 
