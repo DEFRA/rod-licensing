@@ -1,9 +1,9 @@
 import {
   dynamicsClient,
   executeQuery,
-  findById,
   findDueRecurringPayments,
   findRecurringPaymentsByAgreementId,
+  findRecurringPaymentById,
   persist,
   RecurringPayment,
   findRecurringPaymentByPermissionId,
@@ -21,6 +21,7 @@ import { getGlobalOptionSetValue } from './reference-data.service.js'
 import moment from 'moment'
 import { AWS, govUkPayApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { StatusCodes } from 'http-status-codes'
 const debug = db('sales:recurring')
 const { sqs, docClient } = AWS()
 
@@ -167,21 +168,43 @@ export const findNewestExistingRecurringPaymentInCrm = async agreementId => {
 }
 
 export const cancelRecurringPayment = async (id, reason) => {
-  const recurringPayment = await findById(RecurringPayment, id)
-  if (recurringPayment) {
-    const data = recurringPayment
-    const isUserCancelled = reason === 'User Cancelled'
+  const [result] = await executeQuery(findRecurringPaymentById(id))
+  if (!result) {
+    throw new Error(`Invalid id provided for recurring payment cancellation: ${id}`)
+  }
 
-    if (!isUserCancelled) {
-      data.cancelledDate = new Date().toISOString().split('T')[0]
-    }
+  const recurringPayment = result.entity
+  const linkedPermission = result.expanded?.activePermission?.entity
+  if (!linkedPermission) {
+    throw new Error(`No active permission linked to recurring payment: ${id}`)
+  }
+  if (!recurringPayment.agreementId) {
+    throw new Error(`Cannot cancel a recurring payment without an agreement ID: ${id}`)
+  }
 
-    data.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
-    const updatedRecurringPayment = Object.assign(new RecurringPayment(), data)
-    await persist([updatedRecurringPayment])
-    return updatedRecurringPayment
+  recurringPayment.cancelledDate = new Date().toISOString()
+  recurringPayment.cancelledReason = await getGlobalOptionSetValue(RecurringPayment.definition.mappings.cancelledReason.ref, reason)
+
+  await cancelGovUkPayAgreement(recurringPayment.agreementId)
+
+  const updatedRecurringPayment = Object.assign(new RecurringPayment(), recurringPayment)
+  linkedPermission.isRecurringPayment = false
+
+  await persist([updatedRecurringPayment, linkedPermission])
+  return updatedRecurringPayment
+}
+
+const cancelGovUkPayAgreement = async agreementId => {
+  const response = await govUkPayApi.cancelRecurringPaymentAgreement(agreementId)
+  if (response.ok) {
+    debug('Successfully cancelled GovUkPay agreement: %s', agreementId)
+  } else if (response.status === StatusCodes.NOT_FOUND) {
+    debug('GovUkPay agreement not found (already cancelled or does not exist): %s', agreementId)
+  } else if (response.status === StatusCodes.BAD_REQUEST) {
+    debug('GovUkPay agreement cannot be cancelled (invalid state): %s', agreementId)
   } else {
-    throw new Error('Invalid id provided for recurring payment cancellation')
+    const body = await response.text().catch(() => 'Unable to read response body')
+    throw new Error(`Failed to cancel GovUkPay agreement ${agreementId}: ${response.status} ${response.statusText} - ${body}`)
   }
 }
 
