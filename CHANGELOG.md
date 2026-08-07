@@ -1,4 +1,13 @@
 
+## v1.75.0-rc.3 (2026-08-07)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2399](https://github.com/DEFRA/rod-licensing/pull/2399) Cancel agreement via Sales API ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.75.0-rc.1 (2026-08-06)
 
