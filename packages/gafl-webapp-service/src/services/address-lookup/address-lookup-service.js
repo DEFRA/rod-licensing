@@ -383,7 +383,6 @@ const fetchResults = async (postcode, startTime) => {
     resultsLength: allResults.length,
     totalResults
   }
-
   checkForFailedPages(resultsData)
   checkIfCapExceeded(resultsData)
   logDebugData(startTime, resultsData)
