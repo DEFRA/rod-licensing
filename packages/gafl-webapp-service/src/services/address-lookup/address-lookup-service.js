@@ -355,7 +355,7 @@ const preparePaginationNumbers = firstPage => {
  * Fetch all pages from OS Places and return the results
  * @param {string} postcode - The postcode being searched
  * @param {number} startTime - Start timestamp for telemetry
- * @returns {Array} All the results from OS Places
+ * @returns {Promise<Array>} All the results from OS Places
  */
 const fetchResults = async (postcode, startTime) => {
   const firstPage = await fetchFirstPage(postcode)
