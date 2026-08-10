@@ -1,4 +1,13 @@
-import { isMinor, isJunior, isOldEnoughForRecurringPayment, isSenior, MINOR_MAX_AGE, JUNIOR_MAX_AGE, RECURRING_PAYMENT_MIN_AGE, SENIOR_MIN_AGE } from '../ages.js'
+import {
+  isMinor,
+  isJunior,
+  isOldEnoughForRecurringPayment,
+  isSenior,
+  MINOR_MAX_AGE,
+  JUNIOR_MAX_AGE,
+  RECURRING_PAYMENT_MIN_AGE,
+  SENIOR_MIN_AGE
+} from '../ages.js'
 
 describe('age determination', () => {
   describe('isMinor', () => {
@@ -30,9 +39,12 @@ describe('age determination', () => {
     })
   })
   describe('is the minimum age legally allowed a recurring card payment agreement', () => {
-    it.each(Array.from({ length: RECURRING_PAYMENT_MIN_AGE - 1 }, (_v, index) => index + 1))('age of %d is not old enough for recurring payment', age => {
-      expect(isOldEnoughForRecurringPayment(age)).toBeFalsy()
-    })
+    it.each(Array.from({ length: RECURRING_PAYMENT_MIN_AGE - 1 }, (_v, index) => index + 1))(
+      'age of %d is not old enough for recurring payment',
+      age => {
+        expect(isOldEnoughForRecurringPayment(age)).toBeFalsy()
+      }
+    )
     it(`${RECURRING_PAYMENT_MIN_AGE} is old enough for recurring payment`, () => {
       expect(isOldEnoughForRecurringPayment(RECURRING_PAYMENT_MIN_AGE)).toBeTruthy()
     })
