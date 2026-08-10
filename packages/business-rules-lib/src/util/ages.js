@@ -26,7 +26,7 @@ export const isJunior = age => age > MINOR_MAX_AGE && age <= JUNIOR_MAX_AGE
  * @param {number} age The age to be tested
  * @returns {boolean} true if the given age should be classified as an adult
  */
-export const isAdult = age => age >= RECURRING_PAYMENT_MIN_AGE
+export const isOldEnoughForRecurringPayment = age => age >= RECURRING_PAYMENT_MIN_AGE
 
 /**
  * Determine if the provided age is classified as a senior
