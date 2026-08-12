@@ -1,4 +1,13 @@
 
+## v1.75.0-rc.5 (2026-08-12)
+
+#### :memo: Documentation
+* `gafl-webapp-service`
+  * [#2452](https://github.com/DEFRA/rod-licensing/pull/2452) update accessibility statement ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 ## v1.75.0-rc.4 (2026-08-10)
 
 #### :rocket: Enhancement
