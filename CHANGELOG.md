@@ -1,4 +1,13 @@
 
+## v1.75.0-rc.6 (2026-08-13)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#2441](https://github.com/DEFRA/rod-licensing/pull/2441) Recurring payments shouldn't be offered to minors (under 18)  ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.75.0-rc.5 (2026-08-12)
 
 #### :memo: Documentation
