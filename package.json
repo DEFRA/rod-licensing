@@ -6,6 +6,12 @@
   "engines": {
     "node": ">=22"
   },
+  "allowScripts": {
+    "core-js@2.6.12": true,
+    "es5-ext@0.10.64": true,
+    "nx@22.3.1": true,
+    "fsevents@1.2.13": false
+  },
   "keywords": [
     "rod",
     "fishing",

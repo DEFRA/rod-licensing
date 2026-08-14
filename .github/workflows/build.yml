@@ -25,9 +25,9 @@ jobs:
       - name: Install node
         uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
         with:
-          node-version: '22.x'
+          node-version: '24.x'
       - name: Install NPM
-        run: npm install -g npm@11.5.1
+        run: npm install -g npm@11.6.1
       - name: Install dependencies
         run: npm ci --workspaces --include=dev --include-workspace-root
       - name: Shai-hulud scan
@@ -61,9 +61,9 @@ jobs:
       - name: Install node
         uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
         with:
-          node-version: '22.x'
+          node-version: '24.x'
       - name: Install NPM
-        run: npm install -g npm@11.5.1
+        run: npm install -g npm@11.6.1
       - name: Install dependencies
         run: npm ci --workspaces --include-workspace-root
       - name: Extract branch name
