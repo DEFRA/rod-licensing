@@ -60,7 +60,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
           numberOfRods: 3
         }
       ]
-    ])("Adds permission %s, value '%s', to transaction cache", async (fieldName, fieldValue) => {
+    ])('adds permission %s to transaction cache', async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
       const authResult = getSampleAuthResult({ [fieldName]: fieldValue })
@@ -76,7 +76,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
       )
     })
 
-    it('Adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
+    it('adds licensee firstName, lastName and preferredMethodOfConfirmation label to transaction cache', async () => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
       const authResult = getSampleAuthResult({
@@ -101,7 +101,7 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
     it.each([
       ['licensee', { anotherProperty: 'Should not be there' }],
       ['permit', { altProp: 'Should not be here' }]
-    ])('Omits extraneous properties from permission %s', async (fieldName, fieldValue) => {
+    ])('omits extraneous properties from permission %s', async (fieldName, fieldValue) => {
       const setCurrentPermission = jest.fn()
       const mockRequest = getSampleRequest(setCurrentPermission)
 
@@ -111,8 +111,8 @@ describe('setUpCancelRecurringPaymentCacheFromAuthenticationResult', () => {
 
       expect(setCurrentPermission).toHaveBeenCalledWith(
         expect.objectContaining({
-          permission: expect.not.objectContaining({
-            [fieldName]: fieldValue
+          permission: expect.objectContaining({
+            [fieldName]: expect.not.objectContaining(fieldValue)
           })
         })
       )
