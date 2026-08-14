@@ -1,6 +1,7 @@
 import pageRoute from '../../../../../routes/page-route.js'
 import { CANCEL_RP_DETAILS, CANCEL_RP_CONFIRM } from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
+import { licenceTypeDisplay } from '../../../../../processors/licence-type-display.js'
 import { getData } from '../route.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat, dateDisplayFormat } from '../../../../../processors/date-and-time-display.js'
@@ -12,6 +13,7 @@ jest.mock('../../../../../uri.js', () => ({
   CANCEL_RP_CONFIRM: { uri: Symbol('cancel-rp-confirm-uri') }
 }))
 jest.mock('../../../../../processors/uri-helper.js')
+jest.mock('../../../../../processors/licence-type-display.js')
 jest.mock('moment-timezone', () =>
   jest.fn(() => ({
     format: jest.fn()
@@ -151,10 +153,12 @@ describe('route', () => {
         }
       }
       const sampleFormattedDate = Symbol('formatted-end-date')
+      const sampleLicenceTypeDisplayResult = Symbol('licence-type-display-result')
       const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
       moment.mockReturnValueOnce({
         format: () => sampleFormattedDate
       })
+      licenceTypeDisplay.mockReturnValueOnce(sampleLicenceTypeDisplayResult)
 
       const result = await getData(mockRequest)
 
@@ -163,7 +167,7 @@ describe('route', () => {
           key: { text: mssgs.rp_cancel_details_licence_holder },
           value: { text: `${sampleData.permission.licensee.firstName} ${sampleData.permission.licensee.lastName}` }
         },
-        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: mssgs.licence_type_radio_trout_two_rod_payment_summary } },
+        { key: { text: mssgs.rp_cancel_details_licence_type }, value: { text: sampleLicenceTypeDisplayResult } },
         {
           key: { text: mssgs.rp_cancel_details_payment_card },
           value: { text: `**** **** **** ${sampleData.recurringPayment.lastDigitsCardNumbers}` }
@@ -173,22 +177,52 @@ describe('route', () => {
       ])
     })
 
-    it.each([
-      ['Salmon and sea trout', 2, 'licence_type_radio_salmon_payment_summary'],
-      ['Trout and coarse', 2, 'licence_type_radio_trout_two_rod_payment_summary'],
-      ['Trout and coarse', 3, 'licence_type_radio_trout_three_rod_payment_summary']
-    ])('returns licence type summary row text for %s, %s rods', async (subtypeLabel, numberOfRods, expectedCatalogKey) => {
-      const mssgs = getSampleCatalog()
-      const sampleData = getSamplePermission()
-      sampleData.permission.permit.permitSubtype = { label: subtypeLabel }
-      sampleData.permission.permit.numberOfRods = numberOfRods
-      const mockRequest = createMockRequest({ catalog: mssgs, currentPermission: sampleData })
+    describe('licence type summary row', () => {
+      it.each([['Salmon and sea trout'], ['Trout and coarse']])(
+        'calls licenceTypeDisplay with licenceType set to permitSubtype.label of %s',
+        async label => {
+          const sampleData = getSamplePermission()
+          sampleData.permission.permit.permitSubtype = { label }
+          const mockRequest = createMockRequest({ currentPermission: sampleData })
 
-      const result = await getData(mockRequest)
+          await getData(mockRequest)
 
-      const licenceTypeRow = result.summaryTable.find(row => row.key.text === mssgs.rp_cancel_details_licence_type)
+          expect(licenceTypeDisplay).toHaveBeenCalledWith({ licenceType: label, numberOfRods: '2' }, expect.anything())
+        }
+      )
 
-      expect(licenceTypeRow.value.text).toBe(mssgs[expectedCatalogKey])
+      it('calls licenceTypeDisplay with numberOfRods converted to a string', async () => {
+        const sampleData = getSamplePermission()
+        sampleData.permission.permit.numberOfRods = 3
+        const mockRequest = createMockRequest({ currentPermission: sampleData })
+
+        await getData(mockRequest)
+
+        expect(licenceTypeDisplay).toHaveBeenCalledWith({ licenceType: 'Salmon and sea trout', numberOfRods: '3' }, expect.anything())
+      })
+
+      it('calls licenceTypeDisplay with request.i18n.getCatalog() result as the second argument', async () => {
+        const mssgs = getSampleCatalog()
+        const mockRequest = createMockRequest({ catalog: mssgs })
+
+        await getData(mockRequest)
+
+        expect(licenceTypeDisplay).toHaveBeenCalledWith(expect.anything(), mssgs)
+      })
+
+      it('returns licence type row with licenceTypeDisplay return value as the value text', async () => {
+        const mssgs = getSampleCatalog()
+        const sampleLicenceTypeDisplayResult = Symbol('licence-type-display-result')
+        licenceTypeDisplay.mockReturnValueOnce(sampleLicenceTypeDisplayResult)
+        const mockRequest = createMockRequest({ catalog: mssgs })
+
+        const result = await getData(mockRequest)
+
+        expect(result.summaryTable[1]).toEqual({
+          key: { text: mssgs.rp_cancel_details_licence_type },
+          value: { text: sampleLicenceTypeDisplayResult }
+        })
+      })
     })
 
     it('passes cache date format and request locale to moment', async () => {
