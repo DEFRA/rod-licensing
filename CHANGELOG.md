@@ -1,4 +1,13 @@
 
+## v1.75.0-rc.10 (2026-08-17)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2454](https://github.com/DEFRA/rod-licensing/pull/2454) License type on RCP details translation ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 
 
