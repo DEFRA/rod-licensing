@@ -36,6 +36,7 @@ docker/volumes/**/*
 
 # Ignore any hidden files/folders (starting with a .)
 **/.*
-# except the github and husky dir...
+# except the github, husky dir, and the root npm config...
 !.github
 !.husky
+!/.npmrc
