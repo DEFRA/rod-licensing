@@ -59,3 +59,20 @@ export const findRecurringPaymentByPermissionId = permissionId => {
     expand: [activePermission]
   })
 }
+
+/**
+ * Builds a query to retrieve a recurring payment by id, with its linked active permission expanded
+ *
+ * @param recurringPaymentId the id of the recurring payment
+ * @returns {PredefinedQuery}
+ */
+export const findRecurringPaymentById = recurringPaymentId => {
+  const { activePermission } = RecurringPayment.definition.relationships
+  const filter = `defra_recurringpaymentid eq ${recurringPaymentId} and ${RecurringPayment.definition.defaultFilter}`
+
+  return new PredefinedQuery({
+    root: RecurringPayment,
+    filter,
+    expand: [activePermission]
+  })
+}
