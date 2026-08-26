@@ -1,4 +1,13 @@
 
+## v1.76.0-rc.1 (2026-08-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2456](https://github.com/DEFRA/rod-licensing/pull/2456) Missing translation in Easy Renewals ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 
 
 ## v1.75.0-rc.10 (2026-08-17)
