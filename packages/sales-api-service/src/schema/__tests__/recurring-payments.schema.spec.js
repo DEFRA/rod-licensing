@@ -168,50 +168,29 @@ describe('cancelRecurringPaymentRequestParamsSchema', () => {
   })
 })
 
-describe('cancelRecurringPaymentRequestParamsSchema', () => {
-  it('validates expected object', async () => {
-    const sampleData = { id: 'abc123' }
-    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData)).not.toThrow()
-  })
-
-  it('throws an error if id missing', async () => {
-    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync({}).rejects.toThrow())
-  })
-
-  it('throws an error if id is not the correct type', async () => {
-    const sampleData = { id: 99 }
-    expect(() => cancelRecurringPaymentRequestParamsSchema.validateAsync(sampleData).rejects.toThrow())
-  })
-})
-
 describe('cancelRecurringPaymentRequestQuerySchema', () => {
-  it('validates expected object if the reason is Payment Failure', async () => {
-    const sampleData = { reason: 'Payment Failure' }
-    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
-  })
-
-  it('validates expected object if the reason is User Cancelled', async () => {
-    const sampleData = { reason: 'User Cancelled' }
-    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).not.toThrow()
+  it.each(['Payment Failure', 'User Cancelled', 'Business Cancelled'])('successfully validates when reason is %s', async reason => {
+    const sampleData = { reason }
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).resolves.toEqual(sampleData)
   })
 
   it('throws an error if query is empty', async () => {
     const sampleData = {}
-    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
   it('throws an error if reason is not the correct type', async () => {
     const sampleData = { reason: 99 }
-    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
-  it('throws an error if reason is not the correct value', async () => {
-    const sampleData = { reason: 'Because I said so' }
-    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+  it('throws an error if reason is invalid', async () => {
+    const sampleData = { reason: 'Not A Valid Reason' }
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 
   it('throws an error if an incorrect key is provided', async () => {
     const sampleData = { foo: 'Payment Failure' }
-    expect(() => cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData).rejects.toThrow())
+    await expect(cancelRecurringPaymentRequestQuerySchema.validateAsync(sampleData)).rejects.toThrow()
   })
 })

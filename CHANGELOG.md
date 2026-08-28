@@ -1,4 +1,104 @@
 
+
+## v1.76.0-rc.1 (2026-08-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2456](https://github.com/DEFRA/rod-licensing/pull/2456) Missing translation in Easy Renewals ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+
+
+## v1.75.0-rc.10 (2026-08-17)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2454](https://github.com/DEFRA/rod-licensing/pull/2454) License type on RCP details translation ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+
+
+## v1.75.0-rc.6 (2026-08-13)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#2441](https://github.com/DEFRA/rod-licensing/pull/2441) Recurring payments shouldn't be offered to minors (under 18)  ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.75.0-rc.5 (2026-08-12)
+
+#### :memo: Documentation
+* `gafl-webapp-service`
+  * [#2452](https://github.com/DEFRA/rod-licensing/pull/2452) update accessibility statement ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+## v1.75.0-rc.4 (2026-08-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2462](https://github.com/DEFRA/rod-licensing/pull/2462) Amend age concession content - FIX ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.75.0-rc.3 (2026-08-07)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2399](https://github.com/DEFRA/rod-licensing/pull/2399) Cancel agreement via Sales API ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.75.0-rc.1 (2026-08-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2440](https://github.com/DEFRA/rod-licensing/pull/2440) Amend age concession content ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.75.0-rc.0 (2026-08-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2442](https://github.com/DEFRA/rod-licensing/pull/2442) Incorrect link colours in Easy Renewals journey ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
+
+## v1.74.0-rc.1 (2026-08-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2450](https://github.com/DEFRA/rod-licensing/pull/2450) Return GAFL README to left alignment ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.74.0-rc.0 (2026-07-31)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `recurring-payments-job`
+  * [#2133](https://github.com/DEFRA/rod-licensing/pull/2133) Implement batcher for RCP ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
 ## v1.73.0-rc.9 (2026-07-21)
 
 #### :rocket: Enhancement
