@@ -20,21 +20,10 @@ const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {
   return startDate
 }
 
-const sendSQSMessage = async (QueueUrl, MessageGroupId, MessageDeduplicationId, MessageBody) => {
-  // throw new Error('KABOOM: SQS is kaput!')
-  return await sqs.sendMessage({
-    QueueUrl: TRANSACTION_QUEUE.Url,
-    MessageGroupId,
-    MessageDeduplicationId,
-    MessageBody
-  })
-}
-
 export async function finaliseTransaction ({ id, ...payload }) {
   debug('Finalising transaction %s', id)
   const transactionRecord = await retrieveStagedTransaction(id)
-  const originalTransactionRecord = JSON.parse(JSON.stringify(transactionRecord))
-  console.log('originalTransactionRecord', originalTransactionRecord)
+  const { id: _omitId, ...originalTransactionRecord } = JSON.parse(JSON.stringify(transactionRecord))
 
   if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED) {
     throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
@@ -74,31 +63,26 @@ export async function finaliseTransaction ({ id, ...payload }) {
 
   const receipt = await (async () => {
     try {
-      return await sendSQSMessage(TRANSACTION_QUEUE.Url, id, id, JSON.stringify({ id }))
-      // return await sqs.sendMessage({
-      //   QueueUrl: TRANSACTION_QUEUE.Url,
-      //   MessageGroupId: id,
-      //   MessageDeduplicationId: id,
-      //   MessageBody: JSON.stringify({ id })
-      // })  
+      return await sqs.sendMessage({
+        QueueUrl: TRANSACTION_QUEUE.Url,
+        MessageGroupId: id,
+        MessageDeduplicationId: id,
+        MessageBody: JSON.stringify({ id })
+      })
     } catch (error) {
       try {
-        // console.log('rolling back', originalTransactionRecord)
-        // console.log('update expression', docClient.createUpdateExpression(originalTransactionRecord))
-        delete originalTransactionRecord.id
-
         await docClient.update({
           TableName: TRANSACTION_STAGING_TABLE.TableName,
           Key: { id },
           ...docClient.createUpdateExpression(originalTransactionRecord),
           ReturnValues: 'ALL_NEW'
-        })  
+        })
       } catch (rollbackError) {
-        throw new Boom.internal(`Failed to rollback transaction record ${id} after SQS send failure`, { id, rollbackError })
+        throw Boom.internal(`Failed to rollback transaction record ${id} after SQS send failure`, rollbackError)
       }
       debug('Error sending transaction %s to staging queue: %o', id, error)
       throw Boom.internal('Failed to send transaction to staging queue', error)
-    }  
+    }
   })()
 
   debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)

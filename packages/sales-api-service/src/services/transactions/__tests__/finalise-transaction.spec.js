@@ -271,11 +271,13 @@ describe('transaction service', () => {
     })
 
     describe('transaction rollback', () => {
-
-      const sqsFailureSetup = () => {
-        const mockRecord = mockStagedTransactionRecord()
+      const sqsFailureSetup = ({
+        mockRecord = mockStagedTransactionRecord(),
+        updateExpression = { expression: 'update-expression' }
+      } = {}) => {
         docClient.get.mockResolvedValueOnce({ Item: mockRecord })
-        const originalRecord = JSON.parse(JSON.stringify(mockRecord))
+        docClient.createUpdateExpression.mockReturnValueOnce({}).mockReturnValueOnce(updateExpression)
+        const { id: _omitId, ...originalRecord } = JSON.parse(JSON.stringify(mockRecord))
         sqs.sendMessage.mockRejectedValueOnce(new Error('SQS send message failed'))
         return { mockRecord, originalRecord }
       }
@@ -286,26 +288,48 @@ describe('transaction service', () => {
       })
 
       it('rolls back the transaction if the SQS message fails to send', async () => {
-        const { mockRecord, originalRecord } = sqsFailureSetup()
+        const updateExpression = { expression: Symbol('update-expression') }
+        const { mockRecord } = sqsFailureSetup({ updateExpression })
         try {
-          await finaliseTransaction({ 
-            id: mockRecord.id, 
+          await finaliseTransaction({
+            id: mockRecord.id,
             payment: getSamplePayment()
           })
         } catch (e) {}
-        
+
         expect(docClient.update).toHaveBeenNthCalledWith(
           2,
           expect.objectContaining({
             TableName: TRANSACTION_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id },
-            Item: originalRecord
+            ...updateExpression
           })
         )
       })
 
+      it('uses createUpdateExpression to roll back the transaction when the SQS message fails to send', async () => {
+        const updateExpression = { expression: Symbol('update-expression') }
+        const { mockRecord, originalRecord } = sqsFailureSetup({
+          mockRecord: {
+            ...mockStagedTransactionRecord(),
+            uniqueTag: 'afd113fe-acfb-4124-a2ed-f1b182df55fd'
+          },
+          updateExpression
+        })
+        try {
+          await finaliseTransaction({
+            id: mockRecord.id,
+            payment: getSamplePayment()
+          })
+        } catch (e) {}
+
+        expect(docClient.createUpdateExpression).toHaveBeenNthCalledWith(2, originalRecord)
+      })
+
       it('throws an internal server error if the SQS message fails to send', async () => {
-        const { mockRecord: { id } } = sqsFailureSetup()
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
 
         await expect(
           finaliseTransaction({
@@ -316,14 +340,16 @@ describe('transaction service', () => {
       })
 
       it('logs the error if the SQS message fails to send', async () => {
-        const { mockRecord: { id } } = sqsFailureSetup()
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
         try {
           await finaliseTransaction({ id, payment: getSamplePayment() })
         } catch (e) {}
         expect(debugLogger).toHaveBeenCalledWith(
           'Error sending transaction %s to staging queue: %o',
-          id, 
-          expect.objectContaining({ 
+          id,
+          expect.objectContaining({
             message: 'Failed to send transaction to staging queue: SQS send message failed',
             isBoom: true
           })
@@ -331,8 +357,10 @@ describe('transaction service', () => {
       })
 
       it('throws an internal server error if the rollback fails', async () => {
-        const { mockRecord: { id } } = sqsFailureSetup()
-        docClient.update.mockResolvedValueOnce(({ Attributes: { status: {} } }))
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
+        docClient.update.mockResolvedValueOnce({ Attributes: { status: {} } })
         docClient.update.mockRejectedValueOnce(new Error('Rollback failed'))
         await expect(
           finaliseTransaction({
@@ -341,9 +369,7 @@ describe('transaction service', () => {
           })
         ).rejects.toThrowErrorMatchingSnapshot()
       })
-
     })
-
   })
 
   describe('finaliseTransaction adjusts licence times according to issue date and start date', () => {
