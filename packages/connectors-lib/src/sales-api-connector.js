@@ -30,13 +30,13 @@ export const call = async (url, method = 'get', payload = null) => {
     body: response.status === 204 ? undefined : await parseResponseBody(response)
   }
   debug(
-    'Request sent (%s): %s %s with payload %s.  Response received (%s): %s',
+    'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',
     requestTimestamp,
     method,
     url.href,
-    JSON.stringify(payload),
+    payload,
     responseTimestamp,
-    JSON.stringify(responseData)
+    responseData
   )
   return responseData
 }
