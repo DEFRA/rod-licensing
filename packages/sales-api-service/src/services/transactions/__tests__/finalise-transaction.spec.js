@@ -12,9 +12,12 @@ import moment from 'moment'
 import { TRANSACTION_STATUS } from '../constants.js'
 import permissionsService from '../../permissions.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
+import db from 'debug'
 
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 const { docClient, sqs } = AWS.mock.results[0].value
+const debugLogger = db.mock.results[1].value // first call is by retrieve-transaction.js
+global.structuredClone = global.structuredClone ?? (obj => JSON.parse(JSON.stringify(obj)))
 
 jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: jest.fn(() => MOCK_PERMISSION_NUMBER),
@@ -49,6 +52,8 @@ jest.mock('@defra-fish/connectors-lib', () => {
     })
   }
 })
+
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 const getStagedTransactionRecord = () => {
   const record = mockStagedTransactionRecord()
@@ -264,6 +269,107 @@ describe('transaction service', () => {
     it('throws exceptions back up the stack', async () => {
       docClient.get.mockRejectedValueOnce(new Error('Test error'))
       await expect(finaliseTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+    })
+
+    describe('transaction rollback', () => {
+      const sqsFailureSetup = ({
+        mockRecord = mockStagedTransactionRecord(),
+        updateExpression = { expression: 'update-expression' }
+      } = {}) => {
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        docClient.createUpdateExpression.mockReturnValueOnce({}).mockReturnValueOnce(updateExpression)
+        const { id: _omitId, ...originalRecord } = JSON.parse(JSON.stringify(mockRecord))
+        sqs.sendMessage.mockRejectedValueOnce(new Error('SQS send message failed'))
+        return { mockRecord, originalRecord }
+      }
+
+      const getSamplePayment = () => ({
+        amount: 30,
+        timestamp: new Date().toISOString()
+      })
+
+      it('rolls back the transaction if the SQS message fails to send', async () => {
+        const updateExpression = { expression: Symbol('update-expression') }
+        const { mockRecord } = sqsFailureSetup({ updateExpression })
+        try {
+          await finaliseTransaction({
+            id: mockRecord.id,
+            payment: getSamplePayment()
+          })
+        } catch (e) {}
+
+        expect(docClient.update).toHaveBeenNthCalledWith(
+          2,
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
+            Key: { id: mockRecord.id },
+            ...updateExpression
+          })
+        )
+      })
+
+      it('uses createUpdateExpression to roll back the transaction when the SQS message fails to send', async () => {
+        const updateExpression = { expression: Symbol('update-expression') }
+        const { mockRecord, originalRecord } = sqsFailureSetup({
+          mockRecord: {
+            ...mockStagedTransactionRecord(),
+            uniqueTag: 'afd113fe-acfb-4124-a2ed-f1b182df55fd'
+          },
+          updateExpression
+        })
+        try {
+          await finaliseTransaction({
+            id: mockRecord.id,
+            payment: getSamplePayment()
+          })
+        } catch (e) {}
+
+        expect(docClient.createUpdateExpression).toHaveBeenNthCalledWith(2, originalRecord)
+      })
+
+      it('throws an internal server error if the SQS message fails to send', async () => {
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
+
+        await expect(
+          finaliseTransaction({
+            id,
+            payment: getSamplePayment()
+          })
+        ).rejects.toThrowErrorMatchingSnapshot()
+      })
+
+      it('logs the error if the SQS message fails to send', async () => {
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
+        try {
+          await finaliseTransaction({ id, payment: getSamplePayment() })
+        } catch (e) {}
+        expect(debugLogger).toHaveBeenCalledWith(
+          'Error sending transaction %s to staging queue: %o',
+          id,
+          expect.objectContaining({
+            message: 'Failed to send transaction to staging queue: SQS send message failed',
+            isBoom: true
+          })
+        )
+      })
+
+      it('throws an internal server error if the rollback fails', async () => {
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
+        docClient.update.mockResolvedValueOnce({ Attributes: { status: {} } })
+        docClient.update.mockRejectedValueOnce(new Error('Rollback failed'))
+        await expect(
+          finaliseTransaction({
+            id,
+            payment: getSamplePayment()
+          })
+        ).rejects.toThrowErrorMatchingSnapshot()
+      })
     })
   })
 

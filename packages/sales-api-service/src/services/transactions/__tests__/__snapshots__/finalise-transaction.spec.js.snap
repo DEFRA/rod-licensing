@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transaction service finaliseTransaction transaction rollback throws an internal server error if the SQS message fails to send 1`] = `"Failed to send transaction to staging queue: SQS send message failed"`;
+
+exports[`transaction service finaliseTransaction transaction rollback throws an internal server error if the rollback fails 1`] = `"Failed to rollback transaction record b364c12f-ce62-4c62-b4bd-4a06fd57e256 after SQS send failure: Rollback failed"`;
