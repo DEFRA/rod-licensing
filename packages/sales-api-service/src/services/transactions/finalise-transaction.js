@@ -23,7 +23,7 @@ const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {
 export async function finaliseTransaction ({ id, ...payload }) {
   debug('Finalising transaction %s', id)
   const transactionRecord = await retrieveStagedTransaction(id)
-  const { id: _omitId, ...originalTransactionRecord } = JSON.parse(JSON.stringify(transactionRecord))
+  const { id: _omitId, ...originalTransactionRecord } = structuredClone(transactionRecord)
 
   if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED) {
     throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
