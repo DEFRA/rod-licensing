@@ -1,4 +1,4 @@
-import { finaliseTransaction } from '../finalise-transaction'
+import { finaliseTransaction } from '../finalise-transaction.js'
 import {
   MOCK_END_DATE,
   MOCK_PERMISSION_NUMBER,
@@ -17,7 +17,7 @@ import db from 'debug'
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 const { docClient, sqs } = AWS.mock.results[0].value
 const debugLogger = db.mock.results[1].value // first call is by retrieve-transaction.js
-global.structuredClone = obj => JSON.parse(JSON.stringify(obj))
+global.structuredClone = global.structuredClone ?? (obj => JSON.parse(JSON.stringify(obj)))
 
 jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: jest.fn(() => MOCK_PERMISSION_NUMBER),
