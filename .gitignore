@@ -39,4 +39,3 @@ docker/volumes/**/*
 # except the github, husky dir, and the root npm config...
 !.github
 !.husky
-!/.npmrc
