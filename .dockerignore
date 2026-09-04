@@ -17,6 +17,7 @@ pids
 **/node_modules/
 
 **/.*
+!.npmrc
 
 **/public/
 
