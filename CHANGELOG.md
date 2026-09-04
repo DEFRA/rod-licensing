@@ -1,4 +1,12 @@
 
+## v1.76.0-rc.5 (2026-09-04)
+
+#### :bug: Bug Fix
+* [#2471](https://github.com/DEFRA/rod-licensing/pull/2471) Upgrade rod-licensing npm to v11.19.0- #2463 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 
 
