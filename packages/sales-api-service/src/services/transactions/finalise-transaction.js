@@ -63,6 +63,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
 
   const receipt = await (async () => {
     try {
+      throw new Error('Unable to dispatch SQS message')
       return await sqs.sendMessage({
         QueueUrl: TRANSACTION_QUEUE.Url,
         MessageGroupId: id,
