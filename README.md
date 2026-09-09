@@ -24,6 +24,7 @@ Mono-repo for the rod licensing digital services.
 ## Prerequisites
 
 - Node v22.x
+- npm v11.19.0
 - Docker v18.06.0+
 
 ## Cloning
@@ -99,5 +100,5 @@ The following attribution statement MUST be cited in your products and applicati
 ### About the license
 
 The Open Government Licence (OGL) was developed by the Controller of Her Majesty's Stationery Office (HMSO) to enable information providers in the public sector to license the use and re-use of their information under a common open licence.
-
+ 
 It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.

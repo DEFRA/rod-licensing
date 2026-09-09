@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Install app dependencies
 COPY packages/pocl-job/package*.json /app/
+COPY .npmrc /app/
 RUN npm install --workspaces=false --production && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
