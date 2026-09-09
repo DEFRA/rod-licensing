@@ -3,17 +3,10 @@ import { v4 as uuidv4 } from 'uuid'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 
 export const paymentJournalEntryParamsSchema = Joi.object({
-  id: Joi.string()
-    .min(1)
-    .trim()
-    .required()
-    .description('The payment journal identifier')
-    .example(uuidv4())
+  id: Joi.string().min(1).trim().required().description('The payment journal identifier').example(uuidv4())
 })
 
-const paymentReferenceSchema = Joi.string()
-  .min(1)
-  .example(uuidv4())
+const paymentReferenceSchema = Joi.string().min(1).example(uuidv4())
 const paymentTimestampSchema = Joi.string()
   .isoDate()
   .required()
@@ -40,17 +33,17 @@ export const createPaymentJournalRequestSchema = Joi.object({
 export const updatePaymentJournalRequestSchema = Joi.object({
   paymentReference: paymentReferenceSchema.optional(),
   paymentTimestamp: paymentTimestampSchema.optional(),
-  paymentStatus: paymentStatusSchema.optional()
+  paymentStatus: paymentStatusSchema.optional(),
+  eligibleForMopUp: Joi.boolean()
+    .description('A flag showing whether the payment journal can be mopped up before the normal elapsed time has occurred')
+    .optional()
 })
-  .or('paymentTimestamp', 'paymentReference', 'paymentStatus')
+  .or('paymentTimestamp', 'paymentReference', 'paymentStatus', 'eligibleForMopUp')
   .label('update-payment-journal-request')
 
 export const paymentJournalResponseSchema = createPaymentJournalRequestSchema
   .append({
-    id: Joi.string()
-      .trim()
-      .required()
-      .example(uuidv4()),
+    id: Joi.string().trim().required().example(uuidv4()),
     expires: Joi.number().required()
   })
   .label('payment-journal-response')
@@ -61,20 +54,12 @@ export const paymentJournalResponseSchema = createPaymentJournalRequestSchema
  */
 export const paymentJournalQueryParams = Joi.object({
   paymentStatus: paymentStatusSchema,
-  from: Joi.string()
-    .isoDate()
-    .required()
-    .description('From date (inclusive)'),
-  to: Joi.string()
-    .isoDate()
-    .required()
-    .description('To date (inclusive)')
+  from: Joi.string().isoDate().required().description('From date (inclusive)'),
+  to: Joi.string().isoDate().required().description('To date (inclusive)')
 }).external(value => {
   if (value.from > value.to) {
     throw new Error('From date must not be after to date')
   }
 })
 
-export const paymentJournalQueryResponse = Joi.array()
-  .items(paymentJournalResponseSchema)
-  .label('payment-journal-query-response')
+export const paymentJournalQueryResponse = Joi.array().items(paymentJournalResponseSchema).label('payment-journal-query-response')

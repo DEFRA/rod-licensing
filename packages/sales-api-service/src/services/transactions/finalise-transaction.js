@@ -8,6 +8,7 @@ import moment from 'moment'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { updatePaymentJournal } from '../paymentjournals/payment-journals.service.js'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
@@ -77,6 +78,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
           ...docClient.createUpdateExpression(originalTransactionRecord),
           ReturnValues: 'ALL_NEW'
         })
+        await updatePaymentJournal(id, { eligibleForMopUp: true })
       } catch (rollbackError) {
         throw Boom.internal(`Failed to rollback transaction record ${id} after SQS send failure`, rollbackError)
       }
