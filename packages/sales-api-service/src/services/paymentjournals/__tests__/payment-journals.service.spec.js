@@ -27,7 +27,7 @@ describe('payment-journals service', () => {
       await createPaymentJournal('test-id', { some: 'data' })
       expect(docClient.put).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
-        Item: { id: 'test-id', some: 'data', expires: expect.any(Number) },
+        Item: { id: 'test-id', some: 'data', eligibleForMopUp: false, expires: expect.any(Number) },
         ConditionExpression: 'attribute_not_exists(id)'
       })
     })
