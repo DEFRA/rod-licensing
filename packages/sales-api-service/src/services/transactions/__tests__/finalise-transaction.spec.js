@@ -288,22 +288,6 @@ describe('transaction service', () => {
         timestamp: new Date().toISOString()
       })
 
-      it('marks rolled back transaction as eligible to be mopped up', async () => {
-        const { mockRecord } = sqsFailureSetup()
-        try {
-          await finaliseTransaction({
-            id: mockRecord.id,
-            payment: getSamplePayment()
-          })
-        } catch (e) {}
-        expect(docClient.createUpdateExpression).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining({
-            eligibleForMopUp: true
-          })
-        )
-      })
-
       it('rolls back the transaction if the SQS message fails to send', async () => {
         const updateExpression = { expression: Symbol('update-expression') }
         const { mockRecord } = sqsFailureSetup({ updateExpression })
@@ -340,7 +324,7 @@ describe('transaction service', () => {
           })
         } catch (e) {}
 
-        expect(docClient.createUpdateExpression).toHaveBeenNthCalledWith(2, expect.objectContaining(originalRecord))
+        expect(docClient.createUpdateExpression).toHaveBeenNthCalledWith(2, originalRecord)
       })
 
       it('throws an internal server error if the SQS message fails to send', async () => {
