@@ -10,7 +10,7 @@ const debug = db('sales:paymentjournals')
  * @returns {Promise<*>}
  */
 export async function createPaymentJournal (id, payload) {
-  const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
+  const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, eligibleForMopUp: false, ...payload }
   await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
   debug('Payment journal stored with payload %o', record)
   return record
@@ -49,6 +49,8 @@ export async function getPaymentJournal (id) {
  * @returns {Promise<*>}
  */
 export async function queryJournalsByTimestamp ({ paymentStatus, from, to }) {
+  console.log('from', from)
+  console.log('to', to)
   return docClient.queryAllPromise({
     TableName: PAYMENTS_TABLE.TableName,
     IndexName: 'PaymentJournalsByStatusAndTimestamp',

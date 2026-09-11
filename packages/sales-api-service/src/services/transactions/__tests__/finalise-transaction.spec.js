@@ -11,6 +11,7 @@ import BusinessRulesLib from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import { TRANSACTION_STATUS } from '../constants.js'
 import permissionsService from '../../permissions.service.js'
+import { updatePaymentJournal } from '../../paymentjournals/payment-journals.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 
@@ -18,6 +19,8 @@ const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 const { docClient, sqs } = AWS.mock.results[0].value
 const debugLogger = db.mock.results[1].value // first call is by retrieve-transaction.js
 global.structuredClone = global.structuredClone ?? (obj => JSON.parse(JSON.stringify(obj)))
+
+jest.mock('../../paymentjournals/payment-journals.service.js')
 
 jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: jest.fn(() => MOCK_PERMISSION_NUMBER),
@@ -325,6 +328,18 @@ describe('transaction service', () => {
         } catch (e) {}
 
         expect(docClient.createUpdateExpression).toHaveBeenNthCalledWith(2, originalRecord)
+      })
+
+      it('updates the payment journal to be eligible for mop-up when the SQS message fails to send', async () => {
+        const { mockRecord } = sqsFailureSetup()
+        try {
+          await finaliseTransaction({
+            id: mockRecord.id,
+            payment: getSamplePayment()
+          })
+        } catch (e) {}
+
+        expect(updatePaymentJournal).toHaveBeenCalledWith(mockRecord.id, expect.objectContaining({ eligibleForMopUp: true }))
       })
 
       it('throws an internal server error if the SQS message fails to send', async () => {

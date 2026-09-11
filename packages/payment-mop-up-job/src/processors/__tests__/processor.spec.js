@@ -14,30 +14,35 @@ jest.mock('bottleneck', () =>
 const journalEntries = () => [
   {
     id: '4fa393ab-07f4-407e-b233-89be2a6f5f77',
+    eligibleForMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '05nioqikvvnuu5l8m2qeaj0qap',
     paymentTimestamp: '2020-06-01T10:35:56.873Z'
   },
   {
     id: 'aaced854-d337-47ee-8d5e-75b26aeb90fb',
+    eligibleForMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '0f3dr9ugp7u68qq18vt9h8ma85',
     paymentTimestamp: '2020-06-02T07:17:23.169Z'
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8213',
+    eligibleForMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vme',
-    paymentTimestamp: '2020-06-04T12:04:30.802Z'
+    paymentTimestamp: '2020-06-04T11:04:30.802Z'
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8214',
+    eligibleForMopUp: true,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmf',
     paymentTimestamp: '2020-06-04T12:04:30.802Z'
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8215',
+    eligibleForMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmg',
     paymentTimestamp: '2020-06-04T12:04:30.802Z'
@@ -128,6 +133,10 @@ const createPaymentEventsEntry = paymentStatus => {
 describe('processor', () => {
   beforeEach(jest.clearAllMocks)
 
+  beforeAll(() => {
+    salesApi.paymentJournals.getAll.mockReturnValue([])
+  })
+
   it('completes normally where there are no journal records retrieved', async () => {
     salesApi.paymentJournals.getAll.mockReturnValueOnce([])
     await execute(1, 1)
@@ -164,6 +173,69 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('a0e0e5c3-1004-4271-80ba-d05eda3e8215', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
     })
+  })
+
+  it.each([
+    ['2026-09-10T09:00:00.000Z', 1, 1],
+    ['2024-02-29T19:00:00.000Z', 14, 5],
+    ['2026-09-10T00:01:00.000Z', 28, 37]
+  ])(
+    "sends expected arguments to query payment journals when it's %s, we're looking for payments over %i minute(s) old and going back %i hour(s)",
+    async (now, ageMinutes, scanDurationHours) => {
+      jest.useFakeTimers().setSystemTime(new Date(now))
+      const expectedFrom = moment(now).subtract({ minutes: ageMinutes, hours: scanDurationHours }).toISOString()
+
+      await execute(ageMinutes, scanDurationHours)
+
+      expect(salesApi.paymentJournals.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress,
+          from: expectedFrom,
+          to: now
+        })
+      )
+      jest.useRealTimers()
+    }
+  )
+
+  it('only processes payments that are either within the payment window or have eligibleForMopUp flag', async () => {
+    const now = '2020-06-04T12:04:30.802Z'
+    jest.useFakeTimers().setSystemTime(new Date(now))
+    const sampleJournalEntries = journalEntries()
+    salesApi.paymentJournals.getAll.mockResolvedValueOnce(sampleJournalEntries)
+    for (let x = 0; x < sampleJournalEntries.length; x++) {
+      govUkPayApi.fetchPaymentStatus.mockImplementationOnce(ref => ({ json: async () => ({}) }))
+      govUkPayApi.fetchPaymentEvents.mockImplementationOnce(ref => ({
+        json: async () => ({
+          events: [
+            {
+              payment_id: ref,
+              state: {
+                status: 'success',
+                finished: true
+              },
+              amount: 8200
+            }
+          ]
+        })
+      }))
+    }
+
+    await execute(1, 1)
+
+    const expectedIds = [
+      '05nioqikvvnuu5l8m2qeaj0qap',
+      '0f3dr9ugp7u68qq18vt9h8ma85',
+      '7lufvi9sbh077rvrrmnqo63vme',
+      '7lufvi9sbh077rvrrmnqo63vmf'
+    ]
+    const unexpectedId = '7lufvi9sbh077rvrrmnqo63vmg'
+    for (const expectedId of expectedIds) {
+      expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(expectedId, expect.anything())
+    }
+    expect(govUkPayApi.fetchPaymentStatus).not.toHaveBeenCalledWith(unexpectedId, expect.anything())
+
+    jest.useRealTimers()
   })
 
   it('calls fetchPaymentStatus with recurring as true since agreementId exists', async () => {

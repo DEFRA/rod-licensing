@@ -112,17 +112,19 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   debug(`Running payment mop up processor with a payment age of ${ageMinutes} minutes and a scan duration of ${scanDurationHours} hours`)
 
   const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
+  const now = moment()
   const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
 
   const paymentJournals = await salesApi.paymentJournals.getAll({
     paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress,
     from: fromTimestamp.toISOString(),
-    to: toTimestamp.toISOString()
+    to: now.toISOString()
   })
+  const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForMopUp)
 
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await Promise.all(
-    paymentJournals.map(async p => {
+    paymentJournalsToMopUp.map(async p => {
       const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
       const paymentJournalWithStatus = {
         ...p,

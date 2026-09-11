@@ -132,7 +132,7 @@ describe('payment journals handlers', () => {
       expect(JSON.parse(result.payload)).toMatchObject({
         error: 'Unprocessable Entity',
         message:
-          'Invalid payload: "update-payment-journal-request" must contain at least one of [paymentTimestamp, paymentReference, paymentStatus]',
+          'Invalid payload: "update-payment-journal-request" must contain at least one of [paymentTimestamp, paymentReference, paymentStatus, eligibleForMopUp]',
         statusCode: 422
       })
     })
