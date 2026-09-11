@@ -49,6 +49,8 @@ export async function getPaymentJournal (id) {
  * @returns {Promise<*>}
  */
 export async function queryJournalsByTimestamp ({ paymentStatus, from, to }) {
+  console.log('from', from)
+  console.log('to', to)
   return docClient.queryAllPromise({
     TableName: PAYMENTS_TABLE.TableName,
     IndexName: 'PaymentJournalsByStatusAndTimestamp',
