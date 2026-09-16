@@ -324,6 +324,13 @@ describe('sales-api-connector', () => {
         })
       )
     })
+
+    it('returns multiple licences when more than one match is found', async () => {
+      const expectedResponse = { licences: [{ referenceNumber: 'AAAAAA-1' }, { referenceNumber: 'AAAAAA-2' }] }
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', 'BS9 4PT', '2000-10-03')).resolves.toEqual(expectedResponse)
+    })
+
     it('returns null if none found', async () => {
       fetch.mockReturnValueOnce({
         ok: false,
