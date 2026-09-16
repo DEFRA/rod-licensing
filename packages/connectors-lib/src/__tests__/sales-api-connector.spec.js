@@ -312,6 +312,36 @@ describe('sales-api-connector', () => {
     })
   })
 
+  describe('getLicenceDetails', () => {
+    it('retrieves licence details using name, postcode and date of birth', async () => {
+      const expectedResponse = { licences: [{ some: 'data' }] }
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', '2000-10-03', 'AB123CD')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePostcode=AB123CD&licenseeBirthDate=2000-10-03',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+
+    it('returns multiple licences when more than one match is found', async () => {
+      const expectedResponse = { licences: [{ referenceNumber: 'AAAAAA-1' }, { referenceNumber: 'AAAAAA-2' }] }
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', '2000-10-03', 'AB123CD')).resolves.toEqual(expectedResponse)
+    })
+
+    it('returns null if none found', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
+      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', '2000-10-03', 'AB123CD')).resolves.toBeNull()
+    })
+  })
+
   describe('createPaymentJournal', () => {
     it('creates a new payment journal', async () => {
       const payload = { some: 'data' }
