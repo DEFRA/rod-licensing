@@ -312,6 +312,29 @@ describe('sales-api-connector', () => {
     })
   })
 
+  describe('getLicenceDetails', () => {
+    it('retrieves licence details using name, postcode and date of birth', async () => {
+      const expectedResponse = { licences: [{ some: 'data' }] }
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', 'BS9 4PT', '2000-10-03')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePostcode=BS9%204PT&licenseeBirthDate=2000-10-03',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+    it('returns null if none found', async () => {
+      fetch.mockReturnValueOnce({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
+      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', 'BS9 4PT', '2000-10-03')).resolves.toBeNull()
+    })
+  })
+
   describe('createPaymentJournal', () => {
     it('creates a new payment journal', async () => {
       const payload = { some: 'data' }
