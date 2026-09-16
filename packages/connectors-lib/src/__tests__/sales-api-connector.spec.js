@@ -331,7 +331,6 @@ describe('sales-api-connector', () => {
       await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', 'BS9 4PT', '2000-10-03')).resolves.toEqual(expectedResponse)
     })
 
-
     it('returns null if none found', async () => {
       fetch.mockReturnValueOnce({
         ok: false,
