@@ -37,7 +37,6 @@ const getLicenceDetails = async request => {
     licences: permissions.map(permission => ({
       ...permission.entity.toJSON(),
       licensee: permission.expanded.licensee.entity.toJSON(),
-      concessions: permission.expanded.concessionProofs.map(concessionProof => concessionProof.entity.toJSON()),
       permit: permission.expanded.permit.entity.toJSON()
     }))
   }

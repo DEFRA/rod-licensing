@@ -3,9 +3,7 @@ import { contactForLicenseeByPersonalDetails, executeQuery, permissionForContact
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
-  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
-  MOCK_CONCESSION_PROOF_ENTITY,
-  MOCK_CONCESSION
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY
 } from '../../../__mocks__/test-data.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -38,7 +36,6 @@ describe('licence-details handler', () => {
     entity: MOCK_EXISTING_PERMISSION_ENTITY,
     expanded: {
       licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-      concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
       permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
     }
   })
@@ -109,7 +106,6 @@ describe('licence-details handler', () => {
         expect.objectContaining({
           ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
           licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
-          concessions: [MOCK_CONCESSION_PROOF_ENTITY.toJSON()],
           permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
         })
       ]
