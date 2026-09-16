@@ -357,11 +357,11 @@ export const retrieveStagedTransaction = async id => {
  *
  * @param {string} firstName
  * @param {string} lastName
- * @param {string} postcode
  * @param {string} birthDate
+ * @param {string} postcode
  * @returns {Promise<*>}
  */
-export const getLicenceDetails = async (firstName, lastName, postcode, birthDate) =>
+export const getLicenceDetails = async (firstName, lastName, birthDate, postcode) =>
   exec2xxOrNull(
     call(
       new URL(
