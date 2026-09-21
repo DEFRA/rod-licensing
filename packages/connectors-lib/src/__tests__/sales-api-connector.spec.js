@@ -316,7 +316,14 @@ describe('sales-api-connector', () => {
     it('retrieves licence details using name, postcode and date of birth', async () => {
       const expectedResponse = { licences: [{ some: 'data' }] }
       fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
-      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', '2000-10-03', 'AB123CD')).resolves.toEqual(expectedResponse)
+      await expect(
+        salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
+      ).resolves.toEqual(expectedResponse)
+    })
+
+    it('calls fetch with the name, postcode and date of birth as query parameters', async () => {
+      fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify({ licences: [] }) })
+      await salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePostcode=AB123CD&licenseeBirthDate=2000-10-03',
         expect.objectContaining({
@@ -328,7 +335,9 @@ describe('sales-api-connector', () => {
     it('returns multiple licences when more than one match is found', async () => {
       const expectedResponse = { licences: [{ referenceNumber: 'AAAAAA-1' }, { referenceNumber: 'AAAAAA-2' }] }
       fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
-      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', '2000-10-03', 'AB123CD')).resolves.toEqual(expectedResponse)
+      await expect(
+        salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
+      ).resolves.toEqual(expectedResponse)
     })
 
     it('returns null if none found', async () => {
@@ -338,7 +347,9 @@ describe('sales-api-connector', () => {
         statusText: 'Not Found',
         text: async () => JSON.stringify({ error: 'Description' })
       })
-      await expect(salesApi.getLicenceDetails('Gandalf', 'Grey', '2000-10-03', 'AB123CD')).resolves.toBeNull()
+      await expect(
+        salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
+      ).resolves.toBeNull()
     })
   })
 
