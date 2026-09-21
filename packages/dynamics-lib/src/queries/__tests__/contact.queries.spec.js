@@ -67,19 +67,19 @@ describe('Contact Queries', () => {
     })
 
     it('should return a predefined query', () => {
-      const result = contactForLicenseeByPersonalDetails('Bilbo', 'Baggins', '2000-10-03', 'AB12 3CD')
+      const result = contactForLicenseeByPersonalDetails('Gandalf', 'Grey', '1960-10-03', 'AB12 3CD')
       expect(result).toBeInstanceOf(PredefinedQuery)
     })
 
     it('root should return Contact', () => {
-      const result = contactForLicenseeByPersonalDetails('Frodo', 'Baggins', '2003-10-03', 'AB12 3CD')
+      const result = contactForLicenseeByPersonalDetails('Aragorn', 'Elessar', '1989-04-20', 'AB12 3CD')
       expect(result._root).toEqual(Contact)
     })
 
     it.each([
-      ['Bilbo', 'Baggins', '2000-10-03', 'AB12 3CD'],
-      ['Frodo', 'Baggins', '1980-09-22', 'EF45 6GH'],
-      ['Samwise', 'Gamgee', '1985-03-06', 'IJ78 9KL']
+      ['Smeagol', 'Ring', '2000-10-03', 'AB12 3CD'],
+      ['Frodo', 'Baggins', '1993-09-22', 'EF45 6GH'],
+      ['Samwise', 'Gamgee', '1998-03-06', 'IJ78 9KL']
     ])(
       'should return correct retrieve request when first name is %s, last name is %s, birth date is %s and postcode is %s',
       (firstName, lastName, birthDate, postcode) => {
