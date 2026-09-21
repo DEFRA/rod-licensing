@@ -16,6 +16,29 @@ export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcod
 }
 
 /**
+ * Gets the query to find a contact using their name, postcode and date of birth
+ *
+ * @param {string} licenseeFirstName
+ * @param {string} licenseeLastName
+ * @param {string} licenseeBirthDate
+ * @param {string} licenseePostcode
+ * @returns {PredefinedQuery<Contact>}
+ */
+export const contactForLicenseeByPersonalDetails = (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode) => {
+  const { firstName, lastName, postcode, birthDate } = Contact.definition.mappings
+  const filter = `${firstName.field} eq '${escapeODataStringValue(licenseeFirstName)}' and ${lastName.field} eq '${escapeODataStringValue(
+    licenseeLastName
+  )}' and ${postcode.field} eq '${escapeODataStringValue(licenseePostcode)}' and ${birthDate.field} eq ${licenseeBirthDate} and ${
+    Contact.definition.defaultFilter
+  }`
+  return new PredefinedQuery({
+    root: Contact,
+    filter,
+    expand: []
+  })
+}
+
+/**
  * Gets the query to get a contact by the last 6 characters if their license number and postcode
  *
  * @param {string} permissionLast6Characters the last 6 characters of the permission reference number

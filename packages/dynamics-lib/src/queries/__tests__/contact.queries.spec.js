@@ -1,4 +1,4 @@
-import { contactAndPermissionForLicensee, contactForLicenseeNoReference } from '../contact.queries.js'
+import { contactAndPermissionForLicensee, contactForLicenseeNoReference, contactForLicenseeByPersonalDetails } from '../contact.queries.js'
 import { Contact } from '../../entities/contact.entity.js'
 import { Permission } from '../../entities/permission.entity.js'
 import { PredefinedQuery } from '../predefined-query.js'
@@ -36,14 +36,6 @@ describe('Contact Queries', () => {
       expect(result._root).toEqual(Contact)
     })
 
-    it('should use mocked values for mapping postcode and birth date', () => {
-      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
-      expect(result._retrieveRequest.filter).toEqual(
-        expect.stringContaining(Contact.definition.mappings.postcode.field),
-        expect.stringContaining(Contact.definition.mappings.birthDate.field)
-      )
-    })
-
     it.each([
       ['AB12 3CD', '03/12/1990'],
       ['EF45 6GH', '05/06/1987'],
@@ -58,6 +50,49 @@ describe('Contact Queries', () => {
         select: expect.any(Array)
       })
     })
+  })
+
+  describe('contactForLicenseeByPersonalDetails', () => {
+    beforeEach(() => {
+      jest.resetAllMocks()
+
+      jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
+        firstName: { field: 'mock_firstname' },
+        lastName: { field: 'mock_lastname' },
+        postcode: { field: 'mock_postcode' },
+        birthDate: { field: 'mock_birthdate' }
+      })
+
+      jest.spyOn(Contact.definition, 'defaultFilter', 'get').mockReturnValue('statecode eq 0')
+    })
+
+    it('should return a predefined query', () => {
+      const result = contactForLicenseeByPersonalDetails('Bilbo', 'Baggins', '2000-10-03', 'AB12 3CD')
+      expect(result).toBeInstanceOf(PredefinedQuery)
+    })
+
+    it('root should return Contact', () => {
+      const result = contactForLicenseeByPersonalDetails('Frodo', 'Baggins', '2003-10-03', 'AB12 3CD')
+      expect(result._root).toEqual(Contact)
+    })
+
+    it.each([
+      ['Bilbo', 'Baggins', '2000-10-03', 'AB12 3CD'],
+      ['Frodo', 'Baggins', '1980-09-22', 'EF45 6GH'],
+      ['Samwise', 'Gamgee', '1985-03-06', 'IJ78 9KL']
+    ])(
+      'should return correct retrieve request when first name is %s, last name is %s, birth date is %s and postcode is %s',
+      (firstName, lastName, birthDate, postcode) => {
+        const result = contactForLicenseeByPersonalDetails(firstName, lastName, birthDate, postcode)
+
+        expect(result._retrieveRequest).toEqual({
+          collection: 'contacts',
+          expand: [],
+          filter: `mock_firstname eq '${firstName}' and mock_lastname eq '${lastName}' and mock_postcode eq '${postcode}' and mock_birthdate eq ${birthDate} and statecode eq 0`,
+          select: expect.any(Array)
+        })
+      }
+    )
   })
 
   describe('contactAndPermissionForLicensee', () => {
