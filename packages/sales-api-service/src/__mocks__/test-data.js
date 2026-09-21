@@ -165,8 +165,28 @@ export const MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE = {
   defra_itemid: '42289'
 }
 
+export const MOCK_8DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"51026150"',
+  defra_availablefrom: '2017-03-31T23:00:00Z',
+  defra_availableto: '2021-03-31T22:59:00Z',
+  defra_durationnumericpart: 8,
+  defra_durationdaymonthyearpart: 910400000,
+  defra_numberofrods: 2,
+  defra_permittype: 910400000,
+  defra_advertisedprice: 12.0,
+  defra_datasource: 910400002,
+  defra_permitid: 'a01b34a0-0c66-e611-80dc-c4346bad0190',
+  defra_name: 'Coarse 8 day 2 Rod Licence (Senior)',
+  defra_permitsubtype: 910400001,
+  defra_isforfulfilment: false,
+  defra_iscountersales: true,
+  defra_recurringsupported: false,
+  defra_itemid: '42291'
+}
+
 export const MOCK_1DAY_SENIOR_PERMIT_ENTITY = Permit.fromResponse(MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
 export const MOCK_1DAY_FULL_PERMIT_ENTITY = Permit.fromResponse(MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+export const MOCK_8DAY_SENIOR_PERMIT_ENTITY = Permit.fromResponse(MOCK_8DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
 
 export const MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE = {
   '@odata.etag': 'W/"51026180"',
