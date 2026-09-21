@@ -67,12 +67,22 @@ describe('Contact Queries', () => {
     })
 
     it('should return a predefined query', () => {
-      const result = contactForLicenseeByPersonalDetails('Gandalf', 'Grey', '1960-10-03', 'AB12 3CD')
+      const result = contactForLicenseeByPersonalDetails({
+        licenseeFirstName: 'Gandalf',
+        licenseeLastName: 'Grey',
+        licenseeBirthDate: '1960-10-03',
+        licenseePostcode: 'AB12 3CD'
+      })
       expect(result).toBeInstanceOf(PredefinedQuery)
     })
 
     it('root should return Contact', () => {
-      const result = contactForLicenseeByPersonalDetails('Aragorn', 'Elessar', '1989-04-20', 'AB12 3CD')
+      const result = contactForLicenseeByPersonalDetails({
+        licenseeFirstName: 'Aragorn',
+        licenseeLastName: 'Elessar',
+        licenseeBirthDate: '1989-04-20',
+        licenseePostcode: 'AB12 3CD'
+      })
       expect(result._root).toEqual(Contact)
     })
 
@@ -82,13 +92,13 @@ describe('Contact Queries', () => {
       ['Samwise', 'Gamgee', '1998-03-06', 'IJ78 9KL']
     ])(
       'should return correct retrieve request when first name is %s, last name is %s, birth date is %s and postcode is %s',
-      (firstName, lastName, birthDate, postcode) => {
-        const result = contactForLicenseeByPersonalDetails(firstName, lastName, birthDate, postcode)
+      (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode) => {
+        const result = contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode })
 
         expect(result._retrieveRequest).toEqual({
           collection: 'contacts',
           expand: [],
-          filter: `mock_firstname eq '${firstName}' and mock_lastname eq '${lastName}' and mock_postcode eq '${postcode}' and mock_birthdate eq ${birthDate} and statecode eq 0`,
+          filter: `mock_firstname eq '${licenseeFirstName}' and mock_lastname eq '${licenseeLastName}' and mock_postcode eq '${licenseePostcode}' and mock_birthdate eq ${licenseeBirthDate} and statecode eq 0`,
           select: expect.any(Array)
         })
       }
