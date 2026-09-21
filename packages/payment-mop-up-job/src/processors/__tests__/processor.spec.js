@@ -14,35 +14,35 @@ jest.mock('bottleneck', () =>
 const journalEntries = () => [
   {
     id: '4fa393ab-07f4-407e-b233-89be2a6f5f77',
-    eligibleForMopUp: false,
+    eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '05nioqikvvnuu5l8m2qeaj0qap',
     paymentTimestamp: '2020-06-01T10:35:56.873Z'
   },
   {
     id: 'aaced854-d337-47ee-8d5e-75b26aeb90fb',
-    eligibleForMopUp: false,
+    eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '0f3dr9ugp7u68qq18vt9h8ma85',
     paymentTimestamp: '2020-06-02T07:17:23.169Z'
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8213',
-    eligibleForMopUp: false,
+    eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vme',
     paymentTimestamp: '2020-06-04T11:04:30.802Z'
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8214',
-    eligibleForMopUp: true,
+    eligibleForEarlyMopUp: true,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmf',
     paymentTimestamp: '2020-06-04T12:04:30.802Z'
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8215',
-    eligibleForMopUp: false,
+    eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmg',
     paymentTimestamp: '2020-06-04T12:04:30.802Z'
@@ -198,7 +198,7 @@ describe('processor', () => {
     }
   )
 
-  it('only processes payments that are either within the payment window or have eligibleForMopUp flag', async () => {
+  it('only processes payments that are either within the payment window or have eligibleForEarlyMopUp flag', async () => {
     const now = '2020-06-04T12:04:30.802Z'
     jest.useFakeTimers().setSystemTime(new Date(now))
     const sampleJournalEntries = journalEntries()

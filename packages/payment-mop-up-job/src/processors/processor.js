@@ -120,7 +120,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     from: fromTimestamp.toISOString(),
     to: now.toISOString()
   })
-  const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForMopUp)
+  const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
 
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await Promise.all(

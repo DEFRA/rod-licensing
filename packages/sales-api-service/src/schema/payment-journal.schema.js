@@ -34,11 +34,11 @@ export const updatePaymentJournalRequestSchema = Joi.object({
   paymentReference: paymentReferenceSchema.optional(),
   paymentTimestamp: paymentTimestampSchema.optional(),
   paymentStatus: paymentStatusSchema.optional(),
-  eligibleForMopUp: Joi.boolean()
+  eligibleForEarlyMopUp: Joi.boolean()
     .description('A flag showing whether the payment journal can be mopped up before the normal elapsed time has occurred')
     .optional()
 })
-  .or('paymentTimestamp', 'paymentReference', 'paymentStatus', 'eligibleForMopUp')
+  .or('paymentTimestamp', 'paymentReference', 'paymentStatus', 'eligibleForEarlyMopUp')
   .label('update-payment-journal-request')
 
 export const paymentJournalResponseSchema = createPaymentJournalRequestSchema

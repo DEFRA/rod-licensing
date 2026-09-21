@@ -339,7 +339,7 @@ describe('transaction service', () => {
           })
         } catch (e) {}
 
-        expect(updatePaymentJournal).toHaveBeenCalledWith(mockRecord.id, expect.objectContaining({ eligibleForMopUp: true }))
+        expect(updatePaymentJournal).toHaveBeenCalledWith(mockRecord.id, expect.objectContaining({ eligibleForEarlyMopUp: true }))
       })
 
       it('throws an internal server error if the SQS message fails to send', async () => {

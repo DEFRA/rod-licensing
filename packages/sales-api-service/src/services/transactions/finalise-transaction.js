@@ -78,7 +78,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
           ...docClient.createUpdateExpression(originalTransactionRecord),
           ReturnValues: 'ALL_NEW'
         })
-        await updatePaymentJournal(id, { eligibleForMopUp: true })
+        await updatePaymentJournal(id, { eligibleForEarlyMopUp: true })
       } catch (rollbackError) {
         throw Boom.internal(`Failed to rollback transaction record ${id} after SQS send failure`, rollbackError)
       }
