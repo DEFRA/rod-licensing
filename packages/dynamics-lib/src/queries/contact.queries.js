@@ -24,7 +24,7 @@ export const contactForLicenseeNoReference = (licenseeBirthDate, licenseePostcod
  * @param {string} licenseePostcode
  * @returns {PredefinedQuery<Contact>}
  */
-export const contactForLicenseeByPersonalDetails = (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode) => {
+export const contactForLicenseeByPersonalDetails = ({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode }) => {
   const { firstName, lastName, postcode, birthDate } = Contact.definition.mappings
   const filter = `${firstName.field} eq '${escapeODataStringValue(licenseeFirstName)}' and ${lastName.field} eq '${escapeODataStringValue(
     licenseeLastName
