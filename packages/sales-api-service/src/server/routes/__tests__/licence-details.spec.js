@@ -7,7 +7,9 @@ import {
   MOCK_1DAY_SENIOR_PERMIT_ENTITY,
   MOCK_8DAY_SENIOR_PERMIT_ENTITY,
   MOCK_12MONTH_SENIOR_PERMIT,
-  MOCK_12MONTH_DISABLED_PERMIT
+  MOCK_12MONTH_DISABLED_PERMIT,
+  MOCK_12MONTH_JUNIOR_PERMIT,
+  MOCK_12MONTH_FULL_PERMIT
 } from '../../../__mocks__/test-data.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -164,8 +166,10 @@ describe('licence-details handler', () => {
   })
 
   it.each([
-    ['senior', MOCK_12MONTH_SENIOR_PERMIT],
-    ['full, disabled', MOCK_12MONTH_DISABLED_PERMIT]
+    ['junior', MOCK_12MONTH_JUNIOR_PERMIT],
+    ['full', MOCK_12MONTH_FULL_PERMIT],
+    ['full, disabled', MOCK_12MONTH_DISABLED_PERMIT],
+    ['senior', MOCK_12MONTH_SENIOR_PERMIT]
   ])('includes active twelve month licences for %s permits regardless of concession', async (_, permit) => {
     executeQuery.mockResolvedValueOnce([mockContact()])
     executeQuery.mockResolvedValueOnce([mockPermission({ permit })])
