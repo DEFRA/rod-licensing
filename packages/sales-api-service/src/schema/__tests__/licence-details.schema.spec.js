@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { licenceDetailsRequestQuerySchema, licenceDetailsResponseSchema } from '../licence-details.schema.js'
 
 const getRequestSampleData = () => ({
@@ -9,7 +10,7 @@ const getRequestSampleData = () => ({
 
 const optionSetOptionSample = () => ({ id: 910400000, label: 'Example Label', description: 'Example Description' })
 
-const addDays = days => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+const addDays = days => moment().add(days, 'days').toISOString()
 
 const getResponseSampleData = () => ({
   licences: [

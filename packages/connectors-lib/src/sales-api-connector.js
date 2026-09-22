@@ -353,7 +353,7 @@ export const retrieveStagedTransaction = async id => {
 }
 
 /**
- * Retrieve licence details using name, post code and date of birth
+ * Retrieve licence (or licences) details using name, post code and date of birth
  *
  * @param {string} firstName
  * @param {string} lastName
