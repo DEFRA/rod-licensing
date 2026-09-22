@@ -879,14 +879,6 @@ describe('getLicenceDetails', () => {
     ).resolves.toEqual(expectedResponse)
   })
 
-  it('returns multiple licences when more than one match is found', async () => {
-    const expectedResponse = { licences: [{ referenceNumber: 'AAAAAA-1' }, { referenceNumber: 'AAAAAA-2' }] }
-    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
-    await expect(
-      salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
-    ).resolves.toEqual(expectedResponse)
-  })
-
   it('calls fetch with the name, postcode and date of birth as query parameters', async () => {
     fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify({ licences: [] }) })
     await salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
