@@ -351,3 +351,28 @@ export const cancelRecurringPayment = async (id, reason = 'Payment Failure') => 
 export const retrieveStagedTransaction = async id => {
   return exec2xxOrThrow(call(new URL(`/retrieveStagedTransaction/${id}`, urlBase), 'get'))
 }
+
+/**
+ * Retrieve licence (or licences) details using name, post code and date of birth
+ *
+ * @param {string} firstName
+ * @param {string} lastName
+ * @param {string} birthDate
+ * @param {string} postcode
+ * @returns {Promise<*>}
+ */
+export const getLicenceDetails = async ({ firstName, lastName, birthDate, postcode }) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `/licenceDetails?${querystring.stringify({
+          licenseeFirstName: firstName,
+          licenseeLastName: lastName,
+          licenseePostcode: postcode,
+          licenseeBirthDate: birthDate
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )
