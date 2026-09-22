@@ -6,6 +6,8 @@ import { permissionForContacts, contactForLicenseeByPersonalDetails, executeQuer
 const debug = db('sales:licence-details')
 const failLicenceDetails = 'Licence details could not be found for the provided contact details'
 const HTTP_OK = 200
+const TWELVE_MONTH_DURATION_MAGNITUDE = 12
+const TWELVE_MONTH_DURATION_DESIGNATOR = 'M'
 
 const executeWithErrorLog = async query => {
   try {
@@ -16,10 +18,18 @@ const executeWithErrorLog = async query => {
   }
 }
 
+const isActiveTwelveMonthLicence = permission => {
+  const { durationMagnitude, durationDesignator } = permission.expanded.permit.entity
+  const isTwelveMonthPermit =
+    durationMagnitude === TWELVE_MONTH_DURATION_MAGNITUDE && durationDesignator.description === TWELVE_MONTH_DURATION_DESIGNATOR
+  const hasNotExpired = new Date(permission.entity.endDate) >= new Date()
+  return isTwelveMonthPermit && hasNotExpired
+}
+
 const getLicenceDetails = async request => {
   const { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode } = request.query
   const contacts = await executeWithErrorLog(
-    contactForLicenseeByPersonalDetails(licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode)
+    contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode })
   )
 
   if (!contacts.length) {
@@ -28,13 +38,14 @@ const getLicenceDetails = async request => {
 
   const contactIds = contacts.map(contact => contact.entity.id)
   const permissions = await executeWithErrorLog(permissionForContacts(contactIds))
+  const activeLicences = permissions.filter(isActiveTwelveMonthLicence)
 
-  if (!permissions.length) {
+  if (!activeLicences.length) {
     throw Boom.notFound(failLicenceDetails)
   }
 
   return {
-    licences: permissions.map(permission => ({
+    licences: activeLicences.map(permission => ({
       ...permission.entity.toJSON(),
       licensee: permission.expanded.licensee.entity.toJSON(),
       permit: permission.expanded.permit.entity.toJSON()

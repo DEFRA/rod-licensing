@@ -1,9 +1,13 @@
+import moment from 'moment'
 import initialiseServer from '../../server.js'
-import { contactForLicenseeByPersonalDetails, executeQuery, permissionForContacts } from '@defra-fish/dynamics-lib'
+import { contactForLicenseeByPersonalDetails, executeQuery, permissionForContacts, Permission } from '@defra-fish/dynamics-lib'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
-  MOCK_1DAY_SENIOR_PERMIT_ENTITY
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
+  MOCK_8DAY_SENIOR_PERMIT_ENTITY,
+  MOCK_12MONTH_SENIOR_PERMIT,
+  MOCK_12MONTH_DISABLED_PERMIT
 } from '../../../__mocks__/test-data.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -32,11 +36,13 @@ describe('licence-details handler', () => {
 
   const mockContact = () => ({ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} })
 
-  const mockPermission = () => ({
-    entity: MOCK_EXISTING_PERMISSION_ENTITY,
+  const addDays = days => moment().add(days, 'days').toISOString()
+
+  const mockPermission = ({ permit = MOCK_12MONTH_SENIOR_PERMIT, startDate = addDays(-30), endDate = addDays(30) } = {}) => ({
+    entity: Object.assign(new Permission(), MOCK_EXISTING_PERMISSION_ENTITY, { startDate, endDate }),
     expanded: {
       licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-      permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+      permit: { entity: permit, expanded: {} }
     }
   })
 
@@ -53,7 +59,12 @@ describe('licence-details handler', () => {
 
     await server.inject({ method: 'GET', url: baseUrl })
 
-    expect(contactForLicenseeByPersonalDetails).toHaveBeenCalledWith('Bilbo', 'Baggins', '2000-10-03', 'AB12 3CD')
+    expect(contactForLicenseeByPersonalDetails).toHaveBeenCalledWith({
+      licenseeFirstName: 'Bilbo',
+      licenseeLastName: 'Baggins',
+      licenseeBirthDate: '2000-10-03',
+      licenseePostcode: 'AB12 3CD'
+    })
   })
 
   it.each([
@@ -97,16 +108,17 @@ describe('licence-details handler', () => {
 
   it('returns licence details matching the expected shape', async () => {
     executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission()])
+    const permission = mockPermission()
+    executeQuery.mockResolvedValueOnce([permission])
 
     const result = await server.inject({ method: 'GET', url: baseUrl })
 
     expect(JSON.parse(result.payload)).toMatchObject({
       licences: [
         expect.objectContaining({
-          ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
+          ...permission.entity.toJSON(),
           licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
-          permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+          permit: MOCK_12MONTH_SENIOR_PERMIT.toJSON()
         })
       ]
     })
@@ -119,6 +131,48 @@ describe('licence-details handler', () => {
     const result = await server.inject({ method: 'GET', url: baseUrl })
 
     expect(JSON.parse(result.payload).licences).toHaveLength(2)
+  })
+
+  it.each([
+    ['1-day', MOCK_1DAY_SENIOR_PERMIT_ENTITY],
+    ['8-day', MOCK_8DAY_SENIOR_PERMIT_ENTITY]
+  ])('excludes %s permits from the response', async (_, permit) => {
+    executeQuery.mockResolvedValueOnce([mockContact()])
+    executeQuery.mockResolvedValueOnce([mockPermission({ permit })])
+
+    const result = await server.inject({ method: 'GET', url: baseUrl })
+
+    expect(result.statusCode).toBe(404)
+  })
+
+  it('excludes expired licences from the response', async () => {
+    executeQuery.mockResolvedValueOnce([mockContact()])
+    executeQuery.mockResolvedValueOnce([mockPermission({ endDate: addDays(-1) })])
+
+    const result = await server.inject({ method: 'GET', url: baseUrl })
+
+    expect(result.statusCode).toBe(404)
+  })
+
+  it('includes licences that have been issued but have not yet started', async () => {
+    executeQuery.mockResolvedValueOnce([mockContact()])
+    executeQuery.mockResolvedValueOnce([mockPermission({ startDate: addDays(30), endDate: addDays(395) })])
+
+    const result = await server.inject({ method: 'GET', url: baseUrl })
+
+    expect(result.statusCode).toBe(200)
+  })
+
+  it.each([
+    ['senior', MOCK_12MONTH_SENIOR_PERMIT],
+    ['full, disabled', MOCK_12MONTH_DISABLED_PERMIT]
+  ])('includes active twelve month licences for %s permits regardless of concession', async (_, permit) => {
+    executeQuery.mockResolvedValueOnce([mockContact()])
+    executeQuery.mockResolvedValueOnce([mockPermission({ permit })])
+
+    const result = await server.inject({ method: 'GET', url: baseUrl })
+
+    expect(result.statusCode).toBe(200)
   })
 
   it('returns 200 for a matching contact', async () => {
