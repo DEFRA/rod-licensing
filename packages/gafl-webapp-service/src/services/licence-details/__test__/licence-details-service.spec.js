@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import licenceDetailsService from '../licence-details-service'
+import { licenceDetailsService } from '../licence-details-service'
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     getLicenceDetails: jest.fn(() => ({ licences: [] }))
@@ -18,7 +18,7 @@ describe('licence-details-service', () => {
     const params = getParams()
     await licenceDetailsService(params)
 
-    expect(salesApi.getLicenceDetails).toHaveBeenCalledWith(params.firstName, params.lastName, params.birthDate, params.postcode)
+    expect(salesApi.getLicenceDetails).toHaveBeenCalledWith(params)
   })
 
   it.each([
