@@ -93,15 +93,6 @@ describe('Cache decorator', () => {
       expect(mockCacheStore.set).toHaveBeenCalledWith(cacheValue)
     })
   })
-
-  // it.each([
-  //   [{ state: {} }, false],
-  //   [{ state: { bourbon: { id: 'abc123' } } }, true]
-  // ])('hasSession flags whether cache is available', (state, expectedHasSession) => {
-  //   const context = getCacheDecoratorContext(state)
-
-  //   expect(generateCacheDecorator(context).hasSession()).toEqual(expectedHasSession)
-  // })
 })
 
 const getCacheDecoratorContext = context => ({
