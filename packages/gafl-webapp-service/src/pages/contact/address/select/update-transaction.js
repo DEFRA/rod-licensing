@@ -1,4 +1,5 @@
 import { ADDRESS_SELECT } from '../../../../uri.js'
+import { licenceDetailsService } from '../../../../services/licence-details/licence-details-service.js'
 
 /**
  * In this case the result of the address search is placed into the page data of the select address page
@@ -27,4 +28,7 @@ export default async request => {
   }
 
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
+  const { firstName, lastName, birthDate } = licensee
+  const existingPermissions = await licenceDetailsService(firstName, lastName, birthDate, postcode)
+  await request.cache().helpers.existingPermissions.set(existingPermissions)
 }
