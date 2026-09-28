@@ -871,23 +871,38 @@ describe('rcp authentication', () => {
 })
 
 describe('getLicenceDetails', () => {
-  it('retrieves licence details using name, postcode and date of birth', async () => {
-    const expectedResponse = { licences: [{ some: 'data' }] }
-    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
-    await expect(
-      salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
-    ).resolves.toEqual(expectedResponse)
+  beforeEach(() => {
+    fetch.mockReturnValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      text: async () => JSON.stringify({ licences: [] })
+    })
   })
 
-  it('calls fetch with the name, postcode and date of birth as query parameters', async () => {
-    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify({ licences: [] }) })
-    await salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
-    expect(fetch).toHaveBeenCalledWith(
-      'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePostcode=AB123CD&licenseeBirthDate=2000-10-03',
-      expect.objectContaining({
-        method: 'get'
-      })
-    )
+  it.each([
+    { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' },
+    { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', postcode: 'BS9 4PT' }
+  ])('retrieves the licence details payload returned by the Sales API for %p', async licensee => {
+    const expectedResponse = { licences: [{ some: 'data' }] }
+    fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+    await expect(salesApi.getLicenceDetails(licensee)).resolves.toEqual(expectedResponse)
+  })
+
+  it.each([
+    {
+      input: { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' },
+      expectedUrl:
+        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePostcode=AB123CD&licenseeBirthDate=2000-10-03'
+    },
+    {
+      input: { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', postcode: 'BS9 4PT' },
+      expectedUrl:
+        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Bilbo&licenseeLastName=Baggins&licenseePostcode=BS9%204PT&licenseeBirthDate=1995-04-15'
+    }
+  ])('calls fetch with the name, postcode and date of birth as query parameters for %p', async ({ input, expectedUrl }) => {
+    await salesApi.getLicenceDetails(input)
+    expect(fetch).toHaveBeenCalledWith(expectedUrl, expect.objectContaining({ method: 'get' }))
   })
 
   it('returns null if none found', async () => {

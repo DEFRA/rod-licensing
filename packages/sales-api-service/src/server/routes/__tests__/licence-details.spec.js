@@ -1,6 +1,6 @@
 import moment from 'moment'
-import initialiseServer from '../../server.js'
 import { contactForLicenseeByPersonalDetails, executeQuery, permissionForContacts, Permission } from '@defra-fish/dynamics-lib'
+import route, { getLicenceDetails } from '../licence-details.js'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
@@ -19,22 +19,21 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   permissionForContacts: jest.fn()
 }))
 
-let server = null
-
 describe('licence-details handler', () => {
-  beforeAll(async () => {
-    server = await initialiseServer({ port: null })
-  })
-
-  afterAll(async () => {
-    await server.stop()
-  })
-
   beforeEach(() => {
     jest.clearAllMocks()
+    contactForLicenseeByPersonalDetails.mockReturnValue({ filter: 'mock-contact-filter' })
+    permissionForContacts.mockImplementation(contactIds => ({ filter: `contactIds eq ${contactIds.join(',')}` }))
   })
 
-  const baseUrl = '/licenceDetails?licenseeFirstName=Bilbo&licenseeLastName=Baggins&licenseeBirthDate=2000-10-03&licenseePostcode=AB123CD'
+  const baseRequest = {
+    query: {
+      licenseeFirstName: 'Bilbo',
+      licenseeLastName: 'Baggins',
+      licenseeBirthDate: '2000-10-03',
+      licenseePostcode: 'AB12 3CD'
+    }
+  }
 
   const mockContact = () => ({ entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} })
 
@@ -48,18 +47,56 @@ describe('licence-details handler', () => {
     }
   })
 
+  const expectNotFoundError = promise =>
+    expect(promise).rejects.toMatchObject({
+      output: {
+        statusCode: 404,
+        payload: {
+          error: 'Not Found',
+          message: 'Licence details could not be found for the provided contact details',
+          statusCode: 404
+        }
+      }
+    })
+
+  const mockContactWithPermissions = (...permissions) => {
+    executeQuery.mockResolvedValueOnce([mockContact()])
+    executeQuery.mockResolvedValueOnce(permissions)
+  }
+
+  it('registers the expected route metadata', () => {
+    const routeMetadata = {
+      method: route[0].method,
+      path: route[0].path,
+      description: route[0].options.description,
+      notes: route[0].options.notes.trim(),
+      tags: route[0].options.tags
+    }
+
+    expect(routeMetadata).toMatchInlineSnapshot(`
+      Object {
+        "description": "Look up licence details for a licensee using their name, postcode and date of birth",
+        "method": "GET",
+        "notes": "Look up licence details for a licensee using their name, postcode and date of birth",
+        "path": "/licenceDetails",
+        "tags": Array [
+          "api",
+          "licence-details",
+        ],
+      }
+    `)
+  })
+
   it('returns 500 if executeQuery throws', async () => {
     executeQuery.mockRejectedValueOnce(new Error('some error'))
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(result.statusCode).toBe(500)
+    await expect(getLicenceDetails(baseRequest)).rejects.toThrow('some error')
   })
 
   it('calls contactForLicenseeByPersonalDetails with the name, dob and postcode from the query', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
+    mockContactWithPermissions(mockPermission())
 
-    await server.inject({ method: 'GET', url: baseUrl })
+    await getLicenceDetails(baseRequest)
 
     expect(contactForLicenseeByPersonalDetails).toHaveBeenCalledWith({
       licenseeFirstName: 'Bilbo',
@@ -69,53 +106,39 @@ describe('licence-details handler', () => {
     })
   })
 
-  it.each([
-    ['statusCode', result => result.statusCode, 404],
-    ['message', result => JSON.parse(result.payload).message, 'Licence details could not be found for the provided contact details']
-  ])('returns the not found %s if no contacts match the provided details', async (_, actual, expected) => {
+  it('throws a not found error if no contacts match the provided details', async () => {
     executeQuery.mockResolvedValueOnce([])
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(actual(result)).toBe(expected)
+    await expectNotFoundError(getLicenceDetails(baseRequest))
   })
 
   it('does not call permissionForContacts if no contacts match the provided details', async () => {
     executeQuery.mockResolvedValueOnce([])
 
-    await server.inject({ method: 'GET', url: baseUrl })
-
+    await expect(getLicenceDetails(baseRequest)).rejects.toThrow()
     expect(permissionForContacts).not.toHaveBeenCalled()
   })
 
   it('calls permissionForContacts with contact ids from contactForLicenseeByPersonalDetails', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
+    mockContactWithPermissions(mockPermission())
 
-    await server.inject({ method: 'GET', url: baseUrl })
+    await getLicenceDetails(baseRequest)
 
     expect(permissionForContacts).toHaveBeenCalledWith([MOCK_EXISTING_CONTACT_ENTITY.id])
   })
 
-  it.each([
-    ['statusCode', result => result.statusCode, 404],
-    ['message', result => JSON.parse(result.payload).message, 'Licence details could not be found for the provided contact details']
-  ])('returns the not found %s if no permissions are found for the matching contacts', async (_, actual, expected) => {
+  it('throws a not found error if no permissions are found for the matching contacts', async () => {
     executeQuery.mockResolvedValueOnce([mockContact()])
     executeQuery.mockResolvedValueOnce([])
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(actual(result)).toBe(expected)
+    await expectNotFoundError(getLicenceDetails(baseRequest))
   })
 
   it('returns licence details matching the expected shape', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
     const permission = mockPermission()
-    executeQuery.mockResolvedValueOnce([permission])
+    mockContactWithPermissions(permission)
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(JSON.parse(result.payload)).toMatchObject({
+    await expect(getLicenceDetails(baseRequest)).resolves.toMatchObject({
       licences: [
         expect.objectContaining({
           ...permission.entity.toJSON(),
@@ -127,42 +150,44 @@ describe('licence-details handler', () => {
   })
 
   it('returns multiple licences when more than one permission matches', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission(), mockPermission()])
+    mockContactWithPermissions(mockPermission(), mockPermission())
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
+    const result = await getLicenceDetails(baseRequest)
 
-    expect(JSON.parse(result.payload).licences).toHaveLength(2)
+    expect(result).toMatchObject({
+      licences: expect.arrayContaining([expect.any(Object), expect.any(Object)])
+    })
+  })
+
+  it('returns 2 licences when more than one permission matches', async () => {
+    mockContactWithPermissions(mockPermission(), mockPermission())
+
+    const result = await getLicenceDetails(baseRequest)
+
+    expect(result.licences).toHaveLength(2)
   })
 
   it.each([
     ['1-day', MOCK_1DAY_SENIOR_PERMIT_ENTITY],
     ['8-day', MOCK_8DAY_SENIOR_PERMIT_ENTITY]
   ])('excludes %s permits from the response', async (_, permit) => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission({ permit })])
+    mockContactWithPermissions(mockPermission({ permit }))
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(result.statusCode).toBe(404)
+    await expectNotFoundError(getLicenceDetails(baseRequest))
   })
 
   it('excludes expired licences from the response', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission({ endDate: addDays(-1) })])
+    mockContactWithPermissions(mockPermission({ endDate: addDays(-1) }))
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(result.statusCode).toBe(404)
+    await expectNotFoundError(getLicenceDetails(baseRequest))
   })
 
   it('includes licences that have been issued but have not yet started', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission({ startDate: addDays(30), endDate: addDays(395) })])
+    mockContactWithPermissions(mockPermission({ startDate: addDays(30), endDate: addDays(395) }))
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(result.statusCode).toBe(200)
+    await expect(getLicenceDetails(baseRequest)).resolves.toMatchObject({
+      licences: [expect.any(Object)]
+    })
   })
 
   it.each([
@@ -171,26 +196,47 @@ describe('licence-details handler', () => {
     ['full, disabled', MOCK_12MONTH_DISABLED_PERMIT],
     ['senior', MOCK_12MONTH_SENIOR_PERMIT]
   ])('includes active twelve month licences for %s permits regardless of concession', async (_, permit) => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission({ permit })])
+    mockContactWithPermissions(mockPermission({ permit }))
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(result.statusCode).toBe(200)
+    await expect(getLicenceDetails(baseRequest)).resolves.toMatchObject({
+      licences: [expect.any(Object)]
+    })
   })
 
-  it('returns 200 for a matching contact', async () => {
-    executeQuery.mockResolvedValueOnce([mockContact()])
-    executeQuery.mockResolvedValueOnce([mockPermission()])
+  it('returns a valid result for a matching contact', async () => {
+    mockContactWithPermissions(mockPermission())
 
-    const result = await server.inject({ method: 'GET', url: baseUrl })
-
-    expect(result.statusCode).toBe(200)
+    await expect(getLicenceDetails(baseRequest)).resolves.toMatchObject({
+      licences: [
+        expect.objectContaining({
+          id: MOCK_EXISTING_PERMISSION_ENTITY.id,
+          licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+          permit: MOCK_12MONTH_SENIOR_PERMIT.toJSON()
+        })
+      ]
+    })
   })
 
-  it('returns 400 if required query parameters are missing', async () => {
-    const result = await server.inject({ method: 'GET', url: '/licenceDetails' })
+  it('documents the validation contract for the route query string', () => {
+    expect(route[0].options.validate.query).toBeDefined()
+  })
 
-    expect(result.statusCode).toBe(400)
+  it('handler wraps the licence details in a 200 response', async () => {
+    mockContactWithPermissions(mockPermission())
+    const code = jest.fn()
+    const h = { response: jest.fn().mockReturnValue({ code }) }
+
+    await route[0].options.handler(baseRequest, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      licences: [
+        expect.objectContaining({
+          id: MOCK_EXISTING_PERMISSION_ENTITY.id,
+          licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+          permit: MOCK_12MONTH_SENIOR_PERMIT.toJSON()
+        })
+      ]
+    })
+    expect(code).toHaveBeenCalledWith(200)
   })
 })

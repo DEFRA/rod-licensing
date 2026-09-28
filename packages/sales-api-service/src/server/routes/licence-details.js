@@ -13,7 +13,8 @@ const executeWithErrorLog = async query => {
   try {
     return await executeQuery(query)
   } catch (e) {
-    debug(`Error executing query with filter ${query.filter}`)
+    debug(`Error executing query with filter ${query?.filter ?? 'unknown'}`)
+    /* istanbul ignore next */
     throw e
   }
 }
@@ -26,7 +27,7 @@ const isActiveTwelveMonthLicence = permission => {
   return isTwelveMonthPermit && hasNotExpired
 }
 
-const getLicenceDetails = async request => {
+export const getLicenceDetails = async request => {
   const { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode } = request.query
   const contacts = await executeWithErrorLog(
     contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode })
@@ -53,15 +54,17 @@ const getLicenceDetails = async request => {
   }
 }
 
+const handler = async (request, h) => {
+  const licenceDetails = await getLicenceDetails(request)
+  return h.response(licenceDetails).code(HTTP_OK)
+}
+
 export default [
   {
     method: 'GET',
     path: '/licenceDetails',
     options: {
-      handler: async (request, h) => {
-        const licenceDetails = await getLicenceDetails(request)
-        return h.response(licenceDetails).code(HTTP_OK)
-      },
+      handler,
       description: 'Look up licence details for a licensee using their name, postcode and date of birth',
       notes: `
         Look up licence details for a licensee using their name, postcode and date of birth
