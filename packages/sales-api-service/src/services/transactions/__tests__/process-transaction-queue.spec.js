@@ -29,6 +29,10 @@ import {
 } from '../../recurring-payments.service.js'
 import { AWS } from '@defra-fish/connectors-lib'
 const { docClient } = AWS.mock.results[0].value
+// import db from 'debug'
+// const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'sales:transactions')]
+
+// jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -388,6 +392,134 @@ describe('transaction service', () => {
         expect(e.message).toEqual('A transaction for the specified identifier was not found')
         expect(e.output.statusCode).toEqual(404)
       }
+    })
+
+    describe('when persisting throws an error', () => {
+      it('throws the error', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+        const error = new Error('I do not like it')
+        persist.mockRejectedValueOnce(error)
+
+        try {
+          await processQueue({ id: mockRecord.id })
+        } catch (e) {
+          expect(e).toEqual(error)
+        }
+      })
+
+      it('does not delete the data from the transaction staging table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+        const error = new Error('I do not like it')
+        persist.mockRejectedValueOnce(error)
+
+        try {
+          await processQueue({ id: mockRecord.id })
+        } catch (e) {
+          expect(docClient.delete).not.toHaveBeenCalled()
+        }
+      })
+
+      it('does not move the data to the transaction staging history table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+        const error = new Error('I do not like it')
+        persist.mockRejectedValueOnce(error)
+
+        try {
+          await processQueue({ id: mockRecord.id })
+        } catch (e) {
+          expect(docClient.put).not.toHaveBeenCalled()
+        }
+      })
+    })
+
+    describe('when persisting throws an PermissionReferenceNumber_Key error', () => {
+      it('does not throw an error', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
+        await expect(processQueue({ id: mockRecord.id })).resolves.not.toThrow()
+      })
+
+      // it('logs that the permission has already been persisted', async () => {
+      //   const transactionFilename = 'test-file.xml'
+      //   const mockRecord = mockFinalisedTransactionRecord()
+      //   mockRecord.transactionFile = transactionFilename
+      //   docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+      //   const error = new Error('Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.')
+      //   persist.mockRejectedValueOnce(error)
+
+      //   await processQueue({ id: mockRecord.id })
+
+      //   expect(debug).toHaveBeenCalledWith('Permission for staging id %s has already been persisted', mockRecord.id)
+      // })
+
+      it('deletes the data from the transaction staging table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
+        await processQueue({ id: mockRecord.id })
+
+        expect(docClient.delete).toHaveBeenCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
+            Key: { id: mockRecord.id }
+          })
+        )
+      })
+
+      it('moves the data to the transaction staging history table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
+        await processQueue({ id: mockRecord.id })
+
+        const expectedRecord = Object.assign(mockRecord, {
+          id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+          expires: expect.any(Number)
+        })
+
+        expect(docClient.put).toHaveBeenCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+            Item: expectedRecord,
+            ConditionExpression: 'attribute_not_exists(id)'
+          })
+        )
+      })
     })
 
     describe.each([20, 38.46, 287])('the provisional transaction amount of £%d is used for final transaction amount', cost => {

@@ -102,7 +102,9 @@ export async function processQueue ({ id }) {
   paymentJournal.total = totalTransactionValue
 
   debug('Persisting %d entities for staging id %s', entities.length, id)
-  await persist(entities, transactionRecord.createdBy)
+
+  await persistEntities(entities, transactionRecord, id)
+
   debug('Moving staging data to history table for staging id %s', id)
   await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } })
   await docClient.put({
@@ -170,6 +172,21 @@ const createTransactionEntities = async transactionRecord => {
   const paymentJournal = await createTransactionJournal(transactionRecord, transaction, 'Payment', currency)
 
   return { transaction, chargeJournal, paymentJournal }
+}
+
+const persistEntities = async (entities, transactionRecord, id) => {
+  const ALREADY_PERSISTED_ERROR =
+    'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+
+  try {
+    await persist(entities, transactionRecord.createdBy)
+  } catch (e) {
+    if (e.message === ALREADY_PERSISTED_ERROR) {
+      debug('Permission for staging id %s has already been persisted', id)
+    } else {
+      throw e
+    }
+  }
 }
 
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
