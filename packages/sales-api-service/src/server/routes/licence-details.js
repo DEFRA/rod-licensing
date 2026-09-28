@@ -14,7 +14,6 @@ const executeWithErrorLog = async query => {
     return await executeQuery(query)
   } catch (e) {
     debug(`Error executing query with filter ${query?.filter ?? 'unknown'}`)
-    /* istanbul ignore next */
     throw e
   }
 }
