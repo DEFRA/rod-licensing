@@ -70,6 +70,7 @@ const shouldCancelRecurringPayment = transaction => {
   return false
 }
 
+//
 const processPaymentResults = async transaction => {
   if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalization for transaction id: ${transaction.id}`)

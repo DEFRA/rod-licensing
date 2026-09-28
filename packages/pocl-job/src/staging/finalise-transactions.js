@@ -55,6 +55,7 @@ const getInitialState = async filename => {
   )
 }
 
+//
 /**
  * Finalise the records in the Sales API, updating properties as appropriate based on whether the operation was successful or not
  *

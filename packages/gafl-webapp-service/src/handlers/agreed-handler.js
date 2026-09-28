@@ -210,7 +210,7 @@ const processPayment = async (request, transaction, status) => {
 
   return next
 }
-
+// agreed-handler calls finalise the transaction in the sales api
 const finaliseTransaction = async (request, transaction, status) => {
   const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
   debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
@@ -297,7 +297,7 @@ export default async (request, h) => {
     }
   }
 
-  // If the transaction has already been finalised then redirect to the order completed page
+   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
     await finaliseTransaction(request, transaction, status)
   } else {

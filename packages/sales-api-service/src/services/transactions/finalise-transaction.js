@@ -25,6 +25,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
   const transactionRecord = await retrieveStagedTransaction(id)
   const { id: _omitId, ...originalTransactionRecord } = structuredClone(transactionRecord)
 
+// finalise-transaction then marks the status as FINALISED in the 
   if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED) {
     throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
   }

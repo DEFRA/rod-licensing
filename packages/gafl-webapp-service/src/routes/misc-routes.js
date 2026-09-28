@@ -115,6 +115,7 @@ export default [
       return h.redirectWithLanguageCode(IDENTIFY.uri)
     }
   },
+
   {
     method: 'GET',
     path: AGREED.uri,
