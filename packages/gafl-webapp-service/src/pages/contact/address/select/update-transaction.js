@@ -8,7 +8,7 @@ import { licenceDetailsService } from '../../../../services/licence-details/lice
  */
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(ADDRESS_SELECT.page)
-  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  const { licensee, licenceLength } = await request.cache().helpers.transaction.getCurrentPermission()
   const { addresses } = await request.cache().helpers.addressLookup.getCurrentPermission()
   const { premises, street, locality, town, postcode } = addresses.find(a => a.id === payload.address)
   // All UK addresses from lookup default to GB
@@ -29,6 +29,8 @@ export default async request => {
 
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
   const { firstName, lastName, birthDate } = licensee
-  const existingPermissions = await licenceDetailsService(firstName, lastName, birthDate, postcode)
-  await request.cache().helpers.existingPermissions.set(existingPermissions)
+  if (licenceLength === '12M') {
+    const existingPermissions = await licenceDetailsService(firstName, lastName, birthDate, postcode)
+    await request.cache().helpers.existingPermissions.set(existingPermissions)
+  }
 }
