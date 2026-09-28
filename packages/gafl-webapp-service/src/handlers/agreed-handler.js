@@ -297,7 +297,7 @@ export default async (request, h) => {
     }
   }
 
-   // If the transaction has already been finalised then redirect to the order completed page
+  // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
     await finaliseTransaction(request, transaction, status)
   } else {
