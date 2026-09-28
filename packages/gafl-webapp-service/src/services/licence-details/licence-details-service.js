@@ -1,1 +1,1 @@
-export const licenceDetailsService = () => {}
+export const licenceDetailsService = async () => {}
