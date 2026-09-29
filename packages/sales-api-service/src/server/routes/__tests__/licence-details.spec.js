@@ -106,18 +106,21 @@ describe('licence-details handler', () => {
     expect(mockDebug).toHaveBeenCalledWith('Error executing query with filter unknown')
   })
 
-  it('calls contactForLicenseeByPersonalDetails with the name, dob and postcode from the query', async () => {
-    mockContactWithPermissions(mockPermission())
+  it.each([
+    ['Frodo', 'Underhill', '1993-09-22', 'EF45 6GH'],
+    ['Samwise', 'Gamgee', '1998-03-06', 'IJ78 9KL'],
+    ['Peregrin', 'Took', '1994-04-01', 'ZZ99 9ZZ']
+  ])(
+    'calls contactForLicenseeByPersonalDetails with the name, dob and postcode from the query (%s %s)',
+    async (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode) => {
+      mockContactWithPermissions(mockPermission())
+      const query = { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode }
 
-    await getLicenceDetails(baseRequest)
+      await getLicenceDetails({ query })
 
-    expect(contactForLicenseeByPersonalDetails).toHaveBeenCalledWith({
-      licenseeFirstName: 'Bilbo',
-      licenseeLastName: 'Baggins',
-      licenseeBirthDate: '2000-10-03',
-      licenseePostcode: 'AB12 3CD'
-    })
-  })
+      expect(contactForLicenseeByPersonalDetails).toHaveBeenCalledWith(query)
+    }
+  )
 
   it('throws a not found error if no contacts match the provided details', async () => {
     executeQuery.mockResolvedValueOnce([])

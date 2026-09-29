@@ -871,15 +871,6 @@ describe('rcp authentication', () => {
 })
 
 describe('getLicenceDetails', () => {
-  beforeEach(() => {
-    fetch.mockReturnValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      text: async () => JSON.stringify({ licences: [] })
-    })
-  })
-
   it.each([
     { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' },
     { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', postcode: 'BS9 4PT' }
@@ -901,6 +892,12 @@ describe('getLicenceDetails', () => {
         'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Bilbo&licenseeLastName=Baggins&licenseePostcode=BS9%204PT&licenseeBirthDate=1995-04-15'
     }
   ])('calls fetch with the name, postcode and date of birth as query parameters for %p', async ({ input, expectedUrl }) => {
+    fetch.mockReturnValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      text: async () => JSON.stringify({ licences: [] })
+    })
     await salesApi.getLicenceDetails(input)
     expect(fetch).toHaveBeenCalledWith(expectedUrl, expect.objectContaining({ method: 'get' }))
   })
