@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { contactForLicenseeByPersonalDetails, executeQuery, permissionForContacts, Permission } from '@defra-fish/dynamics-lib'
 import route, { getLicenceDetails } from '../licence-details.js'
+import db from 'debug'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
@@ -18,6 +19,9 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   executeQuery: jest.fn(),
   permissionForContacts: jest.fn()
 }))
+
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const { value: mockDebug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'sales:licence-details')]
 
 describe('licence-details handler', () => {
   beforeEach(() => {
@@ -91,6 +95,15 @@ describe('licence-details handler', () => {
     executeQuery.mockRejectedValueOnce(new Error('some error'))
 
     await expect(getLicenceDetails(baseRequest)).rejects.toThrow('some error')
+    expect(mockDebug).toHaveBeenCalledWith('Error executing query with filter mock-contact-filter')
+  })
+
+  it('logs an unknown filter if executeQuery throws with no query', async () => {
+    contactForLicenseeByPersonalDetails.mockReturnValueOnce(undefined)
+    executeQuery.mockRejectedValueOnce(new Error('some error'))
+
+    await expect(getLicenceDetails(baseRequest)).rejects.toThrow('some error')
+    expect(mockDebug).toHaveBeenCalledWith('Error executing query with filter unknown')
   })
 
   it('calls contactForLicenseeByPersonalDetails with the name, dob and postcode from the query', async () => {
