@@ -1,3 +1,4 @@
+Must provide GITHUB_AUTH
 
 ## v1.77.0-rc.0 (2026-09-30)
 
