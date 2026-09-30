@@ -1,4 +1,4 @@
-import { contactAndPermissionForLicensee, contactForLicenseeNoReference } from '../contact.queries.js'
+import { contactAndPermissionForLicensee, contactForLicenseeNoReference, contactForLicenseeByPersonalDetails } from '../contact.queries.js'
 import { Contact } from '../../entities/contact.entity.js'
 import { Permission } from '../../entities/permission.entity.js'
 import { PredefinedQuery } from '../predefined-query.js'
@@ -18,12 +18,14 @@ describe('Contact Queries', () => {
     beforeEach(() => {
       jest.resetAllMocks()
 
+      const defaultFilter = 'statecode eq 77'
+
       jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
         postcode: { field: 'mock_postcode' },
         birthDate: { field: 'mock_birthdate' }
       })
 
-      jest.spyOn(Contact.definition, 'defaultFilter', 'get').mockReturnValue('statecode eq 0')
+      jest.spyOn(Contact.definition, 'defaultFilter', 'get').mockReturnValue(defaultFilter)
     })
 
     it('should return a predefined query', () => {
@@ -36,14 +38,6 @@ describe('Contact Queries', () => {
       expect(result._root).toEqual(Contact)
     })
 
-    it('should use mocked values for mapping postcode and birth date', () => {
-      const result = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
-      expect(result._retrieveRequest.filter).toEqual(
-        expect.stringContaining(Contact.definition.mappings.postcode.field),
-        expect.stringContaining(Contact.definition.mappings.birthDate.field)
-      )
-    })
-
     it.each([
       ['AB12 3CD', '03/12/1990'],
       ['EF45 6GH', '05/06/1987'],
@@ -54,7 +48,7 @@ describe('Contact Queries', () => {
       expect(result._retrieveRequest).toEqual({
         collection: 'contacts',
         expand: [],
-        filter: `mock_postcode eq '${postcode}' and mock_birthdate eq ${birthDate} and statecode eq 0`,
+        filter: `mock_postcode eq '${postcode}' and mock_birthdate eq ${birthDate} and ${Contact.definition.defaultFilter}`,
         select: expect.any(Array)
       })
     })
@@ -64,10 +58,13 @@ describe('Contact Queries', () => {
     beforeEach(() => {
       jest.resetAllMocks()
 
+      const defaultFilter = 'statecode eq 77'
+
       jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
         id: { field: 'contactid' },
         postcode: { field: 'defra_postcode' }
       })
+      jest.spyOn(Permission.definition, 'defaultFilter', 'get').mockReturnValue(defaultFilter)
     })
 
     it('should return a predefined query', () => {
@@ -84,7 +81,7 @@ describe('Contact Queries', () => {
       const result = contactAndPermissionForLicensee('ABC123', 'AB12 3CD')
 
       expect(result._retrieveRequest.filter).toEqual(
-        "endswith(defra_name, 'ABC123') and statecode eq 0 and defra_ContactId/defra_postcode eq 'AB12 3CD'"
+        `endswith(defra_name, 'ABC123') and ${Permission.definition.defaultFilter} and defra_ContactId/defra_postcode eq 'AB12 3CD'`
       )
     })
 
@@ -116,7 +113,7 @@ describe('Contact Queries', () => {
 
         expect(result._retrieveRequest).toEqual({
           collection: 'defra_permissions',
-          filter: `endswith(defra_name, '${permissionLast6}') and statecode eq 0 and defra_ContactId/defra_postcode eq '${postcode}'`,
+          filter: `endswith(defra_name, '${permissionLast6}') and ${Permission.definition.defaultFilter} and defra_ContactId/defra_postcode eq '${postcode}'`,
           orderBy: ['defra_issuedate desc', 'defra_ContactId/contactid asc'],
           expand: [
             {
@@ -139,5 +136,58 @@ describe('Contact Queries', () => {
         })
       }
     )
+  })
+})
+
+describe('contactForLicenseeByPersonalDetails', () => {
+  beforeEach(() => {
+    const defaultFilter = 'statecode eq 77'
+
+    jest.spyOn(Contact.definition, 'mappings', 'get').mockReturnValue({
+      firstName: { field: 'mock_firstname' },
+      lastName: { field: 'mock_lastname' },
+      postcode: { field: 'mock_postcode' },
+      birthDate: { field: 'mock_birthdate' }
+    })
+
+    jest.spyOn(Contact.definition, 'defaultFilter', 'get').mockReturnValue(defaultFilter)
+  })
+
+  it.each([
+    ['Smeagol', 'Ring', '2000-10-03', 'AB12 3CD'],
+    ['Frodo', 'Baggins', '1993-09-22', 'EF45 6GH'],
+    ['Samwise', 'Gamgee', '1998-03-06', 'IJ78 9KL']
+  ])(
+    'should return correct retrieve request when first name is %s, last name is %s, birth date is %s and postcode is %s',
+    (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode) => {
+      const result = contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode })
+
+      expect(result._retrieveRequest).toEqual({
+        collection: 'contacts',
+        expand: [],
+        filter: `mock_firstname eq '${licenseeFirstName}' and mock_lastname eq '${licenseeLastName}' and mock_postcode eq '${licenseePostcode}' and mock_birthdate eq ${licenseeBirthDate} and ${Contact.definition.defaultFilter}`,
+        select: expect.any(Array)
+      })
+    }
+  )
+
+  it('should return a predefined query', () => {
+    const result = contactForLicenseeByPersonalDetails({
+      licenseeFirstName: 'Gandalf',
+      licenseeLastName: 'Grey',
+      licenseeBirthDate: '1960-10-03',
+      licenseePostcode: 'AB12 3CD'
+    })
+    expect(result).toBeInstanceOf(PredefinedQuery)
+  })
+
+  it('root should return Contact', () => {
+    const result = contactForLicenseeByPersonalDetails({
+      licenseeFirstName: 'Aragorn',
+      licenseeLastName: 'Elessar',
+      licenseeBirthDate: '1989-04-20',
+      licenseePostcode: 'AB12 3CD'
+    })
+    expect(result._root).toEqual(Contact)
   })
 })
