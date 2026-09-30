@@ -1,4 +1,14 @@
 
+## v1.77.0-rc.0 (2026-09-30)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2476](https://github.com/DEFRA/rod-licensing/pull/2476) Create new Sales API endpoint to look up and return licence details using name, post code and date of birth ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
 ## v1.76.0-rc.5 (2026-09-04)
 
 #### :bug: Bug Fix
