@@ -1,4 +1,14 @@
 
+## v1.77.0-rc.2 (2026-10-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2477](https://github.com/DEFRA/rod-licensing/pull/2477) Create webapp service to look up licence matches ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+Must provide GITHUB_AUTH
+
 ## v1.77.0-rc.0 (2026-09-30)
 
 #### :rocket: Enhancement
