@@ -91,6 +91,10 @@ const cacheDecorator = sessionCookieName =>
           get: async () => contextCache(this.server.app.cache, id(), 'analytics').get(),
           set: async obj => contextCache(this.server.app.cache, id(), 'analytics').set(obj)
         },
+        existingPermissions: {
+          get: async () => contextCache(this.server.app.cache, id(), 'existingPermissions').get(),
+          set: async obj => contextCache(this.server.app.cache, id(), 'existingPermissions').set(obj)
+        },
 
         // This one differs in that it has an individual segment for each page
         page: {
