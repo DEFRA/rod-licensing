@@ -42,7 +42,7 @@ describe('update-transaction', () => {
 
     await updateTransaction(sampleRequest)
 
-    expect(setExistingPermissions).toHaveBeenCalledWith(existingPermissions)
+    expect(setExistingPermissions).toHaveBeenCalledWith({ permissions: existingPermissions })
   })
 
   describe.each([

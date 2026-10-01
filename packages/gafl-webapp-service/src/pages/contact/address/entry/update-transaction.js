@@ -15,6 +15,6 @@ export default async request => {
   if (licenceLength === '12M') {
     const { firstName, lastName, birthDate } = licensee
     const existingPermissions = await licenceDetailsService({ firstName, lastName, birthDate, postcode })
-    await request.cache().helpers.existingPermissions.set(existingPermissions)
+    await request.cache().helpers.existingPermissions.set({ permissions: existingPermissions })
   }
 }
