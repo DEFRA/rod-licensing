@@ -420,9 +420,9 @@ describe('transaction service', () => {
 
         try {
           await processQueue({ id: mockRecord.id })
-        } catch (e) {
-          expect(docClient.delete).not.toHaveBeenCalled()
-        }
+        } catch (e) {}
+
+        expect(docClient.delete).not.toHaveBeenCalled()
       })
 
       it('does not move the data to the transaction staging history table', async () => {
@@ -436,9 +436,9 @@ describe('transaction service', () => {
 
         try {
           await processQueue({ id: mockRecord.id })
-        } catch (e) {
-          expect(docClient.put).not.toHaveBeenCalled()
-        }
+        } catch (e) {}
+
+        expect(docClient.put).not.toHaveBeenCalled()
       })
     })
 
