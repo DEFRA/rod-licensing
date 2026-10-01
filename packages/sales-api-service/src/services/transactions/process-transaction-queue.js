@@ -175,13 +175,12 @@ const createTransactionEntities = async transactionRecord => {
 }
 
 const persistEntities = async (entities, transactionRecord, id) => {
-  const ALREADY_PERSISTED_ERROR =
-    'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+  const ALREADY_PERSISTED_ERROR = /Permission Reference Number already exists/
 
   try {
     await persist(entities, transactionRecord.createdBy)
   } catch (e) {
-    if (e.message === ALREADY_PERSISTED_ERROR) {
+    if (e.message.match(ALREADY_PERSISTED_ERROR)) {
       debug('Permission for staging id %s has already been persisted', id)
     } else {
       throw e
