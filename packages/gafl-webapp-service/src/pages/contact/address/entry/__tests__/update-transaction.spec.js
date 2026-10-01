@@ -25,10 +25,12 @@ describe('update-transaction', () => {
 
     await updateTransaction(generateMockRequest({ licensee: sampleLicensee, postcode }))
     expect(licenceDetailsService).toHaveBeenCalledWith(
-      sampleLicensee.firstName,
-      sampleLicensee.lastName,
-      sampleLicensee.birthDate,
-      postcode
+      expect.objectContaining({
+        firstName: sampleLicensee.firstName,
+        lastName: sampleLicensee.lastName,
+        birthDate: sampleLicensee.birthDate,
+        postcode
+      })
     )
   })
 
