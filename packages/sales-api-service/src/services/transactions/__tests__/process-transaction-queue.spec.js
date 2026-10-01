@@ -385,11 +385,8 @@ describe('transaction service', () => {
     it('throws an error if retrieveStagedTransaction fails', async () => {
       const error = new Error('Boo!')
       retrieveStagedTransaction.mockRejectedValueOnce(error)
-      try {
-        await processQueue({ id: 'foo' })
-      } catch (e) {
-        expect(e).toEqual(error)
-      }
+
+      await expect(processQueue({ id: 'foo' })).rejects.toThrow(error)
     })
 
     describe('when persisting throws an error', () => {
@@ -402,11 +399,7 @@ describe('transaction service', () => {
         const error = new Error('I do not like it')
         persist.mockRejectedValueOnce(error)
 
-        try {
-          await processQueue({ id: mockRecord.id })
-        } catch (e) {
-          expect(e).toEqual(error)
-        }
+        await expect(processQueue({ id: mockRecord.id })).rejects.toThrow(error)
       })
 
       it('does not delete the data from the transaction staging table', async () => {
