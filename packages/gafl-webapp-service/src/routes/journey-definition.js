@@ -11,6 +11,7 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  HAS_EXISTING_LICENCE,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   CHECK_CONFIRMATION_CONTACT,
@@ -290,6 +291,17 @@ export default [
     },
     backLink: ADDRESS_LOOKUP.uri
   },
+
+  {
+    current: HAS_EXISTING_LICENCE,
+    next: {
+      [CommonResults.OK]: {
+        page: LICENCE_FULFILMENT
+      }
+    },
+    backLink: ADDRESS_LOOKUP.uri
+  },
+
   {
     current: LICENCE_FULFILMENT,
     next: {

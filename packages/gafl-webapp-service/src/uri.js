@@ -18,6 +18,7 @@ export const ADDRESS_LOOKUP = { uri: '/buy/find-address', page: 'address-lookup'
 export const ADDRESS_SELECT = { uri: '/buy/select-address', page: 'address-select' }
 export const ADDRESS_ENTRY = { uri: '/buy/address', page: 'address-entry' }
 export const CONTACT = { uri: '/buy/contact', page: 'contact' }
+export const HAS_EXISTING_LICENCE = { uri: '/buy/has-existing-licence', page: 'has-existing-licence' }
 export const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 
 export const LICENCE_FULFILMENT = { uri: '/buy/fulfilment', page: 'licence-fulfilment' }
