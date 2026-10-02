@@ -15,6 +15,7 @@ import name from '../pages/contact/name/update-transaction.js'
 import addressLookup from '../pages/contact/address/lookup/update-transaction.js'
 import addressSelect from '../pages/contact/address/select/update-transaction.js'
 import addressEntry from '../pages/contact/address/entry/update-transaction.js'
+import hasExistingLicence from '../pages/contact/has-existing-licence/update-transaction.js'
 import contact from '../pages/contact/contact/update-transaction.js'
 import licenceFulfilment from '../pages/contact/digital-licence/licence-fulfilment/update-transaction.js'
 import licenceConfirmationMethod from '../pages/contact/digital-licence/licence-confirmation-method/update-transaction.js'
@@ -42,6 +43,7 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  HAS_EXISTING_LICENCE,
   CONTACT,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
@@ -66,6 +68,7 @@ export default {
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_SELECT.page]: addressSelect,
   [ADDRESS_ENTRY.page]: addressEntry,
+  [HAS_EXISTING_LICENCE.page]: hasExistingLicence,
   [NAME.page]: name,
   [CONTACT.page]: contact,
   [LICENCE_FULFILMENT.page]: licenceFulfilment,

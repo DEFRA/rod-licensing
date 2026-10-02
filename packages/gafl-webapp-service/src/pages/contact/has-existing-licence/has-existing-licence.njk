@@ -1,0 +1,9 @@
+{% extends "standard-form.njk" %}
+
+{% set title = mssgs.has_existing_licence_title %}
+
+{% block pageContent %}
+    <p class="govuk-body-m">
+        Number of existing permissions: {{ data.existingPermissionsCount }}
+    </p>
+{% endblock %}
