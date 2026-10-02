@@ -12,6 +12,7 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  HAS_EXISTING_LICENCE,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   CONTACT,
@@ -36,6 +37,7 @@ import name from '../pages/contact/name/result-function.js'
 import addressLookup from '../pages/contact/address/lookup/result-function.js'
 import addressSelect from '../pages/contact/address/select/result-function.js'
 import addressEntry from '../pages/contact/address/entry/result-function.js'
+import hasExistingLicence from '../pages/contact/has-existing-licence/result-function.js'
 import licenceSummary from '../pages/summary/licence-summary/result-function.js'
 import termsAndConditions from '../pages/terms-and-conditions/result-function.js'
 import choosePayment from '../pages/recurring-payments/choose-payment/result-function.js'
@@ -55,6 +57,7 @@ export default {
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_ENTRY.page]: addressEntry,
   [ADDRESS_SELECT.page]: addressSelect,
+  [HAS_EXISTING_LICENCE.page]: hasExistingLicence,
   [CONTACT.page]: contact,
   [LICENCE_FULFILMENT.page]: licenceFulfilment,
   [LICENCE_CONFIRMATION_METHOD.page]: licenceConfirmationMethod,
