@@ -58,13 +58,19 @@ export const contactAndPermissionForLicensee = (permissionLast6Characters, licen
  * @param {string} licenseePostcode
  * @returns {PredefinedQuery<Contact>}
  */
-export const contactForLicenseeByPersonalDetails = ({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode }) => {
-  const { firstName, lastName, postcode, birthDate } = Contact.definition.mappings
+export const contactForLicenseeByPersonalDetails = ({
+  licenseeFirstName,
+  licenseeLastName,
+  licenseeBirthDate,
+  licenseePremises,
+  licenseePostcode
+}) => {
+  const { firstName, lastName, premises, postcode, birthDate } = Contact.definition.mappings
   const filter = `${firstName.field} eq '${escapeODataStringValue(licenseeFirstName)}' and ${lastName.field} eq '${escapeODataStringValue(
     licenseeLastName
-  )}' and ${postcode.field} eq '${escapeODataStringValue(licenseePostcode)}' and ${birthDate.field} eq ${licenseeBirthDate} and ${
-    Contact.definition.defaultFilter
-  }`
+  )}' and ${premises.field} eq '${escapeODataStringValue(licenseePremises)}' and ${postcode.field} eq '${escapeODataStringValue(
+    licenseePostcode
+  )}' and ${birthDate.field} eq ${licenseeBirthDate} and ${Contact.definition.defaultFilter}`
   return new PredefinedQuery({
     root: Contact,
     filter,
