@@ -116,14 +116,14 @@ If problems should arise after doing an upgrade, try the following:
 - rollback to the last good version (previous versions can be downloaded from https://docs.docker.com/desktop/mac/install/)
 - run the following commands:
 
-```
+```shell script
 docker system prune -a && docker volume prune
 ```
 
 - Update Docker
 - Run the following commands:
 
-```
+```shell script
 docker swarm leave --force && docker swarm init
 ```
 
@@ -141,7 +141,7 @@ A recent upgrade to Docker Desktop caused the builds to stop working. Now, to su
 
 Docker Compose v2 builds services in parallel by default, so on a fresh Docker Desktop install you may see:
 
-```
+```shell script
 pull access denied for rod_licensing/base, repository does not exist or may require 'docker login'
 ```
 
@@ -226,7 +226,7 @@ The reverse proxy is started as part of the infrastructure stack (rli), however 
 
 The root certificate file can be found at
 
-```
+```shell script
 ./resources/infrastructure/nginx/ca/ca.pem
 ```
 
