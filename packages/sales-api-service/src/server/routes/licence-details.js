@@ -27,9 +27,9 @@ const isActiveTwelveMonthLicence = permission => {
 }
 
 export const getLicenceDetails = async request => {
-  const { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode } = request.query
+  const { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode } = request.query
   const contacts = await executeWithErrorLog(
-    contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode })
+    contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode })
   )
 
   if (!contacts.length) {
