@@ -10,6 +10,7 @@ const getParams = () => ({
   firstName: 'Fishy',
   lastName: 'McFishface',
   birthDate: '2000-01-01',
+  premises: '22',
   postcode: 'TE1 1ST'
 })
 
