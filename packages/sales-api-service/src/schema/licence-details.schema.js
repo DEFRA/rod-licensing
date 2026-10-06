@@ -8,6 +8,7 @@ export const licenceDetailsRequestQuerySchema = Joi.object({
   licenseeFirstName: validation.contact.createFirstNameValidator(Joi).description('The first name of the licensee'),
   licenseeLastName: validation.contact.createLastNameValidator(Joi).description('The last name of the licensee'),
   licenseeBirthDate: validation.contact.createBirthDateValidator(Joi).description('The date of birth of the licensee'),
+  licenseePremises: validation.contact.createPremisesValidator(Joi).description('The premises of the licensee'),
   licenseePostcode: Joi.alternatives()
     .try(
       validation.contact.createUKPostcodeValidator(Joi).description('The postcode of the licensee'),
