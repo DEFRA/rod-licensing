@@ -112,7 +112,7 @@ describe('licence-details handler', () => {
     ['Samwise', 'Gamgee', '1998-03-06', '15', 'IJ78 9KL'],
     ['Peregrin', 'Took', '1994-04-01', '12', 'ZZ99 9ZZ']
   ])(
-    'calls contactForLicenseeByPersonalDetails with the name, dob and postcode from the query (%s %s)',
+    'calls contactForLicenseeByPersonalDetails with the name, dob, premises and postcode from the query (%s %s)',
     async (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode) => {
       mockContactWithPermissions(mockPermission())
       const query = { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode }
