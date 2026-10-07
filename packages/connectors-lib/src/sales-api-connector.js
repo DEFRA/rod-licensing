@@ -358,6 +358,7 @@ export const retrieveStagedTransaction = async id => {
  * @param {string} firstName
  * @param {string} lastName
  * @param {string} birthDate
+ * @param {string} premises
  * @param {string} postcode
  * @returns {Promise<*>}
  */

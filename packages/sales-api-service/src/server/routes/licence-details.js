@@ -64,9 +64,9 @@ export default [
     path: '/licenceDetails',
     options: {
       handler,
-      description: 'Look up licence details for a licensee using their name, postcode and date of birth',
+      description: 'Look up licence details for a licensee using their name, premises, postcode and date of birth',
       notes: `
-        Look up licence details for a licensee using their name, postcode and date of birth
+        Look up licence details for a licensee using their name, premises, postcode and date of birth
       `,
       tags: ['api', 'licence-details'],
       validate: {

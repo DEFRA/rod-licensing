@@ -55,6 +55,7 @@ export const contactAndPermissionForLicensee = (permissionLast6Characters, licen
  * @param {string} licenseeFirstName
  * @param {string} licenseeLastName
  * @param {string} licenseeBirthDate
+ * @param {string} licenseePremises
  * @param {string} licenseePostcode
  * @returns {PredefinedQuery<Contact>}
  */
