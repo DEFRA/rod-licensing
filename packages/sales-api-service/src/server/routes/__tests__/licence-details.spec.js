@@ -35,7 +35,8 @@ describe('licence-details handler', () => {
       licenseeFirstName: 'Bilbo',
       licenseeLastName: 'Baggins',
       licenseeBirthDate: '2000-10-03',
-      licenseePostcode: 'AB12 3CD'
+      licenseePostcode: 'AB12 3CD',
+      licenseePremises: '12'
     }
   }
 
@@ -78,17 +79,17 @@ describe('licence-details handler', () => {
     }
 
     expect(routeMetadata).toMatchInlineSnapshot(`
-      Object {
-        "description": "Look up licence details for a licensee using their name, postcode and date of birth",
-        "method": "GET",
-        "notes": "Look up licence details for a licensee using their name, postcode and date of birth",
-        "path": "/licenceDetails",
-        "tags": Array [
-          "api",
-          "licence-details",
-        ],
-      }
-    `)
+Object {
+  "description": "Look up licence details for a licensee using their name, premises, postcode and date of birth",
+  "method": "GET",
+  "notes": "Look up licence details for a licensee using their name, premises, postcode and date of birth",
+  "path": "/licenceDetails",
+  "tags": Array [
+    "api",
+    "licence-details",
+  ],
+}
+`)
   })
 
   it('returns 500 if executeQuery throws', async () => {
@@ -107,14 +108,14 @@ describe('licence-details handler', () => {
   })
 
   it.each([
-    ['Frodo', 'Underhill', '1993-09-22', 'EF45 6GH'],
-    ['Samwise', 'Gamgee', '1998-03-06', 'IJ78 9KL'],
-    ['Peregrin', 'Took', '1994-04-01', 'ZZ99 9ZZ']
+    ['Frodo', 'Underhill', '1993-09-22', 'Bag End', 'EF45 6GH'],
+    ['Samwise', 'Gamgee', '1998-03-06', '15', 'IJ78 9KL'],
+    ['Peregrin', 'Took', '1994-04-01', '12', 'ZZ99 9ZZ']
   ])(
-    'calls contactForLicenseeByPersonalDetails with the name, dob and postcode from the query (%s %s)',
-    async (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode) => {
+    'calls contactForLicenseeByPersonalDetails with the name, dob, premises and postcode from the query (%s %s)',
+    async (licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode) => {
       mockContactWithPermissions(mockPermission())
-      const query = { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode }
+      const query = { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode }
 
       await getLicenceDetails({ query })
 
