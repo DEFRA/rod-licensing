@@ -79,17 +79,17 @@ describe('licence-details handler', () => {
     }
 
     expect(routeMetadata).toMatchInlineSnapshot(`
-      Object {
-        "description": "Look up licence details for a licensee using their name, postcode and date of birth",
-        "method": "GET",
-        "notes": "Look up licence details for a licensee using their name, postcode and date of birth",
-        "path": "/licenceDetails",
-        "tags": Array [
-          "api",
-          "licence-details",
-        ],
-      }
-    `)
+Object {
+  "description": "Look up licence details for a licensee using their name, premises, postcode and date of birth",
+  "method": "GET",
+  "notes": "Look up licence details for a licensee using their name, premises, postcode and date of birth",
+  "path": "/licenceDetails",
+  "tags": Array [
+    "api",
+    "licence-details",
+  ],
+}
+`)
   })
 
   it('returns 500 if executeQuery throws', async () => {
