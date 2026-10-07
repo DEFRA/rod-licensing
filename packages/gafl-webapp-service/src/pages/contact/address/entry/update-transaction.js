@@ -9,12 +9,13 @@ import { licenceDetailsService } from '../../../../services/licence-details/lice
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(ADDRESS_ENTRY.page)
   const { licensee, licenceLength } = await request.cache().helpers.transaction.getCurrentPermission()
+
   const { premises, street, locality, town, postcode, 'country-code': countryCode } = payload
   Object.assign(licensee, { premises, street, locality, town, postcode, countryCode, organisation: null })
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
   if (licenceLength === '12M') {
     const { firstName, lastName, birthDate } = licensee
-    const existingPermissions = await licenceDetailsService({ firstName, lastName, birthDate, postcode })
+    const existingPermissions = await licenceDetailsService({ firstName, lastName, birthDate, premises, postcode })
     await request.cache().helpers.existingPermissions.set({ permissions: existingPermissions })
   }
 }

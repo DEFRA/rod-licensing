@@ -30,7 +30,8 @@ export default async request => {
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
   if (licenceLength === '12M') {
     const { firstName, lastName, birthDate } = licensee
-    const existingPermissions = await licenceDetailsService({ firstName, lastName, birthDate, postcode })
+    const existingPermissions = await licenceDetailsService({ firstName, lastName, birthDate, premises, postcode })
+    console.log('existingPermissions', JSON.stringify(existingPermissions))
     await request.cache().helpers.existingPermissions.set({ permissions: existingPermissions })
   }
 }

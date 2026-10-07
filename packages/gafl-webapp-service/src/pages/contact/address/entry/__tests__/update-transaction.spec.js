@@ -3,10 +3,16 @@ import { licenceDetailsService } from '../../../../../services/licence-details/l
 
 jest.mock('../../../../../services/licence-details/licence-details-service.js', () => ({ licenceDetailsService: jest.fn(() => []) }))
 describe('update-transaction', () => {
-  const generateMockRequest = ({ licensee = {}, licenceLength = '12M', postcode = '', setExistingPermissions = () => {} } = {}) => ({
+  const generateMockRequest = ({
+    licensee = {},
+    licenceLength = '12M',
+    premises = '',
+    postcode = '',
+    setExistingPermissions = () => {}
+  } = {}) => ({
     cache: () => ({
       helpers: {
-        page: { getCurrentPermission: () => ({ payload: { postcode } }) },
+        page: { getCurrentPermission: () => ({ payload: { premises, postcode } }) },
         transaction: { getCurrentPermission: () => ({ licensee, licenceLength }), setCurrentPermission: () => {} },
         existingPermissions: { set: setExistingPermissions }
       }
@@ -21,14 +27,16 @@ describe('update-transaction', () => {
       lastName: 'Pysgotwr',
       birthDate: '1987-07-10'
     }
+    const premises = '59'
     const postcode = 'YO99 9AA'
 
-    await updateTransaction(generateMockRequest({ licensee: sampleLicensee, postcode }))
+    await updateTransaction(generateMockRequest({ licensee: sampleLicensee, premises, postcode }))
     expect(licenceDetailsService).toHaveBeenCalledWith(
       expect.objectContaining({
         firstName: sampleLicensee.firstName,
         lastName: sampleLicensee.lastName,
         birthDate: sampleLicensee.birthDate,
+        premises,
         postcode
       })
     )
