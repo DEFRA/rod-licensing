@@ -358,16 +358,18 @@ export const retrieveStagedTransaction = async id => {
  * @param {string} firstName
  * @param {string} lastName
  * @param {string} birthDate
+ * @param {string} premises
  * @param {string} postcode
  * @returns {Promise<*>}
  */
-export const getLicenceDetails = async ({ firstName, lastName, birthDate, postcode }) =>
+export const getLicenceDetails = async ({ firstName, lastName, birthDate, premises, postcode }) =>
   exec2xxOrNull(
     call(
       new URL(
         `/licenceDetails?${querystring.stringify({
           licenseeFirstName: firstName,
           licenseeLastName: lastName,
+          licenseePremises: premises,
           licenseePostcode: postcode,
           licenseeBirthDate: birthDate
         })}`,

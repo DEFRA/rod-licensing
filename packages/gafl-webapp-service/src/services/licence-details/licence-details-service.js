@@ -9,7 +9,7 @@ const matchingLicences = async contactInfo => {
   }
 }
 
-export const licenceDetailsService = async ({ firstName, lastName, birthDate, postcode }) => {
-  const response = await matchingLicences({ firstName, lastName, birthDate, postcode })
+export const licenceDetailsService = async ({ firstName, lastName, birthDate, premises, postcode }) => {
+  const response = await matchingLicences({ firstName, lastName, birthDate, premises, postcode })
   return response?.licences || []
 }

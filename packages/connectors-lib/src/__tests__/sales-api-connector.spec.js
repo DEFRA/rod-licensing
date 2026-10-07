@@ -872,8 +872,8 @@ describe('rcp authentication', () => {
 
 describe('getLicenceDetails', () => {
   it.each([
-    { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' },
-    { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', postcode: 'BS9 4PT' }
+    { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', premises: '59', postcode: 'AB123CD' },
+    { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', premises: 'Bag End', postcode: 'BS9 4PT' }
   ])('retrieves the licence details payload returned by the Sales API for %p', async licensee => {
     const expectedResponse = { licences: [{ some: 'data' }] }
     fetch.mockReturnValueOnce({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
@@ -882,14 +882,14 @@ describe('getLicenceDetails', () => {
 
   it.each([
     {
-      input: { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' },
+      input: { firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', premises: '59', postcode: 'AB123CD' },
       expectedUrl:
-        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePostcode=AB123CD&licenseeBirthDate=2000-10-03'
+        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Gandalf&licenseeLastName=Grey&licenseePremises=59&licenseePostcode=AB123CD&licenseeBirthDate=2000-10-03'
     },
     {
-      input: { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', postcode: 'BS9 4PT' },
+      input: { firstName: 'Bilbo', lastName: 'Baggins', birthDate: '1995-04-15', premises: 'Bag End', postcode: 'BS9 4PT' },
       expectedUrl:
-        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Bilbo&licenseeLastName=Baggins&licenseePostcode=BS9%204PT&licenseeBirthDate=1995-04-15'
+        'http://0.0.0.0:4000/licenceDetails?licenseeFirstName=Bilbo&licenseeLastName=Baggins&licenseePremises=Bag%20End&licenseePostcode=BS9%204PT&licenseeBirthDate=1995-04-15'
     }
   ])('calls fetch with the name, postcode and date of birth as query parameters for %p', async ({ input, expectedUrl }) => {
     fetch.mockReturnValueOnce({
@@ -910,7 +910,7 @@ describe('getLicenceDetails', () => {
       text: async () => JSON.stringify({ error: 'Description' })
     })
     await expect(
-      salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', postcode: 'AB123CD' })
+      salesApi.getLicenceDetails({ firstName: 'Gandalf', lastName: 'Grey', birthDate: '2000-10-03', premises: '59', postcode: 'AB123CD' })
     ).resolves.toBeNull()
   })
 })
