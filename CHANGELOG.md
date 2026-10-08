@@ -1,4 +1,13 @@
 
+## v1.77.0-rc.5 (2026-10-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2479](https://github.com/DEFRA/rod-licensing/pull/2479) Add permission match data to session ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.77.0-rc.4 (2026-10-08)
 
 #### :bug: Bug Fix
