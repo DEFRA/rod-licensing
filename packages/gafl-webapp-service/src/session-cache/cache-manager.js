@@ -11,7 +11,8 @@ const contexts = {
   transaction: { identifier: 'transaction-context', initializer: { payment: {}, permissions: [] } },
   status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: -1 } },
   addressLookup: { identifier: 'address-lookup-context', initializer: { permissions: [] } },
-  analytics: { identifier: 'analytics-context', initializer: { permissions: [] } }
+  analytics: { identifier: 'analytics-context', initializer: { permissions: [] } },
+  existingPermissions: { identifier: 'existing-permissions-context', initializer: { permissions: [] } }
 }
 
 class CacheError extends Error {}
