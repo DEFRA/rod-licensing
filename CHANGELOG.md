@@ -1,13 +1,12 @@
 
-## v1.77.0-rc.2 (2026-10-01)
+## v1.77.0-rc.4 (2026-10-08)
 
-#### :rocket: Enhancement
+#### :bug: Bug Fix
 * `gafl-webapp-service`
-  * [#2477](https://github.com/DEFRA/rod-licensing/pull/2477) Create webapp service to look up licence matches ([@irisfaraway](https://github.com/irisfaraway))
+  * [#2482](https://github.com/DEFRA/rod-licensing/pull/2482) "Enter date of birth " error missing on Renewals ([@mark-a-roberts](https://github.com/mark-a-roberts))
 
 #### Committers: 1
-- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
-Must provide GITHUB_AUTH
+- Mark Roberts ([@mark-a-roberts](https://github.com/mark-a-roberts))
 
 
 ## v1.77.0-rc.2 (2026-10-01)
