@@ -53,3 +53,21 @@ export const recurringLicenceTypeDisplay = (permission, mssgs) => {
   }
   return mssgs.recurring_payment_set_up_bulletpoint_1_salmon
 }
+
+export const licenceSummaryRows = (catalog, data) => {
+  const lsrs = [
+    { key: { text: catalog.licence_summary_name }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } },
+    { key: { text: catalog.identification }, value: { text: data.permission.licensee.obfuscatedDob } },
+    { key: { text: catalog.licence_summary_type }, value: { text: data.licenceTypeStr } },
+    { key: { text: catalog.licence_summary_length }, value: { text: data.lengthText } },
+    { key: { text: catalog.starts }, value: { text: data.startTimeString } },
+    { key: { text: catalog.ends }, value: { text: data.endTimeString } }
+  ]
+  if (data.disabled) {
+    lsrs.push({ key: { text: catalog.licence_summary_disability_concession }, value: { text: catalog.yes } })
+  }
+  if (data.ageConcession) {
+    lsrs.push({ key: { text: catalog.age_concession }, value: { text: data.ageConcessionText } })
+  }
+  return lsrs
+}
