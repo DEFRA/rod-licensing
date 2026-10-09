@@ -72,15 +72,23 @@ const shouldCancelRecurringPayment = transaction => {
 
 const processPaymentResults = async transaction => {
   if (transaction.paymentStatus.state?.status === 'success') {
-    debug(`Completing mop up finalization for transaction id: ${transaction.id}`)
-    await salesApi.finaliseTransaction(transaction.id, {
-      payment: {
-        amount: transaction.paymentStatus.amount / 100,
-        timestamp: transaction.paymentStatus.transactionTimestamp,
-        source: TRANSACTION_SOURCE.govPay,
-        method: PAYMENT_TYPE.debit
+    debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
+    try {
+      await salesApi.finaliseTransaction(transaction.id, {
+        payment: {
+          amount: transaction.paymentStatus.amount / 100,
+          timestamp: transaction.paymentStatus.transactionTimestamp,
+          source: TRANSACTION_SOURCE.govPay,
+          method: PAYMENT_TYPE.debit
+        }
+      })
+    } catch (error) {
+      if (error.status !== 410) {
+        throw error
       }
-    })
+
+      debug(`Transaction id: ${transaction.id} has already been finalised`)
+    }
   }
 
   if (shouldUpdatePaymentJournal(transaction)) {

@@ -2,6 +2,7 @@ import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { execute } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
+import db from 'debug'
 
 jest.mock('@defra-fish/connectors-lib')
 // mock bottleneck to speed up test execution
@@ -10,6 +11,7 @@ jest.mock('bottleneck', () =>
     this.wrap = fn => fn
   })
 )
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 const journalEntries = () => [
   {
@@ -130,7 +132,18 @@ const createPaymentEventsEntry = paymentStatus => {
   }
 }
 
+const mockSingleSuccessfulPayment = () => {
+  const [entry] = journalEntries()
+  const [status] = govUkPayStatusEntries
+  salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+  govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => status })
+  govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({ json: async () => createPaymentEventsEntry(status) })
+  return entry
+}
+
 describe('processor', () => {
+  const [{ value: debugLogger }] = db.mock.results
+
   beforeEach(jest.clearAllMocks)
 
   beforeAll(() => {
@@ -173,6 +186,33 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('a0e0e5c3-1004-4271-80ba-d05eda3e8215', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
     })
+  })
+
+  it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
+    const entry = mockSingleSuccessfulPayment()
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(entry.id, {
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
+    })
+  })
+
+  it('logs a debug message when a 410 error code from finaliseTransaction is treated as already finalised', async () => {
+    const entry = mockSingleSuccessfulPayment()
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(debugLogger).toHaveBeenCalledWith(`Transaction id: ${entry.id} has already been finalised`)
+  })
+
+  it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
+    mockSingleSuccessfulPayment()
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Server error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('Server error')
   })
 
   it.each([
