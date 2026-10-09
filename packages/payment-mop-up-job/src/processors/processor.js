@@ -13,6 +13,7 @@ import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
 const debug = db('payment-mop-up-job:execute')
 
 const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
+const HTTP_STATUS_GONE = 410
 
 const limiter = new Bottleneck({
   minTime: process.env.RATE_LIMIT_MS || RATE_LIMIT_MS_DEFAULT,
@@ -83,7 +84,7 @@ const processPaymentResults = async transaction => {
         }
       })
     } catch (error) {
-      if (error.status !== 410) {
+      if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
 
