@@ -7,7 +7,7 @@ WORKDIR /app
 # Install app dependencies
 COPY packages/fulfilment-job/package*.json /app/
 COPY .npmrc /app/
-RUN npm install --workspaces=false --production && npm cache clean --force > /dev/null 2>&1
+RUN npm ci --workspaces=false --production && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
 COPY packages/fulfilment-job/ /app

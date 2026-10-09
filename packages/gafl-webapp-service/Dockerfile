@@ -10,7 +10,7 @@ COPY packages/gafl-webapp-service/assets /app/assets
 COPY packages/gafl-webapp-service/build /app/build
 COPY .npmrc /app/
 
-RUN npm install --workspaces=false && npm run prepare
+RUN npm ci --workspaces=false && npm run prepare
 
 # Bundle app source
 COPY packages/gafl-webapp-service/ /app
