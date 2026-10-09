@@ -13,6 +13,7 @@ import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
 const debug = db('payment-mop-up-job:execute')
 
 const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
+const HTTP_STATUS_GONE = 410
 
 const limiter = new Bottleneck({
   minTime: process.env.RATE_LIMIT_MS || RATE_LIMIT_MS_DEFAULT,
@@ -72,15 +73,23 @@ const shouldCancelRecurringPayment = transaction => {
 
 const processPaymentResults = async transaction => {
   if (transaction.paymentStatus.state?.status === 'success') {
-    debug(`Completing mop up finalization for transaction id: ${transaction.id}`)
-    await salesApi.finaliseTransaction(transaction.id, {
-      payment: {
-        amount: transaction.paymentStatus.amount / 100,
-        timestamp: transaction.paymentStatus.transactionTimestamp,
-        source: TRANSACTION_SOURCE.govPay,
-        method: PAYMENT_TYPE.debit
+    debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
+    try {
+      await salesApi.finaliseTransaction(transaction.id, {
+        payment: {
+          amount: transaction.paymentStatus.amount / 100,
+          timestamp: transaction.paymentStatus.transactionTimestamp,
+          source: TRANSACTION_SOURCE.govPay,
+          method: PAYMENT_TYPE.debit
+        }
+      })
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
       }
-    })
+
+      debug(`Transaction id: ${transaction.id} has already been finalised`)
+    }
   }
 
   if (shouldUpdatePaymentJournal(transaction)) {
