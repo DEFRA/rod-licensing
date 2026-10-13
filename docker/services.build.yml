@@ -29,7 +29,6 @@ services:
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.build
-      # 
       additional_contexts:
         rod_licensing/base: service:rod_licensing_base
 
