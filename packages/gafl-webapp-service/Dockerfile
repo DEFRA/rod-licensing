@@ -25,12 +25,12 @@ WORKDIR /app
 COPY --from=builder --chown=node:node /app/ /app/
 
 # Create a destination directory for the rebrand assets
-RUN mkdir -p /app/public/assets/rebrand
+RUN mkdir -p /app/public/assets
 
-# Copy rebrand assets to detination directory
+# Copy rebrand assets to destination directory
 COPY --from=builder \
-     /app/node_modules/govuk-frontend/dist/govuk/assets/rebrand \
-     /app/public/assets/rebrand
+     /app/node_modules/govuk-frontend/dist/govuk/assets \
+     /app/public/assets
 
 RUN npm prune --production && npm cache clean --force > /dev/null 2>&1
 

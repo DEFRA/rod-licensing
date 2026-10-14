@@ -1,5 +1,6 @@
 {% extends "template.njk" %}
-{% set assetPath = "/public/assets/rebrand" %}
+
+
 
 {% if not journeyBeginning %}
     <meta name="robots" content="noindex">
@@ -14,7 +15,9 @@
     {% set htmlLang = "cy" %}
 {% endif %}
 
-{% set govukRebrand = true %}
+{% set govukRebrand = false %}
+
+{% set assetPath = "/public/assets/rebrand" if (govukRebrand) else "public/assets" %}
 
 {% macro csrf() %}
     <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
@@ -40,7 +43,6 @@
     {% if displayAnalytics and not analyticsMessageDisplayed %}
       {% if not analyticsSelected %}
         {{ govukCookieBanner({
-          rebrand: true,
           ariaLabel: mssgs.analytics_banner_title,
           messages: [
             {
@@ -90,7 +92,6 @@
         {% endif %}
 
         {{ govukCookieBanner({
-          rebrand: true,
           ariaLabel: mssgs.analytics_banner_title,
           messages: [
             {
@@ -111,7 +112,6 @@
     {% endif %}
 
     {{ govukHeader({
-      rebrand: true,
       assetsPath: assetPath + '/images',
       homepageUrl: "https://www.gov.uk/",
       serviceUrl: "/",
