@@ -22,12 +22,15 @@ services:
   #
   # This is not designed to be deployed but to serve as the base image for building rod-licensing services.
   # Provides additional libraries for the build process not required at runtime.
+  # The additonal-contexts ensures rod_licensing_base is built first instead of being built in parallel by newer Docker versions
   ##############################################################################################################
   rod_licensing_builder:
     image: rod_licensing/builder
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.build
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
 
   ##############################################################################################################
   # rod-licensing gafl_webapp
@@ -37,6 +40,9 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/gafl-webapp-service/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder
 
   ##############################################################################################################
   # rod-licensing sales_api
@@ -46,6 +52,9 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/sales-api-service/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder
 
   ##############################################################################################################
   # rod-licensing pocl_job
@@ -55,6 +64,9 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/pocl-job/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder
 
   ##############################################################################################################
   # rod-licensing fulfilment_job
@@ -64,6 +76,9 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/fulfilment-job/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder
 
   ##############################################################################################################
   # rod-licensing payment_mop_up_job
@@ -73,6 +88,9 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/payment-mop-up-job/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder
 
   ##############################################################################################################
   # rod-licensing sqs_receiver
@@ -82,6 +100,9 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/sqs-receiver-service/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder
 
   ##############################################################################################################
   # rod-licensing recurring_payments_job
@@ -91,3 +112,6 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/recurring-payments-job/${PROJECT_DOCKERFILE:-Dockerfile}
+      additional_contexts:
+        rod_licensing/base: service:rod_licensing_base
+        rod_licensing/builder: service:rod_licensing_builder

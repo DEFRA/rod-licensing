@@ -5,6 +5,7 @@
 - Node v22+ (to execute npm helper scripts only)
 - npm v11.19.0
 - Docker v18.06.0+ (to run the docker services)
+- Docker Compose v2.17.0+ (required for the `additional_contexts` build dependency used in services.build.yml)
 
 You'll also need to initialise a local docker swarm before you can run the infrastructure or services locally. To do so, run the following
 command (you'll only need to do this once):
@@ -116,14 +117,14 @@ If problems should arise after doing an upgrade, try the following:
 - rollback to the last good version (previous versions can be downloaded from https://docs.docker.com/desktop/mac/install/)
 - run the following commands:
 
-```
+```shell script
 docker system prune -a && docker volume prune
 ```
 
 - Update Docker
 - Run the following commands:
 
-```
+```shell script
 docker swarm leave --force && docker swarm init
 ```
 
@@ -200,7 +201,7 @@ The reverse proxy is started as part of the infrastructure stack (rli), however 
 
 The root certificate file can be found at
 
-```
+```shell script
 ./resources/infrastructure/nginx/ca/ca.pem
 ```
 
