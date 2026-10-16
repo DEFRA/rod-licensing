@@ -1,4 +1,13 @@
 
+## v1.77.0-rc.8 (2026-10-16)
+
+#### :bug: Bug Fix
+* `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2500](https://github.com/DEFRA/rod-licensing/pull/2500) Reverting npm ci work ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
 
 
 ## v1.77.0-rc.5 (2026-10-08)
