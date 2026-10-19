@@ -116,14 +116,14 @@ If problems should arise after doing an upgrade, try the following:
 - rollback to the last good version (previous versions can be downloaded from https://docs.docker.com/desktop/mac/install/)
 - run the following commands:
 
-```
+```shell script
 docker system prune -a && docker volume prune
 ```
 
 - Update Docker
 - Run the following commands:
 
-```
+```shell script
 docker swarm leave --force && docker swarm init
 ```
 
@@ -200,7 +200,7 @@ The reverse proxy is started as part of the infrastructure stack (rli), however 
 
 The root certificate file can be found at
 
-```
+```shell script
 ./resources/infrastructure/nginx/ca/ca.pem
 ```
 
