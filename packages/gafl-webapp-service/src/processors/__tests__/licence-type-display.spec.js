@@ -1,7 +1,7 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
-import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringLicenceTypeDisplay } from '../licence-type-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringLicenceTypeDisplay, licenceSummaryRows } from '../licence-type-display.js'
 
-const getCatalog = () => ({
+const getCatalog = (overrides = {}) => ({
   over_66: ' (over_66)',
   age_junior: 'junior ',
   licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
@@ -12,7 +12,16 @@ const getCatalog = () => ({
   recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout',
   licence_1_day: '1-day',
   licence_8_day: '8-day',
-  licence_12_month: '12-month'
+  licence_12_month: '12-month',
+  licence_summary_name: 'licence_summary_name',
+  identification: 'identification',
+  licence_summary_type: 'licence_summary_type',
+  licence_summary_length: 'licence_summary_length',
+  starts: 'starts',
+  ends: 'ends',
+  licence_summary_disability_concession: 'licence_summary_disability_concession',
+  age_concession: 'age_concession',
+  ...overrides
 })
 
 jest.mock('../concession-helper', () => ({
@@ -145,4 +154,209 @@ describe('recurringLicenceTypeDisplay', () => {
       expect(result).toEqual(expected)
     }
   )
+})
+
+describe.only('Licence Summary Rows', () => {
+  const getSampleData = (overrides = {}) => ({
+    permission: {
+      licensee: {}
+    },
+    ...overrides
+  })
+
+  it.each([
+    ['Brenin Pysgotwr', 'Brenin', 'Pysgotwr'],
+    ['Julian Cope', 'Julian', 'Cope']
+  ])('adds a row with first name and last name concatenated = "%s"', (expected, firstName, lastName) => {
+    const extraLabel = { licence_summary_name: 'LiCeNcE SuMmArY NaMe' }
+    const permission = getPermission()
+    permission.licensee = {
+      firstName,
+      lastName
+    }
+    const catalog = getCatalog(extraLabel)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ permission }))
+    expect(lsr[0]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabel.licence_summary_name
+        },
+        value: {
+          text: expected
+        }
+      })
+    )
+  })
+
+  it.each([
+    '76y8789uy78u787uy7887u',
+    'jhuiuyhjui8u8iujhyu7yhgtyue8u7'
+  ])('adds a row with obfuscated DoB - "%s"', obfuscatedDob => {
+    const extraLabel = { identification: 'IdEnTiFiCaTiOn' }
+    const catalog = getCatalog(extraLabel)
+    const permission = getPermission()
+    permission.licensee = {
+      obfuscatedDob
+    }
+    const lsr = licenceSummaryRows(catalog, getSampleData({ permission }))
+    expect(lsr[1]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabel.identification
+        },
+        value: {
+          text: obfuscatedDob
+        }
+      })
+    )
+  })
+
+  it.each([
+    'Shopping trollies and old wellies',
+    'Cardboard and seaweed'
+  ])('adds a row with licence type "%s"', licenceTypeStr => {
+    const extraLabel = { licence_summary_type: 'LiCeNcE SuMmArY TyPe' }
+    const catalog = getCatalog(extraLabel)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ licenceTypeStr }))
+    expect(lsr[2]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabel.licence_summary_type
+        },
+        value: {
+          text: licenceTypeStr
+        }
+      })
+    )
+  })
+
+  it.each([
+    'Twelve Months',
+    '28 seconds',
+    '15 minutes'
+  ])('adds a row with licence length "%s"', lengthText => {
+    const extraLabel = { licence_summary_length: 'LiCeNcE SuMmArY LeNgTh' }
+    const catalog = getCatalog(extraLabel)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ lengthText }))
+    expect(lsr[3]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabel.licence_summary_length
+        },
+        value: {
+          text: lengthText
+        }
+      })
+    )
+  })
+
+  it.each([
+    'Now',
+    'Half an hour',
+    '2027-10-09T16:19:28.890Z'
+  ])('adds a row with start time "%s"', startTimeString => {
+    const extraLabel = { starts: 'StArts' }
+    const catalog = getCatalog(extraLabel)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ startTimeString }))
+    expect(lsr[4]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabel.starts
+        },
+        value: {
+          text: startTimeString
+        }
+      })
+    )
+  })
+
+  it.each([
+    'One year',
+    'Ten Years',
+    '2028-10-09T17:33:12.967Z'
+  ])('adds a row with end time "%s"', endTimeString => {
+    const extraLabel = { ends: 'EnDs' }
+    const catalog = getCatalog(extraLabel)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ endTimeString }))
+    expect(lsr[5]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabel.ends
+        },
+        value: {
+          text: endTimeString
+        }
+      })
+    )
+  })
+
+  it('adds a row with disability concession shown', () => {
+    const extraLabels = { licence_summary_disability_concession: 'LiCeNcE SuMmArY DiSaBiLiTy CoNcEsSiOn', yes: 'YeS' }
+    const catalog = getCatalog(extraLabels)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ disabled: true }))
+    expect(lsr[6]).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabels.licence_summary_disability_concession
+        },
+        value: {
+          text: extraLabels.yes
+        }
+      })
+    )
+  })
+
+  it('omits disability concession row if disabled flag is false', () => {
+    const extraLabels = { licence_summary_disability_concession: 'LiCeNcE SuMmArY DiSaBiLiTy CoNcEsSiOn', yes: 'YeS' }
+    const catalog = getCatalog(extraLabels)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ disabled: false }))
+    expect(lsr[6]).not.toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabels.licence_summary_disability_concession
+        },
+        value: {
+          text: extraLabels.yes
+        }
+      })
+    )
+  })
+
+  it.each([
+    ['Junior', true], 
+    ['Junior', false], 
+    ['Senior', true],
+    ['Senior', false]
+  ])('adds a last row with age concession - %s when disabled flag is %b', (ageConcessionText, disabled) => {
+    const extraLabels = { age_concession: 'AgE CoNcEsSiOn' }
+    const catalog = getCatalog(extraLabels)
+    const lsr = licenceSummaryRows(catalog, getSampleData({ ageConcessionText, ageConcession: true, disabled }))
+    expect(lsr.pop()).toEqual(
+      expect.objectContaining({
+        key: {
+          text: extraLabels.age_concession
+        },
+        value: {
+          text: ageConcessionText
+        }
+      })
+    )
+  })
+
+  it.each([true, false])('omits final age concession row when ageConcession flag is false and  disabled flag is %b', disabled => {
+    const catalog = getCatalog()
+    const ageConcessionText = 'Senior'
+    const lsr = licenceSummaryRows(getCatalog(), getSampleData({ ageConcessionText, ageConcession: false, disabled }))
+    expect(lsr.pop()).not.toEqual(
+      expect.objectContaining({
+        key: {
+          text: catalog.age_concession
+        },
+        value: {
+          text: ageConcessionText
+        }
+      })
+    )
+  })
+
 })
