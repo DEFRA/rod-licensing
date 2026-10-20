@@ -1,3 +1,4 @@
+import db from 'debug'
 import { processQueue, getTransactionJournalRefNumber } from '../process-transaction-queue.js'
 import {
   persist,
@@ -27,8 +28,12 @@ import {
   generateRecurringPaymentRecord,
   findNewestExistingRecurringPaymentInCrm
 } from '../../recurring-payments.service.js'
+import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { AWS } from '@defra-fish/connectors-lib'
 const { docClient } = AWS.mock.results[0].value
+const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'sales:transactions')]
+
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -70,6 +75,10 @@ jest.mock('../../recurring-payments.service.js', () => ({
   findNewestExistingRecurringPaymentInCrm: jest.fn(),
   generateRecurringPaymentRecord: jest.fn(),
   processRecurringPayment: jest.fn()
+}))
+
+jest.mock('../retrieve-transaction.js', () => ({
+  retrieveStagedTransaction: jest.fn()
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => {
@@ -204,17 +213,11 @@ describe('transaction service', () => {
         ]
       ])('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
         const mockRecord = initialiseMockTransactionRecord()
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
         expect(persist).toBeCalledWith(entityExpectations, undefined)
-        expect(docClient.get).toHaveBeenCalledWith(
-          expect.objectContaining({
-            TableName: TRANSACTION_STAGING_TABLE.TableName,
-            Key: { id: mockRecord.id },
-            ConsistentRead: true
-          })
-        )
+        expect(retrieveStagedTransaction).toHaveBeenCalledWith(mockRecord.id)
         expect(docClient.delete).toHaveBeenCalledWith(
           expect.objectContaining({
             TableName: TRANSACTION_STAGING_TABLE.TableName,
@@ -248,7 +251,7 @@ describe('transaction service', () => {
       it('includes a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -267,7 +270,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -295,7 +298,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -313,7 +316,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -332,7 +335,7 @@ describe('transaction service', () => {
     it('sets isLicenceForYou to Yes on the transaction, if it is true on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = true
-      docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
@@ -342,7 +345,7 @@ describe('transaction service', () => {
     it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = false
-      docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
@@ -352,7 +355,7 @@ describe('transaction service', () => {
     it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = undefined
-      docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
@@ -361,7 +364,7 @@ describe('transaction service', () => {
     it('does not set isLicenceForYou on the transaction, if it is null on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = null
-      docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
@@ -371,7 +374,7 @@ describe('transaction service', () => {
       const transactionFilename = 'test-file.xml'
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.transactionFile = transactionFilename
-      docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+      retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToAlternateKey')
       const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToAlternateKey')
       await processQueue({ id: mockRecord.id })
@@ -379,22 +382,144 @@ describe('transaction service', () => {
       expect(permissionToFileBindingSpy).toHaveBeenCalledWith(Permission.definition.relationships.poclFile, transactionFilename)
     })
 
-    it('throws 404 not found error if a record cannot be found for the given id', async () => {
-      const mockRecord = mockFinalisedTransactionRecord()
-      docClient.get.mockResolvedValueOnce({ Item: undefined }).mockResolvedValueOnce({ Item: undefined })
-      try {
+    it('throws an error if retrieveStagedTransaction fails', async () => {
+      const error = new Error('Boo!')
+      retrieveStagedTransaction.mockRejectedValueOnce(error)
+
+      await expect(processQueue({ id: 'foo' })).rejects.toThrow(error)
+    })
+
+    describe('when persisting throws an error', () => {
+      it('throws the error', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error('I do not like it')
+        persist.mockRejectedValueOnce(error)
+
+        await expect(processQueue({ id: mockRecord.id })).rejects.toThrow(error)
+      })
+
+      it('does not delete the data from the transaction staging table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error('I do not like it')
+        persist.mockRejectedValueOnce(error)
+
+        try {
+          await processQueue({ id: mockRecord.id })
+        } catch (e) {}
+
+        expect(docClient.delete).not.toHaveBeenCalled()
+      })
+
+      it('does not move the data to the transaction staging history table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error('I do not like it')
+        persist.mockRejectedValueOnce(error)
+
+        try {
+          await processQueue({ id: mockRecord.id })
+        } catch (e) {}
+
+        expect(docClient.put).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when persisting throws an PermissionReferenceNumber_Key error', () => {
+      it('does not throw an error', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
+        await expect(processQueue({ id: mockRecord.id })).resolves.not.toThrow()
+      })
+
+      it('logs that the permission has already been persisted', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
         await processQueue({ id: mockRecord.id })
-      } catch (e) {
-        expect(e.message).toEqual('A transaction for the specified identifier was not found')
-        expect(e.output.statusCode).toEqual(404)
-      }
+
+        expect(debug).toHaveBeenCalledWith('Permission for staging id %s has already been persisted', mockRecord.id)
+      })
+
+      it('deletes the data from the transaction staging table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
+        await processQueue({ id: mockRecord.id })
+
+        expect(docClient.delete).toHaveBeenCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
+            Key: { id: mockRecord.id }
+          })
+        )
+      })
+
+      it('moves the data to the transaction staging history table', async () => {
+        const transactionFilename = 'test-file.xml'
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.transactionFile = transactionFilename
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
+
+        const error = new Error(
+          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        )
+        persist.mockRejectedValueOnce(error)
+
+        await processQueue({ id: mockRecord.id })
+
+        const expectedRecord = Object.assign(mockRecord, {
+          id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+          expires: expect.any(Number)
+        })
+
+        expect(docClient.put).toHaveBeenCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+            Item: expectedRecord,
+            ConditionExpression: 'attribute_not_exists(id)'
+          })
+        )
+      })
     })
 
     describe.each([20, 38.46, 287])('the provisional transaction amount of £%d is used for final transaction amount', cost => {
       const setup = async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.payment.amount = cost
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
         await processQueue({ id: mockRecord.id })
         const {
           mock: {
@@ -427,7 +552,7 @@ describe('transaction service', () => {
           callingArgs.transaction = JSON.parse(JSON.stringify(transaction))
         })
         const mockRecord = mockFinalisedTransactionRecord()
-        docClient.get.mockResolvedValueOnce({ Item: { ...mockRecord } })
+        retrieveStagedTransaction.mockResolvedValueOnce({ ...mockRecord })
         await processQueue({ id: mockRecord.id })
         // jest.fn args aren't immutable and transaction is changed in processQueue, so we use our clone that hasn't changed
         expect(callingArgs.transaction).toEqual(mockRecord)
@@ -440,7 +565,7 @@ describe('transaction service', () => {
         for (const key of keysToCopy) {
           expectedPermissionData[key] = mockRecord.permissions[0][key]
         }
-        docClient.get.mockResolvedValueOnce({ Item: mockRecord })
+        retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
 
         await processQueue({ id: mockRecord.id })
 
@@ -451,7 +576,7 @@ describe('transaction service', () => {
         const rprSymbol = Symbol('rpr')
         const finalisedTransaction = mockFinalisedTransactionRecord()
         generateRecurringPaymentRecord.mockReturnValueOnce(rprSymbol)
-        docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
+        retrieveStagedTransaction.mockResolvedValueOnce(finalisedTransaction)
         await processQueue({ id: finalisedTransaction.id })
         expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
       })
@@ -464,7 +589,7 @@ describe('transaction service', () => {
         const finalisedTransaction = mockFinalisedTransactionRecord()
         findNewestExistingRecurringPaymentInCrm.mockReturnValueOnce(mockExistingRecurringPayment)
         processRecurringPayment.mockReturnValueOnce({ recurringPayment: mockNewRecurringPayment })
-        docClient.get.mockResolvedValueOnce({ Item: finalisedTransaction })
+        retrieveStagedTransaction.mockResolvedValueOnce(finalisedTransaction)
         await processQueue({ id: finalisedTransaction.id })
         expect(mockExistingRecurringPayment.bindToEntity).toHaveBeenCalledWith(
           RecurringPayment.definition.relationships.nextRecurringPayment,
