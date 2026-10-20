@@ -137,6 +137,32 @@ A recent upgrade to Docker Desktop caused the builds to stop working. Now, to su
 
 `docker login` will have to be done in advance of any build. It is recommended to [create an access token](https://hub.docker.com/settings/security) for CLI access.
 
+#### Troubleshooting base/builder image build order
+
+Docker Compose v2 builds services in parallel by default, so on a fresh Docker Desktop install you may see:
+
+```
+pull access denied for rod_licensing/base, repository does not exist or may require 'docker login'
+```
+
+If you see this error after a successful `docker login`, it likely happens because each service's Dockerfile resolves its `FROM rod_licensing/base` instruction before that image has finished building and been tagged locally.
+
+To fix, build the base and builder images first, as separate sequential commands so they don't build in parallel. Then run the full build as normal:
+
+```shell script
+docker-compose -f docker/services.build.yml build rod_licensing_base
+```
+
+```shell script
+docker-compose -f docker/services.build.yml build rod_licensing_builder
+```
+
+```shell script
+npm run docker:build-dev # or npm run docker:build
+```
+
+If you run `docker system prune -a`, you will have to re-run the above steps.
+
 #### Production mode
 
 Building and running the images in production mode runs a full build of all services using the [rod_licensing/builder](../Dockerfile.build) image
