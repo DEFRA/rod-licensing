@@ -15,9 +15,7 @@
     {% set htmlLang = "cy" %}
 {% endif %}
 
-{% set govukRebrand = false %}
-
-{% set assetPath = "/public/assets/rebrand" if (govukRebrand) else "public/assets" %}
+{% set assetPath = "public/assets" %}
 
 {% macro csrf() %}
     <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
