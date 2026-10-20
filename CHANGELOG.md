@@ -1,4 +1,13 @@
 
+## v1.77.0-rc.12 (2026-10-20)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2480](https://github.com/DEFRA/rod-licensing/pull/2480) Service repeatedly tries to create duplicate permission ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.77.0-rc.11 (2026-10-20)
 
 #### :memo: Documentation
