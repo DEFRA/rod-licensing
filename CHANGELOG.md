@@ -1,4 +1,12 @@
 
+## v1.77.0-rc.11 (2026-10-20)
+
+#### :memo: Documentation
+* [#2503](https://github.com/DEFRA/rod-licensing/pull/2503) Update readme to include new troubleshooting steps ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
 ## v1.77.0-rc.10 (2026-10-19)
 
 #### :bug: Bug Fix
