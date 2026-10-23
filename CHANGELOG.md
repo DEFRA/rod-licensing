@@ -1,4 +1,12 @@
 
+## v1.77.0-rc.13 (2026-10-23)
+
+#### :bug: Bug Fix
+* [#2505](https://github.com/DEFRA/rod-licensing/pull/2505) Fix DynamoDB Admin for Local Dev ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.77.0-rc.12 (2026-10-20)
 
 #### :bug: Bug Fix
