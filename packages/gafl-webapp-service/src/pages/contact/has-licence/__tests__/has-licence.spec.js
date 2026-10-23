@@ -16,8 +16,8 @@ const getSampleRequest = (existingPermissions = []) => ({
 
 describe('The existing licence page', () => {
   describe('default', () => {
-    it('should call the pageRoute with has-existing-licence, /buy/has-existing-licence, null, nextPage and getData', async () => {
-      expect(pageRoute).toBeCalledWith('has-existing-licence', '/buy/has-existing-licence', null, nextPage, getData)
+    it('should call the pageRoute with has-licence, /buy/has-licence, null, nextPage and getData', async () => {
+      expect(pageRoute).toBeCalledWith('has-licence', '/buy/has-licence', null, nextPage, getData)
     })
   })
 
