@@ -40,7 +40,7 @@
     "joi": "17.13.3",
     "moment": "2.29.1",
     "pluralize": "8.0.0",
-    "simple-oauth2": "4.3.0",
+    "simple-oauth2": "5.1.0",
     "uuid": "8.3.2"
   }
 }
