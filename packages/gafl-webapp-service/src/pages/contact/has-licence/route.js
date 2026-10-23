@@ -1,4 +1,4 @@
-import { HAS_EXISTING_LICENCE } from '../../../uri.js'
+import { HAS_LICENCE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 
@@ -11,4 +11,4 @@ export const getData = async request => {
   }
 }
 
-export default pageRoute(HAS_EXISTING_LICENCE.page, HAS_EXISTING_LICENCE.uri, null, nextPage, getData)
+export default pageRoute(HAS_LICENCE.page, HAS_LICENCE.uri, null, nextPage, getData)
