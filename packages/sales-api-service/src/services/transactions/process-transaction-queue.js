@@ -181,8 +181,8 @@ const persistEntities = async (entities, transactionRecord, id) => {
     await persist(entities, transactionRecord.createdBy)
   } catch (e) {
     debug(JSON.stringify(e))
-    // debug(e.message)
-    if (e.message.match(ALREADY_PERSISTED_ERROR)) {
+    debug(e.error.message)
+    if (e.error.message.match(ALREADY_PERSISTED_ERROR)) {
       debug('Permission for staging id %s has already been persisted', id)
     } else {
       // throw e
