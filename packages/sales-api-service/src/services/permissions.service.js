@@ -48,7 +48,7 @@ export const generatePermissionNumber = async ({ permitId, startDate, licensee: 
   // const cs = calculateLuhn(`${block1}${block2}${block3}`)
   // return `${block1}-${block2}-${block3}${cs}`
 
-  return '23211027-3WC3FFE-A6SDG9'
+  return '23311027-1WS3FTT-ABNDZ1'
 }
 
 /**
