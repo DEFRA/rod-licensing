@@ -436,16 +436,22 @@ describe('transaction service', () => {
     })
 
     describe('when persisting throws an PermissionReferenceNumber_Key error', () => {
+      const permissionReferenceKeyError = () => {
+        const e = new Error()
+        e.error = {
+          message:
+            'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
+        }
+        return e
+      }
+
       it('does not throw an error', async () => {
         const transactionFilename = 'test-file.xml'
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.transactionFile = transactionFilename
         retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
 
-        const error = new Error(
-          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
-        )
-        persist.mockRejectedValueOnce(error)
+        persist.mockRejectedValueOnce(permissionReferenceKeyError())
 
         await expect(processQueue({ id: mockRecord.id })).resolves.not.toThrow()
       })
@@ -456,10 +462,7 @@ describe('transaction service', () => {
         mockRecord.transactionFile = transactionFilename
         retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
 
-        const error = new Error(
-          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
-        )
-        persist.mockRejectedValueOnce(error)
+        persist.mockRejectedValueOnce(permissionReferenceKeyError())
 
         await processQueue({ id: mockRecord.id })
 
@@ -472,10 +475,7 @@ describe('transaction service', () => {
         mockRecord.transactionFile = transactionFilename
         retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
 
-        const error = new Error(
-          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
-        )
-        persist.mockRejectedValueOnce(error)
+        persist.mockRejectedValueOnce(permissionReferenceKeyError())
 
         await processQueue({ id: mockRecord.id })
 
@@ -493,10 +493,7 @@ describe('transaction service', () => {
         mockRecord.transactionFile = transactionFilename
         retrieveStagedTransaction.mockResolvedValueOnce(mockRecord)
 
-        const error = new Error(
-          'Entity Key PermissionReferenceNumber_Key violated. A record with the same value for Permission Reference Number already exists. A duplicate record cannot be created. Select one or more unique values and try again.'
-        )
-        persist.mockRejectedValueOnce(error)
+        persist.mockRejectedValueOnce(permissionReferenceKeyError())
 
         await processQueue({ id: mockRecord.id })
 
