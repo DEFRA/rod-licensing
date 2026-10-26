@@ -152,20 +152,31 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
 
   // Get the status for each payment from the GOV.UK Pay API.
-  const journalsWithRecurringPaymentIDs = await Promise.all(
-    paymentJournalsToMopUp.map(async p => {
-      debug(`[IWTF-4872] Starting to process payment journal ${p.id}`)
-      const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
-      const paymentJournalWithStatus = {
-        ...p,
-        paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
+  const journalsWithRecurringPaymentIDs = await (async () => {
+    try {
+      return await Promise.all(
+        paymentJournalsToMopUp.map(async p => {
+          debug(`[IWTF-4872] Starting to process payment journal ${p.id}`)
+          const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
+          const paymentJournalWithStatus = {
+            ...p,
+            paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
+          }
+          if (transactionRecord?.recurringPayment) {
+            paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
+          }
+          return paymentJournalWithStatus
+        })
+      )
+    } catch (error) {
+      debug(`[IWTF-4872] Error retrieving transaction data: ${JSON.stringify(error)}`)
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
       }
-      if (transactionRecord?.recurringPayment) {
-        paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
-      }
-      return paymentJournalWithStatus
-    })
-  )
+      debug('[IWTF-4872] Skipping transaction that is already finalised during retrieval')
+      return []
+    }
+  })()
 
   // Process each result
   await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
