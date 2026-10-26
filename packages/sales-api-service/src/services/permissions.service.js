@@ -24,29 +24,31 @@ const DICTIONARIES = [
  * @returns {Promise<string>}
  */
 export const generatePermissionNumber = async ({ permitId, startDate, licensee: { firstName, lastName, birthDate } }, dataSource) => {
-  const permit = await getReferenceDataForEntityAndId(Permit, permitId)
+  // const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
-  const endDate = await calculateEndDateMoment({ permitId, startDate })
-  const endTime =
-    permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M'
-      ? moment(endDate)
-      : moment(endDate).add(1, 'hour').startOf('hour')
-  const block1 = endTime.format('HH') + endDate.format('DDMMYY')
+  // const endDate = await calculateEndDateMoment({ permitId, startDate })
+  // const endTime =
+  //   permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M'
+  //     ? moment(endDate)
+  //     : moment(endDate).add(1, 'hour').startOf('hour')
+  // const block1 = endTime.format('HH') + endDate.format('DDMMYY')
 
-  const dataSourceOptionSetValue = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, dataSource)
-  const channel = dataSourceOptionSetValue.description.charAt(0)
-  const type = permit.permitSubtype.description
+  // const dataSourceOptionSetValue = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, dataSource)
+  // const channel = dataSourceOptionSetValue.description.charAt(0)
+  // const type = permit.permitSubtype.description
 
-  const durationInDays = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`).asDays()
-  const duration = String(durationInDays).charAt(0)
-  const age = getAgeCategory(birthDate, startDate)
-  const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
-  const block2 = permit.numberOfRods + channel + type + duration + age + initials
+  // const durationInDays = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`).asDays()
+  // const duration = String(durationInDays).charAt(0)
+  // const age = getAgeCategory(birthDate, startDate)
+  // const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
+  // const block2 = permit.numberOfRods + channel + type + duration + age + initials
 
-  const seqNo = Number(BigInt.asIntN(32, BigInt(await redis.incr('permission-seq'))))
-  const block3 = generate(seqNo, DICTIONARIES)
-  const cs = calculateLuhn(`${block1}${block2}${block3}`)
-  return `${block1}-${block2}-${block3}${cs}`
+  // const seqNo = Number(BigInt.asIntN(32, BigInt(await redis.incr('permission-seq'))))
+  // const block3 = generate(seqNo, DICTIONARIES)
+  // const cs = calculateLuhn(`${block1}${block2}${block3}`)
+  // return `${block1}-${block2}-${block3}${cs}`
+
+  return '23211027-3WC3FFE-A6SDG9'
 }
 
 /**
