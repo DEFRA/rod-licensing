@@ -135,6 +135,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await Promise.all(
     paymentJournalsToMopUp.map(async p => {
+      debug(`[IWTF-4872] Starting to process payment journal ${p.id}`)
       const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
       const paymentJournalWithStatus = {
         ...p,
