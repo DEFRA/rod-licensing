@@ -72,6 +72,7 @@ const shouldCancelRecurringPayment = transaction => {
 }
 
 const processPaymentResults = async transaction => {
+  debug(`Processing payment results for transaction ${transaction.id} (IWTF-4872 fix version)`)
   if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
     try {
