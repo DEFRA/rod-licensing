@@ -94,13 +94,29 @@ const processPaymentResults = async transaction => {
   }
 
   if (shouldUpdatePaymentJournal(transaction)) {
-    await salesApi.updatePaymentJournal(transaction.id, {
-      paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
-    })
+    try {
+      await salesApi.updatePaymentJournal(transaction.id, {
+        paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
+      })
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
+      }
+
+      debug(`Transaction id: ${transaction.id} journal already updated`)
+    }
   }
 
   if (shouldCancelRecurringPayment(transaction)) {
-    await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
+    try {
+      await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
+      }
+
+      debug(`Transaction id: ${transaction.id} recurring payment already cancelled`)
+    }
   }
 }
 
