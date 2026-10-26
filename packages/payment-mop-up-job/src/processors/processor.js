@@ -85,7 +85,7 @@ const processPaymentResults = async transaction => {
         }
       })
     } catch (error) {
-      debug(`[IWTF-4872] finaliseTransaction caught error: status=${error.status}, body.statusCode=${error.body?.statusCode}`)
+      debug(`[IWTF-4872] finaliseTransaction caught error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -100,7 +100,7 @@ const processPaymentResults = async transaction => {
         paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
       })
     } catch (error) {
-      debug(`[IWTF-4872] updatePaymentJournal caught error: status=${error.status}, body.statusCode=${error.body?.statusCode}`)
+      debug(`[IWTF-4872] updatePaymentJournal caught error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -113,7 +113,7 @@ const processPaymentResults = async transaction => {
     try {
       await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
     } catch (error) {
-      debug(`[IWTF-4872] cancelRecurringPayment caught error: status=${error.status}, body.statusCode=${error.body?.statusCode}`)
+      debug(`[IWTF-4872] cancelRecurringPayment caught error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
