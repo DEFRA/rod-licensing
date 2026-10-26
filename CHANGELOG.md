@@ -1,4 +1,13 @@
 
+## v1.77.0-rc.14 (2026-10-26)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `sales-api-service`
+  * [#2504](https://github.com/DEFRA/rod-licensing/pull/2504) Fix error message handling for already-persisted permissions ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.77.0-rc.13 (2026-10-23)
 
 #### :bug: Bug Fix
