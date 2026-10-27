@@ -165,6 +165,10 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       from: fromTimestamp.toISOString(),
       to: now.toISOString()
     })
+    debug(`[IWTF-4872] salesApi.paymentJournals.getAll() returned ${paymentJournals.length} journals`)
+    if (paymentJournals.length > 0) {
+      debug(`[IWTF-4872] First journal: ${JSON.stringify(paymentJournals[0])}`)
+    }
     const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
     debug(`[IWTF-4872] Found ${paymentJournalsToMopUp.length} payment journals to mop up`)
 
