@@ -49,7 +49,7 @@ const journalEntries = () => [
   }
 ]
 
-const govUkPayStatusEntries = [
+const govUkPayStatusEntries = () => [
   {
     payment_id: '05nioqikvvnuu5l8m2qeaj0qap',
     state: {
@@ -131,7 +131,11 @@ const createPaymentEventsEntry = paymentStatus => {
 }
 
 describe('processor', () => {
-  beforeEach(jest.clearAllMocks)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    govUkPayApi.fetchPaymentStatus.mockReset()
+    govUkPayApi.fetchPaymentEvents.mockReset()
+  })
 
   beforeAll(() => {
     salesApi.paymentJournals.getAll.mockReturnValue([])
@@ -145,16 +149,17 @@ describe('processor', () => {
 
   it('completes normally where there are journal records retrieved', async () => {
     salesApi.paymentJournals.getAll.mockReturnValueOnce(journalEntries())
-    govUkPayStatusEntries.forEach(status => {
+    const payStatusEntries = govUkPayStatusEntries()
+    payStatusEntries.forEach(status => {
       govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => status })
       govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({ json: async () => createPaymentEventsEntry(status) })
     })
 
     await execute(1, 1)
 
-    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledTimes(govUkPayStatusEntries.length)
-    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledTimes(govUkPayStatusEntries.filter(s => s.state.status === 'success').length)
-    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(govUkPayStatusEntries.filter(s => s.state.status === 'success').length)
+    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledTimes(payStatusEntries.length)
+    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledTimes(payStatusEntries.filter(s => s.state.status === 'success').length)
+    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(payStatusEntries.filter(s => s.state.status === 'success').length)
     expect(salesApi.finaliseTransaction).toHaveBeenCalledWith('4fa393ab-07f4-407e-b233-89be2a6f5f77', {
       payment: { amount: 82, method: 'Debit card', source: 'Gov Pay', timestamp: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }
     })
@@ -271,6 +276,9 @@ describe('processor', () => {
         paymentTimestamp: '2020-06-01T10:35:56.873Z'
       }
     ])
+    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+      json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+    })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
     })
@@ -331,6 +339,7 @@ describe('processor', () => {
       const sampleJournalEntries = journalEntries()
       const NOT_FOUND_ID = sampleJournalEntries[2].id
       const NOT_FOUND_PAYMENT_REFERENCE = sampleJournalEntries[2].paymentReference
+      const payStatusEntries = govUkPayStatusEntries()
 
       salesApi.paymentJournals.getAll.mockReturnValueOnce(sampleJournalEntries)
 
@@ -338,14 +347,14 @@ describe('processor', () => {
         if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
           return { json: async () => govUkPayStatusNotFound() }
         }
-        return { json: async () => createPaymentEventsEntry(govUkPayStatusEntries.find(se => se.payment_id === paymentReference)) }
+        return { json: async () => createPaymentEventsEntry(payStatusEntries.find(se => se.payment_id === paymentReference)) }
       })
 
       govUkPayApi.fetchPaymentStatus.mockImplementation(paymentReference => {
         if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
           return { json: async () => govUkPayStatusNotFound() }
         }
-        return { json: async () => govUkPayStatusEntries.find(se => se.payment_id === paymentReference) }
+        return { json: async () => payStatusEntries.find(se => se.payment_id === paymentReference) }
       })
 
       return {
@@ -475,6 +484,9 @@ describe('processor', () => {
   it("doesn't cancel Recurring Payment if payment succeeded", async () => {
     salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: 'def-456' } })
+    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+      json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+    })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
     })
@@ -482,5 +494,23 @@ describe('processor', () => {
     await execute(1, 1)
 
     expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
+  })
+
+  it('When an error is encountered in salesApi.finalise transaction, other payments are still mopped up', async () => {
+    const journals = journalEntries()
+    salesApi.paymentJournals.getAll.mockReturnValueOnce(journals)
+    for (let x = 0; x < journals.length; x++) {
+      govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({ json: async => ({ state: { status: 'success' } }) })
+      govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
+        json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+      })
+    }
+    salesApi.finaliseTransaction.mockRejectedValueOnce(
+      new Error('Unexpected response from the Sales API: { "ok": false, "status": 410, "statusText": "Gone" }')
+    )
+
+    await execute(1, 1)
+
+    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
   })
 })
