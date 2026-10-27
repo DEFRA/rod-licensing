@@ -138,5 +138,5 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   )
 
   // Process each result
-  await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
+  await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
 }
