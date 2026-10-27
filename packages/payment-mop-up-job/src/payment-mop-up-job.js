@@ -9,7 +9,6 @@ const pkgPath = path.join(process.cwd(), 'package.json')
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
 console.log('Payment mop up job starting at %s. name: %s. version: %s', new Date().toISOString(), pkg.name, pkg.version)
-console.log('Variant iwtf-4872-alpha')
 
 const incompletePurchaseAgeMinutes = Number(process.env.INCOMPLETE_PURCHASE_AGE_MINUTES || DEFAULT_INCOMPLETE_PURCHASE_AGE_MINUTES)
 const scanDurationHours = Number(process.env.SCAN_DURATION_HOURS || DEFAULT_SCAN_DURATION_HOURS)
