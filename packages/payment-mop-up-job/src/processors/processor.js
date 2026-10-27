@@ -85,7 +85,12 @@ const processPaymentResults = async transaction => {
         }
       })
     } catch (error) {
-      debug(`[IWTF-4872] finaliseTransaction caught error: ${JSON.stringify(error)}`)
+      debug(`[IWTF-4872] finaliseTransaction caught error`)
+      debug(`[IWTF-4872] error.status: ${error.status}`)
+      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
+      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
+      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
+      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -100,7 +105,12 @@ const processPaymentResults = async transaction => {
         paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
       })
     } catch (error) {
-      debug(`[IWTF-4872] updatePaymentJournal caught error: ${JSON.stringify(error)}`)
+      debug(`[IWTF-4872] updatePaymentJournal caught error`)
+      debug(`[IWTF-4872] error.status: ${error.status}`)
+      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
+      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
+      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
+      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -113,7 +123,12 @@ const processPaymentResults = async transaction => {
     try {
       await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
     } catch (error) {
-      debug(`[IWTF-4872] cancelRecurringPayment caught error: ${JSON.stringify(error)}`)
+      debug(`[IWTF-4872] cancelRecurringPayment caught error`)
+      debug(`[IWTF-4872] error.status: ${error.status}`)
+      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
+      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
+      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
+      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -169,7 +184,12 @@ export const execute = async (ageMinutes, scanDurationHours) => {
         })
       )
     } catch (error) {
-      debug(`[IWTF-4872] Error retrieving transaction data: ${JSON.stringify(error)}`)
+      debug(`[IWTF-4872] Error retrieving transaction data`)
+      debug(`[IWTF-4872] error.status: ${error.status}`)
+      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
+      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
+      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
+      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
