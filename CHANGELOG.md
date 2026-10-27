@@ -1,4 +1,13 @@
 
+## v1.77.0-rc.16 (2026-10-27)
+
+#### :bug: Bug Fix
+* `payment-mop-up-job`
+  * [#2508](https://github.com/DEFRA/rod-licensing/pull/2508) Payments not mopped up ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.77.0-rc.14 (2026-10-26)
 
