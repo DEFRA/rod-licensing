@@ -178,6 +178,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
+      console.log('[payment-mop-up-job] Cannot retrieve transaction: already finalised by another process (410 Gone) - skipping batch')
       return []
     }
   })()

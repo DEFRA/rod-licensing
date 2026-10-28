@@ -642,6 +642,18 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
   })
 
+  it('logs a debug message when a 410 error code from retrieveStagedTransaction is treated as already retrieved', async () => {
+    const entry = journalEntries()[0]
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(console.log).toHaveBeenCalledWith(
+      '[payment-mop-up-job] Cannot retrieve transaction: already finalised by another process (410 Gone) - skipping batch'
+    )
+  })
+
   it('rethrows non-410 errors from retrieveStagedTransaction', async () => {
     const entry = journalEntries()[0]
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
