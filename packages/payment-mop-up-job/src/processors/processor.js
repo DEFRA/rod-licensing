@@ -183,27 +183,41 @@ export const execute = async (ageMinutes, scanDurationHours) => {
 
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await (async () => {
-    try {
-      return await Promise.all(
-        paymentJournalsToMopUp.map(async p => {
-          const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
-          const paymentJournalWithStatus = {
-            ...p,
-            paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
-          }
-          if (transactionRecord?.recurringPayment) {
-            paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
-          }
-          return paymentJournalWithStatus
-        })
-      )
-    } catch (error) {
-      if (error.status !== HTTP_STATUS_GONE) {
-        throw error
+    const retrievalResults = await Promise.allSettled(
+      paymentJournalsToMopUp.map(async p => {
+        const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
+        const paymentJournalWithStatus = {
+          ...p,
+          paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
+        }
+        if (transactionRecord?.recurringPayment) {
+          paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
+        }
+        return paymentJournalWithStatus
+      })
+    )
+
+    const fulfilled = []
+    const nonGoneFailures = []
+
+    retrievalResults.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        fulfilled.push(result.value)
+      } else if (result.reason?.status === HTTP_STATUS_GONE) {
+        const failedJournal = paymentJournalsToMopUp[index]
+        console.log(
+          `[payment-mop-up-job] Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`
+        )
+      } else {
+        nonGoneFailures.push(result.reason)
       }
-      console.log('[payment-mop-up-job] Cannot retrieve transaction: already finalised by another process (410 Gone) - skipping batch')
-      return []
+    })
+
+    if (nonGoneFailures.length > 0) {
+      throw nonGoneFailures[0]
     }
+
+    return fulfilled
   })()
 
   // Process each result and handle failures

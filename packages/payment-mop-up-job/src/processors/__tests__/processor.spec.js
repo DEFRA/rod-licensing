@@ -724,7 +724,7 @@ describe('processor', () => {
     await execute(1, 1)
 
     expect(console.log).toHaveBeenCalledWith(
-      '[payment-mop-up-job] Cannot retrieve transaction: already finalised by another process (410 Gone) - skipping batch'
+      `[payment-mop-up-job] Cannot retrieve transaction id: ${entry.id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
     )
   })
 
@@ -734,5 +734,41 @@ describe('processor', () => {
     salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Retrieval error'), { status: 500 }))
 
     await expect(execute(1, 1)).rejects.toThrow('Retrieval error')
+  })
+
+  it('logs multiple 410 errors from retrieveStagedTransaction separately with transaction details', async () => {
+    const entries = journalEntries().slice(0, 2)
+    salesApi.paymentJournals.getAll.mockReturnValueOnce(entries)
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    const retrievalLogs = console.log.mock.calls.filter(call => call[0].includes('Cannot retrieve'))
+    expect(retrievalLogs).toEqual([
+      [
+        `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[0].id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
+      ],
+      [
+        `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[1].id} (410 Gone) [cost: 45.5, dataSource: Phone Sales, id: e478ce19-8d6d-56c7-9692-g71336d60603]`
+      ]
+    ])
+  })
+
+  it('skips 410 transactions but continues processing successful ones in the same batch', async () => {
+    const entries = journalEntries().slice(0, 2)
+    salesApi.paymentJournals.getAll.mockReturnValueOnce(entries)
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: null })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => govUkPayStatusEntries()[0]
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => createPaymentEventsEntry(govUkPayStatusEntries()[0])
+    })
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
   })
 })
