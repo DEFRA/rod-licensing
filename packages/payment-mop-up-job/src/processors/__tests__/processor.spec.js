@@ -786,8 +786,6 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(
-      `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`
-    )
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
   })
 })
