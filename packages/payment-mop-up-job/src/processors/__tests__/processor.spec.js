@@ -317,7 +317,7 @@ describe('processor', () => {
       }
     ])
     govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
     })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
@@ -525,7 +525,7 @@ describe('processor', () => {
     salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: 'def-456' } })
     govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
     })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
