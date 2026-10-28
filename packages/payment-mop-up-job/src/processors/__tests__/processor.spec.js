@@ -555,4 +555,99 @@ describe('processor', () => {
 
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
   })
+
+  it('treats a 410 error code from updatePaymentJournal as already updated and continues processing', async () => {
+    mockSingleSuccessfulPayment()
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
+  })
+
+  it('logs a debug message when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
+    const entry = mockSingleSuccessfulPayment()
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(debugLogger).toHaveBeenCalledWith(`Transaction id: ${entry.id} journal already updated`)
+  })
+
+  it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
+    mockSingleSuccessfulPayment()
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Database error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('Database error')
+  })
+
+  it('treats a 410 error code from cancelRecurringPayment as already cancelled and continues processing', async () => {
+    const entry = journalEntries()[0]
+    const rpid = Symbol('recurring-payment-id')
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [] })
+    })
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(rpid)
+  })
+
+  it('logs a debug message when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
+    const entry = journalEntries()[0]
+    const rpid = Symbol('recurring-payment-id')
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [] })
+    })
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(debugLogger).toHaveBeenCalledWith(`Transaction id: ${entry.id} recurring payment already cancelled`)
+  })
+
+  it('rethrows errors from cancelRecurringPayment that are not a 410 error', async () => {
+    const entry = journalEntries()[0]
+    const rpid = Symbol('recurring-payment-id')
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [] })
+    })
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('API error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('API error')
+  })
+
+  it('treats a 410 error code from retrieveStagedTransaction as already retrieved and returns empty array', async () => {
+    const entry = journalEntries()[0]
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
+  })
+
+  it('rethrows non-410 errors from retrieveStagedTransaction', async () => {
+    const entry = journalEntries()[0]
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Retrieval error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('Retrieval error')
+  })
 })
