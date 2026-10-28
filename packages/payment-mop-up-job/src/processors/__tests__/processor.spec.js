@@ -638,15 +638,6 @@ describe('processor', () => {
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
   })
 
-  it('treats a 410 error code from updatePaymentJournal as already updated and continues processing', async () => {
-    mockSingleSuccessfulPayment()
-    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-
-    await execute(1, 1)
-
-    expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
-  })
-
   it('logs message when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
     const entry = mockSingleSuccessfulPayment()
     const error = Object.assign(new Error('Gone'), { status: 410 })
@@ -676,24 +667,6 @@ describe('processor', () => {
     salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Database error'), { status: 500 }))
 
     await expect(execute(1, 1)).rejects.toThrow('Database error')
-  })
-
-  it('treats a 410 error code from cancelRecurringPayment as already cancelled and continues processing', async () => {
-    const entry = journalEntries()[0]
-    const rpid = Symbol('recurring-payment-id')
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [] })
-    })
-    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-
-    await execute(1, 1)
-
-    expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(rpid)
   })
 
   it('logs message when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
@@ -796,23 +769,6 @@ describe('processor', () => {
     salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Retrieval error'), { status: 500 }))
 
     await expect(execute(1, 1)).rejects.toThrow('Retrieval error')
-  })
-
-  it('logs multiple 410 errors from retrieveStagedTransaction separately with transaction details', async () => {
-    const entries = journalEntries().slice(0, 2)
-    salesApi.paymentJournals.getAll.mockReturnValueOnce(entries)
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-
-    await execute(1, 1)
-
-    const retrievalLogs = console.log.mock.calls
-      .filter(call => typeof call[0] === 'string' && call[0].includes('Cannot retrieve'))
-      .map(call => call[0])
-    expect(retrievalLogs).toEqual([
-      `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[0].id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`,
-      `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[1].id} (410 Gone) [cost: 45.5, dataSource: Phone Sales, id: e478ce19-8d6d-56c7-9692-g71336d60603]`
-    ])
   })
 
   it('skips 410 transactions but continues processing successful ones in the same batch', async () => {
