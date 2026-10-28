@@ -8,9 +8,7 @@ import {
 } from '@defra-fish/business-rules-lib'
 import Bottleneck from 'bottleneck'
 import moment from 'moment'
-import db from 'debug'
 import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
-const debug = db('payment-mop-up-job:execute')
 
 const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
 const HTTP_STATUS_GONE = 410
@@ -76,7 +74,7 @@ const finaliseTransaction = async transaction => {
     return
   }
 
-  debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
+  console.log(`[payment-mop-up-job] Completing mop up finalisation for transaction id: ${transaction.id}`)
   try {
     await salesApi.finaliseTransaction(transaction.id, {
       payment: {
@@ -91,7 +89,7 @@ const finaliseTransaction = async transaction => {
       throw error
     }
 
-    debug(`Transaction id: ${transaction.id} has already been finalised`)
+    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)`)
   }
 }
 
@@ -109,7 +107,7 @@ const updatePaymentJournalIfNeeded = async transaction => {
       throw error
     }
 
-    debug(`Transaction id: ${transaction.id} journal already updated`)
+    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)`)
   }
 }
 
@@ -125,7 +123,7 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
       throw error
     }
 
-    debug(`Transaction id: ${transaction.id} recurring payment already cancelled`)
+    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)`)
   }
 }
 
