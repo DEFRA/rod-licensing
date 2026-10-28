@@ -2,7 +2,6 @@ import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { execute } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import db from 'debug'
 
 jest.mock('@defra-fish/connectors-lib')
 // mock bottleneck to speed up test execution
@@ -11,9 +10,6 @@ jest.mock('bottleneck', () =>
     this.wrap = fn => fn
   })
 )
-jest.mock('debug', () => jest.fn(() => jest.fn()))
-
-const debugLogger = db.mock.results[0]?.value || db()
 
 const journalEntries = () => [
   {
@@ -146,6 +142,7 @@ const mockSingleSuccessfulPayment = () => {
 describe('processor', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.spyOn(console, 'log').mockImplementation(() => {})
     govUkPayApi.fetchPaymentStatus.mockReset()
     govUkPayApi.fetchPaymentEvents.mockReset()
   })
@@ -210,7 +207,7 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(debugLogger).toHaveBeenCalledWith(`Transaction id: ${entry.id} has already been finalised`)
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
   })
 
   it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
@@ -571,7 +568,7 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(debugLogger).toHaveBeenCalledWith(`Transaction id: ${entry.id} journal already updated`)
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone)`)
   })
 
   it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
@@ -614,7 +611,7 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(debugLogger).toHaveBeenCalledWith(`Transaction id: ${entry.id} recurring payment already cancelled`)
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} recurring payment already cancelled (410 Gone)`)
   })
 
   it('rethrows errors from cancelRecurringPayment that are not a 410 error', async () => {
