@@ -277,7 +277,9 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`)
+    expect(console.log).toHaveBeenCalledWith(
+      `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
+    )
   })
 
   it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
@@ -638,7 +640,9 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`)
+    expect(console.log).toHaveBeenCalledWith(
+      `[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
+    )
   })
 
   it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {

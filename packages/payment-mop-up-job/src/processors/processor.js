@@ -25,11 +25,9 @@ const formatTransactionData = transaction => {
     return ''
   }
   const { cost, dataSource, id } = transaction.data
-  const details = [
-    cost !== undefined && `cost: ${cost}`,
-    dataSource && `dataSource: ${dataSource}`,
-    id && `id: ${id}`
-  ].filter(Boolean).join(', ')
+  const details = [cost !== undefined && `cost: ${cost}`, dataSource && `dataSource: ${dataSource}`, id && `id: ${id}`]
+    .filter(Boolean)
+    .join(', ')
   return details ? ` [${details}]` : ''
 }
 
@@ -104,7 +102,9 @@ const finaliseTransaction = async transaction => {
       throw error
     }
 
-    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`)
+    console.log(
+      `[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`
+    )
   }
 }
 
@@ -122,7 +122,9 @@ const updatePaymentJournalIfNeeded = async transaction => {
       throw error
     }
 
-    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`)
+    console.log(
+      `[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`
+    )
   }
 }
 
@@ -138,7 +140,11 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
       throw error
     }
 
-    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(transaction)}`)
+    console.log(
+      `[payment-mop-up-job] Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(
+        transaction
+      )}`
+    )
   }
 }
 
