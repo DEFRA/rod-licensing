@@ -848,4 +848,24 @@ describe('processor', () => {
 
     expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
   })
+
+  it('logs 410 error with partial transaction data details when some fields are missing', async () => {
+    const entry = journalEntries()[0]
+    const entryWithPartialData = { ...entry, data: { cost: 36.8, dataSource: 'Web Sales' } }
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entryWithPartialData])
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' }, amount: 8200 })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }] })
+    })
+
+    await execute(1, 1)
+
+    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
+    expect(logs).toContain(
+      `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales]`
+    )
+  })
 })
