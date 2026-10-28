@@ -771,4 +771,23 @@ describe('processor', () => {
 
     expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
   })
+
+  it('logs 410 error without transaction data details when data field is missing', async () => {
+    const entry = journalEntries()[0]
+    const entryWithoutData = { ...entry, data: null }
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entryWithoutData])
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' }, amount: 8200 })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }] })
+    })
+
+    await execute(1, 1)
+
+    expect(console.log).toHaveBeenCalledWith(
+      `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`
+    )
+  })
 })
