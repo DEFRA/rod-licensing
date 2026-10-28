@@ -26,9 +26,9 @@ export async function finaliseTransaction ({ id, ...payload }) {
   const transactionRecord = await retrieveStagedTransaction(id)
   const { id: _omitId, ...originalTransactionRecord } = structuredClone(transactionRecord)
 
-  // if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED || ['252d3bc1-34a2-49e7-9400-3e664a1ca225'].includes(_omitId)) {
+  if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED || _omitId === '23bcc1e0-284e-4015-83e1-0ec8b740b600') {
     throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
-  // }
+  }
   if (transactionRecord.cost !== payload.payment.amount) {
     throw Boom.paymentRequired('The payment amount did not match the cost of the transaction')
   }
