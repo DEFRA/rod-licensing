@@ -20,6 +20,19 @@ const limiter = new Bottleneck({
   maxConcurrent: process.env.CONCURRENCY || CONCURRENCY_DEFAULT
 })
 
+const formatTransactionData = transaction => {
+  if (!transaction.data) {
+    return ''
+  }
+  const { cost, dataSource, id } = transaction.data
+  const details = [
+    cost !== undefined && `cost: ${cost}`,
+    dataSource && `dataSource: ${dataSource}`,
+    id && `id: ${id}`
+  ].filter(Boolean).join(', ')
+  return details ? ` [${details}]` : ''
+}
+
 const getPaymentJournalStatusCodeFromTransaction = transaction => {
   if (transaction.paymentStatus.state?.status === PAYMENT_STATUS.Error) {
     return PAYMENT_JOURNAL_STATUS_CODES.Failed
@@ -91,7 +104,7 @@ const finaliseTransaction = async transaction => {
       throw error
     }
 
-    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)`)
+    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`)
   }
 }
 
@@ -109,7 +122,7 @@ const updatePaymentJournalIfNeeded = async transaction => {
       throw error
     }
 
-    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)`)
+    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`)
   }
 }
 
@@ -125,7 +138,7 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
       throw error
     }
 
-    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)`)
+    console.log(`[payment-mop-up-job] Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(transaction)}`)
   }
 }
 

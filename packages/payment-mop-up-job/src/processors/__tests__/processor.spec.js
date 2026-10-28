@@ -17,35 +17,105 @@ const journalEntries = () => [
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '05nioqikvvnuu5l8m2qeaj0qap',
-    paymentTimestamp: '2020-06-01T10:35:56.873Z'
+    paymentTimestamp: '2020-06-01T10:35:56.873Z',
+    permissions: [
+      {
+        referenceNumber: '23271027-2WC3FSG-AFPDA8',
+        licensee: {
+          firstName: 'Spooky',
+          lastName: 'Ghost'
+        }
+      }
+    ],
+    data: {
+      cost: 36.8,
+      dataSource: 'Web Sales',
+      id: 'd367bd08-7c5c-45b6-8581-f60225d59492'
+    }
   },
   {
     id: 'aaced854-d337-47ee-8d5e-75b26aeb90fb',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '0f3dr9ugp7u68qq18vt9h8ma85',
-    paymentTimestamp: '2020-06-02T07:17:23.169Z'
+    paymentTimestamp: '2020-06-02T07:17:23.169Z',
+    permissions: [
+      {
+        referenceNumber: '23271028-3XD4GRH-BGQEB9',
+        licensee: {
+          firstName: 'John',
+          lastName: 'Smith'
+        }
+      }
+    ],
+    data: {
+      cost: 45.5,
+      dataSource: 'Phone Sales',
+      id: 'e478ce19-8d6d-56c7-9692-g71336d60603'
+    }
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8213',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vme',
-    paymentTimestamp: '2020-06-04T11:04:30.802Z'
+    paymentTimestamp: '2020-06-04T11:04:30.802Z',
+    permissions: [
+      {
+        referenceNumber: '23271029-4YE5HSI-CHRFC0',
+        licensee: {
+          firstName: 'Jane',
+          lastName: 'Doe'
+        }
+      }
+    ],
+    data: {
+      cost: 52.25,
+      dataSource: 'Web Sales',
+      id: 'f589df2a-9e7e-67d8-0803-h82447e71714'
+    }
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8214',
     eligibleForEarlyMopUp: true,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmf',
-    paymentTimestamp: '2020-06-04T12:04:30.802Z'
+    paymentTimestamp: '2020-06-04T12:04:30.802Z',
+    permissions: [
+      {
+        referenceNumber: '23271030-5ZF6ITJ-DISSGD1',
+        licensee: {
+          firstName: 'Bob',
+          lastName: 'Johnson'
+        }
+      }
+    ],
+    data: {
+      cost: 28.9,
+      dataSource: 'Post Office',
+      id: 'g69aeg3b-0f8f-78e9-1914-i93558f82825'
+    }
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8215',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmg',
-    paymentTimestamp: '2020-06-04T12:04:30.802Z'
+    paymentTimestamp: '2020-06-04T12:04:30.802Z',
+    permissions: [
+      {
+        referenceNumber: '23271031-6AG7JUK-EJUTAHE2',
+        licensee: {
+          firstName: 'Alice',
+          lastName: 'Williams'
+        }
+      }
+    ],
+    data: {
+      cost: 19.75,
+      dataSource: 'Web Sales',
+      id: 'h7aabfh4c-1g9g-89fa-2a25-j04669g93936'
+    }
   }
 ]
 
@@ -207,7 +277,7 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`)
   })
 
   it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
@@ -568,7 +638,7 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone)`)
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`)
   })
 
   it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
@@ -612,7 +682,7 @@ describe('processor', () => {
     await execute(1, 1)
 
     expect(console.log).toHaveBeenCalledWith(
-      `[payment-mop-up-job] Transaction id: ${entry.id} recurring payment already cancelled (410 Gone)`
+      `[payment-mop-up-job] Transaction id: ${entry.id} recurring payment already cancelled (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
     )
   })
 
