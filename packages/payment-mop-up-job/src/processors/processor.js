@@ -105,6 +105,7 @@ const finaliseTransaction = async transaction => {
     console.log(
       `[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`
     )
+    console.log(error)
   }
 }
 
@@ -125,6 +126,7 @@ const updatePaymentJournalIfNeeded = async transaction => {
     console.log(
       `[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`
     )
+    console.log(error)
   }
 }
 
@@ -145,6 +147,7 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
         transaction
       )}`
     )
+    console.log(error)
   }
 }
 
@@ -208,6 +211,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
         console.log(
           `[payment-mop-up-job] Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`
         )
+        console.log(result.reason)
       } else {
         nonGoneFailures.push(result.reason)
       }

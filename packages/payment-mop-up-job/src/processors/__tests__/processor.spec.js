@@ -271,15 +271,28 @@ describe('processor', () => {
     })
   })
 
-  it('logs a debug message when a 410 error code from finaliseTransaction is treated as already finalised', async () => {
+  it('logs message when a 410 error code from finaliseTransaction is treated as already finalised', async () => {
     const entry = mockSingleSuccessfulPayment()
-    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(
+    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
+    expect(logs).toContain(
       `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
     )
+  })
+
+  it('logs error object when a 410 error code from finaliseTransaction is treated as already finalised', async () => {
+    mockSingleSuccessfulPayment()
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    const logs = console.log.mock.calls.map(call => call[0])
+    expect(logs).toContain(error)
   })
 
   it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
@@ -634,15 +647,28 @@ describe('processor', () => {
     expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
   })
 
-  it('logs a debug message when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
+  it('logs message when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
     const entry = mockSingleSuccessfulPayment()
-    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(
+    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
+    expect(logs).toContain(
       `[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
     )
+  })
+
+  it('logs error object when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
+    mockSingleSuccessfulPayment()
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    const logs = console.log.mock.calls.map(call => call[0])
+    expect(logs).toContain(error)
   })
 
   it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
@@ -670,9 +696,10 @@ describe('processor', () => {
     expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(rpid)
   })
 
-  it('logs a debug message when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
+  it('logs message when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
     const entry = journalEntries()[0]
     const rpid = Symbol('recurring-payment-id')
+    const error = Object.assign(new Error('Gone'), { status: 410 })
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
@@ -681,13 +708,34 @@ describe('processor', () => {
     govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
       json: async () => ({ events: [] })
     })
-    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(
+    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
+    expect(logs).toContain(
       `[payment-mop-up-job] Transaction id: ${entry.id} recurring payment already cancelled (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
     )
+  })
+
+  it('logs error object when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
+    const entry = journalEntries()[0]
+    const rpid = Symbol('recurring-payment-id')
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [] })
+    })
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    const logs = console.log.mock.calls.map(call => call[0])
+    expect(logs).toContain(error)
   })
 
   it('rethrows errors from cancelRecurringPayment that are not a 410 error', async () => {
@@ -716,16 +764,30 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
   })
 
-  it('logs a debug message when a 410 error code from retrieveStagedTransaction is treated as already retrieved', async () => {
+  it('logs message when a 410 error code from retrieveStagedTransaction is treated as already retrieved', async () => {
     const entry = journalEntries()[0]
+    const error = Object.assign(new Error('Gone'), { status: 410 })
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
 
     await execute(1, 1)
 
-    expect(console.log).toHaveBeenCalledWith(
+    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
+    expect(logs).toContain(
       `[payment-mop-up-job] Cannot retrieve transaction id: ${entry.id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
     )
+  })
+
+  it('logs error object when a 410 error code from retrieveStagedTransaction is treated as already retrieved', async () => {
+    const entry = journalEntries()[0]
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    const logs = console.log.mock.calls.map(call => call[0])
+    expect(logs).toContain(error)
   })
 
   it('rethrows non-410 errors from retrieveStagedTransaction', async () => {
@@ -744,14 +806,12 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    const retrievalLogs = console.log.mock.calls.filter(call => call[0].includes('Cannot retrieve'))
+    const retrievalLogs = console.log.mock.calls
+      .filter(call => typeof call[0] === 'string' && call[0].includes('Cannot retrieve'))
+      .map(call => call[0])
     expect(retrievalLogs).toEqual([
-      [
-        `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[0].id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
-      ],
-      [
-        `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[1].id} (410 Gone) [cost: 45.5, dataSource: Phone Sales, id: e478ce19-8d6d-56c7-9692-g71336d60603]`
-      ]
+      `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[0].id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`,
+      `[payment-mop-up-job] Cannot retrieve transaction id: ${entries[1].id} (410 Gone) [cost: 45.5, dataSource: Phone Sales, id: e478ce19-8d6d-56c7-9692-g71336d60603]`
     ])
   })
 
