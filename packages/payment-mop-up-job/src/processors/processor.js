@@ -72,7 +72,6 @@ const shouldCancelRecurringPayment = transaction => {
 }
 
 const processPaymentResults = async transaction => {
-  debug(`Processing payment results for transaction ${transaction.id} (IWTF-4872 fix version)`)
   if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
     try {
@@ -85,12 +84,6 @@ const processPaymentResults = async transaction => {
         }
       })
     } catch (error) {
-      debug('[IWTF-4872] finaliseTransaction caught error')
-      debug(`[IWTF-4872] error.status: ${error.status}`)
-      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
-      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
-      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
-      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -105,12 +98,6 @@ const processPaymentResults = async transaction => {
         paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
       })
     } catch (error) {
-      debug('[IWTF-4872] updatePaymentJournal caught error')
-      debug(`[IWTF-4872] error.status: ${error.status}`)
-      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
-      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
-      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
-      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -123,12 +110,6 @@ const processPaymentResults = async transaction => {
     try {
       await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
     } catch (error) {
-      debug('[IWTF-4872] cancelRecurringPayment caught error')
-      debug(`[IWTF-4872] error.status: ${error.status}`)
-      debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
-      debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
-      debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
-      debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
       if (error.status !== HTTP_STATUS_GONE) {
         throw error
       }
@@ -154,8 +135,6 @@ const getStatusWrapped = limiter.wrap(getStatus)
 
 export const execute = async (ageMinutes, scanDurationHours) => {
   try {
-    debug(`Running payment mop up processor with a payment age of ${ageMinutes} minutes and a scan duration of ${scanDurationHours} hours`)
-
     const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
     const now = moment()
     const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
@@ -165,19 +144,13 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       from: fromTimestamp.toISOString(),
       to: now.toISOString()
     })
-    debug(`[IWTF-4872] salesApi.paymentJournals.getAll() returned ${paymentJournals.length} journals`)
-    if (paymentJournals.length > 0) {
-      debug(`[IWTF-4872] First journal: ${JSON.stringify(paymentJournals[0])}`)
-    }
     const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
-    debug(`[IWTF-4872] Found ${paymentJournalsToMopUp.length} payment journals to mop up`)
 
     // Get the status for each payment from the GOV.UK Pay API.
     const journalsWithRecurringPaymentIDs = await (async () => {
       try {
         return await Promise.all(
           paymentJournalsToMopUp.map(async p => {
-            debug(`[IWTF-4872] Starting to process payment journal ${p.id}`)
             const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
             const paymentJournalWithStatus = {
               ...p,
@@ -190,16 +163,9 @@ export const execute = async (ageMinutes, scanDurationHours) => {
           })
         )
       } catch (error) {
-        debug('[IWTF-4872] Error retrieving transaction data')
-        debug(`[IWTF-4872] error.status: ${error.status}`)
-        debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
-        debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
-        debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
-        debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
         if (error.status !== HTTP_STATUS_GONE) {
           throw error
         }
-        debug('[IWTF-4872] Skipping transaction that is already finalised during retrieval')
         return []
       }
     })()
@@ -207,12 +173,6 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     // Process each result
     await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
   } catch (error) {
-    debug('[IWTF-4872] Top-level error in execute:')
-    debug(`[IWTF-4872] error.status: ${error.status}`)
-    debug(`[IWTF-4872] error.statusCode: ${error.statusCode}`)
-    debug(`[IWTF-4872] error.body?.statusCode: ${error.body?.statusCode}`)
-    debug(`[IWTF-4872] error keys: ${Object.keys(error).join(', ')}`)
-    debug(`[IWTF-4872] Full error: ${JSON.stringify(error)}`)
     throw error
   }
 }
