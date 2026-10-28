@@ -8,7 +8,9 @@ import {
 } from '@defra-fish/business-rules-lib'
 import Bottleneck from 'bottleneck'
 import moment from 'moment'
+import db from 'debug'
 import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
+const debug = db('payment-mop-up-job:execute')
 
 const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
 const HTTP_STATUS_GONE = 410
@@ -148,6 +150,7 @@ const getStatus = async (paymentReference, agreementId) => {
 const getStatusWrapped = limiter.wrap(getStatus)
 
 export const execute = async (ageMinutes, scanDurationHours) => {
+  debug(`Running payment mop up processor with a payment age of ${ageMinutes} minutes and a scan duration of ${scanDurationHours} hours`)
   const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
   const now = moment()
   const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
@@ -159,6 +162,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   })
   const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
 
+  // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await (async () => {
     try {
       return await Promise.all(
@@ -183,7 +187,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     }
   })()
 
-  // Process each result
+  // Process each result and handle failures
   const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
   const failures = results.filter(result => result.status === 'rejected')
   if (failures.length > 0 && failures[0].reason?.status !== HTTP_STATUS_GONE) {
