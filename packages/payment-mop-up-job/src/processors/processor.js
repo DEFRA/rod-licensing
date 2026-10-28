@@ -134,45 +134,39 @@ const getStatus = async (paymentReference, agreementId) => {
 const getStatusWrapped = limiter.wrap(getStatus)
 
 export const execute = async (ageMinutes, scanDurationHours) => {
-  try {
-    const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
-    const now = moment()
-    const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
+  const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
+  const now = moment()
+  const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
 
-    const paymentJournals = await salesApi.paymentJournals.getAll({
-      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress,
-      from: fromTimestamp.toISOString(),
-      to: now.toISOString()
-    })
-    const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
+  const paymentJournals = await salesApi.paymentJournals.getAll({
+    paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress,
+    from: fromTimestamp.toISOString(),
+    to: now.toISOString()
+  })
+  const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
 
-    // Get the status for each payment from the GOV.UK Pay API.
-    const journalsWithRecurringPaymentIDs = await (async () => {
-      try {
-        return await Promise.all(
-          paymentJournalsToMopUp.map(async p => {
-            const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
-            const paymentJournalWithStatus = {
-              ...p,
-              paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
-            }
-            if (transactionRecord?.recurringPayment) {
-              paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
-            }
-            return paymentJournalWithStatus
-          })
-        )
-      } catch (error) {
-        if (error.status !== HTTP_STATUS_GONE) {
-          throw error
-        }
-        return []
+  const journalsWithRecurringPaymentIDs = await (async () => {
+    try {
+      return await Promise.all(
+        paymentJournalsToMopUp.map(async p => {
+          const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
+          const paymentJournalWithStatus = {
+            ...p,
+            paymentStatus: await getStatusWrapped(p.paymentReference, transactionRecord?.recurringPayment?.agreementId)
+          }
+          if (transactionRecord?.recurringPayment) {
+            paymentJournalWithStatus.recurringPaymentId = transactionRecord.recurringPayment.id
+          }
+          return paymentJournalWithStatus
+        })
+      )
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
       }
-    })()
+      return []
+    }
+  })()
 
-    // Process each result
-    await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
-  } catch (error) {
-    throw error
-  }
+  await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
 }
