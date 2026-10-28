@@ -25,10 +25,9 @@ const formatTransactionData = transaction => {
     return ''
   }
   const { cost, dataSource, id } = transaction.data
-  const details = [cost !== undefined && `cost: ${cost}`, dataSource && `dataSource: ${dataSource}`, id && `id: ${id}`]
+  const fields = [cost !== undefined && `cost: ${cost}`, dataSource && `dataSource: ${dataSource}`, id && `id: ${id}`]
     .filter(Boolean)
-    .join(', ')
-  return details ? ` [${details}]` : ''
+  return fields.length ? ` [${fields.join(', ')}]` : ''
 }
 
 const getPaymentJournalStatusCodeFromTransaction = transaction => {
