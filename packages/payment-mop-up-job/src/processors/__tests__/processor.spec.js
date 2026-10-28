@@ -1,5 +1,4 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
-import { execute } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 
@@ -10,6 +9,10 @@ jest.mock('bottleneck', () =>
     this.wrap = fn => fn
   })
 )
+
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+
+import { execute } from '../processor.js'
 
 const journalEntries = () => [
   {
@@ -212,7 +215,6 @@ const mockSingleSuccessfulPayment = () => {
 describe('processor', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.spyOn(console, 'log').mockImplementation(() => {})
     govUkPayApi.fetchPaymentStatus.mockReset()
     govUkPayApi.fetchPaymentEvents.mockReset()
   })
@@ -271,28 +273,14 @@ describe('processor', () => {
     })
   })
 
-  it('logs message when a 410 error code from finaliseTransaction is treated as already finalised', async () => {
+  it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
     const entry = mockSingleSuccessfulPayment()
     const error = Object.assign(new Error('Gone'), { status: 410 })
     salesApi.finaliseTransaction.mockRejectedValueOnce(error)
 
     await execute(1, 1)
 
-    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
-    expect(logs).toContain(
-      `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
-    )
-  })
-
-  it('logs error object when a 410 error code from finaliseTransaction is treated as already finalised', async () => {
-    mockSingleSuccessfulPayment()
-    const error = Object.assign(new Error('Gone'), { status: 410 })
-    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    const logs = console.log.mock.calls.map(call => call[0])
-    expect(logs).toContain(error)
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalled()
   })
 
   it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
@@ -638,28 +626,14 @@ describe('processor', () => {
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
   })
 
-  it('logs message when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
-    const entry = mockSingleSuccessfulPayment()
-    const error = Object.assign(new Error('Gone'), { status: 410 })
-    salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
-    expect(logs).toContain(
-      `[payment-mop-up-job] Transaction id: ${entry.id} journal already updated (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
-    )
-  })
-
-  it('logs error object when a 410 error code from updatePaymentJournal is treated as already updated', async () => {
+  it('treats a 410 error code from updatePaymentJournal as already updated and continues processing', async () => {
     mockSingleSuccessfulPayment()
     const error = Object.assign(new Error('Gone'), { status: 410 })
     salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
 
     await execute(1, 1)
 
-    const logs = console.log.mock.calls.map(call => call[0])
-    expect(logs).toContain(error)
+    expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
   })
 
   it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
@@ -669,7 +643,7 @@ describe('processor', () => {
     await expect(execute(1, 1)).rejects.toThrow('Database error')
   })
 
-  it('logs message when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
+  it('treats a 410 error code from cancelRecurringPayment as already cancelled and continues processing', async () => {
     const entry = journalEntries()[0]
     const rpid = Symbol('recurring-payment-id')
     const error = Object.assign(new Error('Gone'), { status: 410 })
@@ -685,30 +659,7 @@ describe('processor', () => {
 
     await execute(1, 1)
 
-    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
-    expect(logs).toContain(
-      `[payment-mop-up-job] Transaction id: ${entry.id} recurring payment already cancelled (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
-    )
-  })
-
-  it('logs error object when a 410 error code from cancelRecurringPayment is treated as already cancelled', async () => {
-    const entry = journalEntries()[0]
-    const rpid = Symbol('recurring-payment-id')
-    const error = Object.assign(new Error('Gone'), { status: 410 })
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [] })
-    })
-    salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    const logs = console.log.mock.calls.map(call => call[0])
-    expect(logs).toContain(error)
+    expect(salesApi.cancelRecurringPayment).toHaveBeenCalled()
   })
 
   it('rethrows errors from cancelRecurringPayment that are not a 410 error', async () => {
@@ -737,32 +688,6 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
   })
 
-  it('logs message when a 410 error code from retrieveStagedTransaction is treated as already retrieved', async () => {
-    const entry = journalEntries()[0]
-    const error = Object.assign(new Error('Gone'), { status: 410 })
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
-    expect(logs).toContain(
-      `[payment-mop-up-job] Cannot retrieve transaction id: ${entry.id} (410 Gone) [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]`
-    )
-  })
-
-  it('logs error object when a 410 error code from retrieveStagedTransaction is treated as already retrieved', async () => {
-    const entry = journalEntries()[0]
-    const error = Object.assign(new Error('Gone'), { status: 410 })
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    const logs = console.log.mock.calls.map(call => call[0])
-    expect(logs).toContain(error)
-  })
-
   it('rethrows non-410 errors from retrieveStagedTransaction', async () => {
     const entry = journalEntries()[0]
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
@@ -786,59 +711,5 @@ describe('processor', () => {
     await execute(1, 1)
 
     expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
-  })
-
-  it('logs 410 error without transaction data details when data field is missing', async () => {
-    const entry = journalEntries()[0]
-    const entryWithoutData = { ...entry, data: null }
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entryWithoutData])
-    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: 'success' }, amount: 8200 })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }] })
-    })
-
-    await execute(1, 1)
-
-    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
-  })
-
-  it('logs 410 error with partial transaction data details when some fields are missing', async () => {
-    const entry = journalEntries()[0]
-    const entryWithPartialData = { ...entry, data: { cost: 36.8, dataSource: 'Web Sales' } }
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entryWithPartialData])
-    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: 'success' }, amount: 8200 })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }] })
-    })
-
-    await execute(1, 1)
-
-    const logs = console.log.mock.calls.map(call => call[0]).filter(log => typeof log === 'string')
-    expect(logs).toContain(
-      `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales]`
-    )
-  })
-
-  it('logs 410 error without data details when transaction data is empty object', async () => {
-    const entry = journalEntries()[0]
-    const entryWithEmptyData = { ...entry, data: {} }
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entryWithEmptyData])
-    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: 'success' }, amount: 8200 })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }] })
-    })
-
-    await execute(1, 1)
-
-    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
   })
 })

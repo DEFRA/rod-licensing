@@ -85,7 +85,7 @@ const finaliseTransaction = async transaction => {
     return
   }
 
-  console.log(`[payment-mop-up-job] Completing mop up finalisation for transaction id: ${transaction.id}`)
+  debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
   try {
     await salesApi.finaliseTransaction(transaction.id, {
       payment: {
@@ -100,10 +100,10 @@ const finaliseTransaction = async transaction => {
       throw error
     }
 
-    console.log(
-      `[payment-mop-up-job] Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`
+    debug(
+      `Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`
     )
-    console.log(error)
+    debug(error)
   }
 }
 
@@ -121,10 +121,10 @@ const updatePaymentJournalIfNeeded = async transaction => {
       throw error
     }
 
-    console.log(
-      `[payment-mop-up-job] Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`
+    debug(
+      `Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`
     )
-    console.log(error)
+    debug(error)
   }
 }
 
@@ -140,12 +140,12 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
       throw error
     }
 
-    console.log(
-      `[payment-mop-up-job] Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(
+    debug(
+      `Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(
         transaction
       )}`
     )
-    console.log(error)
+    debug(error)
   }
 }
 
@@ -206,10 +206,10 @@ export const execute = async (ageMinutes, scanDurationHours) => {
         fulfilled.push(result.value)
       } else if (result.reason?.status === HTTP_STATUS_GONE) {
         const failedJournal = paymentJournalsToMopUp[index]
-        console.log(
-          `[payment-mop-up-job] Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`
+        debug(
+          `Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`
         )
-        console.log(result.reason)
+        debug(result.reason)
       } else {
         nonGoneFailures.push(result.reason)
       }
