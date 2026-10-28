@@ -25,8 +25,7 @@ const formatTransactionData = transaction => {
     return ''
   }
   const { cost, dataSource, id } = transaction.data
-  const fields = [cost !== undefined && `cost: ${cost}`, dataSource && `dataSource: ${dataSource}`, id && `id: ${id}`]
-    .filter(Boolean)
+  const fields = [cost !== undefined && `cost: ${cost}`, dataSource && `dataSource: ${dataSource}`, id && `id: ${id}`].filter(Boolean)
   return fields.length ? ` [${fields.join(', ')}]` : ''
 }
 
