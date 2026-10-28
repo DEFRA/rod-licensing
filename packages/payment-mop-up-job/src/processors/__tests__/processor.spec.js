@@ -824,4 +824,21 @@ describe('processor', () => {
       `[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone) [cost: 36.8, dataSource: Web Sales]`
     )
   })
+
+  it('logs 410 error without data details when transaction data is empty object', async () => {
+    const entry = journalEntries()[0]
+    const entryWithEmptyData = { ...entry, data: {} }
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entryWithEmptyData])
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' }, amount: 8200 })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }] })
+    })
+
+    await execute(1, 1)
+
+    expect(console.log).toHaveBeenCalledWith(`[payment-mop-up-job] Transaction id: ${entry.id} has already been finalised (410 Gone)`)
+  })
 })
