@@ -184,5 +184,10 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     }
   })()
 
-  await Promise.all(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
+  // Process each result
+  const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
+  const failures = results.filter(result => result.status === 'rejected')
+  if (failures.length > 0 && failures[0].reason?.status !== HTTP_STATUS_GONE) {
+    throw failures[0].reason
+  }
 }
