@@ -81,71 +81,57 @@ const shouldCancelRecurringPayment = transaction => {
 }
 
 const finaliseTransaction = async transaction => {
-  if (transaction.paymentStatus.state?.status !== 'success') {
-    return
-  }
-
-  debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
-  try {
-    await salesApi.finaliseTransaction(transaction.id, {
-      payment: {
-        amount: transaction.paymentStatus.amount / 100,
-        timestamp: transaction.paymentStatus.transactionTimestamp,
-        source: TRANSACTION_SOURCE.govPay,
-        method: PAYMENT_TYPE.debit
+  if (transaction.paymentStatus.state?.status === 'success') {
+    debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
+    try {
+      await salesApi.finaliseTransaction(transaction.id, {
+        payment: {
+          amount: transaction.paymentStatus.amount / 100,
+          timestamp: transaction.paymentStatus.transactionTimestamp,
+          source: TRANSACTION_SOURCE.govPay,
+          method: PAYMENT_TYPE.debit
+        }
+      })
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
       }
-    })
-  } catch (error) {
-    if (error.status !== HTTP_STATUS_GONE) {
-      throw error
-    }
 
-    debug(
-      `Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`
-    )
-    debug(error)
+      debug(`Transaction id: ${transaction.id} has already been finalised (410 Gone)${formatTransactionData(transaction)}`)
+      debug(error)
+    }
   }
 }
 
 const updatePaymentJournalIfNeeded = async transaction => {
-  if (!shouldUpdatePaymentJournal(transaction)) {
-    return
-  }
+  if (shouldUpdatePaymentJournal(transaction)) {
+    try {
+      await salesApi.updatePaymentJournal(transaction.id, {
+        paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
+      })
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
+      }
 
-  try {
-    await salesApi.updatePaymentJournal(transaction.id, {
-      paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
-    })
-  } catch (error) {
-    if (error.status !== HTTP_STATUS_GONE) {
-      throw error
+      debug(`Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`)
+      debug(error)
     }
-
-    debug(
-      `Transaction id: ${transaction.id} journal already updated (410 Gone)${formatTransactionData(transaction)}`
-    )
-    debug(error)
   }
 }
 
 const cancelRecurringPaymentIfNeeded = async transaction => {
-  if (!shouldCancelRecurringPayment(transaction)) {
-    return
-  }
+  if (shouldCancelRecurringPayment(transaction)) {
+    try {
+      await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
+    } catch (error) {
+      if (error.status !== HTTP_STATUS_GONE) {
+        throw error
+      }
 
-  try {
-    await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
-  } catch (error) {
-    if (error.status !== HTTP_STATUS_GONE) {
-      throw error
+      debug(`Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(transaction)}`)
+      debug(error)
     }
-
-    debug(
-      `Transaction id: ${transaction.id} recurring payment already cancelled (410 Gone)${formatTransactionData(
-        transaction
-      )}`
-    )
-    debug(error)
   }
 }
 
@@ -206,9 +192,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
         fulfilled.push(result.value)
       } else if (result.reason?.status === HTTP_STATUS_GONE) {
         const failedJournal = paymentJournalsToMopUp[index]
-        debug(
-          `Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`
-        )
+        debug(`Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`)
         debug(result.reason)
       } else {
         nonGoneFailures.push(result.reason)
