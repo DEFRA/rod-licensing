@@ -1,5 +1,5 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
-import { execute } from '../processor.js'
+import { execute, formatTransactionData } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 
@@ -11,41 +11,113 @@ jest.mock('bottleneck', () =>
   })
 )
 
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+
 const journalEntries = () => [
   {
     id: '4fa393ab-07f4-407e-b233-89be2a6f5f77',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '05nioqikvvnuu5l8m2qeaj0qap',
-    paymentTimestamp: '2020-06-01T10:35:56.873Z'
+    paymentTimestamp: '2020-06-01T10:35:56.873Z',
+    permissions: [
+      {
+        referenceNumber: '23271027-2WC3FSG-AFPDA8',
+        licensee: {
+          firstName: 'Spooky',
+          lastName: 'Ghost'
+        }
+      }
+    ],
+    data: {
+      cost: 36.8,
+      dataSource: 'Web Sales',
+      id: 'd367bd08-7c5c-45b6-8581-f60225d59492'
+    }
   },
   {
     id: 'aaced854-d337-47ee-8d5e-75b26aeb90fb',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '0f3dr9ugp7u68qq18vt9h8ma85',
-    paymentTimestamp: '2020-06-02T07:17:23.169Z'
+    paymentTimestamp: '2020-06-02T07:17:23.169Z',
+    permissions: [
+      {
+        referenceNumber: '23271028-3XD4GRH-BGQEB9',
+        licensee: {
+          firstName: 'John',
+          lastName: 'Smith'
+        }
+      }
+    ],
+    data: {
+      cost: 45.5,
+      dataSource: 'Phone Sales',
+      id: 'e478ce19-8d6d-56c7-9692-g71336d60603'
+    }
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8213',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vme',
-    paymentTimestamp: '2020-06-04T11:04:30.802Z'
+    paymentTimestamp: '2020-06-04T11:04:30.802Z',
+    permissions: [
+      {
+        referenceNumber: '23271029-4YE5HSI-CHRFC0',
+        licensee: {
+          firstName: 'Jane',
+          lastName: 'Doe'
+        }
+      }
+    ],
+    data: {
+      cost: 52.25,
+      dataSource: 'Web Sales',
+      id: 'f589df2a-9e7e-67d8-0803-h82447e71714'
+    }
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8214',
     eligibleForEarlyMopUp: true,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmf',
-    paymentTimestamp: '2020-06-04T12:04:30.802Z'
+    paymentTimestamp: '2020-06-04T12:04:30.802Z',
+    permissions: [
+      {
+        referenceNumber: '23271030-5ZF6ITJ-DISSGD1',
+        licensee: {
+          firstName: 'Bob',
+          lastName: 'Johnson'
+        }
+      }
+    ],
+    data: {
+      cost: 28.9,
+      dataSource: 'Post Office',
+      id: 'g69aeg3b-0f8f-78e9-1914-i93558f82825'
+    }
   },
   {
     id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8215',
     eligibleForEarlyMopUp: false,
     paymentStatus: 'In Progress',
     paymentReference: '7lufvi9sbh077rvrrmnqo63vmg',
-    paymentTimestamp: '2020-06-04T12:04:30.802Z'
+    paymentTimestamp: '2020-06-04T12:04:30.802Z',
+    permissions: [
+      {
+        referenceNumber: '23271031-6AG7JUK-EJUTAHE2',
+        licensee: {
+          firstName: 'Alice',
+          lastName: 'Williams'
+        }
+      }
+    ],
+    data: {
+      cost: 19.75,
+      dataSource: 'Web Sales',
+      id: 'h7aabfh4c-1g9g-89fa-2a25-j04669g93936'
+    }
   }
 ]
 
@@ -130,6 +202,42 @@ const createPaymentEventsEntry = paymentStatus => {
   }
 }
 
+const mockSingleSuccessfulPayment = () => {
+  const [entry] = journalEntries()
+  const [status] = govUkPayStatusEntries()
+  salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+  govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => status })
+  govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({ json: async () => createPaymentEventsEntry(status) })
+  return entry
+}
+
+describe('formatTransactionData', () => {
+  it('returns empty string when transaction has no data property', () => {
+    const transaction = { id: 'test-id' }
+    const result = formatTransactionData(transaction)
+    expect(result).toBe('')
+  })
+
+  it('returns formatted string with transaction data fields', () => {
+    const transaction = {
+      id: 'test-id',
+      data: {
+        cost: 36.8,
+        dataSource: 'Web Sales',
+        id: 'd367bd08-7c5c-45b6-8581-f60225d59492'
+      }
+    }
+    const result = formatTransactionData(transaction)
+    expect(result).toBe(' [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]')
+  })
+
+  it('returns empty string when transaction data has no truthy fields', () => {
+    const transaction = { id: 'test-id', data: {} }
+    const result = formatTransactionData(transaction)
+    expect(result).toBe('')
+  })
+})
+
 describe('processor', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -178,6 +286,34 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('a0e0e5c3-1004-4271-80ba-d05eda3e8215', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
     })
+  })
+
+  it('treats a 410 error code from finaliseTransaction as already finalised and verifies journal status update', async () => {
+    const entry = mockSingleSuccessfulPayment()
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(entry.id, {
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
+    })
+  })
+
+  it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
+    mockSingleSuccessfulPayment()
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalled()
+  })
+
+  it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
+    mockSingleSuccessfulPayment()
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Server error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('Server error')
   })
 
   it.each([
@@ -277,7 +413,7 @@ describe('processor', () => {
       }
     ])
     govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
     })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
@@ -485,7 +621,7 @@ describe('processor', () => {
     salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: 'def-456' } })
     govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+      json: async () => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
     })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => ({ state: { status: 'success' } })
@@ -500,17 +636,106 @@ describe('processor', () => {
     const journals = journalEntries()
     salesApi.paymentJournals.getAll.mockReturnValueOnce(journals)
     for (let x = 0; x < journals.length; x++) {
-      govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({ json: async => ({ state: { status: 'success' } }) })
+      govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({ json: async () => ({ state: { status: 'success' } }) })
       govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-        json: async => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
+        json: async () => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
       })
     }
     salesApi.finaliseTransaction.mockRejectedValueOnce(
-      new Error('Unexpected response from the Sales API: { "ok": false, "status": 410, "statusText": "Gone" }')
+      Object.assign(new Error('Unexpected response from the Sales API: { "ok": false, "status": 410, "statusText": "Gone" }'), {
+        status: 410
+      })
     )
 
     await execute(1, 1)
 
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
+  })
+
+  it('treats a 410 error code from updatePaymentJournal as already updated and continues processing', async () => {
+    mockSingleSuccessfulPayment()
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
+  })
+
+  it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
+    mockSingleSuccessfulPayment()
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Database error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('Database error')
+  })
+
+  it('treats a 410 error code from cancelRecurringPayment as already cancelled and continues processing', async () => {
+    const entry = journalEntries()[0]
+    const rpid = Symbol('recurring-payment-id')
+    const error = Object.assign(new Error('Gone'), { status: 410 })
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [] })
+    })
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
+
+    await execute(1, 1)
+
+    expect(salesApi.cancelRecurringPayment).toHaveBeenCalled()
+  })
+
+  it('rethrows errors from cancelRecurringPayment that are not a 410 error', async () => {
+    const entry = journalEntries()[0]
+    const rpid = Symbol('recurring-payment-id')
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [] })
+    })
+    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('API error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('API error')
+  })
+
+  it('treats a 410 error code from retrieveStagedTransaction as logged but returns empty array for processing', async () => {
+    const entry = journalEntries()[0]
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
+  })
+
+  it('rethrows non-410 errors from retrieveStagedTransaction', async () => {
+    const entry = journalEntries()[0]
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Retrieval error'), { status: 500 }))
+
+    await expect(execute(1, 1)).rejects.toThrow('Retrieval error')
+  })
+
+  it('skips 410 transactions but continues processing successful ones in the same batch', async () => {
+    const entries = journalEntries().slice(0, 2)
+    salesApi.paymentJournals.getAll.mockReturnValueOnce(entries)
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: null })
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => govUkPayStatusEntries()[0]
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => createPaymentEventsEntry(govUkPayStatusEntries()[0])
+    })
+
+    await execute(1, 1)
+
+    expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
   })
 })
