@@ -1,4 +1,5 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
+import { execute, formatTransactionData } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 
@@ -11,8 +12,6 @@ jest.mock('bottleneck', () =>
 )
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
-
-import { execute } from '../processor.js'
 
 const journalEntries = () => [
   {
@@ -212,6 +211,33 @@ const mockSingleSuccessfulPayment = () => {
   return entry
 }
 
+describe('formatTransactionData', () => {
+  it('returns empty string when transaction has no data property', () => {
+    const transaction = { id: 'test-id' }
+    const result = formatTransactionData(transaction)
+    expect(result).toBe('')
+  })
+
+  it('returns formatted string with transaction data fields', () => {
+    const transaction = {
+      id: 'test-id',
+      data: {
+        cost: 36.8,
+        dataSource: 'Web Sales',
+        id: 'd367bd08-7c5c-45b6-8581-f60225d59492'
+      }
+    }
+    const result = formatTransactionData(transaction)
+    expect(result).toBe(' [cost: 36.8, dataSource: Web Sales, id: d367bd08-7c5c-45b6-8581-f60225d59492]')
+  })
+
+  it('returns empty string when transaction data has no truthy fields', () => {
+    const transaction = { id: 'test-id', data: {} }
+    const result = formatTransactionData(transaction)
+    expect(result).toBe('')
+  })
+})
+
 describe('processor', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -262,7 +288,7 @@ describe('processor', () => {
     })
   })
 
-  it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
+  it('treats a 410 error code from finaliseTransaction as already finalised and verifies journal status update', async () => {
     const entry = mockSingleSuccessfulPayment()
     salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
 
@@ -274,7 +300,7 @@ describe('processor', () => {
   })
 
   it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
-    const entry = mockSingleSuccessfulPayment()
+    mockSingleSuccessfulPayment()
     const error = Object.assign(new Error('Gone'), { status: 410 })
     salesApi.finaliseTransaction.mockRejectedValueOnce(error)
 
@@ -678,7 +704,7 @@ describe('processor', () => {
     await expect(execute(1, 1)).rejects.toThrow('API error')
   })
 
-  it('treats a 410 error code from retrieveStagedTransaction as already retrieved and returns empty array', async () => {
+  it('treats a 410 error code from retrieveStagedTransaction as logged but returns empty array for processing', async () => {
     const entry = journalEntries()[0]
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
     salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))

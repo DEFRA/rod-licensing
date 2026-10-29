@@ -29,6 +29,8 @@ const formatTransactionData = transaction => {
   return fields.length ? ` [${fields.join(', ')}]` : ''
 }
 
+export { formatTransactionData }
+
 const getPaymentJournalStatusCodeFromTransaction = transaction => {
   if (transaction.paymentStatus.state?.status === PAYMENT_STATUS.Error) {
     return PAYMENT_JOURNAL_STATUS_CODES.Failed
@@ -169,7 +171,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
 
   // Get the status for each payment from the GOV.UK Pay API.
-  const journalsWithRecurringPaymentIDs = await (async () => {
+  const { fulfilled: journalsWithRecurringPaymentIDs, nonGoneFailures: retrievalFailures } = await (async () => {
     const retrievalResults = await Promise.allSettled(
       paymentJournalsToMopUp.map(async p => {
         const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
@@ -199,12 +201,12 @@ export const execute = async (ageMinutes, scanDurationHours) => {
       }
     })
 
-    if (nonGoneFailures.length > 0) {
-      throw nonGoneFailures[0]
-    }
-
-    return fulfilled
+    return { fulfilled, nonGoneFailures }
   })()
+
+  if (retrievalFailures.length > 0) {
+    throw retrievalFailures[0]
+  }
 
   // Process each result and handle failures
   const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
