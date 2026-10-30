@@ -230,8 +230,11 @@ const checkPaymentStatuses = async payments => {
       if (paymentStatus === PAYMENT_STATUS.Success) {
         await handlePaymentStatusSuccess(paymentStatusCheck)
       }
-      if ([PAYMENT_STATUS.Failure, PAYMENT_STATUS.Error].includes(paymentStatus)) {
-        await handlePaymentStatusFailure(payment)
+      if (paymentStatus === PAYMENT_STATUS.Failure) {
+        await handlePaymentStatusFailure(payment, false)
+      }
+      if (paymentStatus === PAYMENT_STATUS.Error) {
+        await handlePaymentStatusFailure(payment, true)
       }
     } else if (isClientError(response.status)) {
       console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${response.status}`)
@@ -266,8 +269,12 @@ const handlePaymentStatusSuccess = async paymentStatusCheck => {
   }
 }
 
-const handlePaymentStatusFailure = async payment => {
-  console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+const handlePaymentStatusFailure = async (payment, isError) => {
+  if (isError) {
+    console.error(`Payment failed. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+  } else {
+    debug(`Payment declined. Recurring payment agreement for: ${payment.agreementId} set to be cancelled. Updating payment journal.`)
+  }
 
   if (await salesApi.getPaymentJournal(payment.transactionId)) {
     await salesApi.updatePaymentJournal(payment.transactionId, {
