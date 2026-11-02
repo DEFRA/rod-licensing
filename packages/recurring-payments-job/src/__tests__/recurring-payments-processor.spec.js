@@ -1261,8 +1261,8 @@ describe('recurring-payments-processor', () => {
   })
 
   it.each`
-    agreementId         | mockStatus
-    ${'agreement-id'}   | ${getPaymentStatusError()}
+    agreementId               | mockStatus
+    ${'agreement-id'}         | ${getPaymentStatusError()}
     ${'test-agreement-id'}    | ${getPaymentStatusError()}
     ${'another-agreement-id'} | ${getPaymentStatusError()}
   `(
@@ -1279,22 +1279,19 @@ describe('recurring-payments-processor', () => {
   )
 
   it.each`
-    agreementId         | mockStatus
-    ${'agreement-id'}   | ${getPaymentStatusFailure()}
+    agreementId               | mockStatus
+    ${'agreement-id'}         | ${getPaymentStatusFailure()}
     ${'test-agreement-id'}    | ${getPaymentStatusFailure()}
     ${'another-agreement-id'} | ${getPaymentStatusFailure()}
-  `(
-    'console error is NOT called when payment is a declined payment for $agreementId',
-    async ({ agreementId, mockStatus }) => {
-      const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
+  `('console error is NOT called when payment is a declined payment for $agreementId', async ({ agreementId, mockStatus }) => {
+    const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
 
-      await execute()
+    await execute()
 
-      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
-        `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
-      )
-    }
-  )
+    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+      `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
+    )
+  })
 
   it.each([
     ['a failure', 'agreement-id', getPaymentStatusFailure()],
