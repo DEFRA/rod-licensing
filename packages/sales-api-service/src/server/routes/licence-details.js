@@ -27,9 +27,9 @@ const isActiveTwelveMonthLicence = permission => {
 }
 
 export const getLicenceDetails = async request => {
-  const { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode } = request.query
+  const { licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode } = request.query
   const contacts = await executeWithErrorLog(
-    contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePostcode })
+    contactForLicenseeByPersonalDetails({ licenseeFirstName, licenseeLastName, licenseeBirthDate, licenseePremises, licenseePostcode })
   )
 
   if (!contacts.length) {
@@ -64,9 +64,9 @@ export default [
     path: '/licenceDetails',
     options: {
       handler,
-      description: 'Look up licence details for a licensee using their name, postcode and date of birth',
+      description: 'Look up licence details for a licensee using their name, premises, postcode and date of birth',
       notes: `
-        Look up licence details for a licensee using their name, postcode and date of birth
+        Look up licence details for a licensee using their name, premises, postcode and date of birth
       `,
       tags: ['api', 'licence-details'],
       validate: {

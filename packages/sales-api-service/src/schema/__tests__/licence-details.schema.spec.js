@@ -5,7 +5,8 @@ const getRequestSampleData = () => ({
   licenseeFirstName: 'Laila',
   licenseeLastName: 'Alial',
   licenseeBirthDate: '2000-10-03',
-  licenseePostcode: 'W8 7PP'
+  licenseePostcode: 'W8 7PP',
+  licenseePremises: '12'
 })
 
 const optionSetOptionSample = () => ({ id: 910400000, label: 'Example Label', description: 'Example Description' })
@@ -49,7 +50,7 @@ describe('licenceDetailsRequestQuerySchema', () => {
     expect(result).toEqual(getRequestSampleData())
   })
 
-  it.each([['licenseeFirstName'], ['licenseeLastName'], ['licenseeBirthDate'], ['licenseePostcode']])(
+  it.each([['licenseeFirstName'], ['licenseeLastName'], ['licenseeBirthDate'], ['licenseePostcode'], ['licenseePremises']])(
     'fails when %s is missing',
     async field => {
       const { [field]: _, ...invalidData } = getRequestSampleData()
