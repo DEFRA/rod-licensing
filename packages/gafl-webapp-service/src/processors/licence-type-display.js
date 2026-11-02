@@ -59,8 +59,9 @@ const getLengthText = (catalog, data) => {
     return catalog.licence_type_1d
   } else if (data.permission.licenceLength === '8D') {
     return catalog.licence_type_8d
+  } else {
+    return catalog.licence_type_12m
   }
-  return catalog.licence_type_12m
 }
 
 export const licenceSummaryRows = (catalog, data) => {
