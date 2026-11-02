@@ -9,11 +9,11 @@ import {
 import Bottleneck from 'bottleneck'
 import moment from 'moment'
 import db from 'debug'
+import { StatusCodes } from 'http-status-codes'
 import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
 const debug = db('payment-mop-up-job:execute')
 
 const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
-const HTTP_STATUS_GONE = 410
 
 const limiter = new Bottleneck({
   minTime: process.env.RATE_LIMIT_MS || RATE_LIMIT_MS_DEFAULT,
@@ -95,7 +95,7 @@ const finaliseTransaction = async transaction => {
         }
       })
     } catch (error) {
-      if (error.status !== HTTP_STATUS_GONE) {
+      if (error.status !== StatusCodes.GONE) {
         throw error
       }
 
@@ -112,7 +112,7 @@ const updatePaymentJournalIfNeeded = async transaction => {
         paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
       })
     } catch (error) {
-      if (error.status !== HTTP_STATUS_GONE) {
+      if (error.status !== StatusCodes.GONE) {
         throw error
       }
 
@@ -127,7 +127,7 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
     try {
       await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
     } catch (error) {
-      if (error.status !== HTTP_STATUS_GONE) {
+      if (error.status !== StatusCodes.GONE) {
         throw error
       }
 
@@ -192,7 +192,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     retrievalResults.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         fulfilled.push(result.value)
-      } else if (result.reason?.status === HTTP_STATUS_GONE) {
+      } else if (result.reason?.status === StatusCodes.GONE) {
         const failedJournal = paymentJournalsToMopUp[index]
         debug(`Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`)
         debug(result.reason)
@@ -211,7 +211,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   // Process each result and handle failures
   const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
   const failures = results.filter(result => result.status === 'rejected')
-  if (failures.length > 0 && failures[0].reason?.status !== HTTP_STATUS_GONE) {
+  if (failures.length > 0 && failures[0].reason?.status !== StatusCodes.GONE) {
     throw failures[0].reason
   }
 }

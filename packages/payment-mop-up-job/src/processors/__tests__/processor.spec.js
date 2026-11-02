@@ -1,6 +1,7 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { execute, formatTransactionData } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
+import { StatusCodes } from 'http-status-codes'
 import moment from 'moment'
 
 jest.mock('@defra-fish/connectors-lib')
@@ -290,7 +291,7 @@ describe('processor', () => {
 
   it('treats a 410 error code from finaliseTransaction as already finalised and verifies journal status update', async () => {
     const entry = mockSingleSuccessfulPayment()
-    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: StatusCodes.GONE }))
 
     await execute(1, 1)
 
@@ -301,7 +302,7 @@ describe('processor', () => {
 
   it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
     mockSingleSuccessfulPayment()
-    const error = Object.assign(new Error('Gone'), { status: 410 })
+    const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
     salesApi.finaliseTransaction.mockRejectedValueOnce(error)
 
     await execute(1, 1)
@@ -654,7 +655,7 @@ describe('processor', () => {
 
   it('treats a 410 error code from updatePaymentJournal as already updated and continues processing', async () => {
     mockSingleSuccessfulPayment()
-    const error = Object.assign(new Error('Gone'), { status: 410 })
+    const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
     salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
 
     await execute(1, 1)
@@ -672,7 +673,7 @@ describe('processor', () => {
   it('treats a 410 error code from cancelRecurringPayment as already cancelled and continues processing', async () => {
     const entry = journalEntries()[0]
     const rpid = Symbol('recurring-payment-id')
-    const error = Object.assign(new Error('Gone'), { status: 410 })
+    const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
@@ -707,7 +708,7 @@ describe('processor', () => {
   it('treats a 410 error code from retrieveStagedTransaction as logged but returns empty array for processing', async () => {
     const entry = journalEntries()[0]
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: StatusCodes.GONE }))
 
     await execute(1, 1)
 
@@ -725,7 +726,7 @@ describe('processor', () => {
   it('skips 410 transactions but continues processing successful ones in the same batch', async () => {
     const entries = journalEntries().slice(0, 2)
     salesApi.paymentJournals.getAll.mockReturnValueOnce(entries)
-    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: 410 }))
+    salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: StatusCodes.GONE }))
     salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: null })
     govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
       json: async () => govUkPayStatusEntries()[0]
