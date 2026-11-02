@@ -1,5 +1,11 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
-import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringLicenceTypeDisplay, licenceSummaryRows } from '../licence-type-display.js'
+import {
+  licenceTypeDisplay,
+  licenceTypeAndLengthDisplay,
+  isPhysical,
+  recurringLicenceTypeDisplay,
+  licenceSummaryRows
+} from '../licence-type-display.js'
 
 const getCatalog = (overrides = {}) => ({
   over_66: ' (over_66)',
@@ -156,7 +162,7 @@ describe('recurringLicenceTypeDisplay', () => {
   )
 })
 
-describe.only('Licence Summary Rows', () => {
+describe('Licence Summary Rows', () => {
   const getSampleData = (overrides = {}) => ({
     permission: {
       licensee: {}
@@ -188,10 +194,7 @@ describe.only('Licence Summary Rows', () => {
     )
   })
 
-  it.each([
-    '76y8789uy78u787uy7887u',
-    'jhuiuyhjui8u8iujhyu7yhgtyue8u7'
-  ])('adds a row with obfuscated DoB - "%s"', obfuscatedDob => {
+  it.each(['76y8789uy78u787uy7887u', 'jhuiuyhjui8u8iujhyu7yhgtyue8u7'])('adds a row with obfuscated DoB - "%s"', obfuscatedDob => {
     const extraLabel = { identification: 'IdEnTiFiCaTiOn' }
     const catalog = getCatalog(extraLabel)
     const permission = getPermission()
@@ -211,10 +214,7 @@ describe.only('Licence Summary Rows', () => {
     )
   })
 
-  it.each([
-    'Shopping trollies and old wellies',
-    'Cardboard and seaweed'
-  ])('adds a row with licence type "%s"', licenceTypeStr => {
+  it.each(['Shopping trollies and old wellies', 'Cardboard and seaweed'])('adds a row with licence type "%s"', licenceTypeStr => {
     const extraLabel = { licence_summary_type: 'LiCeNcE SuMmArY TyPe' }
     const catalog = getCatalog(extraLabel)
     const lsr = licenceSummaryRows(catalog, getSampleData({ licenceTypeStr }))
@@ -231,30 +231,35 @@ describe.only('Licence Summary Rows', () => {
   })
 
   it.each([
-    'Twelve Months',
-    '28 seconds',
-    '15 minutes'
-  ])('adds a row with licence length "%s"', lengthText => {
-    const extraLabel = { licence_summary_length: 'LiCeNcE SuMmArY LeNgTh' }
+    ['1D', 'licence_type_1d'],
+    ['8D', 'licence_type_8d'],
+    ['12M', 'licence_type_12m']
+  ])('sets licence length text for licence length %s', (licenceLength, expectedLengthTextLabel) => {
+    const expectedLengthText = 'Licence has this length'
+    const extraLabel = {
+      licence_summary_length: 'LiCeNcE SuMmArY LeNgTh',
+      [expectedLengthTextLabel]: 'Licence has this length'
+    }
     const catalog = getCatalog(extraLabel)
-    const lsr = licenceSummaryRows(catalog, getSampleData({ lengthText }))
+    const lsr = licenceSummaryRows(catalog, {
+      permission: {
+        licensee: {},
+        ...getPermission({ licenceLength })
+      }
+    })
     expect(lsr[3]).toEqual(
       expect.objectContaining({
         key: {
           text: extraLabel.licence_summary_length
         },
         value: {
-          text: lengthText
+          text: expectedLengthText
         }
       })
     )
   })
 
-  it.each([
-    'Now',
-    'Half an hour',
-    '2027-10-09T16:19:28.890Z'
-  ])('adds a row with start time "%s"', startTimeString => {
+  it.each(['Now', 'Half an hour', '2027-10-09T16:19:28.890Z'])('adds a row with start time "%s"', startTimeString => {
     const extraLabel = { starts: 'StArts' }
     const catalog = getCatalog(extraLabel)
     const lsr = licenceSummaryRows(catalog, getSampleData({ startTimeString }))
@@ -270,11 +275,7 @@ describe.only('Licence Summary Rows', () => {
     )
   })
 
-  it.each([
-    'One year',
-    'Ten Years',
-    '2028-10-09T17:33:12.967Z'
-  ])('adds a row with end time "%s"', endTimeString => {
+  it.each(['One year', 'Ten Years', '2028-10-09T17:33:12.967Z'])('adds a row with end time "%s"', endTimeString => {
     const extraLabel = { ends: 'EnDs' }
     const catalog = getCatalog(extraLabel)
     const lsr = licenceSummaryRows(catalog, getSampleData({ endTimeString }))
@@ -323,8 +324,8 @@ describe.only('Licence Summary Rows', () => {
   })
 
   it.each([
-    ['Junior', true], 
-    ['Junior', false], 
+    ['Junior', true],
+    ['Junior', false],
     ['Senior', true],
     ['Senior', false]
   ])('adds a last row with age concession - %s when disabled flag is %b', (ageConcessionText, disabled) => {
@@ -358,5 +359,4 @@ describe.only('Licence Summary Rows', () => {
       })
     )
   })
-
 })
