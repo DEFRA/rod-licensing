@@ -219,30 +219,33 @@ const preparePayment = (agreementId, transaction) => {
 
 const checkPaymentStatuses = async payments => {
   const batcher = await queuePaymentStatusChecks(payments)
-  for (const payment of payments) {
-    const responseDetail = batcher.responseDetails.find(rd => rd.reference === payment.paymentId)
-    const response = responseDetail.responses.at(-1)
-    if (isSuccessfulResponse(response.status)) {
-      const paymentStatusCheck = await response.json()
-      const paymentStatus = paymentStatusCheck.state.status
-      debug(`Payment status for ${paymentStatusCheck.payment_id}: ${paymentStatusCheck.state.status}`)
+  const statusChecks = payments.map(payment => processPaymentStatusCheck(payment, batcher))
+  await Promise.allSettled(statusChecks)
+}
 
-      if (paymentStatus === PAYMENT_STATUS.Success) {
-        await handlePaymentStatusSuccess(paymentStatusCheck)
-      }
-      if (paymentStatus === PAYMENT_STATUS.Failure) {
-        await handlePaymentStatusFailure(payment, false)
-      }
-      if (paymentStatus === PAYMENT_STATUS.Error) {
-        await handlePaymentStatusFailure(payment, true)
-      }
-    } else if (isClientError(response.status)) {
-      console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${response.status}`)
-    } else if (isServerError(response.status)) {
-      console.error(`Payment status API error for ${payment.paymentId}, error ${response.status}`)
-    } else {
-      console.error(`Unexpected error fetching payment status for ${payment.paymentId}.`)
+const processPaymentStatusCheck = async (payment, batcher) => {
+  const responseDetail = batcher.responseDetails.find(rd => rd.reference === payment.paymentId)
+  const response = responseDetail.responses.at(-1)
+  if (isSuccessfulResponse(response.status)) {
+    const paymentStatusCheck = await response.json()
+    const paymentStatus = paymentStatusCheck.state.status
+    debug(`Payment status for ${paymentStatusCheck.payment_id}: ${paymentStatusCheck.state.status}`)
+
+    if (paymentStatus === PAYMENT_STATUS.Success) {
+      await handlePaymentStatusSuccess(paymentStatusCheck)
     }
+    if (paymentStatus === PAYMENT_STATUS.Failure) {
+      await handlePaymentStatusFailure(payment, false)
+    }
+    if (paymentStatus === PAYMENT_STATUS.Error) {
+      await handlePaymentStatusFailure(payment, true)
+    }
+  } else if (isClientError(response.status)) {
+    console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${response.status}`)
+  } else if (isServerError(response.status)) {
+    console.error(`Payment status API error for ${payment.paymentId}, error ${response.status}`)
+  } else {
+    console.error(`Unexpected error fetching payment status for ${payment.paymentId}.`)
   }
 }
 
