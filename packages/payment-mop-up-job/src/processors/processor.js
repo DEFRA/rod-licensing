@@ -211,7 +211,16 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   // Process each result and handle failures
   const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
   const failures = results.filter(result => result.status === 'rejected')
-  if (failures.length > 0 && failures[0].reason?.status !== StatusCodes.GONE) {
-    throw failures[0].reason
+
+  // Log all failures
+  failures.forEach(failure => {
+    debug(`Processing failure: ${failure.reason?.status}${failure.reason?.message ? ': ' + failure.reason.message : ''}`)
+    debug(failure.reason)
+  })
+
+  // Throw only if non-410 failure
+  const nonGoneFailure = failures.find(failure => failure.reason?.status !== StatusCodes.GONE)
+  if (nonGoneFailure) {
+    throw nonGoneFailure.reason
   }
 }
