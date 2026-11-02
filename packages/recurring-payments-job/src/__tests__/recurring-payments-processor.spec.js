@@ -1283,7 +1283,7 @@ describe('recurring-payments-processor', () => {
     ${'agreement-id'}         | ${getPaymentStatusFailure()}
     ${'test-agreement-id'}    | ${getPaymentStatusFailure()}
     ${'another-agreement-id'} | ${getPaymentStatusFailure()}
-  `('console error is NOT called when payment is a declined payment for $agreementId', async ({ agreementId, mockStatus }) => {
+  `('when payment status is Failure (declined), console.error is NOT called for $agreementId', async ({ agreementId, mockStatus }) => {
     const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
 
     await execute()
