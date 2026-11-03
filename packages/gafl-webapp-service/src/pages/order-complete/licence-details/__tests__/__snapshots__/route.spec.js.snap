@@ -11,6 +11,7 @@ Object {
   "ageConcessionText": "age_senior_concession",
   "disabled": true,
   "endTimeString": "1:00am on 5 June 2021",
+  "licenceSummaryRows": Symbol(licence-summary-rows),
   "licenceTypeStr": "Shopping trollies and old wellies",
   "permission": Object {
     "concessions": Array [

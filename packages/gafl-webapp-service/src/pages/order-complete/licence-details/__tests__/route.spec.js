@@ -3,7 +3,7 @@ import Boom from '@hapi/boom'
 import { COMPLETION_STATUS } from '../../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import * as dtDisplay from '../../../../processors/date-and-time-display.js'
-import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+import { licenceTypeDisplay, licenceSummaryRows } from '../../../../processors/licence-type-display.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 
 beforeEach(jest.clearAllMocks)
@@ -113,6 +113,61 @@ describe('The licence details page', () => {
       expect(ageConcessionText).toBe(ageConcession)
     })
 
+    it.each`
+    testLabel                    | hasAgeConcession  | concessionHelperMethod | catalogLabel               | ageConcessionText
+    ${'has a senior concession'} | ${true}           | ${'hasSenior'}         | ${'age_senior_concession'} | ${Symbol('cl1')}
+    ${'has a junior concession'} | ${true}           | ${'hasJunior'}         | ${'age_junior_concession'} | ${Symbol('cl2')}
+    ${'has no age concession'}   | ${false}          | ${undefined}           | ${undefined}               | ${''}
+    `('calls licenceSummaryRows with expected arguments when it $testLabel', async ({testLabel, hasAgeConcession, concessionHelperMethod, catalogLabel, ageConcessionText}) => {
+      const permission = {
+        ...getSamplePermission(),
+        licensee: {
+          firstName: Symbol('first-name'),
+          lastName: Symbol('last-name'),
+          obfuscatedDob: Symbol('obfuscated-dob'),
+          licenceLength: Symbol('licence-length')
+        }
+      }
+      const i18nCatalog = getSampleCatalog()
+      const request = createMockRequest({ i18nCatalog, permission })
+      const licenceTypeStr = Symbol('licence-type')
+      licenceTypeDisplay.mockReturnValueOnce(licenceTypeStr)
+      const startTimeString = Symbol('start-time')
+      dtDisplay.displayStartTime.mockReturnValueOnce(startTimeString)
+      const endTimeString = Symbol('end-time')
+      dtDisplay.displayEndTime.mockReturnValueOnce(endTimeString)
+      const disabled = Symbol('disabled')
+      concessionHelper.hasDisabled.mockReturnValueOnce(disabled)
+      const additionalAssertions = {}
+      if (hasAgeConcession) {
+        concessionHelper.getAgeConcession.mockReturnValueOnce(true)
+        concessionHelper[concessionHelperMethod].mockReturnValueOnce(true)
+        i18nCatalog[catalogLabel] = ageConcessionText
+        additionalAssertions.ageConcessionText = ageConcessionText
+      }
+
+      const data = await getData(request)
+
+      expect(licenceSummaryRows).toHaveBeenCalledWith(
+        i18nCatalog,
+        expect.objectContaining({
+          permission: expect.objectContaining({
+            licensee: expect.objectContaining({
+              firstName: permission.licensee.firstName,
+              lastName: permission.licensee.lastName, 
+              obfuscatedDob: permission.licensee.obfuscatedDob, 
+              licenceLength: permission.licensee.licenceLength 
+            })
+          }),
+          licenceTypeStr,
+          startTimeString,
+          endTimeString,
+          disabled,
+          ...additionalAssertions
+        })
+      )
+    })
+
     it('returns the expected data', async () => {
       const mockRequest = createMockRequest()
       dtDisplay.displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
@@ -121,6 +176,7 @@ describe('The licence details page', () => {
       concessionHelper.hasDisabled.mockReturnValueOnce(true)
       concessionHelper.hasSenior.mockReturnValueOnce(true)
       concessionHelper.getAgeConcession.mockReturnValueOnce({ proof: { type: 'No Proof' }, type: 'Senior' })
+      licenceSummaryRows.mockReturnValueOnce(Symbol('licence-summary-rows'))
       const result = await getData(mockRequest)
       expect(result).toMatchSnapshot()
     })

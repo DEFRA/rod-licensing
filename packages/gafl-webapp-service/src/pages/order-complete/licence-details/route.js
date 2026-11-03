@@ -4,7 +4,7 @@ import pageRoute from '../../../routes/page-route.js'
 import { LICENCE_DETAILS } from '../../../uri.js'
 import { COMPLETION_STATUS } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { licenceSummaryRows, licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
@@ -39,7 +39,7 @@ export const getData = async request => {
   const endTimeString = displayEndTime(request, permission)
   const catalog = request.i18n.getCatalog()
 
-  return {
+  const data = {
     permission,
     startTimeString,
     endTimeString,
@@ -48,6 +48,10 @@ export const getData = async request => {
     ageConcessionText: getAgeConcessionText(permission, catalog),
     licenceTypeStr: licenceTypeDisplay(permission, catalog)
   }
+
+  data.licenceSummaryRows = licenceSummaryRows(catalog, data)
+
+  return data
 }
 
 export default pageRoute(LICENCE_DETAILS.page, LICENCE_DETAILS.uri, null, nextPage, getData)
