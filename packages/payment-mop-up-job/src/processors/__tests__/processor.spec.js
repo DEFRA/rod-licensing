@@ -739,4 +739,41 @@ describe('processor', () => {
 
     expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
   })
+
+  it('logs processing failure with message when error has message property', async () => {
+    const [entry] = journalEntries()
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockResolvedValueOnce({})
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' }, amount: 8200 })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'TIMESTAMP' }] })
+    })
+
+    const error = new Error('API timeout')
+    error.status = StatusCodes.INTERNAL_SERVER_ERROR
+    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+
+    await expect(execute(1440, 24)).rejects.toThrow('API timeout')
+  })
+
+  it('logs processing failure without message when error has no message property', async () => {
+    const [entry] = journalEntries()
+    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+    salesApi.retrieveStagedTransaction.mockResolvedValueOnce({})
+    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
+      json: async () => ({ state: { status: 'success' }, amount: 8200 })
+    })
+    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'TIMESTAMP' }] })
+    })
+
+    const error = new Error()
+    error.status = StatusCodes.INTERNAL_SERVER_ERROR
+    error.message = undefined
+    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+
+    await expect(execute(1440, 24)).rejects.toThrow()
+  })
 })
