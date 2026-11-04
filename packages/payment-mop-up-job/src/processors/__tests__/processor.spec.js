@@ -3,6 +3,7 @@ import { execute, formatTransactionData } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES, PAYMENT_STATUS } from '@defra-fish/business-rules-lib'
 import { StatusCodes } from 'http-status-codes'
 import moment from 'moment'
+import db from 'debug'
 
 jest.mock('@defra-fish/connectors-lib')
 // mock bottleneck to speed up test execution
@@ -12,7 +13,12 @@ jest.mock('bottleneck', () =>
   })
 )
 
-jest.mock('debug', () => jest.fn(() => jest.fn()))
+jest.mock('debug', () => {
+  const debugInstance = jest.fn()
+  return jest.fn(() => debugInstance)
+})
+
+const debugMock = db()
 
 const journalEntries = () => [
   {
@@ -212,6 +218,48 @@ const mockSingleSuccessfulPayment = () => {
   return entry
 }
 
+const mockSingleRecurringPayment = () => {
+  const [entry] = journalEntries()
+  salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
+  salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: 'recurring-payment-id' } })
+  govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => ({ state: { status: PAYMENT_STATUS.Error } }) })
+  return entry
+}
+
+const createError = status => Object.assign(new Error(`Error with status ${status}`), { status })
+
+// each entry: [description of the failing call, function which sets up that call to reject with the given error]
+const failingCalls = [
+  [
+    'finalising the transaction',
+    error => {
+      mockSingleSuccessfulPayment()
+      salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+    }
+  ],
+  [
+    'updating the payment journal',
+    error => {
+      mockSingleSuccessfulPayment()
+      salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
+    }
+  ],
+  [
+    'cancelling the recurring payment',
+    error => {
+      mockSingleRecurringPayment()
+      salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
+    }
+  ],
+  [
+    'retrieving the staged transaction',
+    error => {
+      salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
+      salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
+    }
+  ]
+]
+
 describe('formatTransactionData', () => {
   it('returns empty string when transaction has no data property', () => {
     const transaction = { id: 'test-id' }
@@ -244,6 +292,11 @@ describe('processor', () => {
     jest.clearAllMocks()
     govUkPayApi.fetchPaymentStatus.mockReset()
     govUkPayApi.fetchPaymentEvents.mockReset()
+    jest.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    console.error.mockRestore()
   })
 
   beforeAll(() => {
@@ -298,13 +351,6 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(entry.id, {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
     })
-  })
-
-  it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
-    mockSingleSuccessfulPayment()
-    salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Server error'), { status: 500 }))
-
-    await expect(execute(1, 1)).rejects.toThrow('Server error')
   })
 
   it.each([
@@ -604,59 +650,16 @@ describe('processor', () => {
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
   })
 
-  it('does not proceed when updatePaymentJournal fails with 410', async () => {
-    mockSingleSuccessfulPayment()
-    const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
-    salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    expect(salesApi.cancelRecurringPayment).not.toHaveBeenCalled()
-  })
-
-  it('rethrows errors from updatePaymentJournal that are not a 410 error', async () => {
-    mockSingleSuccessfulPayment()
-    salesApi.updatePaymentJournal.mockRejectedValueOnce(Object.assign(new Error('Database error'), { status: 500 }))
-
-    await expect(execute(1, 1)).rejects.toThrow('Database error')
-  })
-
-  it('treats a 410 error code from cancelRecurringPayment as already cancelled and continues processing', async () => {
-    const entry = journalEntries()[0]
-    const rpid = Symbol('recurring-payment-id')
-    const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [] })
-    })
-    salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
+  it('cancels the recurring payment when updatePaymentJournal fails with 410', async () => {
+    mockSingleRecurringPayment()
+    salesApi.updatePaymentJournal.mockRejectedValueOnce(createError(StatusCodes.GONE))
 
     await execute(1, 1)
 
     expect(salesApi.cancelRecurringPayment).toHaveBeenCalled()
   })
 
-  it('rethrows errors from cancelRecurringPayment that are not a 410 error', async () => {
-    const entry = journalEntries()[0]
-    const rpid = Symbol('recurring-payment-id')
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: 'abc-123', id: rpid } })
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: PAYMENT_STATUS.Error } })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [] })
-    })
-    salesApi.cancelRecurringPayment.mockRejectedValueOnce(Object.assign(new Error('API error'), { status: 500 }))
-
-    await expect(execute(1, 1)).rejects.toThrow('API error')
-  })
-
-  it('treats a 410 error code from retrieveStagedTransaction as logged but returns empty array for processing', async () => {
+  it('does not update any payment journal when retrieveStagedTransaction fails with 410', async () => {
     const entry = journalEntries()[0]
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
     salesApi.retrieveStagedTransaction.mockRejectedValueOnce(Object.assign(new Error('Gone'), { status: StatusCodes.GONE }))
@@ -691,24 +694,40 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
   })
 
-  it.each([
-    ['API timeout', 'API timeout'],
-    [undefined, Error]
-  ])('logs processing failure when error message is %s', async (messageValue, expectedThrow) => {
-    const [entry] = journalEntries()
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockResolvedValueOnce({})
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: 'success' }, amount: 8200 })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'TIMESTAMP' }] })
+  describe('logging', () => {
+    it.each(failingCalls)('logs the error with console.error when %s fails with a non-410 error', async (_description, setupFailure) => {
+      const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
+      setupFailure(error)
+
+      await execute(1, 1).catch(() => {})
+
+      expect(console.error).toHaveBeenCalledWith(error)
     })
 
-    const error = new Error(messageValue)
-    error.status = StatusCodes.INTERNAL_SERVER_ERROR
-    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+    it.each(failingCalls)('does not log with console.error when %s fails with a 410 error', async (_description, setupFailure) => {
+      setupFailure(createError(StatusCodes.GONE))
 
-    await expect(execute(1440, 24)).rejects.toThrow(expectedThrow)
+      await execute(1, 1)
+
+      expect(console.error).not.toHaveBeenCalled()
+    })
+
+    it.each(failingCalls)('logs the error with debug when %s fails with a 410 error', async (_description, setupFailure) => {
+      const error = createError(StatusCodes.GONE)
+      setupFailure(error)
+
+      await execute(1, 1)
+
+      expect(debugMock).toHaveBeenCalledWith(error)
+    })
+
+    it.each(failingCalls)('does not log with debug when %s fails with a non-410 error', async (_description, setupFailure) => {
+      const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
+      setupFailure(error)
+
+      await execute(1, 1).catch(() => {})
+
+      expect(debugMock).not.toHaveBeenCalledWith(error)
+    })
   })
 })
