@@ -218,15 +218,6 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     return fulfilled
   })()
 
-  // Process each result and handle failures
-  const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
-  const failures = results.filter(result => result.status === 'rejected')
-
-  // Throw only if non-410 failure
-  const nonGoneFailure = failures.find(failure => failure.reason?.status !== StatusCodes.GONE)
-  if (nonGoneFailure) {
-    console.error(`Processing error${nonGoneFailure.reason?.message ? ': ' + nonGoneFailure.reason.message : ''}`)
-    console.error(nonGoneFailure.reason)
-    throw nonGoneFailure.reason
-  }
+  // Process each result
+  await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
 }
