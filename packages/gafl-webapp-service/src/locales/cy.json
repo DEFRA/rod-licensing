@@ -78,6 +78,7 @@
   "address_lookup_crown_copyright_terms": "Defnyddir y data cyfeiriad hwn yn unol â'r ",
   "address_lookup_crown_copyright": "© Hawlfrant y goron a hawliau cronfa ddata 2022 ",
   "address_lookup_error_empty_name_num": "Nodwch rif neu enw adeilad",
+  "address_lookup_error_invalid_premises": "Rhaid i rif neu enw’r adeilad gynnwys rhifau a llythrennau yn unig",
   "address_lookup_error_empty_postcode": "Nodwch god post",
   "address_lookup_error_max_name_num": "Mae’n rhaid i rif neu enw’r adeilad fod yn llai na 50 nod",
   "address_lookup_error_pattern_postcode": "Rhowch god post yn y DU. Os mae’r cyfeiriad y tu allan i’r DU, teipiwch y cyfeiriad.",

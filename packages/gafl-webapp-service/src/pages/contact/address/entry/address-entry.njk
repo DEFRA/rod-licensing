@@ -22,7 +22,8 @@
         'premises': {
             'string.empty': { ref: '#premises', text: mssgs.address_entry_error_empty_num },
             'string.max': { ref: '#premises', text: mssgs.address_entry_error_max_char_num },
-            'string.forbidden': { ref: '#premises', text: mssgs.address_entry_error_invalid_premises }
+            'string.forbidden': { ref: '#premises', text: mssgs.address_entry_error_invalid_premises },
+            'string.pattern.base': { ref: '#premises', text: mssgs.address_entry_error_invalid_premises }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.address_entry_error_empty_postcode },
@@ -60,7 +61,7 @@
       value: payload['premises'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
-      errorMessage: { text: mssgs.address_entry_error_empty_num } if error['premises']
+      errorMessage: { text: error['premises'].text } if error['premises']
     }) }}
 
     {{ govukInput({

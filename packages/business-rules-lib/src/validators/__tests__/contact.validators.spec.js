@@ -441,8 +441,35 @@ describe('contact validators', () => {
       '➊➎ 🅡🅞🅢🅔 🅒🅞🅣🅣🅐🅖🅔',
       '①➎ 🅡ⓞ🅢ⓔ Ⓒ🅞ⓣ🅣ⓐ🅖ⓔ',
       '1⑤ 𝑅𝐨𝑠ⓔ 𝒞𝓸𝘁𝕥𝒶ℊ🄴',
-      '𝟏𝟓 𝐑𝐨𝐬𝐞 𝐂𝐨𝐭𝐭𝐚𝐠𝐞'
+      '𝟏𝟓 𝐑𝐨𝐬𝐞 𝐂𝐨𝐭𝐭𝐚𝐠𝐞',
+      '<i>15 Rose Cottage</i>',
+      '15 Rose <Cottage>',
+      '<div>15 Rose Cottage</div>'
     ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).rejects.toThrow()
+    })
+
+    it.each([
+      '15 Róse Cottage',
+      '15 Rosé Cottage',
+      '15 Röse Cottage',
+      '15 Røse Cottage',
+      '15 Rose Cottagé',
+      '15 Rose Cottàge',
+      '15 Rose Cottäge',
+      '15 Róše Cottagé'
+    ])('allows a string with Latin characters: %s', async c => {
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).resolves.toBeDefined()
+    })
+
+    it.each([
+      '<i>15 Rose Cottage</i>',
+      '<b>15 Rose Cottage</b>',
+      '<div>15 Rose Cottage</div>',
+      '15 Rose <Cottage>',
+      '<15 Rose Cottage',
+      '15 Rose Cottage>'
+    ])('prohibits a string with angle brackets: %s', async c => {
       await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })

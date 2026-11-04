@@ -77,6 +77,7 @@
   "address_lookup_crown_copyright_terms": "Use of this addressing data is subject to the ",
   "address_lookup_crown_copyright": "© Crown copyright and database rights 2022 ",
   "address_lookup_error_empty_name_num": "Enter a building number or name",
+  "address_lookup_error_invalid_premises": "The building number or name must only contain numbers and letters",
   "address_lookup_error_empty_postcode": "Enter a postcode",
   "address_lookup_error_max_name_num": "The building number or name must be less than 50 characters",
   "address_lookup_error_pattern_postcode": "Enter a UK postcode. If the address is outside the UK, enter the address manually.",

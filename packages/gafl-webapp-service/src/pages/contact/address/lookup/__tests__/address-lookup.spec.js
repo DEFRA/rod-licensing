@@ -50,6 +50,16 @@ describe('The address lookup page', () => {
     expect(response.headers.location).toHaveValidPathFor(ADDRESS_LOOKUP.uri)
   })
 
+  it('redirects back to itself on posting premises containing forbidden characters', async () => {
+    const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '<i>Howecroft Court</i>', postcode: 'BS9 1HJ' })
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_LOOKUP.uri)
+
+    const redirectedResponse = await injectWithCookies('GET', ADDRESS_LOOKUP.uri)
+    expect(redirectedResponse.statusCode).toBe(200)
+    expect(redirectedResponse.payload).toContain('The building number or name must only contain numbers and letters')
+  })
+
   it('on finding list of multiple found addresses redirects to the select page', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'

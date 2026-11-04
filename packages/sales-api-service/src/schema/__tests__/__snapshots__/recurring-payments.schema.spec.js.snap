@@ -805,6 +805,12 @@ Object {
                           },
                           Object {
                             "args": Object {
+                              "regex": "/^[^<>]+$/u",
+                            },
+                            "name": "pattern",
+                          },
+                          Object {
+                            "args": Object {
                               "limit": 50,
                             },
                             "name": "max",
@@ -849,6 +855,12 @@ Object {
                               "limit": 1,
                             },
                             "name": "min",
+                          },
+                          Object {
+                            "args": Object {
+                              "regex": "/^[^<>]+$/u",
+                            },
+                            "name": "pattern",
                           },
                           Object {
                             "args": Object {
