@@ -701,7 +701,7 @@ describe('processor', () => {
 
       await execute(1, 1).catch(() => {})
 
-      expect(console.error).toHaveBeenCalledWith(error)
+      expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
     })
 
     it.each(failingCalls)('does not log with console.error when %s fails with a 410 error', async (_description, setupFailure) => {

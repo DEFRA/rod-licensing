@@ -96,8 +96,7 @@ const finaliseTransaction = async transaction => {
       debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
     } catch (error) {
       if (error.status !== StatusCodes.GONE) {
-        console.error(`Transaction id: ${transaction.id} finalisation failed${formatTransactionData(transaction)}`)
-        console.error(error)
+        console.error(`Transaction id: ${transaction.id} finalisation failed${formatTransactionData(transaction)}`, error)
         throw error
       }
 
@@ -116,8 +115,7 @@ const updatePaymentJournalIfNeeded = async transaction => {
       debug(`Mop up journal updated for transaction id: ${transaction.id}`)
     } catch (error) {
       if (error.status !== StatusCodes.GONE) {
-        console.error(`Transaction id: ${transaction.id} journal update failed${formatTransactionData(transaction)}`)
-        console.error(error)
+        console.error(`Transaction id: ${transaction.id} journal update failed${formatTransactionData(transaction)}`, error)
         throw error
       }
 
@@ -134,8 +132,7 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
       debug(`Mop up recurring payment cancelled for transaction id: ${transaction.id}`)
     } catch (error) {
       if (error.status !== StatusCodes.GONE) {
-        console.error(`Transaction id: ${transaction.id} recurring payment cancellation failed${formatTransactionData(transaction)}`)
-        console.error(error)
+        console.error(`Transaction id: ${transaction.id} recurring payment cancellation failed${formatTransactionData(transaction)}`, error)
         throw error
       }
 
@@ -208,9 +205,9 @@ export const execute = async (ageMinutes, scanDurationHours) => {
         console.error(
           `Cannot retrieve transaction id: ${paymentJournalsToMopUp[index]?.id} - retrieval failed${formatTransactionData(
             paymentJournalsToMopUp[index]
-          )}`
+          )}`,
+          result.reason
         )
-        console.error(result.reason)
         throw result.reason
       }
     })
