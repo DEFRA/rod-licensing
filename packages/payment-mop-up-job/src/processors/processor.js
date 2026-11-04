@@ -175,6 +175,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     to: now.toISOString()
   })
   const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
+  debug(`Found ${paymentJournals.length} in-progress payment journals, ${paymentJournalsToMopUp.length} of which are due for mop up`)
 
   // Get the status for each payment from the GOV.UK Pay API.
   const journalsWithRecurringPaymentIDs = await (async () => {

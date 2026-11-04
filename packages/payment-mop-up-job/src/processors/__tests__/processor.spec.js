@@ -695,6 +695,16 @@ describe('processor', () => {
   })
 
   describe('logging', () => {
+    it('logs how many in-progress journals were found and how many are due for mop up', async () => {
+      const [dueEntry] = journalEntries()
+      const notDueEntry = { ...dueEntry, paymentTimestamp: moment().toISOString() }
+      salesApi.paymentJournals.getAll.mockReturnValueOnce([dueEntry, notDueEntry])
+      govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => ({ state: { status: PAYMENT_STATUS.Error } }) })
+
+      await execute(1, 1)
+
+      expect(debugMock).toHaveBeenCalledWith('Found 2 in-progress payment journals, 1 of which are due for mop up')
+    })
     it.each(failingCalls)('logs the error with console.error when %s fails with a non-410 error', async (_description, setupFailure) => {
       const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
       setupFailure(error)
