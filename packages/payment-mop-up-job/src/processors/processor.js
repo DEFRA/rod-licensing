@@ -84,7 +84,6 @@ const shouldCancelRecurringPayment = transaction => {
 
 const finaliseTransaction = async transaction => {
   if (transaction.paymentStatus.state?.status === 'success') {
-    debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
     try {
       await salesApi.finaliseTransaction(transaction.id, {
         payment: {
@@ -94,8 +93,11 @@ const finaliseTransaction = async transaction => {
           method: PAYMENT_TYPE.debit
         }
       })
+      debug(`Completing mop up finalisation for transaction id: ${transaction.id}`)
     } catch (error) {
       if (error.status !== StatusCodes.GONE) {
+        console.error(`Transaction id: ${transaction.id} finalisation failed${formatTransactionData(transaction)}`)
+        console.error(error)
         throw error
       }
 
@@ -111,8 +113,11 @@ const updatePaymentJournalIfNeeded = async transaction => {
       await salesApi.updatePaymentJournal(transaction.id, {
         paymentStatus: getPaymentJournalStatusCodeFromTransaction(transaction)
       })
+      debug(`Mop up journal updated for transaction id: ${transaction.id}`)
     } catch (error) {
       if (error.status !== StatusCodes.GONE) {
+        console.error(`Transaction id: ${transaction.id} journal update failed${formatTransactionData(transaction)}`)
+        console.error(error)
         throw error
       }
 
@@ -126,8 +131,11 @@ const cancelRecurringPaymentIfNeeded = async transaction => {
   if (shouldCancelRecurringPayment(transaction)) {
     try {
       await salesApi.cancelRecurringPayment(transaction.recurringPaymentId)
+      debug(`Mop up recurring payment cancelled for transaction id: ${transaction.id}`)
     } catch (error) {
       if (error.status !== StatusCodes.GONE) {
+        console.error(`Transaction id: ${transaction.id} recurring payment cancellation failed${formatTransactionData(transaction)}`)
+        console.error(error)
         throw error
       }
 
@@ -159,6 +167,7 @@ const getStatusWrapped = limiter.wrap(getStatus)
 
 export const execute = async (ageMinutes, scanDurationHours) => {
   debug(`Running payment mop up processor with a payment age of ${ageMinutes} minutes and a scan duration of ${scanDurationHours} hours`)
+
   const toTimestamp = moment().add(-1 * ageMinutes, 'minutes')
   const now = moment()
   const fromTimestamp = toTimestamp.clone().add(-1 * scanDurationHours, 'hours')
@@ -171,7 +180,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   const paymentJournalsToMopUp = paymentJournals.filter(pj => toTimestamp.isAfter(pj.paymentTimestamp) || pj.eligibleForEarlyMopUp)
 
   // Get the status for each payment from the GOV.UK Pay API.
-  const { fulfilled: journalsWithRecurringPaymentIDs, nonGoneFailures: retrievalFailures } = await (async () => {
+  const journalsWithRecurringPaymentIDs = await (async () => {
     const retrievalResults = await Promise.allSettled(
       paymentJournalsToMopUp.map(async p => {
         const transactionRecord = await salesApi.retrieveStagedTransaction(p.id)
@@ -187,7 +196,6 @@ export const execute = async (ageMinutes, scanDurationHours) => {
     )
 
     const fulfilled = []
-    const nonGoneFailures = []
 
     retrievalResults.forEach((result, index) => {
       if (result.status === 'fulfilled') {
@@ -197,30 +205,28 @@ export const execute = async (ageMinutes, scanDurationHours) => {
         debug(`Cannot retrieve transaction id: ${failedJournal.id} (410 Gone)${formatTransactionData(failedJournal)}`)
         debug(result.reason)
       } else {
-        nonGoneFailures.push(result.reason)
+        console.error(
+          `Cannot retrieve transaction id: ${paymentJournalsToMopUp[index]?.id} - retrieval failed${formatTransactionData(
+            paymentJournalsToMopUp[index]
+          )}`
+        )
+        console.error(result.reason)
+        throw result.reason
       }
     })
 
-    return { fulfilled, nonGoneFailures }
+    return fulfilled
   })()
-
-  if (retrievalFailures.length > 0) {
-    throw retrievalFailures[0]
-  }
 
   // Process each result and handle failures
   const results = await Promise.allSettled(journalsWithRecurringPaymentIDs.map(async j => processPaymentResults(j)))
   const failures = results.filter(result => result.status === 'rejected')
 
-  // Log all failures
-  failures.forEach(failure => {
-    debug(`Processing failure: ${failure.reason?.status}${failure.reason?.message ? ': ' + failure.reason.message : ''}`)
-    debug(failure.reason)
-  })
-
   // Throw only if non-410 failure
   const nonGoneFailure = failures.find(failure => failure.reason?.status !== StatusCodes.GONE)
   if (nonGoneFailure) {
+    console.error(`Processing error${nonGoneFailure.reason?.message ? ': ' + nonGoneFailure.reason.message : ''}`)
+    console.error(nonGoneFailure.reason)
     throw nonGoneFailure.reason
   }
 }
