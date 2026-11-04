@@ -300,16 +300,6 @@ describe('processor', () => {
     })
   })
 
-  it('treats a 410 error code from finaliseTransaction as already finalised and continues processing', async () => {
-    mockSingleSuccessfulPayment()
-    const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
-    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
-
-    await execute(1, 1)
-
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalled()
-  })
-
   it('rethrows errors from finaliseTransaction that are not a 410 error', async () => {
     mockSingleSuccessfulPayment()
     salesApi.finaliseTransaction.mockRejectedValueOnce(Object.assign(new Error('Server error'), { status: 500 }))
@@ -380,9 +370,13 @@ describe('processor', () => {
     jest.useRealTimers()
   })
 
-  it('calls fetchPaymentStatus with recurring as true since agreementId exists', async () => {
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
-    const paymentReference = '15nioqikvvnuu5l8m2qeaj0qap'
+  it.each([
+    ['05nioqikvvnuu5l8m2qeaj0qap', true, { recurringPayment: { agreementId: '123' } }],
+    ['0f3dr9ugp7u68qq18vt9h8ma85', false, {}]
+  ])('calls fetchPaymentStatus with recurring=%s', async (paymentReference, recurringFlag, stagingReturn) => {
+    if (stagingReturn.recurringPayment) {
+      salesApi.retrieveStagedTransaction.mockReturnValueOnce(stagingReturn)
+    }
     salesApi.paymentJournals.getAll.mockReturnValueOnce([
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
@@ -395,62 +389,21 @@ describe('processor', () => {
       json: async () => ({ state: { status: 'success' } })
     })
     govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2020-06-01T10:35:56.873Z' }] })
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2026-10-27T00:00:00.000Z' }] })
     })
 
     await execute(1, 1)
 
-    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentReference, true)
+    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentReference, recurringFlag)
   })
 
-  it('calls fetchPaymentStatus with recurring as false since agreementId does not exist', async () => {
-    const paymentReference = '25nioqikvvnuu5l8m2qeaj0qap'
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([
-      {
-        id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
-        paymentStatus: 'In Progress',
-        paymentReference,
-        paymentTimestamp: '2020-06-01T10:35:56.873Z'
-      }
-    ])
-    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success', updated: '2026-10-27T00:00:00.000Z' } }] })
-    })
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: 'success' } })
-    })
-
-    await execute(1, 1)
-
-    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledWith(paymentReference, false)
-  })
-
-  it('calls fetchPaymentEvents with recurring as true since agreementId exists', async () => {
-    salesApi.retrieveStagedTransaction.mockReturnValueOnce({ recurringPayment: { agreementId: '123' } })
-    const paymentReference = '35nioqikvvnuu5l8m2qeaj0qap'
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([
-      {
-        id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
-        paymentStatus: 'In Progress',
-        paymentReference,
-        paymentTimestamp: '2020-06-01T10:35:56.873Z',
-        agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472'
-      }
-    ])
-    govUkPayApi.fetchPaymentStatus.mockResolvedValueOnce({
-      json: async () => ({ state: { status: 'success' } })
-    })
-    govUkPayApi.fetchPaymentEvents.mockResolvedValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2020-06-01T10:35:56.873Z' }] })
-    })
-
-    await execute(1, 1)
-
-    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledWith(paymentReference, true)
-  })
-
-  it('calls fetchPaymentEvents with recurring as false since agreementId does not exist', async () => {
-    const paymentReference = '45nioqikvvnuu5l8m2qeaj0qap'
+  it.each([
+    ['7lufvi9sbh077rvrrmnqo63vme', true, { recurringPayment: { agreementId: '123' } }],
+    ['7lufvi9sbh077rvrrmnqo63vmf', false, {}]
+  ])('calls fetchPaymentEvents with recurring=%s', async (paymentReference, recurringFlag, stagingReturn) => {
+    if (stagingReturn.recurringPayment) {
+      salesApi.retrieveStagedTransaction.mockReturnValueOnce(stagingReturn)
+    }
     salesApi.paymentJournals.getAll.mockReturnValueOnce([
       {
         id: 'a0e0e5c3-1004-4271-80ba-d05eda3e8220',
@@ -463,12 +416,12 @@ describe('processor', () => {
       json: async () => ({ state: { status: 'success' } })
     })
     govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' } }] })
+      json: async () => ({ events: [{ state: { status: 'success' }, updated: '2026-10-27T00:00:00.000Z' }] })
     })
 
     await execute(1, 1)
 
-    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledWith(paymentReference, false)
+    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledWith(paymentReference, recurringFlag)
   })
 
   describe("When a payment isn't present in GovPay", () => {
@@ -499,7 +452,6 @@ describe('processor', () => {
         NOT_FOUND_ID
       }
     }
-    afterEach(() => govUkPayApi.fetchPaymentStatus.mockClear())
 
     it('no error is thrown', async () => {
       absentPaymentSetup()
@@ -564,7 +516,6 @@ describe('processor', () => {
       await execute(1, 1)
 
       expect(salesApi.cancelRecurringPayment).toHaveBeenCalledWith(rpid)
-      salesApi.retrieveStagedTransaction.mockClear()
     })
 
     it("doesn't call cancel for payments without a recurring payment", async () => {
@@ -653,7 +604,7 @@ describe('processor', () => {
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(5)
   })
 
-  it('treats a 410 error code from updatePaymentJournal as already updated and continues processing', async () => {
+  it('does not proceed when updatePaymentJournal fails with 410', async () => {
     mockSingleSuccessfulPayment()
     const error = Object.assign(new Error('Gone'), { status: StatusCodes.GONE })
     salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
@@ -740,7 +691,10 @@ describe('processor', () => {
     expect(salesApi.updatePaymentJournal.mock.calls).toEqual([[entries[1].id, expect.any(Object)]])
   })
 
-  it('logs processing failure with message when error has message property', async () => {
+  it.each([
+    ['API timeout', 'API timeout'],
+    [undefined, Error]
+  ])('logs processing failure when error message is %s', async (messageValue, expectedThrow) => {
     const [entry] = journalEntries()
     salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
     salesApi.retrieveStagedTransaction.mockResolvedValueOnce({})
@@ -751,29 +705,10 @@ describe('processor', () => {
       json: async () => ({ events: [{ state: { status: 'success' }, updated: 'TIMESTAMP' }] })
     })
 
-    const error = new Error('API timeout')
+    const error = new Error(messageValue)
     error.status = StatusCodes.INTERNAL_SERVER_ERROR
     salesApi.finaliseTransaction.mockRejectedValueOnce(error)
 
-    await expect(execute(1440, 24)).rejects.toThrow('API timeout')
-  })
-
-  it('logs processing failure without message when error has no message property', async () => {
-    const [entry] = journalEntries()
-    salesApi.paymentJournals.getAll.mockReturnValueOnce([entry])
-    salesApi.retrieveStagedTransaction.mockResolvedValueOnce({})
-    govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({
-      json: async () => ({ state: { status: 'success' }, amount: 8200 })
-    })
-    govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({
-      json: async () => ({ events: [{ state: { status: 'success' }, updated: 'TIMESTAMP' }] })
-    })
-
-    const error = new Error()
-    error.status = StatusCodes.INTERNAL_SERVER_ERROR
-    error.message = undefined
-    salesApi.finaliseTransaction.mockRejectedValueOnce(error)
-
-    await expect(execute(1440, 24)).rejects.toThrow()
+    await expect(execute(1440, 24)).rejects.toThrow(expectedThrow)
   })
 })
