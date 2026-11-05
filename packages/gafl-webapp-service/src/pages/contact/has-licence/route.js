@@ -3,7 +3,6 @@ import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
-/*
 const licence1 = {
   startDate: new Date().toISOString(),
   endDate: '2025-01-01T00:00:00.000Z',
@@ -28,15 +27,13 @@ const licence1 = {
     numberOfRods: 3,
     isCounterSales: false,
     availableFrom: new Date().toISOString(),
-    availableTo: new Date().toISOString(),
+    availableTo: new Date().toISOString()
   }
 }
 
- */
-
 export const getData = async request => {
-  const existingPermissions = await request.cache().helpers.transaction.getExistingPermissions()
-  // const existingPermissions =  { licences: [ licence1 ] }
+  // const existingPermissions = await request.cache().helpers.transaction.getExistingPermissions()
+  const existingPermissions =  { licences: [ licence1 ] }
 
   // filter and sort licences
   const licences = existingPermissions?.licences?.length
