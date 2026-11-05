@@ -1,9 +1,81 @@
 {% extends "standard-form.njk" %}
 
-{% set title = mssgs.has_licence_title %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "table/macro.njk" import govukTable %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+
+{% set title = mssgs.interrupt_title %}
+
+{% set rows =[] %}
+
+{% if data.licences.length %}
+
+  {% for licence in data.licences %}
+    {{ rows.push([
+      { html: licence.permit.permitSubtype.label },
+      { html: licence.permit.duration.label },
+      { html: licence.endDate },
+      { html: '<a href="#">' + mssgs.interrupt_view_licence_details + '</a>' }
+    ]) }}
+  {% endfor %}
+
+{% else %}
+  {% set primaryLicence = {} %}
+{% endif %}
+
+{% block notificationContent %}
+  {% set messageHtml %}
+    <p class="govuk-notification-banner__heading">
+      {% if data.name %}
+        {{ data.name }} {{ mssgs.interrupt_has_a }}
+      {% else %}
+        {{ mssgs.interrupt_you_already_have }}
+      {% endif %}
+      {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
+    </p>
+    {% if data.notifySalmon %}
+      <p class="govuk-body">
+        {{ mssgs.interrupt_covered_rods }}
+      </p>
+    {% endif %}
+  {% endset %}
+
+  {{ govukNotificationBanner({
+    html: messageHtml
+  }) }}
+{% endblock %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">
-        Number of existing permissions: {{ data.existingPermissionsCount }}
-    </p>
+
+  {% if rows.length %}
+    {{ govukTable({
+      caption: mssgs.interrupt_your_current_licence,
+      captionClasses: "govuk-table__caption--m",
+      firstCellIsHeader: true,
+      head: [
+        {
+          text: mssgs.interrupt_licence_type
+        },
+        {
+          text: mssgs.interrupt_length
+        },
+        {
+          text: mssgs.interrupt_end
+        },
+        {
+          text: ''
+        }
+      ],
+      rows: rows
+    }) }}
+  {% endif %}
+
+  {{ govukWarningText({
+    text: mssgs.interrupt_could_face_prosecution,
+    iconFallbackText: "Warning"
+  }) }}
+
+  <p class="govuk-body">
+    <a href="#">{{ mssgs.interrupt_find_rules }}</a>
+  </p>
 {% endblock %}
