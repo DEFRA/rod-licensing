@@ -228,38 +228,6 @@ const mockSingleRecurringPayment = () => {
 
 const createError = status => Object.assign(new Error(`Error with status ${status}`), { status })
 
-// each entry: [description of the failing call, function which sets up that call to reject with the given error]
-const failingCalls = [
-  [
-    'finalising the transaction',
-    error => {
-      mockSingleSuccessfulPayment()
-      salesApi.finaliseTransaction.mockRejectedValueOnce(error)
-    }
-  ],
-  [
-    'updating the payment journal',
-    error => {
-      mockSingleSuccessfulPayment()
-      salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
-    }
-  ],
-  [
-    'cancelling the recurring payment',
-    error => {
-      mockSingleRecurringPayment()
-      salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
-    }
-  ],
-  [
-    'retrieving the staged transaction',
-    error => {
-      salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
-      salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
-    }
-  ]
-]
-
 describe('formatTransactionData', () => {
   it('returns empty string when transaction has no data property', () => {
     const transaction = { id: 'test-id' }
@@ -705,39 +673,71 @@ describe('processor', () => {
 
       expect(debugMock).toHaveBeenCalledWith('Found 2 in-progress payment journals, 1 of which are gone - 410 error')
     })
-    it.each(failingCalls)('logs the error with console.error when %s fails with a non-410 error', async (_description, setupFailure) => {
-      const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
-      setupFailure(error)
+    
+    describe.each([
+        [
+          'finalising the transaction',
+          error => {
+            mockSingleSuccessfulPayment()
+            salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+          }
+        ],
+        [
+          'updating the payment journal',
+          error => {
+            mockSingleSuccessfulPayment()
+            salesApi.updatePaymentJournal.mockRejectedValueOnce(error)
+          }
+        ],
+        [
+          'cancelling the recurring payment',
+          error => {
+            mockSingleRecurringPayment()
+            salesApi.cancelRecurringPayment.mockRejectedValueOnce(error)
+          }
+        ],
+        [
+          'retrieving the staged transaction',
+          error => {
+            salesApi.paymentJournals.getAll.mockReturnValueOnce([journalEntries()[0]])
+            salesApi.retrieveStagedTransaction.mockRejectedValueOnce(error)
+          }
+        ]
+    ])('When %s fails', (_d, setupFailure) => {
+      it('logs the error with console.error when there is a non-410 error', async () => {
+        const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
+        setupFailure(error)
+  
+        await execute(1, 1).catch(() => {})
+  
+        expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
+      })
 
-      await execute(1, 1).catch(() => {})
+      it('does not log with console.error when there is a 410 error', async () => {
+        setupFailure(createError(StatusCodes.GONE))
+  
+        await execute(1, 1)
+  
+        expect(console.error).not.toHaveBeenCalled()
+      })
 
-      expect(console.error).toHaveBeenCalledWith(expect.any(String), error)
-    })
+      it('logs the error with debug when there is a 410 error', async () => {
+        const error = createError(StatusCodes.GONE)
+        setupFailure(error)
+  
+        await execute(1, 1)
+  
+        expect(debugMock).toHaveBeenCalledWith(error)
+      })
 
-    it.each(failingCalls)('does not log with console.error when %s fails with a 410 error', async (_description, setupFailure) => {
-      setupFailure(createError(StatusCodes.GONE))
-
-      await execute(1, 1)
-
-      expect(console.error).not.toHaveBeenCalled()
-    })
-
-    it.each(failingCalls)('logs the error with debug when %s fails with a 410 error', async (_description, setupFailure) => {
-      const error = createError(StatusCodes.GONE)
-      setupFailure(error)
-
-      await execute(1, 1)
-
-      expect(debugMock).toHaveBeenCalledWith(error)
-    })
-
-    it.each(failingCalls)('does not log with debug when %s fails with a non-410 error', async (_description, setupFailure) => {
-      const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
-      setupFailure(error)
-
-      await execute(1, 1).catch(() => {})
-
-      expect(debugMock).not.toHaveBeenCalledWith(error)
+      it('does not log with debug when there is a non-410 error', async () => {
+        const error = createError(StatusCodes.INTERNAL_SERVER_ERROR)
+        setupFailure(error)
+  
+        await execute(1, 1).catch(() => {})
+  
+        expect(debugMock).not.toHaveBeenCalledWith(error)
+      })
     })
   })
 })
