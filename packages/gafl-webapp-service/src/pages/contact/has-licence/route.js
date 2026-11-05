@@ -33,7 +33,7 @@ const licence1 = {
 
 export const getData = async request => {
   // const existingPermissions = await request.cache().helpers.transaction.getExistingPermissions()
-  const existingPermissions =  { licences: [ licence1 ] }
+  const existingPermissions = { licences: [licence1] }
 
   // filter and sort licences
   const licences = existingPermissions?.licences?.length
