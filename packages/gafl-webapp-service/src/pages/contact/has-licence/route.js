@@ -39,14 +39,14 @@ export const getData = async request => {
   // const existingPermissions =  { licences: [ licence1 ] }
 
   // filter and sort licences
-  const licences = existingPermissions?.licences?.length ?
-    existingPermissions.licences
-    .filter( (licence) => licence.permit.durationMagnitude === 12 )
-    .sort( (a, b) => {
-      if (a.permit.permitSubtype.description ===  b.permitSubtype.description) return 0;
-      return (a.permit.permitSubtype.description === 'S') ? 1 : -1;
-    }) :
-    []
+  const licences = existingPermissions?.licences?.length
+    ? existingPermissions.licences
+      .filter((licence) => licence.permit.durationMagnitude === 12)
+      .sort((a, b) => {
+        if (a.permit.permitSubtype.description === b.permitSubtype.description) return 0
+        return (a.permit.permitSubtype.description === 'S') ? 1 : -1
+      })
+    : []
 
   // if there are no existing permissions, redirect
   if (!licences.length) {
