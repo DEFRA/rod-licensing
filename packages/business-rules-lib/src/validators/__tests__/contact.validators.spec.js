@@ -544,6 +544,13 @@ describe('contact validators', () => {
         await expect(contactValidation.createTownValidator(Joi).validateAsync(c)).rejects.toThrow()
       }
     )
+
+    it.each(['<i>London</i>', '<b>london</b>', '<div>London</div>', '<London>', '<London', 'London>'])(
+      'prohibits a string with angle brackets: %s',
+      async c => {
+        await expect(contactValidation.createTownValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
   })
 
   describe('nationalInsuranceNumberValidator', () => {

@@ -33,7 +33,8 @@
         'town': {
             'string.empty': { ref: '#town', text: mssgs.address_entry_error_empty_town },
             'string.max': { ref: '#town', text: mssgs.address_entry_error_max_char_town },
-            'string.forbidden': { ref: '#town', text: mssgs.address_entry_error_invalid_town }
+            'string.forbidden': { ref: '#town', text: mssgs.address_entry_error_invalid_town },
+            'string.pattern.base': { ref: '#town', text: mssgs.address_entry_error_invalid_town }
         },
         'country': {
             'string.empty': { ref: '#country', text: mssgs.address_entry_error_empty_country }
@@ -72,7 +73,8 @@
       name: "street",
       value: payload['street'],
       classes: "govuk-input--width-20",
-      attributes: { maxlength: 50 }
+      attributes: { maxlength: 50 },
+      errorMessage: { text: error['street'].text } if error['street']
     }) }}
 
     {{ govukInput({
@@ -84,7 +86,8 @@
       value: payload['locality'],
       classes: "govuk-input--width-20",
       autocomplete: 'address-level2',
-      attributes: { maxlength: 50 }
+      attributes: { maxlength: 50 },
+      errorMessage: { text: error['locality'].text } if error['locality']
     }) }}
 
     {{ govukInput({
@@ -97,7 +100,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
       autocomplete: 'address-level1',
-      errorMessage: { text: mssgs.address_entry_error_empty_town } if error['town']
+      errorMessage: { text: error['town'].text } if error['town']
     }) }}
 
     {{ govukInput({
@@ -111,7 +114,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 10 },
       autocomplete: 'postal-code',
-      errorMessage: { text: mssgs.address_entry_error_empty_postcode } if error['postcode']
+      errorMessage: { text: error['postcode'].text } if error['postcode']
     }) }}
 
     {{ govukSelect({

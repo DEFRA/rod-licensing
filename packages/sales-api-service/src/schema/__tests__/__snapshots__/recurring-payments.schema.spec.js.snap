@@ -403,6 +403,12 @@ Object {
                     },
                     Object {
                       "args": Object {
+                        "regex": "/^[^<>]+$/u",
+                      },
+                      "name": "pattern",
+                    },
+                    Object {
+                      "args": Object {
                         "limit": 100,
                       },
                       "name": "max",
@@ -906,6 +912,12 @@ Object {
                     },
                     Object {
                       "args": Object {
+                        "regex": "/^[^<>]+$/u",
+                      },
+                      "name": "pattern",
+                    },
+                    Object {
+                      "args": Object {
                         "limit": 100,
                       },
                       "name": "max",
@@ -954,6 +966,12 @@ Object {
                           },
                           Object {
                             "args": Object {
+                              "regex": "/^[^<>]+$/u",
+                            },
+                            "name": "pattern",
+                          },
+                          Object {
+                            "args": Object {
                               "limit": 100,
                             },
                             "name": "max",
@@ -992,6 +1010,12 @@ Object {
                               "enabled": true,
                             },
                             "name": "trim",
+                          },
+                          Object {
+                            "args": Object {
+                              "regex": "/^[^<>]+$/u",
+                            },
+                            "name": "pattern",
                           },
                           Object {
                             "args": Object {
