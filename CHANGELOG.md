@@ -1,4 +1,13 @@
 
+## v1.77.0-rc.18 (2026-11-05)
+
+#### :bug: Bug Fix
+* `payment-mop-up-job`
+  * [#2494](https://github.com/DEFRA/rod-licensing/pull/2494) Investigate cause of 410 sales API errors caused by payment mop-up job ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.77.0-rc.16 (2026-10-27)
 
