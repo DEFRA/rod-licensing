@@ -209,6 +209,20 @@ describe('permissions service', () => {
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate })
       expect(endDate).toBe('2025-02-28T23:59:59.999Z')
     })
+
+    it.each([
+      ['2028-02-29T23:59:59.999Z', '2027-03-01'],
+      ['2029-02-28T23:59:59.999Z', '2028-03-01'],
+      ['2032-02-29T23:59:59.999Z', '2031-03-01'],
+      ['2033-02-28T23:59:59.999Z', '2032-03-01'],
+      ['2028-03-01T23:59:59.999Z', '2027-03-02']
+    ])('returns %s as the end date for a 12 month licence starting %s', async (expected, start) => {
+      const endDate = await calculateEndDate({
+        permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
+        startDate: moment(`${start}T00:00:00.000Z`)
+      })
+      expect(endDate).toBe(expected)
+    })
   })
 
   describe('sequence generator', () => {

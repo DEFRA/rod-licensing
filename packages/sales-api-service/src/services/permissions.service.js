@@ -50,7 +50,8 @@ export const generatePermissionNumber = async ({ permitId, startDate, licensee: 
 }
 
 /**
- * Calculate the end date of a permission for a given permitId and start date
+ * Calculate the end date of a permission for a given permitId and start date.
+ * 12 month licences starting on 1st March end on the last day of February the following year, whether this is the 28th or 29th.
  * @param {string} permitId the permit ID to use when calculating the end date
  * @param {moment.Moment|string} startDate The start date to use when calculating the end date
  * @returns {Promise<moment.Moment>} The end date as a moment
@@ -59,7 +60,12 @@ export const calculateEndDateMoment = async ({ permitId, startDate }) => {
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
   const duration = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`)
   if (permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M') {
-    return moment(startDate).tz(SERVICE_LOCAL_TIME).subtract(1, 'day').endOf('day').add(duration)
+    const localStart = moment(startDate).tz(SERVICE_LOCAL_TIME)
+    const endMoment = localStart.clone().subtract(1, 'day').endOf('day').add(duration)
+    if (localStart.month() === 2 && localStart.date() === 1) {
+      endMoment.endOf('month')
+    }
+    return endMoment
   }
   return moment(startDate).add(duration)
 }
