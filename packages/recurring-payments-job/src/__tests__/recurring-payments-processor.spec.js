@@ -135,6 +135,33 @@ const getJSONImplementation = responseJSON => {
   }
 }
 
+const setupPaymentStatusCheckTest = ({ agreementId, mockStatus }) => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+  salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
+  const mockPaymentResponse = {
+    payment_id: 'test-payment-id',
+    agreement_id: agreementId,
+    created_date: '2025-01-01T00:00:00.000Z'
+  }
+  mockBatchers({
+    paymentResponses: [
+      {
+        status: 200,
+        reference: agreementId,
+        json: getJSONImplementation(mockPaymentResponse)
+      }
+    ],
+    statusResponses: [
+      {
+        status: 200,
+        reference: mockPaymentResponse.payment_id,
+        json: getJSONImplementation(mockStatus)
+      }
+    ]
+  })
+  return consoleErrorSpy
+}
+
 describe('recurring-payments-processor', () => {
   const [{ value: debugLogger }] = db.mock.results
 
@@ -1234,40 +1261,14 @@ describe('recurring-payments-processor', () => {
   })
 
   it.each`
-    agreementId               | paymentDescription | mockStatus
-    ${'agreement-id'}         | ${'failure'}       | ${getPaymentStatusFailure()}
-    ${'test-agreement-id'}    | ${'failure'}       | ${getPaymentStatusFailure()}
-    ${'another-agreement-id'} | ${'failure'}       | ${getPaymentStatusFailure()}
-    ${'agreement-id'}         | ${'error'}         | ${getPaymentStatusError()}
-    ${'test-agreement-id'}    | ${'error'}         | ${getPaymentStatusError()}
-    ${'another-agreement-id'} | ${'error'}         | ${getPaymentStatusError()}
+    agreementId               | mockStatus
+    ${'agreement-id'}         | ${getPaymentStatusError()}
+    ${'test-agreement-id'}    | ${getPaymentStatusError()}
+    ${'another-agreement-id'} | ${getPaymentStatusError()}
   `(
-    'console error displays "Payment failed. Recurring payment agreement for: $agreementId set to be cancelled" when payment is a $paymentDescription',
+    'console error displays "Payment failed. Recurring payment agreement for: $agreementId set to be cancelled" when payment is an error',
     async ({ agreementId, mockStatus }) => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      salesApi.getDueRecurringPayments.mockReturnValueOnce([getMockDueRecurringPayment({ agreementId })])
-      const mockPaymentResponse = {
-        payment_id: 'test-payment-id',
-        agreement_id: agreementId,
-        created_date: '2025-01-01T00:00:00.000Z',
-        randomTag: Symbol('random')
-      }
-      mockBatchers({
-        paymentResponses: [
-          {
-            status: 200,
-            reference: agreementId,
-            json: getJSONImplementation(mockPaymentResponse)
-          }
-        ],
-        statusResponses: [
-          {
-            status: 200,
-            reference: mockPaymentResponse.payment_id,
-            json: getJSONImplementation(mockStatus)
-          }
-        ]
-      })
+      const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
 
       await execute()
 
@@ -1276,6 +1277,21 @@ describe('recurring-payments-processor', () => {
       )
     }
   )
+
+  it.each`
+    agreementId               | mockStatus
+    ${'agreement-id'}         | ${getPaymentStatusFailure()}
+    ${'test-agreement-id'}    | ${getPaymentStatusFailure()}
+    ${'another-agreement-id'} | ${getPaymentStatusFailure()}
+  `('when payment status is Failure (declined), console.error is NOT called for $agreementId', async ({ agreementId, mockStatus }) => {
+    const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
+
+    await execute()
+
+    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+      `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
+    )
+  })
 
   it.each([
     ['a failure', 'agreement-id', getPaymentStatusFailure()],
