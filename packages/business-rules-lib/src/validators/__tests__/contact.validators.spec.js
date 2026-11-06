@@ -488,6 +488,13 @@ describe('contact validators', () => {
         '"value" length must be less than or equal to 100 characters long'
       )
     })
+
+    it.each(['<i>Bond Street</i>', '<b>Bond Street</b>', '<div>Bond Street</div>', '<Bond Street>', '<Bond Street', 'Bond Street>'])(
+      'prohibits a string with angle brackets: %s',
+      async c => {
+        await expect(contactValidation.createStreetValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
   })
 
   describe('localityValidator', () => {
@@ -504,6 +511,13 @@ describe('contact validators', () => {
         '"value" length must be less than or equal to 100 characters long'
       )
     })
+
+    it.each(['<i>Mayfair</i>', '<b>Mayfair</b>', '<div>Mayfair</div>', '<Mayfair>', '<Mayfair', 'Mayfair>'])(
+      'prohibits a string with angle brackets: %s',
+      async c => {
+        await expect(contactValidation.createLocalityValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
   })
 
   describe('townValidator', () => {

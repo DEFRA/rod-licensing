@@ -23,18 +23,24 @@
             'string.empty': { ref: '#premises', text: mssgs.address_entry_error_empty_num },
             'string.max': { ref: '#premises', text: mssgs.address_entry_error_max_char_num },
             'string.forbidden': { ref: '#premises', text: mssgs.address_entry_error_invalid_premises },
-            'string.pattern.base': { ref: '#premises', text: mssgs.address_entry_error_invalid_premises }
+            'string.pattern.base': { ref: '#premises', text: mssgs.address_entry_error_pattern_premises }
         },
-        'postcode': {
-            'string.empty': { ref: '#postcode', text: mssgs.address_entry_error_empty_postcode },
-            'string.pattern.base': { ref: '#postcode', text: mssgs.address_entry_error_pattern_postcode },
-            'string.forbidden': { ref: '#postcode', text: mssgs.address_entry_error_invalid_postcode }
+        'street': {
+            'string.pattern.base': { ref: '#street', text: mssgs.address_entry_error_pattern_street }
+        },
+        'locality': {
+            'string.pattern.base': { ref: '#locality', text: mssgs.address_entry_error_pattern_locality }
         },
         'town': {
             'string.empty': { ref: '#town', text: mssgs.address_entry_error_empty_town },
             'string.max': { ref: '#town', text: mssgs.address_entry_error_max_char_town },
             'string.forbidden': { ref: '#town', text: mssgs.address_entry_error_invalid_town },
-            'string.pattern.base': { ref: '#town', text: mssgs.address_entry_error_invalid_town }
+            'string.pattern.base': { ref: '#town', text: mssgs.address_entry_error_pattern_town }
+        },
+        'postcode': {
+            'string.empty': { ref: '#postcode', text: mssgs.address_entry_error_empty_postcode },
+            'string.pattern.base': { ref: '#postcode', text: mssgs.address_entry_error_pattern_postcode },
+            'string.forbidden': { ref: '#postcode', text: mssgs.address_entry_error_invalid_postcode }
         },
         'country': {
             'string.empty': { ref: '#country', text: mssgs.address_entry_error_empty_country }

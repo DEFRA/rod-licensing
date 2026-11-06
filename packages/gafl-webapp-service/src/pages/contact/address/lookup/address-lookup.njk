@@ -13,7 +13,7 @@
         'premises': {
             'string.empty': { ref: '#premises', text: mssgs.address_lookup_error_empty_name_num },
             'string.max': { ref: '#premises', text: mssgs.address_lookup_error_max_name_num },
-            'string.pattern.base': { ref: '#premises', text: mssgs.address_lookup_error_invalid_premises }
+            'string.pattern.base': { ref: '#premises', text: mssgs.address_lookup_error_pattern_premises }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.address_lookup_error_empty_postcode },
@@ -65,7 +65,7 @@
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-20",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: mssgs.address_lookup_error_empty_postcode } if error['postcode']
+                  errorMessage: { text: error['postcode'].text } if error['postcode']
                 }) }}
 
             {% endcall %}
