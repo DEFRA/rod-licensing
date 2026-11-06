@@ -28,13 +28,15 @@
 
             {% endcall %}
 
-            {{ govukButton({
-                attributes: { id: 'continue' },
-                preventDoubleClick: true,
-                name: "continue",
-                text: mssgs.continue,
-                classes: "govuk-!-margin-top-5"
-            }) }}
+            {%  block continueButton %}
+              {{ govukButton({
+                  attributes: { id: 'continue' },
+                  preventDoubleClick: true,
+                  name: "continue",
+                  text: mssgs.continue,
+                  classes: "govuk-!-margin-top-5"
+              }) }}
+            {% endblock %}
             {{ csrf() }}
         </form>
     </div>
