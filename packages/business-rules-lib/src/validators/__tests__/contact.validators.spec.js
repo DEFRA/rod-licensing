@@ -441,8 +441,35 @@ describe('contact validators', () => {
       '➊➎ 🅡🅞🅢🅔 🅒🅞🅣🅣🅐🅖🅔',
       '①➎ 🅡ⓞ🅢ⓔ Ⓒ🅞ⓣ🅣ⓐ🅖ⓔ',
       '1⑤ 𝑅𝐨𝑠ⓔ 𝒞𝓸𝘁𝕥𝒶ℊ🄴',
-      '𝟏𝟓 𝐑𝐨𝐬𝐞 𝐂𝐨𝐭𝐭𝐚𝐠𝐞'
+      '𝟏𝟓 𝐑𝐨𝐬𝐞 𝐂𝐨𝐭𝐭𝐚𝐠𝐞',
+      '<i>15 Rose Cottage</i>',
+      '15 Rose <Cottage>',
+      '<div>15 Rose Cottage</div>'
     ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).rejects.toThrow()
+    })
+
+    it.each([
+      '15 Róse Cottage',
+      '15 Rosé Cottage',
+      '15 Röse Cottage',
+      '15 Røse Cottage',
+      '15 Rose Cottagé',
+      '15 Rose Cottàge',
+      '15 Rose Cottäge',
+      '15 Róše Cottagé'
+    ])('allows a string with Latin characters: %s', async c => {
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).resolves.toBeDefined()
+    })
+
+    it.each([
+      '<i>15 Rose Cottage</i>',
+      '<b>15 Rose Cottage</b>',
+      '<div>15 Rose Cottage</div>',
+      '15 Rose <Cottage>',
+      '<15 Rose Cottage',
+      '15 Rose Cottage>'
+    ])('prohibits a string with angle brackets: %s', async c => {
       await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
@@ -461,6 +488,13 @@ describe('contact validators', () => {
         '"value" length must be less than or equal to 100 characters long'
       )
     })
+
+    it.each(['<i>Bond Street</i>', '<b>Bond Street</b>', '<div>Bond Street</div>', '<Bond Street>', '<Bond Street', 'Bond Street>'])(
+      'prohibits a string with angle brackets: %s',
+      async c => {
+        await expect(contactValidation.createStreetValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
   })
 
   describe('localityValidator', () => {
@@ -477,6 +511,13 @@ describe('contact validators', () => {
         '"value" length must be less than or equal to 100 characters long'
       )
     })
+
+    it.each(['<i>Mayfair</i>', '<b>Mayfair</b>', '<div>Mayfair</div>', '<Mayfair>', '<Mayfair', 'Mayfair>'])(
+      'prohibits a string with angle brackets: %s',
+      async c => {
+        await expect(contactValidation.createLocalityValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
   })
 
   describe('townValidator', () => {
@@ -513,6 +554,13 @@ describe('contact validators', () => {
 
     it.each(['Ｌｏｎｄｏｎ', 'ᴸᵒⁿᵈᵒⁿ', '𝐋𝐨𝐧𝐝𝐨𝐧', 'ㄥＬ口ｏ几ｎ冂ｄ口ｏ几ｎ', 'L⃠o⃠n⃠d⃠o⃠n⃠', '🅛🅞🅝🅓🅞🅝', 'L̸o̸n̸d̸o̸n̸', 'L̲o̲n̲d̲o̲n̲'])(
       'prohibits a string with non-standard characters: %s',
+      async c => {
+        await expect(contactValidation.createTownValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
+
+    it.each(['<i>London</i>', '<b>london</b>', '<div>London</div>', '<London>', '<London', 'London>'])(
+      'prohibits a string with angle brackets: %s',
       async c => {
         await expect(contactValidation.createTownValidator(Joi).validateAsync(c)).rejects.toThrow()
       }
