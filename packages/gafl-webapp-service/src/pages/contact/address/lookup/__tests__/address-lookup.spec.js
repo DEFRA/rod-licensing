@@ -57,7 +57,7 @@ describe('The address lookup page', () => {
 
     const redirectedResponse = await injectWithCookies('GET', ADDRESS_LOOKUP.uri)
     expect(redirectedResponse.statusCode).toBe(200)
-    expect(redirectedResponse.payload).toContain('The building number or name must only contain numbers and letters')
+    expect(redirectedResponse.payload).toContain('The building number or name must not contain angle brackets')
   })
 
   it('on finding list of multiple found addresses redirects to the select page', async () => {
