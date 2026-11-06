@@ -23,15 +23,27 @@
   {% set primaryLicence = {} %}
 {% endif %}
 
+{% block continueButton %}
+  {{ govukButton({
+    attributes: { id: 'continue' },
+    preventDoubleClick: true,
+    name: "continue",
+    text: mssgs.interrupt_continue_purchase,
+    classes: "govuk-!-margin-top-5"
+  }) }}
+{% endblock %}
+
 {% block notificationContent %}
   {% set messageHtml %}
     <p class="govuk-notification-banner__heading">
       {% if data.name %}
-        {{ data.name }} {{ mssgs.interrupt_has_a }}
+        {{ mssgs.interrupt_name_has_1 }} {{ data.name }} {{ mssgs.interrupt_name_has_2 }}
+        {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
+        {{ mssgs.interrupt_name_has_3 }}
       {% else %}
-        {{ mssgs.interrupt_you_already_have }}
+        {{ mssgs.interrupt_you_have_1 }}
+        {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
       {% endif %}
-      {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
     </p>
     {% if data.notifySalmon %}
       <p class="govuk-body">
@@ -50,7 +62,7 @@
   {% if rows.length %}
     {{ govukTable({
       caption: mssgs.interrupt_your_current_licence,
-      captionClasses: "govuk-table__caption--m",
+      captionClasses: "govuk-table__caption--m govuk-visually-hidden",
       firstCellIsHeader: true,
       head: [
         {

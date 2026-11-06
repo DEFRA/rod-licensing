@@ -14,7 +14,7 @@ const licence1 = {
     },
     permitSubtype: {
       id: 910400001,
-      label: 'Salmon',
+      label: 'Salmon and sea trout',
       description: 'S'
     },
     description: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
@@ -31,7 +31,7 @@ const licence1 = {
   }
 }
 
-export const getData = async request => {
+export const getData = async _request => {
   // const existingPermissions = await request.cache().helpers.transaction.getExistingPermissions()
   const existingPermissions = { licences: [licence1] }
 
@@ -51,6 +51,7 @@ export const getData = async request => {
   }
 
   return {
+    name: "Michael Myers",
     licences,
     notifySalmon: licences?.[0].permit.permitSubtype.description === 'S'
   }
