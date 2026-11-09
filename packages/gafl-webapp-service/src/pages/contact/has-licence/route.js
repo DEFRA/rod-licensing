@@ -2,6 +2,9 @@ import { HAS_LICENCE, LICENCE_FULFILMENT } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
+import moment from 'moment-timezone'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { dateDisplayFormat } from '../../../processors/date-and-time-display.js'
 
 const licence1 = {
   startDate: new Date().toISOString(),
@@ -31,6 +34,21 @@ const licence1 = {
   }
 }
 
+const endDate = (request, date) => {
+  const endMoment = moment.utc(date, null, request.locale).tz(SERVICE_LOCAL_TIME)
+  const timeComponent = endMoment
+    .format('h:mma')
+    .replace('12:00am', () => {
+      endMoment.subtract(1, 'days')
+      return '11:59pm'
+    })
+    .replace('12:00pm', '12:00pm (midday)')
+  return {
+    time: timeComponent,
+    date: endMoment.format(dateDisplayFormat)
+  }
+}
+
 export const getData = async _request => {
   // const existingPermissions = await request.cache().helpers.transaction.getExistingPermissions()
   const existingPermissions = { licences: [licence1] }
@@ -42,7 +60,7 @@ export const getData = async _request => {
       .sort((a, b) => {
         if (a.permit.permitSubtype.description === b.permitSubtype.description) return 0
         return (a.permit.permitSubtype.description === 'S') ? 1 : -1
-      })
+      }).map( licence => ({ ...licence, end: endDate(_request, licence.permit.endDate)}))
     : []
 
   // if there are no existing permissions, redirect
