@@ -35,6 +35,9 @@ services:
       - '8002:8001'
     environment:
       - DYNAMO_ENDPOINT=http://host.docker.internal:4566
+      - AWS_REGION=eu-west-2
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     deploy:
       restart_policy:
         condition: on-failure

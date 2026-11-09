@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`contexts has expected contexts 1`] = `
+Object {
+  "addressLookup": Object {
+    "identifier": "address-lookup-context",
+    "initializer": Object {
+      "permissions": Array [],
+    },
+  },
+  "analytics": Object {
+    "identifier": "analytics-context",
+    "initializer": Object {
+      "permissions": Array [],
+    },
+  },
+  "existingPermissions": Object {
+    "identifier": "existing-permissions-context",
+    "initializer": Object {
+      "permissions": Array [],
+    },
+  },
+  "page": Object {
+    "identifier": "page-context",
+    "initializer": Object {
+      "permissions": Array [],
+    },
+  },
+  "status": Object {
+    "identifier": "status-context",
+    "initializer": Object {
+      "currentPermissionIdx": -1,
+      "permissions": Array [],
+    },
+  },
+  "transaction": Object {
+    "identifier": "transaction-context",
+    "initializer": Object {
+      "payment": Object {},
+      "permissions": Array [],
+    },
+  },
+}
+`;

@@ -1,4 +1,116 @@
 
+## v1.77.0-rc.18 (2026-11-05)
+
+#### :bug: Bug Fix
+* `payment-mop-up-job`
+  * [#2494](https://github.com/DEFRA/rod-licensing/pull/2494) Investigate cause of 410 sales API errors caused by payment mop-up job ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
+
+## v1.77.0-rc.16 (2026-10-27)
+
+#### :bug: Bug Fix
+* `payment-mop-up-job`
+  * [#2508](https://github.com/DEFRA/rod-licensing/pull/2508) Payments not mopped up ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.77.0-rc.14 (2026-10-26)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `sales-api-service`
+  * [#2504](https://github.com/DEFRA/rod-licensing/pull/2504) Fix error message handling for already-persisted permissions ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.77.0-rc.13 (2026-10-23)
+
+#### :bug: Bug Fix
+* [#2505](https://github.com/DEFRA/rod-licensing/pull/2505) Fix DynamoDB Admin for Local Dev ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.77.0-rc.12 (2026-10-20)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2480](https://github.com/DEFRA/rod-licensing/pull/2480) Service repeatedly tries to create duplicate permission ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.77.0-rc.11 (2026-10-20)
+
+#### :memo: Documentation
+* [#2503](https://github.com/DEFRA/rod-licensing/pull/2503) Update readme to include new troubleshooting steps ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
+## v1.77.0-rc.10 (2026-10-19)
+
+#### :bug: Bug Fix
+* [#2502](https://github.com/DEFRA/rod-licensing/pull/2502) Revert "Add additional contexts to fix docker build parallel executions" ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
+
+## v1.77.0-rc.8 (2026-10-16)
+
+#### :bug: Bug Fix
+* `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2500](https://github.com/DEFRA/rod-licensing/pull/2500) Reverting npm ci work ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
+
+
+## v1.77.0-rc.5 (2026-10-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2479](https://github.com/DEFRA/rod-licensing/pull/2479) Add permission match data to session ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.77.0-rc.4 (2026-10-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2482](https://github.com/DEFRA/rod-licensing/pull/2482) "Enter date of birth " error missing on Renewals ([@mark-a-roberts](https://github.com/mark-a-roberts))
+
+#### Committers: 1
+- Mark Roberts ([@mark-a-roberts](https://github.com/mark-a-roberts))
+
+
+## v1.77.0-rc.2 (2026-10-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2477](https://github.com/DEFRA/rod-licensing/pull/2477) Create webapp service to look up licence matches ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+Must provide GITHUB_AUTH
+
+## v1.77.0-rc.0 (2026-09-30)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#2476](https://github.com/DEFRA/rod-licensing/pull/2476) Create new Sales API endpoint to look up and return licence details using name, post code and date of birth ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.76.0-rc.5 (2026-09-04)
 

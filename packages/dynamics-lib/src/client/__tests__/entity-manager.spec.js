@@ -81,7 +81,10 @@ describe('entity manager', () => {
 
     it('throws an error object on failure', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
+      const error = new Error('Test error')
+      const message = Symbol('We have a problem here')
+      error.error = { message }
+      MockDynamicsWebApi.__throwWithErrorsOnBatchExecute(error)
       const newEntity = Object.assign(new TestEntity(), { strVal: 'test', intVal: 0 })
       const existingEntity = TestEntity.fromResponse(
         {
@@ -93,12 +96,13 @@ describe('entity manager', () => {
         },
         {}
       )
-      await expect(persist([newEntity, existingEntity])).rejects.toThrow('Test error')
+      await expect(persist([newEntity, existingEntity])).rejects.toThrow(error)
       // Expect the console error to contain details of the batch data (one create, one update plus the exception object)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringMatching('Error persisting batch. Data: %j, Exception: %o'),
+        expect.stringMatching('Error persisting batch. Data: %j, Exception: %o, Message: %s'),
         expect.arrayContaining([{ create: expect.any(Object) }, { update: expect.any(Object) }]),
-        expect.any(Error)
+        error,
+        message
       )
     })
 

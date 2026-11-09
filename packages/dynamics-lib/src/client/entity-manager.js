@@ -25,7 +25,7 @@ export async function persist (entities, createdBy) {
   } catch (e) {
     const error = e.length ? e[0] : e
     const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'create' : 'update']: entity.toPersistRequest() }))
-    console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
+    console.error('Error persisting batch. Data: %j, Exception: %o, Message: %s', requestDetails, error, error?.error?.message)
     throw error
   }
 }
