@@ -11,11 +11,14 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
-        <form method="post" novalidate>
 
           {% block notificationContent %}{% endblock %}
-
-            {% call govukFieldset({
+    </div>
+</div>
+<div class="govuk-grid-row">
+  <div class={{ pageContentClass if pageContentClass else "govuk-grid-column-two-thirds" }}>
+      <form method="post" novalidate>
+      {% call govukFieldset({
               describedBy: describedByTag,
               legend: {
                 text: title,
