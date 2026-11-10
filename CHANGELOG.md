@@ -1,4 +1,13 @@
 
+## v1.78.0-rc.0 (2026-11-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2495](https://github.com/DEFRA/rod-licensing/pull/2495) Upgrade GOVUK Frontend to v6 ([@mark-a-roberts](https://github.com/mark-a-roberts))
+
+#### Committers: 1
+- Mark Roberts ([@mark-a-roberts](https://github.com/mark-a-roberts))
+
 
 ## v1.77.0-rc.18 (2026-11-05)
 
