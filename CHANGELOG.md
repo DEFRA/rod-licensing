@@ -1,4 +1,13 @@
 
+## v1.78.0-rc.1 (2026-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2488](https://github.com/DEFRA/rod-licensing/pull/2488) Abstract licence display component ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.78.0-rc.0 (2026-11-10)
 
 #### :rocket: Enhancement
