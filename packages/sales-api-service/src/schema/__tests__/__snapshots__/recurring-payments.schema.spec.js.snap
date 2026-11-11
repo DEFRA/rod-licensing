@@ -403,7 +403,7 @@ Object {
                     },
                     Object {
                       "args": Object {
-                        "regex": "/^[^<>]+$/u",
+                        "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
                       },
                       "name": "pattern",
                     },
@@ -811,7 +811,7 @@ Object {
                           },
                           Object {
                             "args": Object {
-                              "regex": "/^[^<>]+$/u",
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
                             },
                             "name": "pattern",
                           },
@@ -864,7 +864,7 @@ Object {
                           },
                           Object {
                             "args": Object {
-                              "regex": "/^[^<>]+$/u",
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
                             },
                             "name": "pattern",
                           },
@@ -912,7 +912,7 @@ Object {
                     },
                     Object {
                       "args": Object {
-                        "regex": "/^[^<>]+$/u",
+                        "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
                       },
                       "name": "pattern",
                     },
@@ -966,7 +966,7 @@ Object {
                           },
                           Object {
                             "args": Object {
-                              "regex": "/^[^<>]+$/u",
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
                             },
                             "name": "pattern",
                           },
@@ -1013,7 +1013,7 @@ Object {
                           },
                           Object {
                             "args": Object {
-                              "regex": "/^[^<>]+$/u",
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
                             },
                             "name": "pattern",
                           },

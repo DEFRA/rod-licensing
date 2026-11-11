@@ -468,8 +468,14 @@ describe('contact validators', () => {
       '<div>15 Rose Cottage</div>',
       '15 Rose <Cottage>',
       '<15 Rose Cottage',
-      '15 Rose Cottage>'
-    ])('prohibits a string with angle brackets: %s', async c => {
+      '15 Rose Cottage>',
+      'Rose Cottage&lt;',
+      'Rose Cottage&gt;',
+      '&lt;Rose Cottage&gt;',
+      '&Lt;Rose Cottage&Gt;',
+      'Rose Cottage&Lt;',
+      'Rose Cottage&Gt;'
+    ])('prohibits a string with angle brackets or their literal HTML-entity equivalents: %s', async c => {
       await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })

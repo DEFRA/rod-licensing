@@ -111,7 +111,7 @@ export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
 export const createMobilePhoneValidator = joi =>
   checkCopyPasteValidator(joi, forbiddenMobileRegex).string().allowable().trim().pattern(mobilePhoneRegex).example('person@example.com')
 
-export const addressNoHtmlTagsRegex = /^[^<>]+$/u
+export const addressNoHtmlTagsRegex = /^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu
 const maxPremises = 50
 
 /**

@@ -198,6 +198,18 @@ describe('The manual address entry page', () => {
     })
   })
 
+  it('rejects angle brackets and their literal HTML-entity equivalents in premises', async () => {
+    const addr = Object.assign({}, goodAddress, {
+      premises: '&Lt;Rose Cottage&Gt;'
+    })
+    const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
+    const redirectedResponse = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
+    expect(redirectedResponse.statusCode).toBe(200)
+    expect(redirectedResponse.payload).toContain('The building number or name must not contain angle brackets')
+  })
+
   it('redirects to contact summary page on posting a valid non-UK address if the contact summary has been seen', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
