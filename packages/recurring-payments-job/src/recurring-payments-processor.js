@@ -219,8 +219,9 @@ const preparePayment = (agreementId, transaction) => {
 
 const checkPaymentStatuses = async payments => {
   const batcher = await queuePaymentStatusChecks(payments)
-  const statusChecks = payments.map(payment => processPaymentStatusCheck(payment, batcher))
-  await Promise.allSettled(statusChecks)
+  for (const payment of payments) {
+    await processPaymentStatusCheck(payment, batcher)
+  }
 }
 
 const processPaymentStatusCheck = async (payment, batcher) => {
