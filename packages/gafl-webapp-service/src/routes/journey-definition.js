@@ -280,7 +280,7 @@ export default [
     current: ADDRESS_SELECT,
     next: {
       [ShowDigitalLicencePages.YES]: {
-        page: LICENCE_FULFILMENT
+        page: HAS_LICENCE
       },
       [ShowDigitalLicencePages.NO]: {
         page: CONTACT
