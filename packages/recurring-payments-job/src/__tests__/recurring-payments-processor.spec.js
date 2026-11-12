@@ -1261,14 +1261,14 @@ describe('recurring-payments-processor', () => {
   })
 
   it.each`
-    agreementId               | mockStatus
-    ${'agreement-id'}         | ${getPaymentStatusError()}
-    ${'test-agreement-id'}    | ${getPaymentStatusError()}
-    ${'another-agreement-id'} | ${getPaymentStatusError()}
+    agreementId
+    ${'agreement-id'}
+    ${'test-agreement-id'}
+    ${'another-agreement-id'}
   `(
     'console error displays "Payment failed. Recurring payment agreement for: $agreementId set to be cancelled" when payment is an error',
-    async ({ agreementId, mockStatus }) => {
-      const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
+    async ({ agreementId }) => {
+      const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus: getPaymentStatusError() })
 
       await execute()
 
@@ -1279,17 +1279,30 @@ describe('recurring-payments-processor', () => {
   )
 
   it.each`
-    agreementId               | mockStatus
-    ${'agreement-id'}         | ${getPaymentStatusFailure()}
-    ${'test-agreement-id'}    | ${getPaymentStatusFailure()}
-    ${'another-agreement-id'} | ${getPaymentStatusFailure()}
-  `('when payment status is Failure (declined), console.error is NOT called for $agreementId', async ({ agreementId, mockStatus }) => {
-    const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus })
+    agreementId
+    ${'agreement-id'}
+    ${'test-agreement-id'}
+    ${'another-agreement-id'}
+  `('when payment status is Failure (declined), console.error is NOT called for $agreementId', async ({ agreementId }) => {
+    const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus: getPaymentStatusFailure() })
 
     await execute()
 
-    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
-      `Payment failed. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
+  })
+
+  it.each`
+    agreementId
+    ${'agreement-id'}
+    ${'test-agreement-id'}
+    ${'another-agreement-id'}
+  `('when payment status is Failure, debug is called instead for $agreementId', async ({ agreementId }) => {
+    setupPaymentStatusCheckTest({ agreementId, mockStatus: getPaymentStatusFailure() })
+
+    await execute()
+
+    expect(debugLogger).toHaveBeenCalledWith(
+      `Payment declined. Recurring payment agreement for: ${agreementId} set to be cancelled. Updating payment journal.`
     )
   })
 
