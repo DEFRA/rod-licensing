@@ -91,9 +91,9 @@ const coarseLicence2 = {
   }
 }
 
-const getMessages = (mssgs)
+const getMessages = mssgs
 
-const getSampleRequest = (existingPermissions = {}, currentPermission  = {}) => ({
+const getSampleRequest = (existingPermissions = {}, currentPermission = {}) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -135,7 +135,7 @@ describe('The existing licence page', () => {
       [[salmonLicence1], 1],
       [[coarseLicence2, coarseLicence3, salmonLicence1], 3]
     ])('returns expected values', async (permissions, expectedCount) => {
-      const existingPermissions = { permissions };
+      const existingPermissions = { permissions }
       const currentPermission = {
         isLicenceForYou: false,
         licensee: {
@@ -148,7 +148,7 @@ describe('The existing licence page', () => {
     })
 
     it('places a salmon and trout licence first if present', async () => {
-      const existingPermissions = { permissions: [coarseLicence3, coarseLicence2, salmonLicence1] };
+      const existingPermissions = { permissions: [coarseLicence3, coarseLicence2, salmonLicence1] }
       const currentPermission = {
         isLicenceForYou: false,
         licensee: {
@@ -159,24 +159,20 @@ describe('The existing licence page', () => {
       const result = await getData(getSampleRequest(existingPermissions, currentPermission))
       expect(result.licences.length).toBe(3)
 
-      expect(result.licences[0]).toMatchObject(
-        {
-          licenceType: mssgs.licence_type_radio_salmon,
-          isSalmon: true
-        })
-      expect(result.licences[1]).toMatchObject(
-{
-            numberOfRods: 3,
-            licenceType: mssgs.licence_type_radio_trout_three_rod,
-            isSalmon: false
-          })
-      expect(result.licences[2]).toMatchObject(
-          {
-            numberOfRods: 2,
-            licenceType: mssgs.licence_type_radio_trout_two_rod,
-            isSalmon: false
-          })
+      expect(result.licences[0]).toMatchObject({
+        licenceType: mssgs.licence_type_radio_salmon,
+        isSalmon: true
+      })
+      expect(result.licences[1]).toMatchObject({
+        numberOfRods: 3,
+        licenceType: mssgs.licence_type_radio_trout_three_rod,
+        isSalmon: false
+      })
+      expect(result.licences[2]).toMatchObject({
+        numberOfRods: 2,
+        licenceType: mssgs.licence_type_radio_trout_two_rod,
+        isSalmon: false
+      })
     })
-
   })
 })
