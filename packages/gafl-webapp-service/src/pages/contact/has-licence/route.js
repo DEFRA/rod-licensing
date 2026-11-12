@@ -34,6 +34,24 @@ const licence1 = {
   }
 }
 
+const licenceTypeDisplay = (permit, mssgs) => {
+  const typesStrArr = []
+
+  // Build the display string for the licence type
+
+  if (permit.permitSubtype.description === 'S') {
+    typesStrArr.push(mssgs.licence_type_radio_salmon_payment_summary)
+  } else if (permit.permitSubtype.description === 'C') {
+    if (Number(permit.numberOfRods) === 2) {
+      typesStrArr.push(mssgs.licence_type_radio_trout_two_rod_payment_summary)
+    } else {
+      typesStrArr.push(mssgs.licence_type_radio_trout_three_rod_payment_summary)
+    }
+  }
+
+  return typesStrArr.join(' ')
+}
+
 const endDate = (request, date) => {
   const endMoment = moment.utc(date, null, request.locale).tz(SERVICE_LOCAL_TIME)
   const timeComponent = endMoment
@@ -49,18 +67,29 @@ const endDate = (request, date) => {
   }
 }
 
-export const getData = async _request => {
-  // const existingPermissions = await request.cache().helpers.transaction.getExistingPermissions()
-  const existingPermissions = { licences: [licence1] }
+export const getData = async request => {
+  const mssgs = request.i18n.getCatalog()
+  const existingPermissions = await request.cache().helpers.existingPermissions.get()
+  // const existingPermissions = { permissions: [licence1] }
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  console.log('has existingPermissions -', JSON.stringify(existingPermissions))
 
   // filter and sort licences
-  const licences = existingPermissions?.licences?.length
-    ? existingPermissions.licences
+  const licences = existingPermissions?.permissions?.length
+    ? existingPermissions.permissions
       .filter((licence) => licence.permit.durationMagnitude === 12)
       .sort((a, b) => {
-        if (a.permit.permitSubtype.description === b.permitSubtype.description) return 0
-        return (a.permit.permitSubtype.description === 'S') ? 1 : -1
-      }).map( licence => ({ ...licence, end: endDate(_request, licence.permit.endDate)}))
+        if (a.permit.permitSubtype.description === b.permit.permitSubtype.description)
+          return b.permit.numberOfRods - a.permit.numberOfRods
+        return (a.permit.permitSubtype.description === 'S') ? -1 : 1
+      }).map(licence => (
+        {
+          licenceType: licenceTypeDisplay(licence.permit, mssgs),
+          duration: mssgs.licence_type_12m,
+          ends: endDate(request, licence.endDate),
+          numberOfRods: licence.permit.numberOfRods,
+          isSalmon: licence.permit.permitSubtype.description === 'S'
+        }))
     : []
 
   // if there are no existing permissions, redirect
@@ -69,9 +98,10 @@ export const getData = async _request => {
   }
 
   return {
-    name: "Michael Myers",
+    name: permission.licensee.firstName + ' ' + permission.licensee.lastName,
+    isLicenceForYou: permission.isLicenceForYou,
     licences,
-    notifySalmon: licences?.[0].permit.permitSubtype.description === 'S'
+    notifySalmon: licences[0].isSalmon
   }
 }
 

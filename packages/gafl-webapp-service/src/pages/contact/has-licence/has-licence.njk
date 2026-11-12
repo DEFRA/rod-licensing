@@ -14,15 +14,12 @@
 
   {% for licence in data.licences %}
     {{ rows.push([
-      { html: licence.permit.permitSubtype.label },
-      { html: licence.permit.duration.label },
-      { html: licence.end.time + '<br/>' + licence.end.date },
+      { html: licence.licenceType },
+      { html: licence.duration },
+      { html: licence.ends.time + '<br/>' + licence.ends.date },
       { html: '<a href="#">' + mssgs.interrupt_view_licence_details + '</a>' }
     ]) }}
   {% endfor %}
-
-{% else %}
-  {% set primaryLicence = {} %}
 {% endif %}
 
 {% block continueButton %}
@@ -38,13 +35,13 @@
 {% block notificationContent %}
   {% set messageHtml %}
     <p class="govuk-notification-banner__heading">
-      {% if data.name %}
+      {% if data.isLicenceForYou %}
+        {{ mssgs.interrupt_you_have_1 }}
+        {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
+      {% else %}
         {{ mssgs.interrupt_name_has_1 }} {{ data.name }} {{ mssgs.interrupt_name_has_2 }}
         {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
         {{ mssgs.interrupt_name_has_3 }}
-      {% else %}
-        {{ mssgs.interrupt_you_have_1 }}
-        {{ mssgs.interrupt_salmon_and_sea_trout_licence if data.notifySalmon else mssgs.interrupt_trout_and_coarse_licence }}
       {% endif %}
     </p>
     {% if data.notifySalmon %}
@@ -55,6 +52,7 @@
   {% endset %}
 
   {{ govukNotificationBanner({
+    titleText: mssgs.interrupt_important,
     html: messageHtml
   }) }}
 {% endblock %}

@@ -1,17 +1,112 @@
 import { getData } from '../route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import pageRoute from '../../../../routes/page-route.js'
+import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
+import { CONTACT } from '../../../../uri.js'
+import mssgs from '../../../../locales/en.json'
 
 jest.mock('../../../../routes/page-route.js')
 
-const getSampleRequest = (existingPermissions = []) => ({
+const salmonLicence1 = {
+  startDate: new Date().toISOString(),
+  endDate: '2025-01-01T00:00:00.000Z',
+  permit: {
+    permitType: {
+      id: 910400000,
+      label: 'Rod Fishing Licence',
+      description: ''
+    },
+    permitSubtype: {
+      id: 910400001,
+      label: 'Salmon and sea trout',
+      description: 'S'
+    },
+    description: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
+    duration: {
+      id: 910400003,
+      label: '12 months',
+      description: ''
+    },
+    durationMagnitude: 12,
+    numberOfRods: 3,
+    isCounterSales: false,
+    availableFrom: new Date().toISOString(),
+    availableTo: new Date().toISOString()
+  }
+}
+
+const coarseLicence3 = {
+  startDate: new Date().toISOString(),
+  endDate: '2025-01-01T00:00:00.000Z',
+  permit: {
+    permitType: {
+      id: 910400000,
+      label: 'Rod Fishing Licence',
+      description: ''
+    },
+    permitSubtype: {
+      id: 910400001,
+      label: 'Trout and coarse',
+      description: 'C'
+    },
+    description: 'Coarse 12 month 3 Rod Licence',
+    duration: {
+      id: 910400003,
+      label: '12 months',
+      description: ''
+    },
+    durationMagnitude: 12,
+    numberOfRods: 3,
+    isCounterSales: false,
+    availableFrom: new Date().toISOString(),
+    availableTo: new Date().toISOString()
+  }
+}
+
+const coarseLicence2 = {
+  startDate: new Date().toISOString(),
+  endDate: '2025-01-01T00:00:00.000Z',
+  permit: {
+    permitType: {
+      id: 910400000,
+      label: 'Rod Fishing Licence',
+      description: ''
+    },
+    permitSubtype: {
+      id: 910400001,
+      label: 'Trout and coarse',
+      description: 'C'
+    },
+    description: 'Coarse 12 month 3 Rod Licence',
+    duration: {
+      id: 910400003,
+      label: '12 months',
+      description: ''
+    },
+    durationMagnitude: 12,
+    numberOfRods: 2,
+    isCounterSales: false,
+    availableFrom: new Date().toISOString(),
+    availableTo: new Date().toISOString()
+  }
+}
+
+const getMessages = (mssgs)
+
+const getSampleRequest = (existingPermissions = {}, currentPermission  = {}) => ({
   cache: () => ({
     helpers: {
       transaction: {
-        getExistingPermissions: () => existingPermissions
+        getCurrentPermission: () => currentPermission
+      },
+      existingPermissions: {
+        get: () => existingPermissions
       }
     }
-  })
+  }),
+  i18n: {
+    getCatalog: () => getMessages
+  }
 })
 
 describe('The existing licence page', () => {
@@ -22,16 +117,66 @@ describe('The existing licence page', () => {
   })
 
   describe('getData', () => {
-    it.each([
-      [[], 0],
-      [['foo'], 1],
-      [['foo', 'bar', 'baz'], 3]
-    ])('returns expected values', async (existingPermissions, expectedCount) => {
-      const result = await getData(getSampleRequest(existingPermissions))
-
-      expect(result).toEqual({
-        existingPermissionsCount: expectedCount
-      })
+    it('redirects if no existing licences', async () => {
+      const existingPermissions = { permissions: [] }
+      const currentPermission = {
+        isLicenceForYou: false,
+        licensee: {
+          firstName: 'First',
+          lastName: 'Last'
+        }
+      }
+      const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
+      const func = async () => await getData(getSampleRequest(existingPermissions, currentPermission))
+      await expect(func).rejects.toThrow(getDataRedirectError)
     })
+
+    it.each([
+      [[salmonLicence1], 1],
+      [[coarseLicence2, coarseLicence3, salmonLicence1], 3]
+    ])('returns expected values', async (permissions, expectedCount) => {
+      const existingPermissions = { permissions };
+      const currentPermission = {
+        isLicenceForYou: false,
+        licensee: {
+          firstName: 'First',
+          lastName: 'Last'
+        }
+      }
+      const result = await getData(getSampleRequest(existingPermissions, currentPermission))
+      expect(result.licences.length).toEqual(expectedCount)
+    })
+
+    it('places a salmon and trout licence first if present', async () => {
+      const existingPermissions = { permissions: [coarseLicence3, coarseLicence2, salmonLicence1] };
+      const currentPermission = {
+        isLicenceForYou: false,
+        licensee: {
+          firstName: 'First',
+          lastName: 'Last'
+        }
+      }
+      const result = await getData(getSampleRequest(existingPermissions, currentPermission))
+      expect(result.licences.length).toBe(3)
+
+      expect(result.licences[0]).toMatchObject(
+        {
+          licenceType: mssgs.licence_type_radio_salmon,
+          isSalmon: true
+        })
+      expect(result.licences[1]).toMatchObject(
+{
+            numberOfRods: 3,
+            licenceType: mssgs.licence_type_radio_trout_three_rod,
+            isSalmon: false
+          })
+      expect(result.licences[2]).toMatchObject(
+          {
+            numberOfRods: 2,
+            licenceType: mssgs.licence_type_radio_trout_two_rod,
+            isSalmon: false
+          })
+    })
+
   })
 })
