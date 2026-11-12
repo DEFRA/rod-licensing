@@ -1,4 +1,13 @@
 
+## v1.78.0-rc.2 (2026-11-12)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2506](https://github.com/DEFRA/rod-licensing/pull/2506) 12 month licences starting on 1st March finish on 28th February of the following year even if it's a leap year ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
 ## v1.78.0-rc.1 (2026-11-11)
 
 #### :rocket: Enhancement
