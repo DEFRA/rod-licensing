@@ -6,6 +6,8 @@ import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { dateDisplayFormat } from '../../../processors/date-and-time-display.js'
 
+const TWELVE_MONTHS = 12
+
 const licence1 = {
   startDate: new Date().toISOString(),
   endDate: '2025-01-01T00:00:00.000Z',
@@ -39,13 +41,16 @@ const licenceTypeDisplay = (permit, mssgs) => {
 
   // Build the display string for the licence type
 
-  if (permit.permitSubtype.description === 'S') {
-    typesStrArr.push(mssgs.licence_type_radio_salmon_payment_summary)
-  } else if (permit.permitSubtype.description === 'C') {
-    if (Number(permit.numberOfRods) === 2) {
-      typesStrArr.push(mssgs.licence_type_radio_trout_two_rod_payment_summary)
+  if (["S","C"].includes( permit.permitSubtype.description)) {
+    if (permit.permitSubtype.description === 'S') {
+      typesStrArr.push(mssgs.licence_type_radio_salmon_payment_summary)
     } else {
-      typesStrArr.push(mssgs.licence_type_radio_trout_three_rod_payment_summary)
+      // must be trout/coarse
+      if (Number(permit.numberOfRods) === 2) {
+        typesStrArr.push(mssgs.licence_type_radio_trout_two_rod_payment_summary)
+      } else {
+        typesStrArr.push(mssgs.licence_type_radio_trout_three_rod_payment_summary)
+      }
     }
   }
 
@@ -77,10 +82,11 @@ export const getData = async request => {
   // filter and sort licences
   const licences = existingPermissions?.permissions?.length
     ? existingPermissions.permissions
-      .filter((licence) => licence.permit.durationMagnitude === 12)
+      .filter((licence) => licence.permit.durationMagnitude === TWELVE_MONTHS)
       .sort((a, b) => {
-        if (a.permit.permitSubtype.description === b.permit.permitSubtype.description)
+        if (a.permit.permitSubtype.description === b.permit.permitSubtype.description) {
           return b.permit.numberOfRods - a.permit.numberOfRods
+        }
         return (a.permit.permitSubtype.description === 'S') ? -1 : 1
       }).map(licence => (
         {
@@ -98,7 +104,7 @@ export const getData = async request => {
   }
 
   return {
-    name: permission.licensee.firstName + ' ' + permission.licensee.lastName,
+    name: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
     isLicenceForYou: permission.isLicenceForYou,
     licences,
     notifySalmon: licences[0].isSalmon
