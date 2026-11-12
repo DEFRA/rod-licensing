@@ -1,4 +1,12 @@
 
+## v1.77.1 (2026-11-12)
+
+#### :rocket: Enhancement
+* [#2516](https://github.com/DEFRA/rod-licensing/pull/2516) SEMVER-PATCH: Release v1.77.1 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.77.0-rc.18 (2026-11-05)
 
