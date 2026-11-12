@@ -369,6 +369,7 @@
   "important_info_contact_title_other": "How should we contact the licence holder about their licence?",
   "important_info_contact_title_you": "How should we contact you about your licence?",
   "interrupt_title": "Your current licence",
+  "interrupt_important": "Important",
   "interrupt_you_have_1": "You already have a ",
   "interrupt_name_has_1": "",
   "interrupt_name_has_2": "already has a",
