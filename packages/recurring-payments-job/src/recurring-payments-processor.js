@@ -219,9 +219,7 @@ const preparePayment = (agreementId, transaction) => {
 
 const checkPaymentStatuses = async payments => {
   const batcher = await queuePaymentStatusChecks(payments)
-  for (const payment of payments) {
-    await processPaymentStatusCheck(payment, batcher)
-  }
+  await Promise.all(payments.map(p => processPaymentStatusCheck(p, batcher)))
 }
 
 const processPaymentStatusCheck = async (payment, batcher) => {
@@ -235,11 +233,8 @@ const processPaymentStatusCheck = async (payment, batcher) => {
     if (paymentStatus === PAYMENT_STATUS.Success) {
       await handlePaymentStatusSuccess(paymentStatusCheck)
     }
-    if (paymentStatus === PAYMENT_STATUS.Failure) {
-      await handlePaymentStatusFailure(payment, false)
-    }
-    if (paymentStatus === PAYMENT_STATUS.Error) {
-      await handlePaymentStatusFailure(payment, true)
+    if ([PAYMENT_STATUS.Failure, PAYMENT_STATUS.Error].includes(paymentStatus)) {
+      await handlePaymentStatusFailure(payment, paymentStatus === PAYMENT_STATUS.Error)
     }
   } else if (isClientError(response.status)) {
     console.error(`Failed to fetch status for payment ${payment.paymentId}, error ${response.status}`)
