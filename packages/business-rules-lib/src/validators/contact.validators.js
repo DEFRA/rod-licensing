@@ -111,6 +111,7 @@ export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
 export const createMobilePhoneValidator = joi =>
   checkCopyPasteValidator(joi, forbiddenMobileRegex).string().allowable().trim().pattern(mobilePhoneRegex).example('person@example.com')
 
+export const addressNoHtmlTagsRegex = /^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu
 const maxPremises = 50
 
 /**
@@ -125,6 +126,7 @@ export const createPremisesValidator = joi =>
     .allowable()
     .trim()
     .min(1)
+    .pattern(addressNoHtmlTagsRegex)
     .max(maxPremises)
     .external(toTitleCase())
     .required()
@@ -136,7 +138,8 @@ export const createPremisesValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createStreetValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Example Street')
+export const createStreetValidator = joi =>
+  joi.string().trim().pattern(addressNoHtmlTagsRegex).max(100).external(toTitleCase()).empty('').example('Example Street')
 
 /**
  * Create a validator to check a contact's address locality
@@ -144,7 +147,8 @@ export const createStreetValidator = joi => joi.string().trim().max(100).externa
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createLocalityValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Near Sample')
+export const createLocalityValidator = joi =>
+  joi.string().trim().pattern(addressNoHtmlTagsRegex).max(100).external(toTitleCase()).empty('').example('Near Sample')
 
 /**
  * Create a validator to check a contact's address town
@@ -157,6 +161,7 @@ export const createTownValidator = joi =>
     .string()
     .allowable()
     .trim()
+    .pattern(addressNoHtmlTagsRegex)
     .max(100)
     .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le', 'super']))
     .required()
