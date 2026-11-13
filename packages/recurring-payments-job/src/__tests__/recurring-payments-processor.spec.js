@@ -1266,7 +1266,7 @@ describe('recurring-payments-processor', () => {
     ${'test-agreement-id'}
     ${'another-agreement-id'}
   `(
-    'console error displays "Payment failed. Recurring payment agreement for: $agreementId set to be cancelled" when payment is an error',
+    'when payment status is Error, console.error displays "Payment failed. Recurring payment agreement for: $agreementId set to be cancelled"',
     async ({ agreementId }) => {
       const consoleErrorSpy = setupPaymentStatusCheckTest({ agreementId, mockStatus: getPaymentStatusError() })
 
@@ -1296,7 +1296,7 @@ describe('recurring-payments-processor', () => {
     ${'agreement-id'}
     ${'test-agreement-id'}
     ${'another-agreement-id'}
-  `('when payment status is Failure, debug is called instead for $agreementId', async ({ agreementId }) => {
+  `('when payment status is Failure (declined), debug is called instead for $agreementId', async ({ agreementId }) => {
     setupPaymentStatusCheckTest({ agreementId, mockStatus: getPaymentStatusFailure() })
 
     await execute()
