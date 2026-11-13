@@ -1,7 +1,7 @@
 import { CONTACT_SUMMARY_SEEN, CommonResults, ShowDigitalLicencePages } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 
-export default async request => {
+const resultFunction = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
@@ -10,3 +10,4 @@ export default async request => {
 
   return isPhysical(permission) ?  ShowDigitalLicencePages.YES :  ShowDigitalLicencePages.NO
 }
+export default resultFunction
