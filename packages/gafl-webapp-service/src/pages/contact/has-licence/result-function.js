@@ -6,8 +6,7 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
     return CommonResults.SUMMARY
-  } else if (isPhysical(permission)) {
-    return ShowDigitalLicencePages.YES
   }
-  return ShowDigitalLicencePages.NO
+
+  return isPhysical(permission) ?  ShowDigitalLicencePages.YES :  ShowDigitalLicencePages.NO
 }
