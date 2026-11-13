@@ -1,6 +1,6 @@
 import {
   ADDRESS_SELECT,
-  LICENCE_FULFILMENT,
+  HAS_LICENCE,
   CONTACT,
   ADDRESS_LOOKUP,
   TEST_TRANSACTION,
@@ -101,13 +101,13 @@ describe('The address select page', () => {
       expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
-    it('redirects to the licence fulfilment page if licence length is 12 months and not junior', async () => {
+    it('redirects to the has licence page if licence length is 12 months and not junior', async () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       isPhysical.mockReturnValueOnce(true)
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toHaveValidPathFor(LICENCE_FULFILMENT.uri)
+      expect(response.headers.location).toHaveValidPathFor(HAS_LICENCE.uri)
     })
 
     it('redirects to the summary page if the summary page is seen', async () => {
