@@ -295,8 +295,14 @@ export default [
   {
     current: HAS_LICENCE,
     next: {
-      [CommonResults.OK]: {
+      [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
+      },
+      [ShowDigitalLicencePages.NO]: {
+        page: CONTACT
+      },
+      [CommonResults.SUMMARY]: {
+        page: CONTACT_SUMMARY
       }
     },
     backLink: ADDRESS_LOOKUP.uri
