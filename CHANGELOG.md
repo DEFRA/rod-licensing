@@ -1,4 +1,12 @@
 
+## v1.78.0-rc.3 (2026-11-13)
+
+#### :rocket: Enhancement
+* [#2518](https://github.com/DEFRA/rod-licensing/pull/2518) Node v22.23.5 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.78.0-rc.2 (2026-11-12)
 
 #### :bug: Bug Fix
