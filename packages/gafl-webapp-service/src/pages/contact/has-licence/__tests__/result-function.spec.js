@@ -1,25 +1,42 @@
 import resultFunction from '../result-function'
-import { CommonResults } from '../../../../constants.js'
+import { CONTACT_SUMMARY_SEEN, CommonResults, ShowDigitalLicencePages } from '../../../../constants.js'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
 
-describe('has-licence > result-function', () => {
-  const mockStatusCacheGet = jest.fn()
+jest.mock('../../../../processors/licence-type-display.js')
 
-  const mockRequest = {
+describe('contact > has-licence > result-function', () => {
+  const getMockRequest = (statusPermission = {}) => ({
     cache: () => ({
       helpers: {
         status: {
-          getCurrentPermission: mockStatusCacheGet
+          getCurrentPermission: () => statusPermission
+        },
+        transaction: {
+          getCurrentPermission: () => {}
         }
       }
     })
-  }
+  })
+
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
-    it('should return ok', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({}))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.OK)
+    it('should return CommonResults.SUMMARY if fromSummary is set to CONTACT_SUMMARY_SEEN', async () => {
+      const request = getMockRequest({ fromSummary: CONTACT_SUMMARY_SEEN })
+      const result = await resultFunction(request)
+      expect(result).toBe(CommonResults.SUMMARY)
+    })
+
+    it('should return ShowDigitalLicencePages.YES if fromSummary is not set to CONTACT_SUMMARY_SEEN and the permit is physical', async () => {
+      isPhysical.mockReturnValueOnce(true)
+      const result = await resultFunction(getMockRequest())
+      expect(result).toBe(ShowDigitalLicencePages.YES)
+    })
+
+    it('should return ShowDigitalLicencePages.NO if fromSummary is not set to CONTACT_SUMMARY_SEEN and the permit is not physical', async () => {
+      isPhysical.mockReturnValueOnce(false)
+      const result = await resultFunction(getMockRequest())
+      expect(result).toBe(ShowDigitalLicencePages.NO)
     })
   })
 })

@@ -6,10 +6,44 @@ import { CONTACT } from '../../../../uri.js'
 import mssgs from '../../../../locales/en.json'
 
 jest.mock('../../../../routes/page-route.js')
+// arbitrary duration of existing licence
+const TEN_MONTHS =  10 * 30 * 24 * 60 * 60 * 1000
+
+const startDate = new Date()
+const finishDate = new Date()
+finishDate.setTime(startDate.getTime() + TEN_MONTHS)
+
+const badLicence = {
+  startDate: startDate.toISOString(),
+  endDate: finishDate.toISOString(),
+  permit: {
+    permitType: {
+      id: 910400000,
+      label: 'Rod Fishing Licence',
+      description: ''
+    },
+    permitSubtype: {
+      id: 910400001,
+      label: 'Bad Subtype',
+      description: 'W'
+    },
+    description: 'Bad Licence',
+    duration: {
+      id: 910400003,
+      label: '12 months',
+      description: ''
+    },
+    durationMagnitude: 12,
+    numberOfRods: 3,
+    isCounterSales: false,
+    availableFrom: new Date().toISOString(),
+    availableTo: new Date().toISOString()
+  }
+}
 
 const salmonLicence1 = {
-  startDate: new Date().toISOString(),
-  endDate: '2025-01-01T00:00:00.000Z',
+  startDate: startDate.toISOString(),
+  endDate: finishDate.toISOString() ,
   permit: {
     permitType: {
       id: 910400000,
@@ -36,8 +70,8 @@ const salmonLicence1 = {
 }
 
 const coarseLicence3 = {
-  startDate: new Date().toISOString(),
-  endDate: '2025-01-01T00:00:00.000Z',
+  startDate: startDate.toISOString(),
+  endDate: finishDate.toISOString(),
   permit: {
     permitType: {
       id: 910400000,
@@ -64,8 +98,8 @@ const coarseLicence3 = {
 }
 
 const coarseLicence2 = {
-  startDate: new Date().toISOString(),
-  endDate: '2025-01-01T00:00:00.000Z',
+  startDate: startDate.toISOString(),
+  endDate: finishDate.toISOString(),
   permit: {
     permitType: {
       id: 910400000,
@@ -172,6 +206,21 @@ describe('The existing licence page', () => {
         numberOfRods: 2,
         licenceType: mssgs.licence_type_radio_trout_two_rod,
         isSalmon: false
+      })
+    })
+    it('handles a bad existing licence', async () => {
+      const existingPermissions = { permissions: [badLicence] }
+      const currentPermission = {
+        isLicenceForYou: false,
+        licensee: {
+          firstName: 'First',
+          lastName: 'Last'
+        }
+      }
+      const result = await getData(getSampleRequest(existingPermissions, currentPermission))
+      expect(result.licences.length).toBe(1)
+      expect(result.licences[0]).toMatchObject({
+        licenceType: ''
       })
     })
   })

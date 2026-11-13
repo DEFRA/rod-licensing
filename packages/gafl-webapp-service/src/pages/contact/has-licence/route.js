@@ -52,9 +52,9 @@ const licenceTypeDisplay = (permit, mssgs) => {
       // must be salmon
       typesStrArr.push(mssgs.licence_type_radio_salmon_payment_summary)
     }
+    return typesStrArr.join(' ')
   }
-
-  return typesStrArr.join(' ')
+  return ''
 }
 
 const endDate = (request, date) => {
