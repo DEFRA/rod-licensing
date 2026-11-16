@@ -457,7 +457,8 @@ describe('contact validators', () => {
       '15 Rose Cottagé',
       '15 Rose Cottàge',
       '15 Rose Cottäge',
-      '15 Róše Cottagé'
+      '15 Róše Cottagé',
+      '15 Rose Cottage'
     ])('allows a string with Latin characters: %s', async c => {
       await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).resolves.toBeDefined()
     })
@@ -466,6 +467,8 @@ describe('contact validators', () => {
       '<i>15 Rose Cottage</i>',
       '<b>15 Rose Cottage</b>',
       '<div>15 Rose Cottage</div>',
+      '15 <span>Rose</span> Cottage',
+      '<a>15 Rose Cottage',
       '15 Rose <Cottage>',
       '<15 Rose Cottage',
       '15 Rose Cottage>',
