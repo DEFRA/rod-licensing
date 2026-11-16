@@ -1,4 +1,13 @@
 
+## v1.78.0-rc.4 (2026-11-16)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2509](https://github.com/DEFRA/rod-licensing/pull/2509) Stop logging declined RP job payments as errors ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
 ## v1.78.0-rc.3 (2026-11-13)
 
 #### :rocket: Enhancement
