@@ -3,38 +3,12 @@ import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { dateDisplayFormat } from '../../../processors/date-and-time-display.js'
 
 const TWELVE_MONTHS = 12
 
-const licence1 = {
-  startDate: new Date().toISOString(),
-  endDate: '2025-01-01T00:00:00.000Z',
-  permit: {
-    permitType: {
-      id: 910400000,
-      label: 'Rod Fishing Licence',
-      description: ''
-    },
-    permitSubtype: {
-      id: 910400001,
-      label: 'Salmon and sea trout',
-      description: 'S'
-    },
-    description: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
-    duration: {
-      id: 910400003,
-      label: '12 months',
-      description: ''
-    },
-    durationMagnitude: 12,
-    numberOfRods: 3,
-    isCounterSales: false,
-    availableFrom: new Date().toISOString(),
-    availableTo: new Date().toISOString()
-  }
-}
+// placeholder for implementation
+const EXISTING_LICENCE_DETAILS = { uri: '/buy/existing-licence-details'}
 
 const licenceTypeDisplay = (permit, mssgs) => {
   const typesStrArr = []
@@ -94,7 +68,10 @@ export const getData = async request => {
         duration: mssgs.licence_type_12m,
         ends: endDate(request, licence.endDate),
         numberOfRods: licence.permit.numberOfRods,
-        isSalmon: licence.permit.permitSubtype.description === 'S'
+        isSalmon: licence.permit.permitSubtype.description === 'S',
+        uri: {
+          'licenceDetails': EXISTING_LICENCE_DETAILS.uri
+        }
       }))
     : []
 
