@@ -13,8 +13,9 @@ const startDate = new Date()
 const finishDate = new Date()
 finishDate.setTime(startDate.getTime() + TEN_MONTHS)
 const midday = new Date( finishDate.getTime());
-midday.setUTCHours(12,0,0,0);
 const midnight = new Date(finishDate.getTime());
+
+midday.setUTCHours(12,0,0,0);
 midnight.setUTCHours( 0, 0, 0, 0);
 
 const badLicence = {
@@ -186,7 +187,13 @@ describe('The existing licence page', () => {
     })
 
     it('places a salmon and trout licence first if present', async () => {
-      const existingPermissions = { permissions: [coarseLicence3, coarseLicence2, salmonLicence1] }
+      const existingPermissions = { permissions :[
+          { ...coarseLicence2 },
+          { ...salmonLicence1 },
+          { ...coarseLicence3 },
+          { ...salmonLicence1 },
+          { ...coarseLicence3 }
+        ]}
       const currentPermission = {
         isLicenceForYou: false,
         licensee: {
@@ -194,28 +201,39 @@ describe('The existing licence page', () => {
           lastName: 'Last'
         }
       }
+
       const result = await getData(getSampleRequest(existingPermissions, currentPermission))
-      expect(result.licences.length).toBe(3)
-
-      // verify midday conversion
-      expect(result.licences[0]).toMatchObject({
-        licenceType: mssgs.licence_type_radio_salmon,
-        isSalmon: true,
-        ends: expect.objectContaining({ 'time': '12:00pm (midday)' })
-      })
-
-      // verify midnight conversion
-      expect(result.licences[1]).toMatchObject({
-        numberOfRods: 3,
-        licenceType: mssgs.licence_type_radio_trout_three_rod,
-        isSalmon: false,
-        ends: expect.objectContaining({ 'time': '11:59pm' })
-      })
-      expect(result.licences[2]).toMatchObject({
-        numberOfRods: 2,
-        licenceType: mssgs.licence_type_radio_trout_two_rod,
-        isSalmon: false
-      })
+      expect(result.licences.length).toBe(5)
+      expect(result.licences).toMatchObject(
+        [
+          expect.objectContaining({
+            licenceType: mssgs.licence_type_radio_salmon,
+            isSalmon: true,
+            ends: expect.objectContaining({ 'time': '12:00pm (midday)' })
+          }),
+          expect.objectContaining({
+            licenceType: mssgs.licence_type_radio_salmon,
+            isSalmon: true,
+            ends: expect.objectContaining({ 'time': '12:00pm (midday)' })
+          }),
+          expect.objectContaining({
+            numberOfRods: 3,
+            licenceType: mssgs.licence_type_radio_trout_three_rod,
+            isSalmon: false,
+            ends: expect.objectContaining({ 'time': '11:59pm' })
+          }),
+          expect.objectContaining({
+            numberOfRods: 3,
+            licenceType: mssgs.licence_type_radio_trout_three_rod,
+            isSalmon: false,
+            ends: expect.objectContaining({ 'time': '11:59pm' })
+          }),
+          expect.objectContaining({
+            numberOfRods: 2,
+            licenceType: mssgs.licence_type_radio_trout_two_rod,
+            isSalmon: false
+          })
+        ])
     })
     it('handles a bad existing licence', async () => {
       const existingPermissions = { permissions: [badLicence] }
