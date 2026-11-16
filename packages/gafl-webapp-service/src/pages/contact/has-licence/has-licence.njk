@@ -13,11 +13,17 @@
 {% if data.licences.length %}
 
   {% for licence in data.licences %}
+    {% set link = "" %}
+    {% if data.isLicenceForYou %}
+        {% set link %}
+            <a href="{{ licence.uri.licenceDetails }}">{{ mssgs.interrupt_view_licence_details }}</a>
+        {% endset %}
+    {% endif %}
     {{ rows.push([
       { html: licence.licenceType },
       { html: licence.duration },
       { html: licence.ends.time + '<br/>' + licence.ends.date },
-      { html: '<a href="#">' + mssgs.interrupt_view_licence_details + '</a>' }
+      { html: link }
     ]) }}
   {% endfor %}
 {% endif %}
