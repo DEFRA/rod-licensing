@@ -12,6 +12,10 @@ const TEN_MONTHS =  10 * 30 * 24 * 60 * 60 * 1000
 const startDate = new Date()
 const finishDate = new Date()
 finishDate.setTime(startDate.getTime() + TEN_MONTHS)
+const midday = new Date( finishDate.getTime());
+midday.setUTCHours(12,0,0,0);
+const midnight = new Date(finishDate.getTime());
+midnight.setUTCHours( 0, 0, 0, 0);
 
 const badLicence = {
   startDate: startDate.toISOString(),
@@ -43,7 +47,7 @@ const badLicence = {
 
 const salmonLicence1 = {
   startDate: startDate.toISOString(),
-  endDate: finishDate.toISOString() ,
+  endDate: midday.toISOString() ,
   permit: {
     permitType: {
       id: 910400000,
@@ -71,7 +75,7 @@ const salmonLicence1 = {
 
 const coarseLicence3 = {
   startDate: startDate.toISOString(),
-  endDate: finishDate.toISOString(),
+  endDate: midnight.toISOString(),
   permit: {
     permitType: {
       id: 910400000,
@@ -193,14 +197,19 @@ describe('The existing licence page', () => {
       const result = await getData(getSampleRequest(existingPermissions, currentPermission))
       expect(result.licences.length).toBe(3)
 
+      // verify midday conversion
       expect(result.licences[0]).toMatchObject({
         licenceType: mssgs.licence_type_radio_salmon,
-        isSalmon: true
+        isSalmon: true,
+        ends: expect.objectContaining({ 'time': '12:00pm (midday)' })
       })
+
+      // verify midnight conversion
       expect(result.licences[1]).toMatchObject({
         numberOfRods: 3,
         licenceType: mssgs.licence_type_radio_trout_three_rod,
-        isSalmon: false
+        isSalmon: false,
+        ends: expect.objectContaining({ 'time': '11:59pm' })
       })
       expect(result.licences[2]).toMatchObject({
         numberOfRods: 2,

@@ -58,7 +58,7 @@ const licenceTypeDisplay = (permit, mssgs) => {
 }
 
 const endDate = (request, date) => {
-  const endMoment = moment.utc(date, null, request.locale).tz(SERVICE_LOCAL_TIME)
+  const endMoment = moment.utc(date, null, request.locale)
   const timeComponent = endMoment
     .format('h:mma')
     .replace('12:00am', () => {
