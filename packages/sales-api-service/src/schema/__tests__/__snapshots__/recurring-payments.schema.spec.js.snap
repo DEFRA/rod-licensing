@@ -403,6 +403,12 @@ Object {
                     },
                     Object {
                       "args": Object {
+                        "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
+                      },
+                      "name": "pattern",
+                    },
+                    Object {
+                      "args": Object {
                         "limit": 100,
                       },
                       "name": "max",
@@ -805,6 +811,12 @@ Object {
                           },
                           Object {
                             "args": Object {
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
+                            },
+                            "name": "pattern",
+                          },
+                          Object {
+                            "args": Object {
                               "limit": 50,
                             },
                             "name": "max",
@@ -852,6 +864,12 @@ Object {
                           },
                           Object {
                             "args": Object {
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
+                            },
+                            "name": "pattern",
+                          },
+                          Object {
+                            "args": Object {
                               "limit": 50,
                             },
                             "name": "max",
@@ -891,6 +909,12 @@ Object {
                         "enabled": true,
                       },
                       "name": "trim",
+                    },
+                    Object {
+                      "args": Object {
+                        "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
+                      },
+                      "name": "pattern",
                     },
                     Object {
                       "args": Object {
@@ -942,6 +966,12 @@ Object {
                           },
                           Object {
                             "args": Object {
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
+                            },
+                            "name": "pattern",
+                          },
+                          Object {
+                            "args": Object {
                               "limit": 100,
                             },
                             "name": "max",
@@ -980,6 +1010,12 @@ Object {
                               "enabled": true,
                             },
                             "name": "trim",
+                          },
+                          Object {
+                            "args": Object {
+                              "regex": "/^(?!.*(?:[<>]|&(?:lt|gt);)).+$/iu",
+                            },
+                            "name": "pattern",
                           },
                           Object {
                             "args": Object {
