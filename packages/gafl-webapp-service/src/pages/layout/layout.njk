@@ -6,6 +6,7 @@
 
 {% from "cookie-banner/macro.njk" import govukCookieBanner %}
 {% from "header/macro.njk" import govukHeader %}
+{% from "service-navigation/macro.njk" import govukServiceNavigation %}
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
@@ -112,8 +113,11 @@
       homepageUrl: "https://www.gov.uk/",
       serviceUrl: "/",
       classes: "no-print",
-      containerClasses: "govuk-width-container",
-      productName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)"
+      containerClasses: "govuk-width-container"
+    }) }}
+    {{ govukServiceNavigation({
+      serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)",
+      serviceUrl: "/"
     }) }}
   </form>
 {% endblock %}
