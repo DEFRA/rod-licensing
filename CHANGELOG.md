@@ -1,4 +1,13 @@
 
+## v1.78.0-rc.6 (2026-11-17)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2510](https://github.com/DEFRA/rod-licensing/pull/2510) ITHC - Poor input sanitation ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 
 ## v1.78.0-rc.4 (2026-11-16)
 
