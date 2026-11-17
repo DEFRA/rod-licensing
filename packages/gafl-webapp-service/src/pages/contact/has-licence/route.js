@@ -1,4 +1,5 @@
 import { HAS_LICENCE, LICENCE_FULFILMENT } from '../../../uri.js'
+// import { HAS_LICENCE, LICENCE_FULFILMENT, EXISTING_LICENCE_DETAILS } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
@@ -6,9 +7,6 @@ import moment from 'moment-timezone'
 import { dateDisplayFormat } from '../../../processors/date-and-time-display.js'
 
 const TWELVE_MONTHS = 12
-
-// placeholder for implementation
-const EXISTING_LICENCE_DETAILS = { uri: '/buy/existing-licence-details'}
 
 const licenceTypeDisplay = (permit, mssgs) => {
   const typesStrArr = []
@@ -51,7 +49,6 @@ export const getData = async request => {
   const existingPermissions = await request.cache().helpers.existingPermissions.get()
   // const existingPermissions = { permissions: [licence1] }
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  console.log('has existingPermissions -', JSON.stringify(existingPermissions))
 
   // filter and sort licences
   const licences = existingPermissions?.permissions?.length
@@ -70,7 +67,7 @@ export const getData = async request => {
         numberOfRods: licence.permit.numberOfRods,
         isSalmon: licence.permit.permitSubtype.description === 'S',
         uri: {
-          'licenceDetails': EXISTING_LICENCE_DETAILS.uri
+          // licenceDetails: EXISTING_LICENCE_DETAILS.uri
         }
       }))
     : []
@@ -79,6 +76,9 @@ export const getData = async request => {
   if (!licences.length) {
     throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
   }
+  console.log('ExistingPermissions -', JSON.stringify(existingPermissions))
+  console.log('isLicenceForYou', permission.isLicenceForYou )
+  console.log('Licences', JSON.stringify(licences))
 
   return {
     name: `${permission.licensee.firstName} ${permission.licensee.lastName}`,

@@ -14,7 +14,7 @@
 
   {% for licence in data.licences %}
     {% set link = "" %}
-    {% if data.isLicenceForYou %}
+    {% if data.isLicenceForYou and licence.uri and licence.uri.licenceDetails %}
         {% set link %}
             <a href="{{ licence.uri.licenceDetails }}">{{ mssgs.interrupt_view_licence_details }}</a>
         {% endset %}
