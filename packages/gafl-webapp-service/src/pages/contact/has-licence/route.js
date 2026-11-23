@@ -1,5 +1,4 @@
 import { HAS_LICENCE, LICENCE_FULFILMENT } from '../../../uri.js'
-// import { HAS_LICENCE, LICENCE_FULFILMENT, EXISTING_LICENCE_DETAILS } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
@@ -47,7 +46,6 @@ const endDate = (request, date) => {
 export const getData = async request => {
   const mssgs = request.i18n.getCatalog()
   const existingPermissions = await request.cache().helpers.existingPermissions.get()
-  // const existingPermissions = { permissions: [licence1] }
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // filter and sort licences
@@ -66,9 +64,7 @@ export const getData = async request => {
         ends: endDate(request, licence.endDate),
         numberOfRods: licence.permit.numberOfRods,
         isSalmon: licence.permit.permitSubtype.description === 'S',
-        uri: {
-          // licenceDetails: EXISTING_LICENCE_DETAILS.uri
-        }
+        uri: {}
       }))
     : []
 
@@ -76,9 +72,6 @@ export const getData = async request => {
   if (!licences.length) {
     throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
   }
-  console.log('ExistingPermissions -', JSON.stringify(existingPermissions))
-  console.log('isLicenceForYou', permission.isLicenceForYou )
-  console.log('Licences', JSON.stringify(licences))
 
   return {
     name: `${permission.licensee.firstName} ${permission.licensee.lastName}`,

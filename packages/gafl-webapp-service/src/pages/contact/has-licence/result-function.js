@@ -8,6 +8,6 @@ const resultFunction = async request => {
     return CommonResults.SUMMARY
   }
 
-  return isPhysical(permission) ?  ShowDigitalLicencePages.YES :  ShowDigitalLicencePages.NO
+  return isPhysical(permission) ? ShowDigitalLicencePages.YES : ShowDigitalLicencePages.NO
 }
 export default resultFunction

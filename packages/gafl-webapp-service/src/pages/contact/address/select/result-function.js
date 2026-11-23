@@ -7,5 +7,5 @@ export default async request => {
   if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
     return CommonResults.SUMMARY
   }
-  return isPhysical(permission) ?  ShowDigitalLicencePages.YES :  ShowDigitalLicencePages.NO
+  return isPhysical(permission) ? ShowDigitalLicencePages.YES : ShowDigitalLicencePages.NO
 }
