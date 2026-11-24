@@ -20,7 +20,7 @@ describe('Security Headers', () => {
       ['licence type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri, 'same-origin'],
       ['renewal page at ' + IDENTIFY.uri, IDENTIFY.uri, 'same-origin'],
       ['guidance page at ' + PRIVACY_POLICY.uri, PRIVACY_POLICY.uri, 'same-origin']
-    ])('should set CORP to same-origin for %s', async (description, url, expectedValue) => {
+    ])('should set CORP to same-origin for %s', async (_, url, expectedValue) => {
       const response = await server.inject({ method: 'GET', url })
 
       expect(response.headers['cross-origin-resource-policy']).toBe(expectedValue)
@@ -33,7 +33,7 @@ describe('Security Headers', () => {
       ['licence type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri],
       ['renewal page at ' + IDENTIFY.uri, IDENTIFY.uri],
       ['guidance page at ' + PRIVACY_POLICY.uri, PRIVACY_POLICY.uri]
-    ])('should include COOP header for %s', async (description, url) => {
+    ])('should include COOP header for %s', async (_, url) => {
       const response = await server.inject({ method: 'GET', url })
 
       expect(response.headers['cross-origin-opener-policy']).toBeDefined()
@@ -46,7 +46,7 @@ describe('Security Headers', () => {
       ['licence type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri],
       ['renewal page at ' + IDENTIFY.uri, IDENTIFY.uri],
       ['guidance page at ' + PRIVACY_POLICY.uri, PRIVACY_POLICY.uri]
-    ])('should include COEP header for %s', async (description, url) => {
+    ])('should include COEP header for %s', async (_, url) => {
       const response = await server.inject({ method: 'GET', url })
 
       expect(response.headers['cross-origin-embedder-policy']).toBeDefined()
@@ -80,7 +80,7 @@ describe('Security Headers', () => {
       ['X-Frame-Options set to DENY', 'x-frame-options', 'DENY'],
       ['X-Content-Type-Options set to nosniff', 'x-content-type-options', 'nosniff'],
       ['Strict-Transport-Security set to max-age=31536000', 'strict-transport-security', 'max-age=31536000']
-    ])('should include %s', async (description, headerKey, expectedValue) => {
+    ])('should include %s', async (_, headerKey, expectedValue) => {
       const response = await server.inject({ method: 'GET', url: LICENCE_LENGTH.uri })
 
       expect(response.headers[headerKey]).toContain(expectedValue)
