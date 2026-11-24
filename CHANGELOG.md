@@ -1,4 +1,13 @@
 
+## v1.78.0-rc.9 (2026-11-24)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2522](https://github.com/DEFRA/rod-licensing/pull/2522) ITHC: Cross-site scripting in some back links ([@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def))
+
+#### Committers: 1
+- [@Lawrence-Sithole-Def](https://github.com/Lawrence-Sithole-Def)
+
 
 ## v1.78.0-rc.6 (2026-11-17)
 
