@@ -1,5 +1,5 @@
 import { start, stop, server, initialize } from '../__mocks__/test-utils-system.js'
-import { LICENCE_LENGTH, LICENCE_TYPE } from '../uri.js'
+import { LICENCE_LENGTH, LICENCE_TYPE, IDENTIFY, PRIVACY_POLICY } from '../uri.js'
 
 beforeAll(
   () =>
@@ -16,8 +16,10 @@ afterAll(d => {
 describe('Security Headers', () => {
   describe('CORP - Cross-Origin-Resource-Policy', () => {
     it.each([
-      ['license length page at ' + LICENCE_LENGTH.uri, LICENCE_LENGTH.uri, 'same-origin'],
-      ['license type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri, 'same-origin']
+      ['licence length page at ' + LICENCE_LENGTH.uri, LICENCE_LENGTH.uri, 'same-origin'],
+      ['licence type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri, 'same-origin'],
+      ['renewal page at ' + IDENTIFY.uri, IDENTIFY.uri, 'same-origin'],
+      ['guidance page at ' + PRIVACY_POLICY.uri, PRIVACY_POLICY.uri, 'same-origin']
     ])('should set CORP to same-origin for %s', async (description, url, expectedValue) => {
       const response = await server.inject({ method: 'GET', url })
 
@@ -27,8 +29,10 @@ describe('Security Headers', () => {
 
   describe('COOP - Cross-Origin-Opener-Policy', () => {
     it.each([
-      ['license length page at ' + LICENCE_LENGTH.uri, LICENCE_LENGTH.uri],
-      ['license type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri]
+      ['licence length page at ' + LICENCE_LENGTH.uri, LICENCE_LENGTH.uri],
+      ['licence type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri],
+      ['renewal page at ' + IDENTIFY.uri, IDENTIFY.uri],
+      ['guidance page at ' + PRIVACY_POLICY.uri, PRIVACY_POLICY.uri]
     ])('should include COOP header for %s', async (description, url) => {
       const response = await server.inject({ method: 'GET', url })
 
@@ -38,8 +42,10 @@ describe('Security Headers', () => {
 
   describe('COEP - Cross-Origin-Embedder-Policy', () => {
     it.each([
-      ['license length page at ' + LICENCE_LENGTH.uri, LICENCE_LENGTH.uri],
-      ['license type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri]
+      ['licence length page at ' + LICENCE_LENGTH.uri, LICENCE_LENGTH.uri],
+      ['licence type page at ' + LICENCE_TYPE.uri, LICENCE_TYPE.uri],
+      ['renewal page at ' + IDENTIFY.uri, IDENTIFY.uri],
+      ['guidance page at ' + PRIVACY_POLICY.uri, PRIVACY_POLICY.uri]
     ])('should include COEP header for %s', async (description, url) => {
       const response = await server.inject({ method: 'GET', url })
 
