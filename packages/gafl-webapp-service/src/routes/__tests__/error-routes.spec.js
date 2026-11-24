@@ -1,5 +1,5 @@
 import errorRoutes from '../error-routes'
-import { CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR, AGREED } from '../../uri.js'
+import { CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR, AGREED, CONTROLLER } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 
 jest.mock('../../processors/uri-helper.js')
@@ -27,6 +27,12 @@ describe('Error route handlers', () => {
         expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
       })
 
+      it('addLanguageCodeToUri is called with expected request and CONTROLLER.uri', async () => {
+        const request = getMockRequest()
+        await clientError(request, getMockToolkit())
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, CONTROLLER.uri)
+      })
+
       it('second argument of handler return correct values', async () => {
         const href = Symbol('gov.pay.url')
         const payment = { payment_id: 'abc123', href: href }
@@ -41,6 +47,7 @@ describe('Error route handlers', () => {
           altLang: [],
           uri: {
             new: decoratedUri,
+            controller: decoratedUri,
             payment: href
           }
         })

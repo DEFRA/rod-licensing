@@ -26,7 +26,6 @@ export const errorHandler = async (request, h) => {
         altLang,
         mssgs,
         paymentInProgress,
-        referer: request?.headers?.referer,
         clientError: request.response.output.payload,
         path: request.path,
         uri: {

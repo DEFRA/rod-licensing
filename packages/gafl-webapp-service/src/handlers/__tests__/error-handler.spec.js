@@ -7,31 +7,19 @@ jest.mock('../../processors/uri-helper.js')
 describe('error-handler', () => {
   describe('errorHandler', () => {
     beforeEach(jest.clearAllMocks)
-    it('should pass the referer to the view if it is present', async () => {
+    it('should not pass the referer header to the client error view', async () => {
       const request = {
         ...getMockRequest(),
         headers: {
-          referer: 'http://example.com'
+          referer: 'javascript:alert(1)'
         }
       }
       const mockToolkit = getMockToolkit()
       await errorHandler(request, mockToolkit)
       expect(mockToolkit.view).toBeCalledWith(
         CLIENT_ERROR.page,
-        expect.objectContaining({
-          referer: 'http://example.com'
-        })
-      )
-    })
-
-    it('should not pass the referer to the view if it is not present', async () => {
-      const request = getMockRequest()
-      const mockToolkit = getMockToolkit()
-      await errorHandler(request, mockToolkit)
-      expect(mockToolkit.view).toBeCalledWith(
-        CLIENT_ERROR.page,
         expect.not.objectContaining({
-          referer: 'http://example.com'
+          referer: expect.anything()
         })
       )
     })
