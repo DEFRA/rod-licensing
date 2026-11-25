@@ -43,6 +43,11 @@ export const GOVUK_PAY_ERROR_STATUS_CODES = {
 }
 
 /**
+ * Error codes returned when finalising a transaction
+ */
+export const TRANSACTION_FINALISATION_ERROR_CODES = { FALLBACK_LICENCE: 'FALLBACK_LICENCE' }
+
+/**
  * Constants used in finalization
  * @type {{telesales: string, govPay: string}}
  */
