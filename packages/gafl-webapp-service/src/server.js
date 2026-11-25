@@ -118,6 +118,9 @@ const addDefaultHeaders = (request, h) => {
   }
   request.response.header('X-Content-Type-Options', 'nosniff')
   request.response.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+  request.response.header('Cross-Origin-Resource-Policy', 'same-origin')
+  request.response.header('Cross-Origin-Opener-Policy', 'same-origin')
+  request.response.header('Cross-Origin-Embedder-Policy', 'require-corp')
 
   return h.continue
 }
