@@ -38,6 +38,8 @@ export const OIDC_SIGNIN = { uri: '/oidc/signin' }
 export const OIDC_ROLE_REQUIRED = { uri: '/oidc/role-required', page: 'role-required' }
 export const OIDC_ACCOUNT_DISABLED = { uri: '/oidc/account-disabled', page: 'account-disabled' }
 
+export const EXISTING_LICENCE_DETAILS = { uri: '/buy/existing-licence-details', page: 'existing-licence-details' }
+
 /**
  * Renewals pages
  * @type {{uri: string}}
