@@ -1,4 +1,17 @@
 
+## v1.78.0-rc.10 (2026-11-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2521](https://github.com/DEFRA/rod-licensing/pull/2521) ITHC: HTTP security headers not implemented and not securely configured ([@lailien3](https://github.com/lailien3))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2521](https://github.com/DEFRA/rod-licensing/pull/2521) ITHC: HTTP security headers not implemented and not securely configured ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila ([@lailien3](https://github.com/lailien3))
+
 ## v1.78.0-rc.9 (2026-11-24)
 
 #### :bug: Bug Fix
