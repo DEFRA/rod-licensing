@@ -3,7 +3,7 @@ import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
-import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES, TRANSACTION_FINALISATION_ERROR_CODES } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
@@ -83,7 +83,9 @@ export async function finaliseTransaction ({ id, ...payload }) {
         throw Boom.internal(`Failed to rollback transaction record ${id} after SQS send failure`, rollbackError)
       }
       debug('Error sending transaction %s to staging queue: %o', id, error)
-      throw Boom.internal('Failed to send transaction to staging queue', error)
+      const fallbackLicenceError = Boom.internal('Failed to send transaction to staging queue', error)
+      fallbackLicenceError.data = { errorCode: TRANSACTION_FINALISATION_ERROR_CODES.FALLBACK_LICENCE }
+      throw fallbackLicenceError
     }
   })()
 
