@@ -17,7 +17,7 @@ describe('storm-padlock-service', () => {
     beforeEach(() => {
       jest.clearAllMocks()
 
-      process.env.STORM_PADLOCK_API_TIMEOUT_MS = 10000
+      process.env.STORM_PADLOCK_API_TIMEOUT_MS = '10000'
       process.env.STORM_PADLOCK_API_TOKEN_URL = 'https://www.example.com/'
       process.env.STORM_PADLOCK_CLIENT_ID = 'client_id'
       process.env.STORM_PADLOCK_CLIENT_SECRET = 'client_secret'
@@ -25,6 +25,7 @@ describe('storm-padlock-service', () => {
 
     it('sends expected fetch request', async () => {
       mockFetchSuccessResponse()
+      const timeoutSpy = jest.spyOn(AbortSignal, 'timeout').mockImplementationOnce(() => {})
 
       await getBearerToken()
 
@@ -36,9 +37,22 @@ describe('storm-padlock-service', () => {
           'content-type': 'application/x-www-form-urlencoded'
         },
         body: 'grant_type=client_credentials',
-        timeout: '10000'
+        signal: expect(timeoutSpy).toHaveBeenCalledWith(10000)
       })
     })
+
+    it.each(['foo', null, undefined])(
+      'falls back to the default of 20000 if no valid STORM_PADLOCK_API_TIMEOUT_MS is provided',
+      async invalidTimeout => {
+        process.env.STORM_PADLOCK_API_TIMEOUT_MS = invalidTimeout
+        mockFetchSuccessResponse()
+        const timeoutSpy = jest.spyOn(AbortSignal, 'timeout').mockImplementationOnce(() => {})
+
+        await getBearerToken()
+
+        expect(timeoutSpy).toHaveBeenCalledWith(20000)
+      }
+    )
 
     it('returns the token', async () => {
       const expectedToken = Symbol('expectedToken')
