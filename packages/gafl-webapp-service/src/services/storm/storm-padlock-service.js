@@ -2,7 +2,7 @@ const STORM_PADLOCK_API_TIMEOUT_MS_DEFAULT = 20000
 
 const requestBearerToken = async () => {
   const encodedCredentials = btoa(`${process.env.STORM_PADLOCK_CLIENT_ID}:${process.env.STORM_PADLOCK_CLIENT_SECRET}`)
-  const timeout = parseInt(process.env.STORM_PADLOCK_API_TIMEOUT_MS) || STORM_PADLOCK_API_TIMEOUT_MS_DEFAULT
+  const timeout = Number.parseInt(process.env.STORM_PADLOCK_API_TIMEOUT_MS) || STORM_PADLOCK_API_TIMEOUT_MS_DEFAULT
 
   try {
     return await fetch(process.env.STORM_PADLOCK_API_TOKEN_URL, {
