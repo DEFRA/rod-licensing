@@ -16,8 +16,12 @@ import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../
 import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../constants.js'
-import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, CONTROLLER } from '../uri.js'
-import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, FALLBACK_LICENCE, CONTROLLER } from '../uri.js'
+import {
+  PAYMENT_JOURNAL_STATUS_CODES,
+  GOVUK_PAY_ERROR_STATUS_CODES,
+  TRANSACTION_FINALISATION_ERROR_CODES
+} from '@defra-fish/business-rules-lib'
 import { v4 as uuidv4 } from 'uuid'
 const debug = db('webapp:agreed-handler')
 
@@ -299,7 +303,17 @@ export default async (request, h) => {
 
   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
-    await finaliseTransaction(request, transaction, status)
+    try {
+      await finaliseTransaction(request, transaction, status)
+    } catch (error) {
+      const isServerError = error.status === 500
+      const finalisationErrorCode = error.body?.data?.errorCode
+      const isFallbackLicenceError = finalisationErrorCode === TRANSACTION_FINALISATION_ERROR_CODES.FALLBACK_LICENCE
+      if (isServerError && isFallbackLicenceError) {
+        return h.redirectWithLanguageCode(FALLBACK_LICENCE.uri)
+      }
+      throw error
+    }
   } else {
     debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
   }
