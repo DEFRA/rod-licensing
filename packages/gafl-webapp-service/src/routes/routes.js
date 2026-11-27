@@ -26,6 +26,7 @@ import orderComplete from '../pages/order-complete/order-complete/route.js'
 import licenceDetails from '../pages/order-complete/licence-details/route.js'
 import paymentCancelled from '../pages/payment/cancelled/route.js'
 import paymentFailed from '../pages/payment/failed/route.js'
+import fallbackLicence from '../pages/payment/fallback-licence/route.js'
 
 import identify from '../pages/renewals/identify/route.js'
 import invalidLink from '../pages/renewals/renewal-inactive/route.js'
@@ -74,6 +75,7 @@ const routes = [
   ...termsAndConditions,
   ...paymentCancelled,
   ...paymentFailed,
+  ...fallbackLicence,
   ...orderComplete,
   ...licenceDetails,
   ...identify,

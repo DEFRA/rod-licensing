@@ -29,6 +29,7 @@ export const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-sum
 
 export const PAYMENT_CANCELLED = { uri: '/buy/payment-cancelled', page: 'payment-cancelled' }
 export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-failed' }
+export const FALLBACK_LICENCE = { uri: '/buy/fallback-licence', page: 'fallback-licence' }
 
 export const TERMS_AND_CONDITIONS = { uri: '/buy/conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }

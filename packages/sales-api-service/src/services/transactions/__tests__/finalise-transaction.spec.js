@@ -15,7 +15,7 @@ import { updatePaymentJournal } from '../../paymentjournals/payment-journals.ser
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 
-const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
+const { START_AFTER_PAYMENT_MINUTES, TRANSACTION_FINALISATION_ERROR_CODES } = BusinessRulesLib
 const { docClient, sqs } = AWS.mock.results[0].value
 const debugLogger = db.mock.results[1].value // first call is by retrieve-transaction.js
 global.structuredClone = global.structuredClone ?? (obj => JSON.parse(JSON.stringify(obj)))
@@ -33,7 +33,8 @@ jest.mock('../../contacts.service.js', () => ({
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
   POCL_TRANSACTION_SOURCES: ['Post Office Sales', 'DDE File'],
-  START_AFTER_PAYMENT_MINUTES: 30
+  START_AFTER_PAYMENT_MINUTES: 30,
+  TRANSACTION_FINALISATION_ERROR_CODES: { FALLBACK_LICENCE: 'FALLBACK_LICENCE' }
 }))
 
 jest.mock('@defra-fish/connectors-lib', () => {
@@ -340,6 +341,22 @@ describe('transaction service', () => {
         } catch (e) {}
 
         expect(updatePaymentJournal).toHaveBeenCalledWith(mockRecord.id, expect.objectContaining({ eligibleForEarlyMopUp: true }))
+      })
+
+      it('identifies an SQS send failure as requiring the fallback licence page', async () => {
+        const {
+          mockRecord: { id }
+        } = sqsFailureSetup()
+
+        await expect(
+          finaliseTransaction({
+            id,
+            payment: getSamplePayment()
+          })
+        ).rejects.toMatchObject({
+          isBoom: true,
+          data: { errorCode: TRANSACTION_FINALISATION_ERROR_CODES.FALLBACK_LICENCE }
+        })
       })
 
       it('throws an internal server error if the SQS message fails to send', async () => {

@@ -3,8 +3,12 @@ import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../
 import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
-import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, CONTROLLER } from '../../uri.js'
-import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, FALLBACK_LICENCE, CONTROLLER } from '../../uri.js'
+import {
+  PAYMENT_JOURNAL_STATUS_CODES,
+  GOVUK_PAY_ERROR_STATUS_CODES,
+  TRANSACTION_FINALISATION_ERROR_CODES
+} from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
 import Boom from '@hapi/boom'
 
@@ -423,6 +427,88 @@ describe('agreed-handler', () => {
 
       it('redirects to order complete', () => {
         expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
+      })
+    })
+
+    describe('return from payment - fallback licence', () => {
+      let request, h
+
+      beforeEach(() => {
+        request = getMockRequest({
+          cache: () => ({
+            helpers: {
+              transaction: {
+                get: jest.fn(async () => ({
+                  id: 'test-id',
+                  cost: 100,
+                  permissions: [{ licensee: {} }],
+                  payment: { payment_id: 'pay123' }
+                })),
+                set: jest.fn(async () => {})
+              },
+              status: {
+                get: jest.fn(async () => ({
+                  [COMPLETION_STATUS.agreed]: true,
+                  [COMPLETION_STATUS.posted]: true,
+                  [COMPLETION_STATUS.paymentCreated]: true
+                })),
+                set: jest.fn(async () => {})
+              }
+            }
+          })
+        })
+        h = getMockResponseToolkit()
+        getPaymentStatus.mockResolvedValue({
+          state: { status: 'success', finished: true }
+        })
+
+        prepareApiFinalisationPayload.mockResolvedValue({})
+      })
+
+      it('redirects to the fallback licence page for a recoverable finalisation error', async () => {
+        salesApi.finaliseTransaction.mockRejectedValueOnce(
+          Object.assign(new Error('Sales API finalisation error'), {
+            status: 500,
+            body: {
+              data: {
+                errorCode: TRANSACTION_FINALISATION_ERROR_CODES.FALLBACK_LICENCE
+              }
+            }
+          })
+        )
+
+        await agreedHandler(request, h)
+
+        expect(h.redirectWithLanguageCode).toHaveBeenCalledWith(FALLBACK_LICENCE.uri)
+      })
+
+      it('rethrows an unrelated finalisation error', async () => {
+        const error = Object.assign(new Error('Unrelated finalisation error'), {
+          status: 500,
+          body: {
+            data: {
+              errorCode: 'UNRELATED_ERROR'
+            }
+          }
+        })
+
+        salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+
+        await expect(agreedHandler(request, h)).rejects.toBe(error)
+
+        expect(h.redirectWithLanguageCode).not.toHaveBeenCalledWith(FALLBACK_LICENCE.uri)
+      })
+
+      it('rethrows an unclassified server error', async () => {
+        const error = Object.assign(new Error('Sales API unavailable'), {
+          status: 500
+        })
+
+        salesApi.finaliseTransaction.mockRejectedValueOnce(error)
+
+        await expect(agreedHandler(request, h)).rejects.toBe(error)
+
+        expect(h.redirectWithLanguageCode).not.toHaveBeenCalledWith(FALLBACK_LICENCE.uri)
       })
     })
 
