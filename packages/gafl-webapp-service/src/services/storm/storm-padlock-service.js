@@ -1,3 +1,5 @@
+import { StormPadlockCache } from './storm-padlock-cache'
+
 const STORM_PADLOCK_API_TIMEOUT_MS_DEFAULT = 20000
 
 const requestBearerToken = async () => {
@@ -21,11 +23,21 @@ const requestBearerToken = async () => {
   }
 }
 
-export const getBearerToken = async () => {
-  const response = await requestBearerToken()
+const retrieveAndCacheToken = async cache => {
+  let response
+
+  try {
+    response = await requestBearerToken()
+  } catch (e) {
+    await cache.disconnect()
+    throw e
+  }
 
   if (response.ok) {
-    return response.json().accessToken
+    const token = response.json().accessToken
+    const timeout = response.json().expiresIn
+    await cache.setCachedToken(token, timeout)
+    return token
   } else {
     const responseData = {
       status: response.status,
@@ -33,4 +45,11 @@ export const getBearerToken = async () => {
     }
     throw new Error('Failure retrieving Bearer token from Storm API', responseData)
   }
+}
+
+export const getBearerToken = async () => {
+  const cache = new StormPadlockCache()
+  const token = (await cache.getCachedToken()) || (await retrieveAndCacheToken(cache))
+  await cache.disconnect()
+  return token
 }
