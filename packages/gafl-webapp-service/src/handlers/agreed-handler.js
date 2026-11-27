@@ -24,6 +24,7 @@ import {
 } from '@defra-fish/business-rules-lib'
 import { v4 as uuidv4 } from 'uuid'
 const debug = db('webapp:agreed-handler')
+const HTTP_INTERNAL_SERVER_ERROR = 500
 
 /**
  * Send (post) transaction to sales API
@@ -244,6 +245,23 @@ const finaliseTransaction = async (request, transaction, status) => {
   }
 }
 
+const finaliseTransactionAndGetNextPage = async (request, transaction, status) => {
+  try {
+    await finaliseTransaction(request, transaction, status)
+    return ORDER_COMPLETE.uri
+  } catch (error) {
+    const isServerError = error.status === HTTP_INTERNAL_SERVER_ERROR
+    const finalisationErrorCode = error.body?.data?.errorCode
+    const isFallbackLicenceError = finalisationErrorCode === TRANSACTION_FINALISATION_ERROR_CODES.FALLBACK_LICENCE
+
+    if (isServerError && isFallbackLicenceError) {
+      return FALLBACK_LICENCE.uri
+    }
+
+    throw error
+  }
+}
+
 const postTransaction = async (request, transaction, status) => {
   // Create the agreement if a recurring payment
   if (status[RECURRING_PAYMENT] === true) {
@@ -303,20 +321,10 @@ export default async (request, h) => {
 
   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
-    try {
-      await finaliseTransaction(request, transaction, status)
-    } catch (error) {
-      const isServerError = error.status === 500
-      const finalisationErrorCode = error.body?.data?.errorCode
-      const isFallbackLicenceError = finalisationErrorCode === TRANSACTION_FINALISATION_ERROR_CODES.FALLBACK_LICENCE
-      if (isServerError && isFallbackLicenceError) {
-        return h.redirectWithLanguageCode(FALLBACK_LICENCE.uri)
-      }
-      throw error
-    }
-  } else {
-    debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
+    const next = await finaliseTransactionAndGetNextPage(request, transaction, status)
+    return h.redirectWithLanguageCode(next)
   }
+  debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
 
   // If we are here we have completed
   return h.redirectWithLanguageCode(ORDER_COMPLETE.uri)
